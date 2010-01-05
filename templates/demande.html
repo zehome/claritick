@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block title %}Consultation de demande{% endblock %}
+{% block content_title %}Consultation de demande{% endblock %}
+{% block image %}<img src="/media/images/oxygen/demande.png" />{% endblock %}
+{% block content %}
+
+<div class="demande_block">
+    <h2>Patient</h2>
+    <div class="left">Nom:</div>
+    <div class="right"><strong><a href="/medecin/?patient_ipp={{ demande.patient.ipp }}">{{ demande.patient.nom|title }} {{ demande.patient.prenom|title }}</a></strong></div>
+    
+    <div class="left">Né(e) le:</div>
+    <div class="right"><strong>{{ demande.patient.date_naissance|date:"d/m/Y" }}</strong></div>
+    
+    <div class="left">Adresse:</div>
+    <div class="right">{{ demande.patient.adresse }}</div>
+    
+    <div class="left">Tél. fixe:</div>
+    <div class="right">{{ demande.patient.telephone }}</div>
+
+    <div class="left">Tél. portable:</div>
+    <div class="right">{{ demande.patient.telephone_gsm }}</div>
+    
+    <div class="left">Numéro SS:</div>
+    <div class="right">{{ demande.patient.numero_assure }}</div>
+    
+    <div class="left">Numéro IPP:</div>
+    <div class="right">{{ demande.patient.ipp }}</div>
+</div>
+
+<div class="demande_block">
+    <h2>Médecin</h2>
+    <div class="left">Nom:</div>
+    <div class="right"><strong>{{ demande.medecin.nom|title }} {{ demande.medecin.prenom|title }}</strong></div>
+    
+    <div class="left">Email:</div>
+    <div class="right">{{ demande.medecin.email }}</div>
+    
+    <div class="left">Adeli:</div>
+    <div class="right">{{ demande.medecin.adeli }}</div>
+
+    <div class="left">Inscription:</div>
+    <div class="right">{{ demande.medecin.date_inscription|date:"d/m/Y" }}</div>
+</div>
+
+<div class="demande_block">
+    <h2>Laboratoire</h2>
+    <div class="left">Nom:</div>
+    <div class="right"><strong>{{ demande.laboratoire.nom|title }} ({{ demande.laboratoire.groupe.nom|title }})</strong></div>
+    
+    <div class="left">Email:</div>
+    <div class="right">{{ demande.laboratoire.email }}</div>
+    
+    <div class="left">Adeli:</div>
+    <div class="right">{{ demande.laboratoire.adeli }}</div>
+    
+    <div class="left">Téléphone:</div>
+    <div class="right">{{ demande.laboratoire.telephone }}</div>
+</div>
+
+<div class="demande_block">
+    <h2>Demande</h2>
+    <div class="left">Numéro:</div>
+    <div class="right"><strong>{{ demande.tube_executant }}</strong> du <strong>{{ demande.date|date:"d/m/Y G:i" }}</strong></div>
+    
+    
+    <div class="download">
+        {% ifnotequal pdf_id None %}<a href="/medecin/pdf/{{ pdf_id }}">{% endifnotequal %}<img src="/media/images/oxygen/pdf.png" alt="PDF"/>
+        <br />PDF{% ifnotequal pdf_id None %}</a>{% else %} (non disponible) {% endifnotequal %}
+    </div>
+    <div class="download">
+        {% ifnotequal hprim_id None %}<a href="/medecin/hprim/{{ hprim_id }}">{% endifnotequal %}<img src="/media/images/oxygen/hprim.png" alt="HPRIM"/>
+        <br />HPRIM{% ifnotequal hprim_id None %}</a>{% else %} (non disponible) {% endifnotequal %}
+    </div>
+</div>
+
+<hr style="clear: both; display: none;" />
+<h2>Antériorités</h2>
+<p>Aucune antériorité.</p>
+
+{% endblock %}

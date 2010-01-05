@@ -1,0 +1,53 @@
+<?xml version='1.0' encoding='utf-8'?>
+{% extends "base.html" %}
+
+{% block title %}Ticket numéro {{ ticket.id }}{% endblock %}
+{% block content_title %}Ticket numéro {{ ticket.id }}{% endblock %}
+{% block image %}<img src="/media/images/oxygen/folder-open.png" />{% endblock %}
+
+{% block content %}
+
+<form action="/ticket/modify/{{ ticket.id }}" method="POST">
+
+<fieldset class="inline">
+  <legend>Général</legend>
+  <div><label for="id_category">Categorie</label> {{ form.category }}</div>
+  <div><label for="id_project">Projet</label> {{ form.project }}</div>
+  <div><label for="id_priority">Priorité</label> {{ form.priority }}</div>
+  <div><label for="id_state">État</label> {{ form.state }}</div>
+</fieldset>
+
+<fieldset class="block">
+  <legend>Contact</legend>
+  <table>
+    <tr>
+        <td class="large"><label for="id_groupement">Groupement</label></td><td>{{ form.groupement }}</td>
+        <td class="large right"><label for="id_assigned_to">Assigné à</label></td><td>{{ form.assigned_to }}</td>
+    </tr>
+    <tr>
+        <td class="large"><label for="id_site">Site</label></td><td>{{ form.site }}</td>
+        <td class="large right"><label for="id_opened_by">Ouvert par</label></td><td>{{ ticket.opened_by }} le {{ ticket.date_open|date:"d/m/Y à H:i" }}</td>
+    </tr>
+    <tr>
+        <td class="large"><label for="id_contact">Contact</label></td><td>{{ form.contact }}</td>
+        <td class="large right"><label for="id_site">Dernière modif.</label></td><td>le {{ ticket.last_modification|date:"d/m/Y à H:i" }}</td>
+    </tr>
+    <tr>
+        <td class="large"><label for="id_phone">Téléphone</label></td><td>{{ form.telephone }}</td>
+        <td class="large right"><label for="id_validated_by">Validé par</label></td><td>{{ form.validated_by }}</td>
+    </tr>
+  </table>
+</fieldset>
+
+<fieldset class="block">
+  <legend>Contenu</legend>
+  <p><label for="id_title">Titre</label> {{ form.title }}</p>
+  <p>{{ form.text }}</p>
+  <p><label for="id_keywords">Mots clefs:</label> {{ form.keywords }}</p>
+</fieldset>
+
+<hr />
+<span class="bouton"><img class="bouton_img" src="/media/images/oxygen/ok.png" /><input type="submit" value="Modifier/Valider" /></span>
+</form>
+
+{% endblock %}

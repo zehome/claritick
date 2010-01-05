@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='utf-8'?>
+{% extends "base.html" %}
+
+{% block title %}Créer un nouveau ticket{% endblock %}
+{% block content_title %}Créer un nouveau ticket{% endblock %}
+{% block image %}<img src="/media/images/oxygen/folder-open.png" />{% endblock %}
+
+{% block content %}
+
+<h2>Création de ticket</h2>
+<form action="/ticket/new/" method="POST">
+{{ form }}
+<hr />
+<span class="bouton"><img class="bouton_img" src="/media/images/oxygen/ok.png" /><input type="submit" value="Créer" /></span>
+</form>
+
+{% endblock %}

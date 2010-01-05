@@ -1,0 +1,509 @@
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ FEUILLE DE STYLE MTS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+/*##################################################
+################### STYLE GENERAL ##################
+##################################################*/
+
+* { font-family:"Lucida Grande","DejaVu Sans","Bitstream Vera Sans",Verdana,Arial,sans-serif; }
+
+body {
+    margin:0;
+    padding:0;
+    background-color:#eff4ff;
+    background-image:url('/media/images/deg_fond.png');
+    background-repeat:repeat-y;
+    background-position:left;
+    font-size:9pt;
+    color:#333;
+}
+
+img {
+    border: 0;
+}
+
+h1{
+    font-size: 2em;
+    text-align:center; 
+    font-weight:bold;
+    margin:3px;
+    margin-bottom:15px;
+    margin-top: 0;
+    color:#013368;
+    text-transform:uppercase;
+    background-color: #eeeeff;
+    border: 1px solid black;
+    border-top: 0;
+}
+
+h2{
+    font-size: 1.6em;
+    text-align:left;
+    font-weight:normal;
+    margin:3px;
+    margin-bottom:5px;
+    color:#013368;
+    margin-top: 20px;
+}
+
+ul {
+	padding: 0;
+	margin: 0;
+}
+
+ul li {
+	padding: 0;
+	margin: 0;
+}
+
+table {
+  font-weight: bold;
+  color: #013368;
+  padding: 0;
+  margin: 0;
+}
+
+table td,th,tr {
+  padding: 0;
+  margin: 0;
+}
+
+table.resultat th,table.resultat td {
+  border-right: 1px solid #ccc;
+  font-weight: normal;
+}
+
+table.resultat th {
+  white-space: nowrap;
+  font-weight: bold;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+table.resultat td {
+  padding: 5px;
+}
+
+table a {
+  text-decoration: none;
+  font-weight: bold;
+  color: #013368;
+}
+
+table td.label {
+  font-weight: normal;
+}
+
+table a:hover {
+  text-decoration: none;
+  color: red;
+}
+
+/*##################################################
+################## LA BARRE DE MENU ################
+##################################################*/
+
+table.menuPrincipal{
+    background:white;
+    color:black;
+    width:100%;
+    border-bottom:gray solid 1px;
+}
+
+/*##################################################
+#################### FORMULAIRES ###################
+##################################################*/
+
+input, select, textarea {
+    border: 1px solid #99afd6;
+}
+
+form {
+    margin:0;
+    padding:0;
+    border: 1px solid lightgrey;
+}
+
+#contenu form {
+    background-color: #eeeeff;
+}
+
+
+/******************* Boutons de validation ********************/
+.bouton {
+    background-color:#FFFFFF;
+    background-image:url('/media/images/deg_bouton.png');
+    background-position:left center;
+    background-repeat:repeat-x;
+    border:1px solid #99AFD6;
+    color:#333333;
+    font-size:9pt;
+    height:20px;
+    line-height:20px;
+    padding:0px 5px;
+    margin-left: 10px;
+    text-decoration:none;
+    cursor: pointer;
+}
+
+.bouton_disabled {
+    margin:0;
+    padding:0;
+    background-color:#fff;
+    background-image:url('/media/images/deg_bouton.png');
+    background-repeat:repeat-x;
+    background-position:left;
+    color:#ccc;
+    border:#ddd 1px solid;
+    text-decoration:none;
+    height:20px;
+    line-height:20px;
+    padding-left:5px;
+    padding-right:5px;
+    font-size:9pt;
+}
+.bouton_rech {
+    margin:0;
+    padding:0;
+    background-color:#fff;
+    background-image:url('/media/images/deg_bouton_rech.png');
+    background-repeat:repeat-x;
+    background-position:left bottom;
+    border:#013368 1px solid;
+    color:#013368;
+    font-weight:bold;
+    padding-left:10px;
+    padding-right:0px;
+    margin-right: 20px;
+}
+.bouton_rech,.bouton input {
+    border: 0;
+    background: transparent;
+}
+
+.bouton:hover {
+    color:#333;
+}
+.bouton_disabled:hover {
+    color:#ccc;
+}
+.bouton_rech:hover {
+    color:#013368;
+}
+
+.bouton_img {
+    vertical-align: middle;
+    padding: 5px;
+    padding-left: 0;
+    position: relative;
+    left: 5px;
+    z-index: 0;
+}
+
+
+/*##################################################
+## BARRE DE SEPARATION FORMULAIRE/TABLEAU REPONSE ##
+##################################################*/
+
+.barre_separation{
+    background-image:url('/media/images/deg_menu.png');
+    height:30px;
+    margin-top:10px;
+}
+
+
+/*##################################################
+################## TABLEAU REPONSE #################
+##################################################*/
+
+.tableau_pt{
+    margin-left:auto;
+    margin-right:auto;
+    text-align: left;
+    border:#013368 1px solid;
+}
+
+.tableau_pt input {
+    width: 70%;
+}
+
+.tableau_center {
+    margin-left:auto;
+    margin-right:auto;
+    text-align: left;
+}
+
+td {
+    padding:1px;
+    vertical-align: middle;
+}
+
+.row1 { 
+    background-color: white;
+}
+.row1 {
+    background-color: #D3DBFF;
+}
+
+.rowVisited {
+    color: grey;
+}
+
+.rowVisited a {
+    color: grey;
+}
+
+.tableau_pt h2,.resultat th,.demande_block h2 {
+    background-color:#e4eaf6;
+    background-image:url('/media/images/deg_entete.png');
+    background-repeat:repeat-x;
+    background-position:top;
+    border-bottom:#013368 1px solid;
+    color:#013368;
+    height:30px;
+    font-size: 1.5em;
+    margin:0;
+    padding:1px;
+}
+
+div.navig {
+    margin-bottom:1em;
+    margin-top:1em;
+    margin-left:auto; 
+    color:#013368;
+    text-align:center;
+}
+
+div.navig a {
+    color:#013368;
+}
+
+div.navig a:hover {
+    color:black;
+    text-decoration:none;
+}
+
+div.testmessage {
+    text-align:left;
+    border:1px solid gray;
+    margin-right:5%;margin-left:5%;
+    padding-right:1em;padding-left:1em;
+    margin-top:1em;margin-bottom:1em;
+    background:#f0f0ff;
+    padding:1em;
+}
+
+.active_page { 
+    color:#8080c0 
+}
+
+#menu_general {
+    margin-left:25%;
+    margin-right:25%;
+    background:#f0f0ff;
+    border:solid 5px #8080c0;
+    padding:1em;
+}
+
+li {
+    padding-top:1em;
+    list-style-type : none;
+    list-style-position : outside;
+}
+
+
+/*##################################################
+################ STYLE MENU GAUCHE #################
+##################################################*/
+
+/* Menu de gauche */
+
+#gauche {
+    position: absolute;
+    left:10px;
+    width: 170px;
+    height:99%;
+    background-color:#98b3e9;
+    background-image:url('/media/images/deg_menugauche.png');
+    background-repeat:repeat-x;
+    background-position:top;
+    color:#013368;
+    border-left:#013368 1px solid;
+    border-bottom:#013368 1px solid;
+    border-right:#013368 1px solid;
+    text-align:center;
+}
+
+#gauche h2 {
+	color: black;
+	margin: 0;
+	vertical-align: middle;
+}
+
+#gauche h2 img {
+	position: relative;
+	left: -10px;
+	top: 10px;
+}
+
+.menu {
+    width:150px;
+    margin:0;
+    padding:0;
+    list-style:none;
+    text-align:left;
+}
+
+.menu a { 
+    margin:0;
+    margin-top:10px;
+    margin-left:2px;
+    display:block;
+    padding-left:5px;
+    width:160px;
+    height:25px;
+    line-height:25px;
+    background-color:#d6e2fa;
+    background-image:url('/media/images/deg_menu.png');
+    background-repeat:repeat-x;
+    background-position:left;
+    color:#013368;
+    font-size: 10pt;
+    font-weight:bold;
+    text-decoration:none;
+    border-bottom:#013368 1px solid;
+}
+
+.menu a:hover {
+    background-color:#b0bfde;
+    background-image:url('/media/images/deg_menusurvol.png');
+    background-repeat:repeat-x;
+    background-position:left;
+    color:#fff;
+    border-bottom:#fff 1px solid;
+}
+
+.menu ul {
+    margin-left: 10px;
+    padding: 0;
+}
+
+.menu li {
+    padding: 0;
+    padding-left: 0;
+}
+
+.menu ul li ul a {
+    width: 140px;
+}
+
+.menu ul li ul {
+    padding: 0;
+    margin-left: 10px;
+}
+
+.menu ul a {
+    width: 150px;
+}
+.menu a span,.menu ul a span {
+    font-weight:bold;
+    margin-right:2px;
+}
+.menu a:hover span,.menu ul a:hover span {
+    color:red;
+}
+
+
+/************** div contenu **************/
+#contenu {
+    text-align: center;
+    margin-left: 190px;
+}
+
+#contenu p {
+    font-size: 1.2em;
+}
+
+.errorlist {
+    color: red;
+    font-size: 1.5em;
+}
+
+.errorlist ul {
+    border: 2px solid red;
+}
+
+.errorlist li {
+    padding: 0; 
+    margin: 0;
+}
+
+#contenu h1 img {
+    float: left;
+}
+
+#contenu .image {
+    position: absolute;
+    top: 50px;
+    left: 200px;
+}
+
+#contenu table {
+    margin-top: 20px;
+	font-weight: normal;
+}
+
+#contenu table td label {
+    vertical-align: top;
+}
+
+#contenu fieldset {
+	margin-bottom: 20px;
+}
+
+#contenu fieldset p label {
+	vertical-align: top;
+}
+
+#contenu fieldset legend {
+	font-weight: bold;
+	font-size: 2em;
+	color: #777;
+}
+
+#contenu fieldset table .large {
+	width: 150px;
+}
+
+#contenu fieldset table .right {
+	padding-left: 50px;
+}
+
+#contenu fieldset table {
+	margin: 0;
+	padding: 0;
+	color: black;
+}
+
+.block, .inline {
+	padding: 5px;
+	text-align: left;
+	padding-top: 15px;
+	border: 1px solid #999;
+	background-color: #dedede;
+}
+
+.inline div {
+	display: inline;
+}
+
+.block label,.inline label {
+	font-weight: bold;
+}
+
+
+
+/* EOF */

@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Liste des demandes{% endblock %}
+{% block content_title %}Liste des demandes{% endblock %}
+{% block image %}<img src="/media/images/oxygen/search.png" />{% endblock %}
+
+{% block content %}
+
+<h2>Recherche</h2>
+<form action="/medecin/" method="POST">
+<table class="tableau_pt">
+{{ form.as_fieldset_table }}
+</table>
+<hr />
+<span class="bouton"><img class="bouton_img" src="/media/images/oxygen/cancel.png" /><input type="reset" value="Annuler" /></span>
+<span class="bouton"><img class="bouton_img" src="/media/images/oxygen/ok.png" /><input type="submit" value="Rechercher" /></span>
+</form>
+
+
+<h2>Résultats</h2>
+{% if table.rows %}
+<table class="tableau_pt resultat">
+<tr>
+    {% for column in table.columns %}
+    <th><a href="?sort={{ column.name_toggled }}">{{ column }}</a> 
+    {% if column.is_ordered %}
+      {% if column.is_ordered_straight %}
+      <img src="/media/images/oxygen/arrow-up.png" alt="up" />
+      {% else %}
+      <img src="/media/images/oxygen/arrow-down.png" alt="down" />
+      {% endif %}
+    {% endif %}
+    </th>
+    {% endfor %}
+</tr>
+{% for row in table.rows %}
+    <tr class="{% cycle 'row2' 'row1' %} {% if row.medecin_seen %}rowVisited{% endif %}">
+        <td><a href="/medecin/{{ row.id }}/">{{ row.date|date:"d/m/Y G:i" }}</a></td>
+        <td style="text-align: right;"><a href="/medecin/{{ row.id }}/">{{ row.tube_executant }}</a></td>
+        <td><strong>{{ row.patient.nom|title }} {{ row.patient.prenom|title }}</strong> 
+        ({{ row.patient.date_naissance|date:"d/m/Y" }})</td>
+        <td>{{ row.laboratoire.nom }}</td>
+        <td>{{ row.medecin.nom }}</td>        
+    </tr>
+{% endfor %}
+</table>
+{% else %}
+<h3>Aucun résultat</h3>
+{% endif %}
+
+{% endblock %}
