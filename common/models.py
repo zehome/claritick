@@ -20,26 +20,26 @@ class Groupement(models.Model):
     label = models.CharField("Nom", help_text="Nom du groupement", max_length=64)
     
     def __unicode__(self):
-        return "%s" % (self.label,)
+        return u"%s" % (self.label,)
     
 class Site(models.Model):
     label = models.CharField("Nom", help_text="Nom du site", max_length=64)
     groupement = models.ForeignKey(Groupement)
     
     def __unicode__(self):
-        return "%s / %s" % (self.groupement, self.label)
+        return u"%s / %s" % (self.groupement, self.label)
 
 class GoogleAccount(models.Model):
     login = models.EmailField("Login")
     password = models.CharField("Mot de passe", max_length=64)
     
     def __unicode__(self):
-        return "Compte google pour %s" % (self.login,)
+        return u"Compte google pour %s" % (self.login,)
     
 
 class UserProfile(models.Model):
     user = models.ForeignKey(User, verbose_name="Utilisateur", unique=True)
-    google_account = models.ForeignKey(GoogleAccount, verbose_name="Compte google")
+    google_account = models.ForeignKey(GoogleAccount, verbose_name="Compte google", null=True, blank=True)
     
     def __unicode__(self):
-        return "Profil utilisateur"
+        return u"Profil %s" % (self.user,)

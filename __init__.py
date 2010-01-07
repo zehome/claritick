@@ -11,16 +11,28 @@ class TicketCalendarAdapter(CalendarAdapter):
     A calendar adapter for the Showing model.
     """
     
-    def get_event_data(self, instance):
+    def can_save(self, ticket):
+        return bool(ticket.calendar_start_time and ticket.calendar_end_time)
+    
+    def get_event_data(self, ticket):
         """
         Returns a CalendarEventData object filled with data from the adaptee.
         """
+        if ticket.calendar_title:
+            title = ticket.calendar_title
+        else:
+            title = ticket.title
+        
+        content = ticket.text
+
         return CalendarEventData(
-            start=instance.start_time,
-            end=instance.end_time,
-            title=instance.title
+            start=ticket.calendar_start_time,
+            end=ticket.calendar_end_time,
+            title=ticket.title,
+            content = content
         )
 
+observers = []
 
 def register_all_users():
     # Register all users
@@ -33,12 +45,14 @@ def register_all_users():
             continue
         
         if not profile.google_account:
+            print "%s no google account." % (profile,)
             continue
         
         print "Registering google Calendar Observer for %s" % (user,)
         
         observer = CalendarObserver(email=profile.google_account.login,
-                                password=profile.google_account.password)
+                                    password=profile.google_account.password)
         observer.observe(Ticket, TicketCalendarAdapter())
+        observers.append(observer)
 
 register_all_users()

@@ -22,7 +22,7 @@ class Priority(models.Model):
     critical_duration = models.IntegerField("Durée en seconde => Critique", blank=True, null=True)
 
     def __unicode__(self):
-        return "%s" % (self.label,)
+        return u"%s" % (self.label,)
 
 class State(models.Model):
     class Meta:
@@ -33,7 +33,7 @@ class State(models.Model):
     weight = models.IntegerField("Poids", default=1)
 
     def __unicode__(self):
-        return "%s" % (self.label,)
+        return u"%s" % (self.label,)
 
 class Category(models.Model):
     """
@@ -46,7 +46,7 @@ class Category(models.Model):
     label = models.CharField("Libellé", max_length=64)
     
     def __unicode__(self):
-        return "%s" % (self.label,)
+        return u"%s" % (self.label,)
 
 class Project(models.Model):
     class Meta:
@@ -56,7 +56,7 @@ class Project(models.Model):
     watchers = models.ManyToManyField(User, blank=True)
 
     def __unicode__(self):
-        return "%s watched by [%s]" % (self.label, ",".join([ u.username for u in self.watchers.all() ]))
+        return u"%s watched by [%s]" % (self.label, ",".join([ u.username for u in self.watchers.all() ]))
 
 class Ticket(models.Model):
     class Meta:
@@ -93,6 +93,11 @@ class Ticket(models.Model):
     # Pour faciliter la recherche
     keywords = models.CharField("Mots clefs", max_length=1024, blank=True)
     
+    # Calendar
+    calendar_start_time = models.DateTimeField("Début évenement", blank=True, null=True)
+    calendar_end_time = models.DateTimeField("Fin évenement", blank=True, null=True)
+    calendar_title = models.CharField("Titre évenement", max_length=64, blank=True, null=True)
+    
     def get_groupement(self):
         """ Retourne le groupement associé au ticket """
         if self.site:
@@ -106,7 +111,7 @@ class Ticket(models.Model):
         return bool(self.text and self.title)
     
     def __unicode__(self):
-        return "Ticket %s [%s] for %s prio: %s status: %s" % (self.id, self.category, self.get_groupement(), self.priority, self.state) 
+        return u"Ticket %s [%s] for %s prio: %s status: %s" % (self.id, self.category, self.get_groupement(), self.priority, self.state) 
     
 ## Ticket moderation
 class TicketCommentModerator(CommentModerator):
