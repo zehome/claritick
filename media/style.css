@@ -25,7 +25,7 @@ img {
     border: 0;
 }
 
-h1{
+h1.title {
     font-size: 2em;
     text-align:center; 
     font-weight:bold;
@@ -36,9 +36,10 @@ h1{
     background-color: #eeeeff;
     border: 1px solid black;
     border-top: 0;
+	padding: 0;
 }
 
-h2{
+h2 {
     font-size: 1.6em;
     text-align:left;
     font-weight:normal;
@@ -122,12 +123,14 @@ table.menuPrincipal{
 #################### FORMULAIRES ###################
 ##################################################*/
 
-#conrtenu input, select, textarea {
+#contenu input, select, textarea {
     border: 1px solid #99afd6;
 }
 
-#claritick input {
+.claritick #contenu nput[type="button"], .claritick #contenu input[type="submit"] {
 	background: transparent;
+	border: 0;
+	padding: 0;
 }
 
 form {
@@ -155,52 +158,7 @@ form {
     padding:0px 5px;
     margin-left: 10px;
     text-decoration:none;
-    cursor: pointer;
-}
-
-.bouton_disabled {
-    margin:0;
-    padding:0;
-    background-color:#fff;
-    background-image:url('/media/images/deg_bouton.png');
-    background-repeat:repeat-x;
-    background-position:left;
-    color:#ccc;
-    border:#ddd 1px solid;
-    text-decoration:none;
-    height:20px;
-    line-height:20px;
-    padding-left:5px;
-    padding-right:5px;
-    font-size:9pt;
-}
-.bouton_rech {
-    margin:0;
-    padding:0;
-    background-color:#fff;
-    background-image:url('/media/images/deg_bouton_rech.png');
-    background-repeat:repeat-x;
-    background-position:left bottom;
-    border:#013368 1px solid;
-    color:#013368;
-    font-weight:bold;
-    padding-left:10px;
-    padding-right:0px;
-    margin-right: 20px;
-}
-.bouton_rech,.bouton input {
-    border: 0;
-    background: transparent;
-}
-
-.bouton:hover {
-    color:#333;
-}
-.bouton_disabled:hover {
-    color:#ccc;
-}
-.bouton_rech:hover {
-    color:#013368;
+    cursor: ;
 }
 
 .bouton_img {
@@ -284,7 +242,7 @@ form {
     position: absolute;
     left:10px;
     width: 170px;
-    height:99%;
+    height:98%;
     background-color:#98b3e9;
     background-image:url('/media/images/deg_menugauche.png');
     background-repeat:repeat-x;
@@ -296,34 +254,31 @@ form {
     text-align:center;
 }
 
-#gauche ul li {
+div#gauche ul.menu {
+	margin-bottom: 5px;
+}
+
+div#gauche ul li {
+	padding: 0;
     list-style-type : none;
     list-style-position : outside;
 }
 
-#gauche h2 {
+div#gauche h2 {
 	color: black;
 	margin: 0;
 	vertical-align: middle;
 }
 
-#gauche h2 img {
+div#gauche h2 img {
 	position: relative;
 	left: -10px;
-	top: 10px;
 }
 
-.menu {
-    width:150px;
-    margin:0;
-    padding:0;
-    list-style:none;
-    text-align:left;
-}
 
-#gauche a { 
+div#gauche a { 
     margin:0;
-    margin-top:10px;
+    margin-top:5px;
     margin-left:2px;
     display:block;
     padding-left:5px;
@@ -341,7 +296,7 @@ form {
     border-bottom:#013368 1px solid;
 }
 
-#gauche a:hover {
+div#gauche a:hover {
     background-color:#b0bfde;
     background-image:url('/media/images/deg_menusurvol.png');
     background-repeat:repeat-x;
@@ -350,34 +305,13 @@ form {
     border-bottom:#fff 1px solid;
 }
 
-.menu ul {
-    margin-left: 10px;
-    padding: 0;
-}
 
-.menu li {
-    padding: 0;
-    padding-left: 0;
-}
-
-.menu ul li ul a {
-    width: 140px;
-}
-
-.menu ul li ul {
-    padding: 0;
-    margin-left: 10px;
-}
-
-.menu ul a {
-    width: 150px;
-}
-.menu a span,.menu ul a span {
-    font-weight:bold;
-    margin-right:2px;
-}
-.menu a:hover span,.menu ul a:hover span {
-    color:red;
+.menu {
+    width:150px;
+    margin:0;
+    padding:0;
+    list-style:none;
+    text-align:left;
 }
 
 
@@ -389,20 +323,6 @@ form {
 
 #contenu p {
     font-size: 1.2em;
-}
-
-.errorlist {
-    color: red;
-    font-size: 1.5em;
-}
-
-.errorlist ul {
-    border: 2px solid red;
-}
-
-.errorlist li {
-    padding: 0; 
-    margin: 0;
 }
 
 #contenu h1 img {
@@ -471,6 +391,48 @@ form {
 #contenu div.breadcrumbs {
 	background: transparent;
 	text-decoration: none;
+}
+
+table.menuPrincipal p img {
+	position: relative;
+	top: -5px;
+}
+table.menuPrincipal a {
+	color: #555;
+}
+
+
+body.claritick fieldset {
+	margin: 5px;
+}
+
+.claritick td {
+	border: 0;
+}
+
+/* Admin hack */
+
+div#contenu.admin {
+	text-align: left;
+}
+
+div#contenu.admin div#content-related {
+	float: left;
+	margin-left: 50px;
+}
+
+div#contenu.admin div#content-main {
+	float: left;
+	min-width: 600px;
+	width: auto;
+}
+
+div#contenu.admin .object-tools {
+	float: none;
+	position: absolute;
+	right: 10px;
+	margin: 0;
+	top: 85px;
 }
 
 

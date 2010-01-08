@@ -71,15 +71,17 @@
         </ul>
         {% endblock %}
     </div>
-
-    {% endif %} <!-- ispopup -->
-
-    <div id="contenu" class="{% if not app_list %}claritick{% endif %}">
-        <h1>{% if not app_list %}claritick{% endif %}{% block content_title %}{% endblock content_title %}{% block breadcrumbs %}{% if title %} &rsaquo; {{ title }}{% endif %}{% endblock %}</h1>
+    
+    <div id="contenu" class="{% block admin_class %}claritick{% endblock %}">
+        <h1 class="title">{% block content_title %}{% if title %}{{ title }}{% endif %}{% endblock content_title %}</h1>
         <div class="image">{% block image %}{% endblock image %}</div>
+    {% endif %}
         {% block content %}{% endblock content %}
-        {% block admin_content %}{% endblock %}
+        {% block sidebar %}{% endblock %}
+        <br class="clear" />
+    {% if not is_popup %}
     </div>
+    {% endif %} <!-- ispopup -->
   </body>
 </html>
 
