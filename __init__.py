@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from djangogcal.adapter import CalendarAdapter, CalendarEventData
-from djangogcal.observer import CalendarObserver
-
+#from djangogcal.observer import CalendarObserver
+from claritick.ticket.observer import TicketCalendarObserver
 from claritick.ticket.models import Ticket
 from django.contrib.auth.models import User
 
@@ -50,7 +50,7 @@ def register_all_users():
         
         print "Registering google Calendar Observer for %s" % (user,)
         
-        observer = CalendarObserver(email=profile.google_account.login,
+        observer = TicketCalendarObserver(email=profile.google_account.login,
                                     password=profile.google_account.password)
         observer.observe(Ticket, TicketCalendarAdapter())
         observers.append(observer)

@@ -15,10 +15,23 @@ admin.autodiscover()
 
 
 # Utilities
-def flatpage(template, data = {}):
+def flatpage(template, data={}):
     def render(request):
         return render_to_response(template, data, context_instance=RequestContext(request))
     return render
+
+def agenda(request, data={}):
+    template="agenda.html"
+    user = request.user
+    if user:
+        try:
+            profile = user.get_profile()
+            data["google_account"] = profile.google_account
+        except:
+            pass
+    
+    return render_to_response(template, data, context_instance=RequestContext(request))
+
 
 urlpatterns = patterns('',
     (r'^/*$', flatpage("index.html")),
@@ -27,4 +40,5 @@ urlpatterns = patterns('',
     (r'^commentaires/', include('django.contrib.comments.urls')),
     (r'^admin/', include(admin.site.urls)),
     (r'^ticket/', include(claritick.ticket.urls)),
+    (r'^agenda/$', agenda),
 )

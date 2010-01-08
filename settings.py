@@ -84,6 +84,9 @@ INSTALLED_APPS = (
     'claritick',
 )
 
+GCAL_MAIN_LOGIN = "ed@zehome.com" # Compte société
+GCAL_MAIN_PASSWORD = "cistg19g"   # Explicite
+
 AUTH_PROFILE_MODULE = 'common.UserProfile'
 
 # Paramètres application "comment"

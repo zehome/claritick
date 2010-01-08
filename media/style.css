@@ -10,7 +10,7 @@
 
 * { font-family:"Lucida Grande","DejaVu Sans","Bitstream Vera Sans",Verdana,Arial,sans-serif; }
 
-body {
+.claritick body {
     margin:0;
     padding:0;
     background-color:#eff4ff;
@@ -33,7 +33,6 @@ h1{
     margin-bottom:15px;
     margin-top: 0;
     color:#013368;
-    text-transform:uppercase;
     background-color: #eeeeff;
     border: 1px solid black;
     border-top: 0;
@@ -49,7 +48,7 @@ h2{
     margin-top: 20px;
 }
 
-ul {
+.menuPrincipal ul {
 	padding: 0;
 	margin: 0;
 }
@@ -110,15 +109,25 @@ table.menuPrincipal{
     background:white;
     color:black;
     width:100%;
+	border-collapse: separate;
     border-bottom:gray solid 1px;
+}
+
+.menuPrincipal td {
+    padding:1px;
+    vertical-align: middle;
 }
 
 /*##################################################
 #################### FORMULAIRES ###################
 ##################################################*/
 
-input, select, textarea {
+#conrtenu input, select, textarea {
     border: 1px solid #99afd6;
+}
+
+#claritick input {
+	background: transparent;
 }
 
 form {
@@ -236,11 +245,6 @@ form {
     text-align: left;
 }
 
-td {
-    padding:1px;
-    vertical-align: middle;
-}
-
 .row1 { 
     background-color: white;
 }
@@ -256,7 +260,7 @@ td {
     color: grey;
 }
 
-.tableau_pt h2,.resultat th,.demande_block h2 {
+.tableau_pt h2,.resultat th{
     background-color:#e4eaf6;
     background-image:url('/media/images/deg_entete.png');
     background-repeat:repeat-x;
@@ -267,51 +271,6 @@ td {
     font-size: 1.5em;
     margin:0;
     padding:1px;
-}
-
-div.navig {
-    margin-bottom:1em;
-    margin-top:1em;
-    margin-left:auto; 
-    color:#013368;
-    text-align:center;
-}
-
-div.navig a {
-    color:#013368;
-}
-
-div.navig a:hover {
-    color:black;
-    text-decoration:none;
-}
-
-div.testmessage {
-    text-align:left;
-    border:1px solid gray;
-    margin-right:5%;margin-left:5%;
-    padding-right:1em;padding-left:1em;
-    margin-top:1em;margin-bottom:1em;
-    background:#f0f0ff;
-    padding:1em;
-}
-
-.active_page { 
-    color:#8080c0 
-}
-
-#menu_general {
-    margin-left:25%;
-    margin-right:25%;
-    background:#f0f0ff;
-    border:solid 5px #8080c0;
-    padding:1em;
-}
-
-li {
-    padding-top:1em;
-    list-style-type : none;
-    list-style-position : outside;
 }
 
 
@@ -337,6 +296,11 @@ li {
     text-align:center;
 }
 
+#gauche ul li {
+    list-style-type : none;
+    list-style-position : outside;
+}
+
 #gauche h2 {
 	color: black;
 	margin: 0;
@@ -357,7 +321,7 @@ li {
     text-align:left;
 }
 
-.menu a { 
+#gauche a { 
     margin:0;
     margin-top:10px;
     margin-left:2px;
@@ -377,7 +341,7 @@ li {
     border-bottom:#013368 1px solid;
 }
 
-.menu a:hover {
+#gauche a:hover {
     background-color:#b0bfde;
     background-image:url('/media/images/deg_menusurvol.png');
     background-repeat:repeat-x;
@@ -504,6 +468,10 @@ li {
 	font-weight: bold;
 }
 
+#contenu div.breadcrumbs {
+	background: transparent;
+	text-decoration: none;
+}
 
 
 /* EOF */
