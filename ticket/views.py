@@ -12,9 +12,19 @@ from django.contrib.auth.decorators import login_required
 
 from claritick.ticket.models import Ticket
 from claritick.ticket.forms import *
+from claritick.ticket.tables import DefaultTicketTable
 
+@login_required
 def list_all(request, *args, **kw):
-    pass
+    """
+    
+    Liste tous les tickets sans aucun filtre
+    """
+    qs = Ticket.objects.all()
+    qs = qs.exclude(text=None)
+    
+    table = DefaultTicketTable(qs, order_by=request.GET.get('sort', 'title'))
+    return render_to_response('ticket/list.html', {'table': table }, context_instance=RequestContext(request))
 
 @login_required
 def partial_new(request, form=None):
