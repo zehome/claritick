@@ -41,4 +41,5 @@ urlpatterns = patterns('',
     (r'^admin/', include(admin.site.urls)),
     (r'^ticket/', include(claritick.ticket.urls)),
     (r'^agenda/$', agenda),
+    (r'^dojango/', include('dojango.urls')), # Dojango requires
 )

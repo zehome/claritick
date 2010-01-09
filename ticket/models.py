@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from django.contrib.comments.moderation import CommentModerator, moderator
 
 # Clarisys fields
-from claritick.common.models import ColorField, Groupement, Site
+from claritick.common.models import ColorField, Client, ClientField
 from claritick.common.widgets import ColorPickerWidget 
 
 
@@ -64,10 +64,8 @@ class Ticket(models.Model):
 
     # Numero = id
     
-    # Info client: Groupement et Site
-    groupement = models.ForeignKey(Groupement, blank=True, null=True)
-    site = models.ForeignKey(Site, blank=True, null=True)
-    
+    # Info client
+    client = ClientField(Client, verbose_name="Client", blank=True, null=True)
     contact = models.CharField("Contact", max_length=128, blank=True)
     telephone = models.CharField("Téléphone", max_length=10, blank=True)
     

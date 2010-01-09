@@ -21,11 +21,11 @@
   <legend>Contact</legend>
   <table>
     <tr>
-        <td class="large"><label for="id_groupement">Groupement</label></td><td>{{ form.groupement }}</td>
+        <td class="large"><label for="id_groupement">Client</label></td><td>{{ form.client }}</td>
         <td class="large right"><label for="id_assigned_to">Assigné à</label></td><td>{{ form.assigned_to }}</td>
     </tr>
     <tr>
-        <td class="large"><label for="id_site">Site</label></td><td>{{ form.site }}</td>
+        <td class="large">&nbsp;</td><td></td>
         <td class="large right"><label for="id_opened_by">Ouvert par</label></td><td>{{ ticket.opened_by }} le {{ ticket.date_open|date:"d/m/Y à H:i" }}</td>
     </tr>
     <tr>

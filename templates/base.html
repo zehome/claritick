@@ -12,14 +12,12 @@
     {% block extrahead %}{% endblock %}
     {% block blockbots %}<meta name="robots" content="NONE,NOARCHIVE" />{% endblock %}
     <!-- End admin -->
-
-    <!-- jQuery framework version 1.3.2 -->
-    <script type="text/javascript" src="/media/js/jquery-1.3.2.js"></script>
+    {% include "dojango/include.html" %}
 {{ form.media }}
     <title>CLARITICK - Gestion{% block title %}{% endblock %}</title>
   </head>
 {% load i18n %}
-  <body class="{% if is_popup %}popup {% endif %}{% block bodyclass %}claritick{% endblock %}">
+  <body class="{{ DOJANGO.THEME }} {% if is_popup %}popup {% endif %}{% block bodyclass %}claritick{% endblock %}">
     {% if not is_popup %}
     <table class="menuPrincipal" summary="Menu">
       <tr>
@@ -82,6 +80,13 @@
     {% if not is_popup %}
     </div>
     {% endif %} <!-- ispopup -->
+    <!-- Dojo -->
+    <script type="text/javascript">
+        {% for require in DOJANGO.COLLECTOR %}
+            dojo.require("{{ require }}");
+        {% endfor %}                
+    </script>  
+    <!-- End Dojo -->  
   </body>
 </html>
 

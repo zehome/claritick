@@ -55,4 +55,7 @@ def register_all_users():
         observer.observe(Ticket, TicketCalendarAdapter())
         observers.append(observer)
 
-register_all_users()
+try:
+    register_all_users()
+except:
+    print "Unable to register google calendars."

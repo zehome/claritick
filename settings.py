@@ -65,7 +65,17 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'dojango.middleware.DojoCollector',
 )
+
+TEMPLATE_CONTEXT_PROCESSOR = ("django.core.context_processors.auth",
+    "django.core.context_processors.debug",
+    "django.core.context_processors.i18n",
+    "django.core.context_processors.media",
+    "django.contrib.messages.context_processors.messages",
+    "dojango.context_processors.config",
+)
+
 
 ROOT_URLCONF = 'claritick.urls'
 
@@ -82,6 +92,7 @@ INSTALLED_APPS = (
     'django.contrib.comments', # Commentaires
     'formfieldset',            # Form Field set for smart form
     'djangogcal',              # Google calendar OUTPUT integration
+    'dojango',                 # Dojo/Django Dojango
     'claritick.common',
     'claritick.ticket',
     'claritick',
@@ -100,3 +111,9 @@ SITE_ID=1
 DATE_FORMAT = "d/m/Y"
 DATETIME_FORMAT = "d/m/Y H:i"
 TIME_FORMAT = "H:i"
+
+# Dojango config
+#DOJANGO_DOJO_PROFILE = "google"
+DOJANGO_DOJO_PROFILE = "local_release"
+DOJANGO_DOJO_VERSION = "1.4.0-dojango-optimized-with-dojo"
+DOJO_BUILD_JAVA_EXEC = "/usr/bin/java"
