@@ -10,6 +10,7 @@ from django.template import RequestContext
 
 # Custom models
 import claritick.ticket.urls
+import claritick.clariadmin.urls
 # Init code
 admin.autodiscover()
 
@@ -32,7 +33,6 @@ def agenda(request, data={}):
     
     return render_to_response(template, data, context_instance=RequestContext(request))
 
-
 urlpatterns = patterns('',
     (r'^/*$', flatpage("index.html")),
     ## Medias (STATIC Content)
@@ -40,6 +40,7 @@ urlpatterns = patterns('',
     (r'^comments/', include('django.contrib.comments.urls')),
     (r'^admin/', include(admin.site.urls)),
     (r'^ticket/', include(claritick.ticket.urls)),
+    (r'^clariadmin/', include(claritick.clariadmin.urls)),
     (r'^agenda/$', agenda),
     (r'^dojango/', include('dojango.urls')), # Dojango requires
 )

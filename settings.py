@@ -95,6 +95,7 @@ INSTALLED_APPS = (
     'dojango',                 # Dojo/Django Dojango
     'claritick.common',
     'claritick.ticket',
+    'claritick.clariadmin',    # Clariadmin
     'claritick',
 )
 
