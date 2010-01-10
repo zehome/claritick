@@ -92,6 +92,23 @@ table.resultat td {
   padding: 5px;
 }
 
+#contenu table.search {
+	margin: 10px;
+}
+
+table.search tr {
+  margin: 5px;
+  font-weight: bold;
+}
+table.search td {
+	padding: 2px;
+	padding-right: 30px;
+}
+table.search th {
+	padding-right: 5px;
+	vertical-align: middle;
+}
+
 table a {
   text-decoration: none;
   font-weight: bold;

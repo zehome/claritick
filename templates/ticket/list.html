@@ -6,16 +6,20 @@
 
 {% block content %}
 
-<h2>Filtrage</h2>
-<form method="POST">
-{{ form }}
-<span class="bouton"><img class="bouton_img" src="/media/images/oxygen/cancel.png" /><input type="reset" value="Annuler" /></span>
-<span class="bouton"><img class="bouton_img" src="/media/images/oxygen/ok.png" /><input type="submit" value="Rechercher" /></span>
-</form>
+<fieldset>
+  <legend>Filtrage</legend>
+  <form method="POST">
+    <table class="search">
+{{ form.as_table }}
+    </table>
+    <span class="bouton"><img class="bouton_img" src="/media/images/oxygen/cancel.png" /><input type="reset" value="Annuler" /></span>
+    <span class="bouton"><img class="bouton_img" src="/media/images/oxygen/ok.png" /><input type="submit" value="Rechercher" /></span>
+  </form>
+</fieldset>
 
 <h2>Résultats</h2>
 {% if table.rows %}
-<table class="resultat">
+<table class="resultat" dojoType="dijit.Grid">
 <tr>
     {% for column in table.columns %}
     <th><a href="?sort={{ column.name_toggled }}">{{ column }}</a> 
@@ -31,15 +35,16 @@
 </tr>
 {% for row in table.rows %}
     <tr>
-        <td style="width: 60px;">{{ row.id }}</td>
+        <td style="width: 60px;"><a href="/ticket/modify/{{ row.id }}">{{ row.id }}</a></td>
         <td style="width: 200px;">{{ row.client }}</td>
         <td style="width: 100px;">{{ row.category }}</td>
         <td style="width: 100px;">{{ row.project }}</td>
-        <td style="min-width: 250px;">{{ row.title }}</td>
+        <td style="min-width: 250px;"><a href="/ticket/modify/{{ row.id }}">{{ row.title }}</a></td>
         <td>{{ row.contact }}</td>
         <td style="width: 150px;">{{ row.last_modification|date:'d/m/Y H\hi' }}</td>
         <td>{{ row.opened_by }}</td>
         <td>{{ row.assigned_to }}</td>
+        <td>{{ row.form }}</td>
     </tr>
 {% endfor %}
 </table>

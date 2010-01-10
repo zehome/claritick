@@ -2,6 +2,12 @@
 
 import django_tables as tables
 from claritick.ticket.models import *
+from dojango import forms as df
+
+class AssignToForm(df.ModelForm):
+    class Meta:
+        model = Ticket
+        fields = ("client", "category", "project", "title", "contact", "assigned_to")
 
 class DefaultTicketTable(tables.ModelTable):  
     id = tables.Column(verbose_name="N°")  

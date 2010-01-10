@@ -96,17 +96,11 @@ class Ticket(models.Model):
     calendar_end_time = models.DateTimeField("Fin évenement", blank=True, null=True)
     calendar_title = models.CharField("Titre évenement", max_length=64, blank=True, null=True)
     
-    def get_groupement(self):
-        """ Retourne le groupement associé au ticket """
-        if self.site:
-            return self.site.groupement
-        else:
-            if self.groupement:
-                return self.groupement
-        return None
-    
     def is_valid(self):
         return bool(self.text and self.title)
+    
+    def get_absolute_url(self):
+        return "/ticket/modify/%i" % (self.id,)
     
     def __unicode__(self):
         return u"Ticket %s [%s] for %s prio: %s status: %s" % (self.id, self.category, self.get_groupement(), self.priority, self.state) 

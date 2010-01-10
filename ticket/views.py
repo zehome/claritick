@@ -27,13 +27,15 @@ def list_all(request, *args, **kw):
     qs = qs.exclude(text=None)
     
     # Form cleaned_data ?
-    print "form.cleaned_data %s" % (form.cleaned_data,)
-    if form.cleaned_data:
-        cd = form.cleaned_data
-        for key, value in cd.items():
-            if value:
-                qs = qs.filter(**{key:value})
-    
+    try:
+        print "form.cleaned_data %s" % (form.cleaned_data,)
+        if form.cleaned_data:
+            cd = form.cleaned_data
+            for key, value in cd.items():
+                if value:
+                    qs = qs.filter(**{key:value})
+    except AttributeError:
+        pass
     table = DefaultTicketTable(data=qs, order_by=request.GET.get('sort', 'title'))
     
     return render_to_response('ticket/list.html', {'table': table, 'form': form }, context_instance=RequestContext(request))
