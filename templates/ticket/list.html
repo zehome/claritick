@@ -7,14 +7,15 @@
 {% block content %}
 
 <h2>Filtrage</h2>
-<form action="#" method="POST">
+<form method="POST">
+{{ form }}
 <span class="bouton"><img class="bouton_img" src="/media/images/oxygen/cancel.png" /><input type="reset" value="Annuler" /></span>
 <span class="bouton"><img class="bouton_img" src="/media/images/oxygen/ok.png" /><input type="submit" value="Rechercher" /></span>
 </form>
 
 <h2>Résultats</h2>
 {% if table.rows %}
-<table class="tableau_pt">
+<table class="resultat">
 <tr>
     {% for column in table.columns %}
     <th><a href="?sort={{ column.name_toggled }}">{{ column }}</a> 
@@ -30,9 +31,15 @@
 </tr>
 {% for row in table.rows %}
     <tr>
-    {% for value in row %}
-        <td>{{ value }}</td>
-    {% endfor %}
+        <td style="width: 60px;">{{ row.id }}</td>
+        <td style="width: 200px;">{{ row.client }}</td>
+        <td style="width: 100px;">{{ row.category }}</td>
+        <td style="width: 100px;">{{ row.project }}</td>
+        <td style="min-width: 250px;">{{ row.title }}</td>
+        <td>{{ row.contact }}</td>
+        <td style="width: 150px;">{{ row.last_modification|date:'d/m/Y H\hi' }}</td>
+        <td>{{ row.opened_by }}</td>
+        <td>{{ row.assigned_to }}</td>
     </tr>
 {% endfor %}
 </table>

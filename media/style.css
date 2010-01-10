@@ -71,6 +71,11 @@ table td,th,tr {
   margin: 0;
 }
 
+table.resultat {
+	width: 98%;
+	text-align: left;
+}
+
 table.resultat th,table.resultat td {
   border-right: 1px solid #ccc;
   font-weight: normal;

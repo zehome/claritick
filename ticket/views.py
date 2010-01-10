@@ -20,11 +20,23 @@ def list_all(request, *args, **kw):
     
     Liste tous les tickets sans aucun filtre
     """
+    form = SearchTicketForm(request.POST)
+    form.is_valid()
+    
     qs = Ticket.objects.all()
     qs = qs.exclude(text=None)
     
-    table = DefaultTicketTable(qs, order_by=request.GET.get('sort', 'title'))
-    return render_to_response('ticket/list.html', {'table': table }, context_instance=RequestContext(request))
+    # Form cleaned_data ?
+    print "form.cleaned_data %s" % (form.cleaned_data,)
+    if form.cleaned_data:
+        cd = form.cleaned_data
+        for key, value in cd.items():
+            if value:
+                qs = qs.filter(**{key:value})
+    
+    table = DefaultTicketTable(data=qs, order_by=request.GET.get('sort', 'title'))
+    
+    return render_to_response('ticket/list.html', {'table': table, 'form': form }, context_instance=RequestContext(request))
 
 @login_required
 def partial_new(request, form=None):

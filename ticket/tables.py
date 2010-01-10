@@ -4,9 +4,15 @@ import django_tables as tables
 from claritick.ticket.models import *
 
 class DefaultTicketTable(tables.ModelTable):  
-    id = tables.Column(sortable=False, visible=False)  
+    id = tables.Column(verbose_name="N°")  
+    client = tables.Column(verbose_name="Client")
+    category = tables.Column(verbose_name="Cat.")
+    project = tables.Column(verbose_name="Projet")
+    title = tables.Column(verbose_name="Titre")
+    contact = tables.Column(verbose_name='Contact')
+    last_modification = tables.Column(verbose_name='MAJ')
+    opened_by = tables.Column(verbose_name='Par')
+    assigned_to = tables.Column(verbose_name='Pour')
     
-    class Meta:  
-        model = Ticket
-        exclude = ( 'validated_by', 'telephone', 'opened_by', 'text', 'keywords', 
-                    'calendar_start_time', 'calendar_end_time', 'calendar_title' )
+    class Meta:
+        sortable = True

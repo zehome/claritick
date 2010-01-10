@@ -109,8 +109,8 @@ SITE_ID=1
 
 # Formats de date
 DATE_FORMAT = "d/m/Y"
-DATETIME_FORMAT = "d/m/Y H:i"
-TIME_FORMAT = "H:i"
+DATETIME_FORMAT = "d/m/Y H\hi"
+TIME_FORMAT = "H\hi"
 
 # Dojango config
 #DOJANGO_DOJO_PROFILE = "google"

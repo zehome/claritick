@@ -36,3 +36,11 @@ class NewTicketForm(df.ModelForm):
     class Meta:
         model = Ticket
         exclude = ("opened_by",)
+
+class SearchTicketForm(NewTicketForm):
+    title = df.CharField(widget=df.TextInput(attrs={'size':'64'}), required=False)
+    client = df.ModelChoiceField(queryset = Client.objects.all(),
+        widget=df.FilteringSelect(attrs={'queryExpr': '*${0}*'}), empty_label='', required=False)
+    category = df.ModelChoiceField(queryset = Category.objects.all(), 
+        widget=df.FilteringSelect(), empty_label='', required=False)
+    text = df.CharField(required=False)
