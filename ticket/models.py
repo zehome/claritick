@@ -89,7 +89,7 @@ class Ticket(models.Model):
     validated_by = models.ForeignKey(User, related_name="validated_by", verbose_name="Validé par", blank=True, null=True, default=None)
     
     # Pour faciliter la recherche
-    keywords = models.CharField("Mots clefs", max_length=1024, blank=True)
+    keywords = models.CharField("Mots clefs", max_length=1024, blank=True, null=True)
     
     # Calendar
     calendar_start_time = models.DateTimeField("Début évenement", blank=True, null=True)

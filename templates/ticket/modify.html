@@ -7,6 +7,8 @@
 
 {% block content %}
 
+{{ form.errors }}
+
 <form action="/ticket/modify/{{ ticket.id }}" method="POST">
 
 <fieldset class="inline">
@@ -21,7 +23,7 @@
   <legend>Contact</legend>
   <table>
     <tr>
-        <td class="large"><label for="id_groupement">Client</label></td><td>{{ form.client }}</td>
+        <td class="large"><label for="id_client">Client</label></td><td>{{ form.client }}</td>
         <td class="large right"><label for="id_assigned_to">Assigné à</label></td><td>{{ form.assigned_to }}</td>
     </tr>
     <tr>
@@ -30,7 +32,7 @@
     </tr>
     <tr>
         <td class="large"><label for="id_contact">Contact</label></td><td>{{ form.contact }}</td>
-        <td class="large right"><label for="id_site">Dernière modif.</label></td><td>le {{ ticket.last_modification|date:"d/m/Y à H:i" }}</td>
+        <td class="large right"><label for="id_last_modification">Dernière modif.</label></td><td>le {{ ticket.last_modification|date:"d/m/Y à H:i" }}</td>
     </tr>
     <tr>
         <td class="large"><label for="id_phone">Téléphone</label></td><td>{{ form.telephone }}</td>
@@ -46,8 +48,20 @@
   <p><label for="id_keywords">Mots clefs:</label> {{ form.keywords }}</p>
 </fieldset>
 
+<fieldset class="block">
+  <legend>Planification</legend>
+  <p><label for="id_calendar_start_time">Date de début</label> {{ form.calendar_start_time }}</p>
+  <p><label for="id_calendar_end_time">Date de fin</label> {{ form.calendar_end_time }}</p>
+</fieldset>
+
 <hr />
 <span class="bouton"><img class="bouton_img" src="/media/images/oxygen/ok.png" /><input type="submit" value="Modifier/Valider" /></span>
 </form>
 
+{% load comments %}
+{% render_comment_form for ticket %}
+{% get_comment_list for ticket as comment_list %}
+{% for comment in comment_list %}
+    {{ comment }}
+{% endfor %}
 {% endblock %}

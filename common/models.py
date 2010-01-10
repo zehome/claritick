@@ -48,5 +48,5 @@ class UserProfile(models.Model):
     def __unicode__(self):
         ustr = u"Profil %s" % (self.user,)
         if self.client:
-            ustr += " (%s)" (self.client,)
+            ustr += u" (%s)" (self.client,)
         return ustr

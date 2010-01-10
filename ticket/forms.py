@@ -30,9 +30,9 @@ class PartialNewTicketForm(forms.ModelForm):
 class NewTicketForm(df.ModelForm):
     title = df.CharField(widget=df.TextInput(attrs={'size':'64'}))
     text = df.CharField(widget=df.Textarea(attrs={'cols':'90', 'rows': '20'}))
-    keywords = df.CharField(widget=df.TextInput(attrs={'size': 32}))
+    
     client = df.ModelChoiceField(queryset = Client.objects.all(),
-       widget=df.ComboBox(), empty_label='')
+       widget=df.FilteringSelect(attrs={'queryExpr': '*${0}*'}), empty_label='')
     class Meta:
         model = Ticket
         exclude = ("opened_by",)

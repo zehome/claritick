@@ -57,7 +57,7 @@ def modify(request, ticket_id):
     data = request.POST.copy()
     
     ticket = get_object_or_404(Ticket, pk=ticket_id)
-    if not ticket.title:
+    if not ticket.text:
         ticket.title = None
     
     if request.POST:
