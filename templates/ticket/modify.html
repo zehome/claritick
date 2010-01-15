@@ -27,15 +27,15 @@
         <td class="large right"><label for="id_assigned_to">Assigné à</label></td><td>{{ form.assigned_to }}</td>
     </tr>
     <tr>
-        <td class="large">&nbsp;</td><td></td>
+        <td class="large"><label for="id_contact">Contact</label></td><td>{{ form.contact }}</td>
         <td class="large right"><label for="id_opened_by">Ouvert par</label></td><td>{{ ticket.opened_by }} le {{ ticket.date_open|date:"d/m/Y à H:i" }}</td>
     </tr>
     <tr>
-        <td class="large"><label for="id_contact">Contact</label></td><td>{{ form.contact }}</td>
+        <td class="large"><label for="id_phone">Téléphone</label></td><td>{{ form.telephone }}</td>
         <td class="large right"><label for="id_last_modification">Dernière modif.</label></td><td>le {{ ticket.last_modification|date:"d/m/Y à H:i" }}</td>
     </tr>
     <tr>
-        <td class="large"><label for="id_phone">Téléphone</label></td><td>{{ form.telephone }}</td>
+        <td class="large">&nbsp;</td><td></td>
         <td class="large right"><label for="id_validated_by">Validé par</label></td><td>{{ form.validated_by }}</td>
     </tr>
   </table>
