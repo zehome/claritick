@@ -469,9 +469,8 @@ div#contenu.errorlist {
 	height: 45px;
 	font-weight: normal;
 	vertical-align: top;
-	border-bottom: 1px solid grey;
-	border-right: 1px solid grey;
-	border-left: 1px solid grey;
+	border: 1px solid grey;
+	background-color: white;
 }
 
 .comment pre {
