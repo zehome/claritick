@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 
+{% load comments %}
+
 {% block title %}Liste des tickets{% endblock %}
 {% block content_title %}Liste des tickets{% endblock %}
 {% block image %}<img src="/media/images/oxygen/search.png" />{% endblock %}
@@ -34,17 +36,18 @@
     {% endfor %}
 </tr>
 {% for row in table.rows %}
+    {% get_comment_count for ticket.ticket row.id as comment_count %}
     <tr>
         <td style="width: 60px;"><a href="/ticket/modify/{{ row.id }}">{{ row.id }}</a></td>
         <td style="width: 200px;">{{ row.client }}</td>
         <td style="width: 100px;">{{ row.category }}</td>
-        <td style="width: 100px;">{{ row.project }}</td>
+        <td style="width: 100px;">{% if row.project %}{{ row.project }}{% endif %}</td>
         <td style="min-width: 250px;"><a href="/ticket/modify/{{ row.id }}">{{ row.title }}</a></td>
+        <td>({{ comment_count }})</td>
         <td>{{ row.contact }}</td>
         <td style="width: 150px;">{{ row.last_modification|date:'d/m/Y H\hi' }}</td>
         <td>{{ row.opened_by }}</td>
         <td>{{ row.assigned_to }}</td>
-        <td>{{ row.form }}</td>
     </tr>
 {% endfor %}
 </table>

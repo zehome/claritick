@@ -15,7 +15,17 @@ from claritick.ticket.forms import *
 from claritick.ticket.tables import DefaultTicketTable
 
 @login_required
-def list_all(request, *args, **kw):
+def list_me(request, *args, **kw):
+    qs = Ticket.tickets.filter(assigned_to__username__exact=request.user.username)
+    return list_all(request, qs, *args, **kw)
+
+@login_required
+def list_unassigned(request, *args, **kw):
+    qs = Ticket.tickets.filter(assigned_to__isnull=True)
+    return list_all(request, qs, *args, **kw)
+
+@login_required
+def list_all(request, qs=None, *args, **kw):
     """
     
     Liste tous les tickets sans aucun filtre
@@ -23,16 +33,16 @@ def list_all(request, *args, **kw):
     form = SearchTicketForm(request.POST)
     form.is_valid()
     
-    qs = Ticket.objects.all()
-    qs = qs.exclude(text=None)
+    if qs is None:
+        qs = Ticket.tickets.all()
     
     # Form cleaned_data ?
     try:
-        print "form.cleaned_data %s" % (form.cleaned_data,)
         if form.cleaned_data:
             cd = form.cleaned_data
             for key, value in cd.items():
                 if value:
+                    print "qs filter {%s:%s}" % (key, value)
                     qs = qs.filter(**{key:value})
     except AttributeError:
         pass
@@ -80,10 +90,7 @@ def modify(request, ticket_id):
         form = NewTicketForm(instance=ticket)
     
     if data:
-        print "data ! "
         if form.is_valid():
-            print "form is_valid!"
             form.save()
-        print form.errors
 
     return render_to_response("ticket/modify.html", {"form": form, "ticket": ticket}, context_instance=RequestContext(request))

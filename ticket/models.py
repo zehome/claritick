@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 
+import datetime
+
 from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.comments.moderation import CommentModerator, moderator
-
+from django.contrib.comments.signals import comment_was_posted, comment_will_be_posted
 # Clarisys fields
 from claritick.common.models import ColorField, Client, ClientField
 from claritick.common.widgets import ColorPickerWidget 
@@ -58,11 +60,30 @@ class Project(models.Model):
     def __unicode__(self):
         return u"%s watched by [%s]" % (self.label, ",".join([ u.username for u in self.watchers.all() ]))
 
+class Procedure(models.Model):
+    class Meta:
+        verbose_name = u"Procédure"
+
+    label = models.CharField("Libellé", max_length=64)
+    active = models.BooleanField()
+    category = models.ForeignKey(Category, verbose_name="Catégorie")
+    tickets = models.ManyToManyField('Ticket', verbose_name="Ticket", limit_choices_to={'template': True})
+    
+    def __unicode__(self):
+        return u"%s" % (self.label,)
+
+class TicketManager(models.Manager):
+    def get_query_set(self):
+        qs = super(TicketManager, self).get_query_set()
+        qs = qs.filter(text__isnull=False)
+        qs = qs.exclude(template__exact=True)
+        return qs
+
 class Ticket(models.Model):
     class Meta:
         verbose_name = "Ticket"
-
-    # Numero = id
+    
+    tickets = TicketManager()
     
     # Info client
     client = ClientField(Client, verbose_name="Client", blank=True, null=True)
@@ -96,6 +117,8 @@ class Ticket(models.Model):
     calendar_end_time = models.DateTimeField("Fin évenement", blank=True, null=True)
     calendar_title = models.CharField("Titre évenement", max_length=64, blank=True, null=True)
     
+    template = models.BooleanField("Modèle", default=False)
+    
     def is_valid(self):
         return bool(self.text and self.title)
     
@@ -103,8 +126,23 @@ class Ticket(models.Model):
         return "/ticket/modify/%i" % (self.id,)
     
     def __unicode__(self):
-        return u"Ticket %s [%s] for %s prio: %s status: %s" % (self.id, self.category, self.get_groupement(), self.priority, self.state) 
-    
+        return u"n°%s: %s" % (self.id, self.title) 
+
+    @staticmethod
+    def handle_comment_posted_signal(sender, **kwargs):
+        """ Updates ticket last_modification to now() """
+        comment = kwargs["comment"]
+        print comment.content_type.model
+        if comment.content_type.model != "ticket":
+            return
+        
+        ticket = comment.content_object
+        ticket.last_modification=datetime.datetime.now()
+        ticket.save()
+
+# Update last_modification time
+comment_was_posted.connect(Ticket.handle_comment_posted_signal)
+
 ## Ticket moderation
 class TicketCommentModerator(CommentModerator):
     email_notification = False

@@ -58,10 +58,17 @@
 <span class="bouton"><img class="bouton_img" src="/media/images/oxygen/ok.png" /><input type="submit" value="Modifier/Valider" /></span>
 </form>
 
+<fieldset class="block" style="padding: 0;">
+  <legend>Réponses</legend>
 {% load comments %}
 {% render_comment_form for ticket %}
 {% get_comment_list for ticket as comment_list %}
+
 {% for comment in comment_list %}
-    {{ comment }}
+<div class="comment">
+    <h3><b>{{ comment.user_name }}</b><br/><i>{{ comment.submit_date|date:'d/m/Y H\hi' }}</i></h3>
+    <pre class="{% cycle 'row1' 'row2' %}">{{ comment.comment }}</pre>
+</div>
 {% endfor %}
+</fieldset>
 {% endblock %}

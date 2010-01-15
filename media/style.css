@@ -92,10 +92,6 @@ table.resultat td {
   padding: 5px;
 }
 
-#contenu table.search {
-	margin: 10px;
-}
-
 table.search tr {
   margin: 5px;
   font-weight: bold;
@@ -362,6 +358,10 @@ div#gauche a:hover {
 	font-weight: normal;
 }
 
+#contenu table.search {
+	margin: 10px;
+}
+
 #contenu table td label {
     vertical-align: top;
 }
@@ -394,6 +394,12 @@ div#gauche a:hover {
 	color: black;
 }
 
+
+#contenu div.breadcrumbs {
+	background: transparent;
+	text-decoration: none;
+}
+
 .block, .inline {
 	padding: 5px;
 	text-align: left;
@@ -410,11 +416,6 @@ div#gauche a:hover {
 	font-weight: bold;
 }
 
-#contenu div.breadcrumbs {
-	background: transparent;
-	text-decoration: none;
-}
-
 table.menuPrincipal p img {
 	position: relative;
 	top: -5px;
@@ -422,7 +423,6 @@ table.menuPrincipal p img {
 table.menuPrincipal a {
 	color: #555;
 }
-
 
 body.claritick fieldset {
 	margin: 5px;
@@ -460,4 +460,35 @@ div#contenu.admin .object-tools {
 div#contenu.errorlist {
 	background-color: black;
 }
+
+.comment h3 {
+	float: right;
+	padding: 0; 
+	margin: 0;
+	margin-right: 10px;
+	height: 45px;
+	font-weight: normal;
+	vertical-align: top;
+	border-bottom: 1px solid grey;
+	border-right: 1px solid grey;
+	border-left: 1px solid grey;
+}
+
+.comment pre {
+	background-color: #efefef;
+	border: 0;
+	border-top: 1px solid black;
+	margin-bottom: 5px;
+	padding: 5px;
+	min-height: 50px;
+	color: black;
+}
+
+.comment pre.row1 {
+	background-color: #eeeeff;
+}
+.comment pre.row2 {
+	background-color: #dedede;
+}
+
 /* EOF */

@@ -15,6 +15,7 @@ class DefaultTicketTable(tables.ModelTable):
     category = tables.Column(verbose_name="Cat.")
     project = tables.Column(verbose_name="Projet")
     title = tables.Column(verbose_name="Titre")
+    comments = tables.Column(verbose_name="Rep.")
     contact = tables.Column(verbose_name='Contact')
     last_modification = tables.Column(verbose_name='MAJ')
     opened_by = tables.Column(verbose_name='Par')
