@@ -42,7 +42,7 @@ class ModelFormTableMixin(object):
                 if idx == 1:
                     normal_row2 = "<tr>%s" % (normal_row,)
                 elif idx >= cols:
-                    idx = 1
+                    idx = 0
                     normal_row2 = "%s</tr>" % (normal_row,)
                 
                 idx += 1
@@ -73,6 +73,6 @@ class ModelFormTableMixin(object):
                 output.append(str_hidden)
         return mark_safe(u'\n'.join(output))
 
-    def as_column_table(self, cols=5):
+    def as_column_table(self, cols=4):
         "Returns this form rendered as HTML <tr>s -- excluding the <table></table>."
         return self.my_html_output(u'<th>%(label)s</th><td>%(errors)s%(field)s%(help_text)s</td>', u'<td colspan="2">%s</td>', '</td></tr>', u'<br />%s', False, cols=cols)

@@ -37,7 +37,7 @@
 </tr>
 {% for row in table.rows %}
     {% get_comment_count for ticket.ticket row.id as comment_count %}
-    <tr>
+    <tr class="{% cycle 'row1' 'row2' %}">
         <td style="width: 60px;"><a href="/ticket/modify/{{ row.id }}">{{ row.id }}</a></td>
         <td style="width: 200px;">{{ row.client }}</td>
         <td style="width: 100px;">{{ row.category }}</td>
