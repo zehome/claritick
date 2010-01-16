@@ -66,7 +66,7 @@
 
 {% for comment in comment_list %}
 <div class="comment">
-    <h3><b>{{ comment.user.first_name }} {{ comment.user.last_name }}</b><br/><i>{{ comment.submit_date|date:'d/m/Y H\hi' }}</i></h3>
+    <h3><b>{{ comment.user.first_name }} {{ comment.user.last_name }}</b> ({{ comment.user_name }})<br/><i>{{ comment.submit_date|date:'d/m/Y H\hi' }}</i></h3>
     <pre class="{% cycle 'row1' 'row2' %}">{{ comment.comment }}</pre>
 </div>
 {% endfor %}

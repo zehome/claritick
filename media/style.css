@@ -467,6 +467,7 @@ div#contenu.errorlist {
 	margin: 0;
 	margin-right: 10px;
 	height: 45px;
+	width: 200px;
 	font-weight: normal;
 	vertical-align: top;
 	border: 1px solid grey;

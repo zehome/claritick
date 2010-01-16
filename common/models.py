@@ -29,7 +29,7 @@ class Client(models.Model):
     
     def __unicode__(self):
         if self.parent:
-            return u"%s - %s" % (self.parent, self.label)
+            return u"%s - %s" % (self.label, self.parent)
         return u"%s" % (self.label,)
 
 class GoogleAccount(models.Model):

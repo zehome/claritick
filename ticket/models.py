@@ -83,6 +83,7 @@ class Ticket(models.Model):
     class Meta:
         verbose_name = "Ticket"
     
+    objects = models.Manager()
     tickets = TicketManager()
     
     # Info client
