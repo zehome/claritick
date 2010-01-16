@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Identification{% endblock %}
+{% block content_title %}Identification{% endblock %}
+{% block image %}<img src="/media/images/oxygen/help.png" />{% endblock %}
+
+{% block content %}
+{% if form.errors %}
+<p>Veuillez vérifier votre idenfiant et/ou mot de passe.</p>
+{% endif %}
+
+<form method="post" action="{% url django.contrib.auth.views.login %}">
+<fieldset class="block">
+    <legend>Identification</legend>
+    <table class="search">
+    <tr>
+        <td>{{ form.username.label_tag }}</td>
+        <td>{{ form.username }}</td>
+    </tr>
+    <tr>
+        <td>{{ form.password.label_tag }}</td>
+        <td>{{ form.password }}</td>
+    </tr>
+    </table>
+    <span class="bouton"><img class="bouton_img" src="/media/images/oxygen/ok.png" /><input type="submit" value="S'identifier" /></span> 
+    <input type="hidden" name="next" value="{{ next }}" />
+</fieldset>
+</form>
+
+{% endblock %}

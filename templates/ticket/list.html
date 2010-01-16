@@ -21,7 +21,7 @@
 
 <h2>Résultats</h2>
 {% if table.rows %}
-<table class="resultat" dojoType="dijit.Grid">
+<table class="resultat">
 <tr>
     {% for column in table.columns %}
     <th><a href="?sort={{ column.name_toggled }}">{{ column }}</a> 

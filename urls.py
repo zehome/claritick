@@ -43,4 +43,8 @@ urlpatterns = patterns('',
     (r'^clariadmin/', include(claritick.clariadmin.urls)),
     (r'^agenda/$', agenda),
     (r'^dojango/', include('dojango.urls')), # Dojango requires
+    
+    ## Auth
+    (r'^accounts/$', 'django.contrib.auth.views.login'),
+    (r'^accounts/', include('django.contrib.auth.urls')),
 )

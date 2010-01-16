@@ -461,6 +461,14 @@ div#contenu.errorlist {
 	background-color: black;
 }
 
+div#contenu label {
+	white-space: nowrap;
+}
+
+div#contenu .form-row {
+	vertical-align: middle;
+}
+
 .comment h3 {
 	float: right;
 	padding: 0; 
