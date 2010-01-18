@@ -7,6 +7,8 @@
 
 {% block content %}
 <p>Bienvenu sur le système de gestion.</p>
-<p>Le menu de gauche vous permet d'accéder aux tickets et d'en créer de nouveaux</p>
+{% if not user.is_authenticated %}
+<p>Merci de vous <a href="/accounts/login/">IDENTIFIER</a></p>
+{% endif %}
 
 {% endblock %}

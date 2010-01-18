@@ -42,6 +42,7 @@
         <h2><img src="/media/images/icon-home.png" alt="home" />Général</h2>
         <ul class="menu">
             <li><a href="/">Accueil</a></li>
+    {% if user.is_authenticated %}
             <li><a href="/agenda/">Agenda</a></li>
             {% if user.is_staff %}
             <li><a href="/admin/">Administration</a></li>
@@ -71,6 +72,7 @@
         <h2><img src="/media/images/oxygen/computer.png" alt="/" />Clariadmin</h2>
         <ul class="menu">
             <li><a href="/clariadmin/list/all">Toute machine</a></li>
+      {% endif %}
         </ul>
         {% endblock %}
     </div>
