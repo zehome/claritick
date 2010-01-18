@@ -73,6 +73,6 @@ class ModelFormTableMixin(object):
                 output.append(str_hidden)
         return mark_safe(u'\n'.join(output))
 
-    def as_column_table(self, cols=4):
+    def as_column_table(self, cols=3):
         "Returns this form rendered as HTML <tr>s -- excluding the <table></table>."
         return self.my_html_output(u'<th>%(label)s</th><td>%(errors)s%(field)s%(help_text)s</td>', u'<td colspan="2">%s</td>', '</td></tr>', u'<br />%s', False, cols=cols)
