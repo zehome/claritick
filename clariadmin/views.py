@@ -14,6 +14,11 @@ def list_all(request, *args, **kw):
     
     Liste tous les tickets sans aucun filtre
     """
+    
+    search_mapping={'ip': 'istartswith',
+        'automate': 'icontains',
+        'hostname': 'istartswith'}
+                    
     form = SearchHostForm(request.POST)
     form.is_valid()
     
@@ -25,7 +30,11 @@ def list_all(request, *args, **kw):
             cd = form.cleaned_data
             for key, value in cd.items():
                 if value:
-                    qs = qs.filter(**{key:value})
+                    try:
+                        lookup = search_mapping[key]
+                    except KeyError:
+                        lookup = '__exact'
+                    qs = qs.filter(**{"%s__%s"%(key,lookup):value})
     except AttributeError:
         pass
     table = DefaultHostTable(data=qs, order_by=request.GET.get('sort', 'title'))

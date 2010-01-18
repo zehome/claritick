@@ -3,6 +3,7 @@
 from django import forms
 from dojango import forms as df
 
+from django.contrib.auth.models import User
 from claritick.ticket.models import *
 from claritick.common.widgets import *
 from claritick.common.forms import ModelFormTableMixin
@@ -28,6 +29,15 @@ class SearchTicketForm(df.ModelForm, ModelFormTableMixin):
         widget=df.FilteringSelect(attrs={'queryExpr': '${0}*'}), empty_label='', required=False)
     category = df.ModelChoiceField(queryset = Category.objects.all(), 
         widget=df.FilteringSelect(), empty_label='', required=False)
+    project = df.ModelChoiceField(queryset = Project.objects.all(), 
+        widget=df.FilteringSelect(), empty_label='', required=False)
+    state = df.ModelChoiceField(queryset = State.objects.all(), 
+        widget=df.FilteringSelect(), empty_label='', required=False)
+    priority = df.ModelChoiceField(queryset = Priority.objects.all(), 
+        widget=df.FilteringSelect(), empty_label='', required=False)
+    assigned_to = df.ModelChoiceField(queryset = User.objects.all(), 
+        widget=df.FilteringSelect(), empty_label='', required=False)
+    
     text = df.CharField(required=False)
     opened_by = df.ModelChoiceField(queryset = User.objects.all(), 
         widget=df.FilteringSelect(), required=False)

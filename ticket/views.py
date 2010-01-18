@@ -30,6 +30,12 @@ def list_all(request, qs=None, *args, **kw):
     
     Liste tous les tickets sans aucun filtre
     """
+    search_mapping={'title': 'icontains',
+        'text': 'icontains',
+        'contact': 'icontains',
+        'keywords': 'icontains',
+    }
+    
     form = SearchTicketForm(request.POST)
     form.is_valid()
     
@@ -42,8 +48,11 @@ def list_all(request, qs=None, *args, **kw):
             cd = form.cleaned_data
             for key, value in cd.items():
                 if value:
-                    print "qs filter {%s:%s}" % (key, value)
-                    qs = qs.filter(**{key:value})
+                    try:
+                        lookup = search_mapping[key]
+                    except KeyError:
+                        lookup = '__exact'
+                    qs = qs.filter(**{"%s__%s"%(key,lookup):value})
     except AttributeError:
         pass
     table = DefaultTicketTable(data=qs, order_by=request.GET.get('sort', 'title'))
