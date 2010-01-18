@@ -3,6 +3,11 @@
 from django.contrib import admin
 from claritick.ticket.models import Ticket, Priority, State, Category, Project, Procedure
 
+#class ProjectAdmin(admin.ModelAdmin):
+#    fieldsets = [
+#        (None, )
+#    ]
+
 admin.site.register(Ticket)
 admin.site.register(State)
 admin.site.register(Priority)

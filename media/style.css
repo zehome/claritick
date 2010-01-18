@@ -465,6 +465,12 @@ div#contenu label {
 	white-space: nowrap;
 }
 
+/* admin */
+div#contenu .aligned label {
+	width: 20em;
+}
+
+/* admin */
 div#contenu .form-row {
 	vertical-align: middle;
 }
