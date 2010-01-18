@@ -33,8 +33,8 @@ class Host(models.Model):
     ip = models.CharField("Adresse IP", max_length=128, blank=True)
     
     date_add = models.DateTimeField("Date d'ajout", auto_now=True, auto_now_add=True)
-    date_start_prod = models.DateField("Date de mise en service", auto_now_add=True, blank=True)
-    date_end_prod = models.DateField("Fin de mise en service", blank=True)
+    date_start_prod = models.DateField("Date de mise en service", auto_now_add=True, blank=True, null=True)
+    date_end_prod = models.DateField("Fin de mise en service", blank=True, null=True)
 
     supplier = models.ForeignKey(Supplier, verbose_name="Fournisseur", blank=True)
     model = models.CharField(u"Modèle", blank=True, max_length=64)

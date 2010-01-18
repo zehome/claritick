@@ -9,7 +9,13 @@ from django.contrib.comments.signals import comment_was_posted, comment_will_be_
 # Clarisys fields
 from claritick.common.models import ColorField, Client, ClientField
 from claritick.common.widgets import ColorPickerWidget 
-
+from django.db.models import AutoField
+def copy_model_instance(obj):
+    initial = dict([(f.name, getattr(obj, f.name))
+                    for f in obj._meta.fields
+                    if not isinstance(f, AutoField) and\
+                       not f in obj._meta.parents.values()])
+    return obj.__class__(**initial)
 
 class Priority(models.Model):
     class Meta:
@@ -55,10 +61,30 @@ class Project(models.Model):
         verbose_name = "Projet"
     label = models.CharField("Libellé", max_length=64)
     color = ColorField(name="Couleur associée", blank=True, null=True)
-    watchers = models.ManyToManyField(User, blank=True)
-
+    #watchers = models.ManyToManyField(User, blank=True)
+    procedure = models.ForeignKey('Procedure', verbose_name=u'Procédure', limit_choices_to={'active': True})
+    
     def __unicode__(self):
-        return u"%s watched by [%s]" % (self.label, ",".join([ u.username for u in self.watchers.all() ]))
+        return u"%s%s" % (self.label, self.procedure and u" %s" % (self.procedure,))
+    
+    @staticmethod
+    def handle_project_saved_signal(sender, instance, created, **kwargs):
+        """ Updates ticket last_modification to now() """
+        project = instance
+        if not created:
+            return
+        
+        # Ajoute les tickets correspondant a la procédure
+        if project.procedure:
+            for ticketOriginal in project.procedure.tickets.all():
+                ticket = copy_model_instance(ticketOriginal)
+                ticket.date_open = None
+                ticket.template = False
+                ticket.project = project
+                ticket.save()
+
+models.signals.post_save.connect(Project.handle_project_saved_signal, sender=Project)
+
 
 class Procedure(models.Model):
     class Meta:
