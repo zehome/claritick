@@ -5,7 +5,15 @@ import datetime
 from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.comments.moderation import CommentModerator, moderator
+from django.contrib.comments.models import Comment
 from django.contrib.comments.signals import comment_was_posted, comment_will_be_posted
+from django.contrib.contenttypes.models import ContentType
+
+# for email
+from django.core.mail import send_mail
+from django.template.loader import get_template
+from django.template import Context, Template
+
 # Clarisys fields
 from claritick.common.models import ColorField, Client, ClientField
 from claritick.common.widgets import ColorPickerWidget 
@@ -20,6 +28,7 @@ def copy_model_instance(obj):
 class Priority(models.Model):
     class Meta:
         verbose_name = "Priorité"
+        ordering = ['warning_duration', 'label']
 
     label = models.CharField("Libellé", max_length=64, blank=True)
     forecolor = ColorField("Couleur du texte", blank=True)
@@ -36,6 +45,7 @@ class State(models.Model):
     class Meta:
         verbose_name = "État"
         verbose_name_plural = "État"
+        ordering = ['weight', 'label']
 
     label = models.CharField("Libellé", max_length=64)
     weight = models.IntegerField("Poids", default=1)
@@ -50,6 +60,7 @@ class Category(models.Model):
     """
     class Meta:
         verbose_name = "Catégorie"
+        ordering = ['label']
 
     label = models.CharField("Libellé", max_length=64)
     
@@ -58,7 +69,9 @@ class Category(models.Model):
 
 class Project(models.Model):
     class Meta:
-        verbose_name = "Projet"
+        verbose_name = u"Projet"
+        ordering = ['label']
+    
     label = models.CharField("Libellé", max_length=64)
     color = ColorField(name="Couleur associée", blank=True, null=True)
     #watchers = models.ManyToManyField(User, blank=True)
@@ -89,6 +102,7 @@ models.signals.post_save.connect(Project.handle_project_saved_signal, sender=Pro
 class Procedure(models.Model):
     class Meta:
         verbose_name = u"Procédure"
+        ordering = ['label']
 
     label = models.CharField("Libellé", max_length=64)
     active = models.BooleanField()
@@ -108,6 +122,7 @@ class TicketManager(models.Manager):
 class Ticket(models.Model):
     class Meta:
         verbose_name = "Ticket"
+        ordering = ['-last_modification']
     
     objects = models.Manager()
     tickets = TicketManager()
@@ -166,7 +181,93 @@ class Ticket(models.Model):
         ticket = comment.content_object
         ticket.last_modification=datetime.datetime.now()
         ticket.save()
-
+    
+    def save(self):
+        """ Overwrite save in order to do checks if email should be sent, then send email """
+        send_email_reason=None
+        
+        try:
+            old_ticket = Ticket.objects.get(id=self.id)
+        except Ticket.DoesNotExist:
+            old_ticket = None
+        
+        r = super(Ticket, self).save()
+        
+        send_fax_reasons = []
+        send_email_reasons = []
+        if self.is_valid():
+            if old_ticket is None:
+                r = u"Création du ticket"
+                send_email_reasons = [ r, ]
+                senf_fax_reasons = [ r, ]
+            else:
+                if old_ticket.state and old_ticket.state != self.state:
+                    r = u"Status modifié: %s => %s" % (old_ticket.state, self.state)
+                    send_email_reasons.append(r)
+                    send_fax_reasons.append(r)
+                if old_ticket.client and old_ticket.client != self.client:
+                    r = u"Erreur d'affectation client"
+                    send_email_reasons.append(r)
+                    senf_fax_reasons.append(r)
+                if old_ticket.validated_by is None and self.validated_by:
+                    send_email_reasons.append(u"Ticket accepté par %s" % (self.validated_by,))
+                if (old_ticket.assigned_to and old_ticket.assigned_to != self.assigned_to):
+                    send_email_reasons.append(u"Ticket re-affecté à %s" % (self.assigned_to,))
+                elif (not old_ticket.assigned_to and self.assigned_to):
+                    send_email_reasons.append(u"Ticket affecté à %s" % (self.assigned_to,))
+        
+        if send_email_reasons:
+            self.send_email(send_email_reasons)
+        
+        if send_fax_reasons:
+            self.send_fax(send_fax_reasons)
+        
+        return r
+    
+    def send_fax(self, reasons=[u'Demande spécifique']):
+        """ Send a fax for this particuliar ticket """
+        faxes = set(self.client.get_faxes())
+        
+        if self.client and self.client.notifications_by_fax:
+            print "send_fax to %s reasons: %s" % (faxes, reasons,)
+        else:
+            print "no send_fax: le client ne veut pas être faxé"
+    
+    def send_email(self, reasons=[u"Demande spécifique",]):
+        """ Send an email for this particuliar ticket """
+        dests = set()
+        if self.client:
+            dests.union(set(self.client.get_emails()))
+        
+        # La personne qui a ouvert
+        if self.opened_by.email:
+            dests.add(self.opened_by.email)
+        
+        # La personne sur qui le ticket est assignée
+        if self.assigned_to and self.assigned_to.email:
+            dests.add(self.assigned_to.email)
+        
+        # Les project watchers ?
+        # LC: TODO watchers
+        
+        # Ceux qui ont participé (comments)
+        dests.union( set([ c.user.email for c in Comment.objects.for_model(self) if c.user and c.user.email ]))
+        
+        print "Envoi d'email à %s. Raisons: %s" % (dests, reasons)
+        if not dests:
+            print "Aucun destinataire email ?!"
+            return
+        
+        # Application du template email
+        template = get_template("email/ticket.txt")
+        context = Context({"ticket": self, 'reasons': reasons })
+        data = template.render(context)
+        
+        template = Template("[Ticket {{ ticket.id }}]: {{ ticket.title|striptags|truncatewords:64 }}")
+        subject = template.render(context)
+        # Send the email
+        send_mail(subject, data, u"support@clarisys.fr", dests)
+        
 # Update last_modification time
 comment_was_posted.connect(Ticket.handle_comment_posted_signal)
 

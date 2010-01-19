@@ -4,6 +4,10 @@ from django.db import models
 from claritick.common.models import Client, ClientField
 
 class OperatingSystem(models.Model):
+    class Meta:
+        verbose_name = u"Système d'exploitation"
+        ordering = ['name', 'version']
+    
     name = models.CharField(u"Nom", max_length=64)
     version = models.CharField(u"Version", max_length=64)
 
@@ -11,6 +15,10 @@ class OperatingSystem(models.Model):
         return "%s %s" % (self.name, self.version)
 
 class HostType(models.Model):
+    class Meta:
+        verbose_name = u"Type d'hôte"
+        ordering = ['text']
+    
     gateway = models.BooleanField("Gateway", default=False)
     text = models.TextField("Description", blank=True)
 
@@ -18,12 +26,20 @@ class HostType(models.Model):
         return u"%s" % (self.text,)
 
 class Supplier(models.Model):
+    class Meta:
+        verbose_name = u"Fournisseur"
+        ordering = ['name']
+    
     name = models.CharField(u"Nom", max_length=64)
 
     def __unicode__(self):
         return u"%s" % (self.name,)
 
 class Host(models.Model):
+    class Meta:
+        verbose_name = u"Machine"
+        ordering = ['site', 'hostname']
+    
     site = ClientField(Client, verbose_name="Site", limit_choices_to={ 'parent__isnull': False })
     type = models.ForeignKey(HostType, verbose_name=u"Type d'hôte", blank=True)
     os = models.ForeignKey(OperatingSystem, verbose_name=u"Système d'exploitation", blank=True)

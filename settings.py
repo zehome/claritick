@@ -118,3 +118,7 @@ TIME_FORMAT = "H\hi"
 DOJANGO_DOJO_PROFILE = "local_release"
 DOJANGO_DOJO_VERSION = "1.4.0-dojango-optimized-with-dojo"
 DOJO_BUILD_JAVA_EXEC = "/usr/bin/java"
+
+# Contrôle des emails
+EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+EMAIL_FILE_PATH = '/tmp/claritick_emails'
