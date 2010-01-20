@@ -1,14 +1,14 @@
 {%autoescape off %}
 {% load comments %}
-#####
-# Ticket n°{{ ticket.id|ljust:'6' }} [ {{ ticket.state }} ]: {{ reasons|join:';' }}
-{{ ticket.title|striptags|wordwrap:80 }}
-
++------------------------------------------------------------------------------------+
+| Ticket n°{{ ticket.id|ljust:'6' }}: [ {{ ticket.state }} ]  
+| {{ ticket.title|striptags|wordwrap:80 }}
++------------------------------------------------------------------------------------+
 Date d'ouverture:      {{ ticket.date_open|date:'d/m/Y H\hi' }}
 Dernière modification: {{ ticket.last_modification|date:'d/m/Y H\hi' }}
-Ouvert par:            {{ ticket.opened_by }}
+Ouvert par:            {{ ticket.opened_by.first_name }} {{ ticket.opened_by.last_name }} ({{ ticket.opened_by.username }})
 {% if ticket.project %}Projet:                {{ ticket.project }}{% endif %}
-{% if ticket.assigned_to %}Assigné à:             {{ ticket.assigned_to.first_name }} {{ ticket.assigned_to.last_name }} ({{ ticket.assigned_to.user_name }}){% else %}
+{% if ticket.assigned_to %}Assigné à:             {{ ticket.assigned_to.first_name }} {{ ticket.assigned_to.last_name }} ({{ ticket.assigned_to.username }}){% else %}
 Non assigné{% endif %}
 Contact:               {% if ticket.contact %}{{ ticket.contact }}{% else %}{{ ticket.client }}{% endif %}
 
@@ -35,8 +35,6 @@ CLARISYS Informatique        http://www.clarisys.fr/
 Téléphone: 09 72 11 43 60    Fax: 05 11 11 11 11
 
 Email généré automatiquement par le système de suivi CLARITICK.
-Cet email vous est transmi pour la raison suivante: 
-{% for reason in reasons %}
-{{ reason }}
-{% endfor %}
+Cet email vous est transmi pour la/les raison(s) suivante: 
+{% for reason in reasons %}{{ reason }}{% endfor %}
 {% endautoescape %}

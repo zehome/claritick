@@ -7,6 +7,7 @@ djangogcal.observer
 from django.db.models import signals
 from gdata.calendar import CalendarEventEntry, SendEventNotifications
 from gdata.calendar.service import CalendarService
+from gdata.service import RequestError
 
 from models import CalendarEvent
 
@@ -17,7 +18,7 @@ class CalendarObserver(object):
     
     DEFAULT_FEED = '/calendar/feeds/default/private/full'
     
-    def __init__(self, email, password, feed=DEFAULT_FEED, service=None):
+    def __init__(self, email, password, feed=DEFAULT_FEED, service=None, user=None):
         """
         Initialize an instance of the CalendarObserver class.
         """
@@ -26,6 +27,7 @@ class CalendarObserver(object):
         self.password = password
         self.feed = feed
         self.service = service
+        self.user = user
     
     def observe(self, model, adapter):
         """
@@ -77,8 +79,11 @@ class CalendarObserver(object):
         if the retrieval fails.
         """
         event_id = CalendarEvent.objects.get_event_id(instance, self.feed)
+        if not event_id:
+            return None
+        
         try:
-            event = service.GetCalendarEventEntry(event_id)
+            event = service.GetCalendarEventEntry(str(event_id))
         except Exception:
             event = None
         return event
@@ -89,19 +94,27 @@ class CalendarObserver(object):
         of the sender model type.
         """
         adapter = self.adapters[sender]
-        if adapter.can_save(instance):
-            service = self.get_service()
+        if not adapter.can_save(instance, self):
+            return
+    
+        service = self.get_service()
+        saved = False
+        while not saved:
             event = self.get_event(service, instance) or CalendarEventEntry()
             adapter.get_event_data(instance).populate_event(event)
             if adapter.can_notify(instance):
                 event.send_event_notifications = SendEventNotifications(
                     value='true')
             if event.GetEditLink():
-                service.UpdateEvent(event.GetEditLink().href, event)
+                try:
+                    service.UpdateEvent(event.GetEditLink().href, event)
+                except RequestError:
+                    continue
             else:
                 new_event = service.InsertEvent(event, self.feed)
                 CalendarEvent.objects.set_event_id(instance, self.feed,
                                                    new_event.id.text)
+            saved = True
     
     def delete(self, sender, instance):
         """
@@ -109,12 +122,19 @@ class CalendarObserver(object):
         of the sender model type.
         """
         adapter = self.adapters[sender]
-        if adapter.can_delete(instance):
-            service = self.get_service()
+        if not adapter.can_delete(instance, self.user):
+            return
+
+        service = self.get_service()
+        saved = False
+        while not saved:
             event = self.get_event(service, instance)
             if event:
                 if adapter.can_notify(instance):
                     event.send_event_notifications = SendEventNotifications(
                         value='true')
-                service.DeleteEvent(event.GetEditLink().href)
+                try:
+                    service.DeleteEvent(event.GetEditLink().href)
+                except RequestError:
+                    continue
         CalendarEvent.objects.delete_event_id(instance, self.feed)

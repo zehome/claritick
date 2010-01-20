@@ -51,11 +51,11 @@ def list_all(request, qs=None, *args, **kw):
                     try:
                         lookup = search_mapping[key]
                     except KeyError:
-                        lookup = '__exact'
+                        lookup = 'exact'
                     qs = qs.filter(**{"%s__%s"%(key,lookup):value})
     except AttributeError:
         pass
-    table = DefaultTicketTable(data=qs, order_by=request.GET.get('sort', 'title'))
+    table = DefaultTicketTable(data=qs, order_by=request.GET.get('sort', 'last_modified'))
     
     return render_to_response('ticket/list.html', {'table': table, 'form': form }, context_instance=RequestContext(request))
 

@@ -59,7 +59,7 @@ class Client(models.Model):
         ordering = ['label']
     
     label = models.CharField("Nom", max_length=64) 
-    parent = ClientField('Client', verbose_name='Parent', null=True, blank=True, limit_choices_to = {'parent': None})
+    parent = ClientField('Client', verbose_name='Parent', null=True, blank=True, limit_choices_to = {'parent__parent': None})
     coordinates = models.ForeignKey(Coordinate, verbose_name=u'Coordonnées', blank=True, null=True)
     emails = models.CharField("Emails séparés par des virgule", max_length=2048, blank=True, null=True)
     notifications_by_fax = models.BooleanField(u"Transmission des notifications par fax", default=False)
@@ -105,5 +105,5 @@ class UserProfile(models.Model):
     def __unicode__(self):
         ustr = u"Profil %s" % (self.user,)
         if self.client:
-            ustr += u" (%s)" (self.client,)
+            ustr += u" (%s)" % (self.client,)
         return ustr

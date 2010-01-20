@@ -18,6 +18,8 @@ from django.template import Context, Template
 from claritick.common.models import ColorField, Client, ClientField
 from claritick.common.widgets import ColorPickerWidget 
 from django.db.models import AutoField
+
+
 def copy_model_instance(obj):
     initial = dict([(f.name, getattr(obj, f.name))
                     for f in obj._meta.fields
@@ -78,7 +80,7 @@ class Project(models.Model):
     procedure = models.ForeignKey('Procedure', verbose_name=u'Procédure', limit_choices_to={'active': True})
     
     def __unicode__(self):
-        return u"%s%s" % (self.label, self.procedure and u" %s" % (self.procedure,))
+        return u"%s%s" % (self.label, self.procedure and u" (%s)" % (self.procedure,))
     
     @staticmethod
     def handle_project_saved_signal(sender, instance, created, **kwargs):
@@ -174,14 +176,32 @@ class Ticket(models.Model):
     def handle_comment_posted_signal(sender, **kwargs):
         """ Updates ticket last_modification to now() """
         comment = kwargs["comment"]
-        print comment.content_type.model
         if comment.content_type.model != "ticket":
             return
         
         ticket = comment.content_object
         ticket.last_modification=datetime.datetime.now()
         ticket.save()
+        
+        # Send email
+        ticket.send_email(reasons = [ u"Nouvelle réponse", ])
     
+    @staticmethod
+    def handle_ticket_presave_signal(sender, **kwargs):
+        new_ticket = kwargs["instance"]
+        if not new_ticket.id:
+            return
+        
+        from claritick import get_observer
+        old_ticket = Ticket.objects.get(id=new_ticket.id)
+        if old_ticket.assigned_to and old_ticket.assigned_to != new_ticket.assigned_to:
+            # Vérif ya t'il un google event ?
+            observer = get_observer(old_ticket.assigned_to)
+            if observer:
+                e = observer.get_event(observer.service, old_ticket)
+                if e:
+                    observer.delete(Ticket, old_ticket)
+
     def save(self):
         """ Overwrite save in order to do checks if email should be sent, then send email """
         send_email_reason=None
@@ -270,6 +290,9 @@ class Ticket(models.Model):
         
 # Update last_modification time
 comment_was_posted.connect(Ticket.handle_comment_posted_signal)
+
+# Google calendar sync
+models.signals.pre_save.connect(Ticket.handle_ticket_presave_signal, sender=Ticket)
 
 ## Ticket moderation
 class TicketCommentModerator(CommentModerator):
