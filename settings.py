@@ -122,3 +122,4 @@ DOJO_BUILD_JAVA_EXEC = "/usr/bin/java"
 # Contrôle des emails
 EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
 EMAIL_FILE_PATH = '/tmp/claritick_emails'
+EMAIL_HOST = "192.168.3.7"

@@ -13,26 +13,12 @@ class PartialNewTicketForm(forms.ModelForm):
         model = Ticket
         fields = ("category",)
 
-#~ class NewTicketForm(df.ModelForm):
-    #~ text = df.CharField(widget=df.Textarea(attrs={'cols':'90', 'rows': '20'}))
-    #~ title = df.CharField(widget=df.TextInput(attrs={'size':'64'}), required=False)
-    #~ client = df.ModelChoiceField(queryset = Client.objects.all(),
-        #~ widget=df.FilteringSelect(attrs={'queryExpr': '${0}*'}), empty_label='', required=False)
-
-    #~ assigned_to = df.ModelChoiceField(queryset = User.objects.all(), 
-        #~ widget=df.FilteringSelect(), empty_label='', required=False)
-    #~ validated_by = df.ModelChoiceField(queryset = User.objects.all(), 
-        #~ widget=df.FilteringSelect(), empty_label='', required=False)
-    
-    #~ class Meta:
-        #~ model = Ticket
-        #~ exclude = ("opened_by",)
 class NewTicketForm(forms.ModelForm):
     title = forms.CharField(widget=forms.TextInput(attrs={'size': '80'}))
     text = df.CharField(widget=df.Textarea(attrs={'cols':'90', 'rows': '20'}))
     client = df.ModelChoiceField(queryset = Client.objects.all(),
          widget=df.FilteringSelect(attrs={'queryExpr': '${0}*'}), empty_label='', required=False)
-    keywords = forms.CharField(widget=forms.TextInput(attrs={'size': '80'}))
+    keywords = forms.CharField(widget=forms.TextInput(attrs={'size': '80'}), required=False)
 
     calendar_start_time = df.DateTimeField()
     calendar_end_time = df.DateTimeField()
