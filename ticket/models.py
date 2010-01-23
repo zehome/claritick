@@ -82,24 +82,23 @@ class Project(models.Model):
     def __unicode__(self):
         return u"%s%s" % (self.label, self.procedure and u" (%s)" % (self.procedure,))
     
-    @staticmethod
-    def handle_project_saved_signal(sender, instance, created, **kwargs):
-        """ Updates ticket last_modification to now() """
-        project = instance
-        if not created:
-            return
-        
-        # Ajoute les tickets correspondant a la procédure
-        if project.procedure:
-            for ticketOriginal in project.procedure.tickets.all():
-                ticket = copy_model_instance(ticketOriginal)
-                ticket.date_open = None
-                ticket.template = False
-                ticket.project = project
-                ticket.save()
-
-models.signals.post_save.connect(Project.handle_project_saved_signal, sender=Project)
-
+    def save(self, client_id=None):
+        """ Override save in order to pass "client" from ModelAdmin form """
+        created = bool(not self.id)
+        r = super(Project, self).save()
+        if created:
+            # Ajoute les tickets correspondant a la procédure
+            if self.procedure:
+                for ticketOriginal in self.procedure.tickets.all():
+                    ticket = copy_model_instance(ticketOriginal)
+                    ticket.date_open = None
+                    ticket.template = False
+                    ticket.project = self
+                    if client_id and not ticket.client:
+                        ticket.client = Client.objects.get(pk=int(client_id))
+                    
+                    ticket.save()        
+        return r
 
 class Procedure(models.Model):
     class Meta:
