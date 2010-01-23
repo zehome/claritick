@@ -103,6 +103,7 @@ GCAL_MAIN_LOGIN = "ed@zehome.com" # Compte société
 GCAL_MAIN_PASSWORD = ""   # Explicite
 
 AUTH_PROFILE_MODULE = 'common.UserProfile'
+LOGIN_REDIRECT_URL = '/'
 
 # Paramètres application "comment"
 COMMENTS_HIDE_REMOVED=True
