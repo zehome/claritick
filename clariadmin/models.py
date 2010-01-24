@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 
 from django.db import models
+from django.template.loader import get_template
+from django.template import Context
+
 from claritick.common.models import Client, ClientField
 
 class OperatingSystem(models.Model):
@@ -69,4 +72,9 @@ class Host(models.Model):
 
     def __unicode__(self):
         return u"%s on %s (%s)" % (self.hostname, self.site, self.ip)
-
+    
+    def get_text(self):
+        """ Text representation for dialog based app """
+        template = get_template("clariadmin/host.txt")
+        context = Context({"host": self })
+        return template.render(context)

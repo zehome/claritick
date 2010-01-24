@@ -1,0 +1,24 @@
+{% autoescape off %}------ Informations éssentielles ------
+Hostname...... {{ host.hostname }}
+IP............ {{ host.ip }}
+Password root. {{ host.rootpw }}
+Site.......... {{ host.site }}
+Automate...... {{ host.automate }}
+Status........ {{ host.status }}
+Serial......... {{ host.serial }}
+{% if host.commentaire %} Commentaire: 
+{{ host.commentaire }}{% endif %}
+
+------ Info complémentaires -------
+Id............... {{ host.id }}
+Type de machine.. {{ host.type }}
+OS............... {{ host.os }}
+Marque........... {{ host.supplier }}
+Modèle........... {{ host.model }}
+Ajouté le........ {{ host.date_add|date:'d/m/Y' }}
+Mise en prod..... {{ host.date_start_prod|date:'d/m/Y' }}
+Mis hors service. {{ host.date_end_prod|date:'d/m/Y' }}
+
+------ Info du client ------
+Emplacement...... {{ host.location }}
+Inventaire....... {{ host.inventory }}{% endautoescape %}

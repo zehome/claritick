@@ -124,3 +124,7 @@ DOJO_BUILD_JAVA_EXEC = "/usr/bin/java"
 EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
 EMAIL_FILE_PATH = '/tmp/claritick_emails'
 EMAIL_HOST = "192.168.3.7"
+
+DIALOG_DIALOG = '/usr/bin/dialog'
+DIALOG_WIDTH=80
+DIALOG_HEIGHT=25

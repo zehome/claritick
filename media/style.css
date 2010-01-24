@@ -474,7 +474,15 @@ div#contenu .aligned label {
 div#contenu .form-row {
 	vertical-align: middle;
 }
-
+div#contenu .selector {
+	width: 1200px;
+}
+div#contenu .selector-available, div#contenu .selector-chosen {
+	width: 500px;
+}
+div#contenu .selector select {
+	width: 500px;
+}
 .comment h3 {
 	float: right;
 	padding: 0; 
