@@ -1,8 +1,6 @@
-{%autoescape off %}
-{% load comments %}
-+------------------------------------------------------------------------------------+
+{%autoescape off %}{% load comments %}+------------------------------------------------------------------------------------+
 | Ticket n°{{ ticket.id|ljust:'6' }}: [ {{ ticket.state }} ]  
-| {{ ticket.title|striptags|wordwrap:80 }}
+| Objet: {{ ticket.title|striptags|wordwrap:80 }}
 +------------------------------------------------------------------------------------+
 Date d'ouverture:      {{ ticket.date_open|date:'d/m/Y H\hi' }}
 Dernière modification: {{ ticket.last_modification|date:'d/m/Y H\hi' }}
@@ -36,5 +34,4 @@ Téléphone: 09 72 11 43 60    Fax: 05 11 11 11 11
 
 Email généré automatiquement par le système de suivi CLARITICK.
 Cet email vous est transmi pour la/les raison(s) suivante: 
-{% for reason in reasons %}{{ reason }}{% endfor %}
-{% endautoescape %}
+{% for reason in reasons %}{{ reason }}{% endfor %}{% endautoescape %}
