@@ -97,6 +97,7 @@ INSTALLED_APPS = (
     'claritick.ticket',
     'claritick.clariadmin',    # Clariadmin
     'claritick',
+    'importv1',
 )
 
 GCAL_MAIN_LOGIN = "ed@zehome.com" # Compte société

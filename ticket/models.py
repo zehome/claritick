@@ -77,7 +77,7 @@ class Project(models.Model):
     label = models.CharField("Libellé", max_length=64)
     color = ColorField(name="Couleur associée", blank=True, null=True)
     #watchers = models.ManyToManyField(User, blank=True)
-    procedure = models.ForeignKey('Procedure', verbose_name=u'Procédure', limit_choices_to={'active': True})
+    procedure = models.ForeignKey('Procedure', verbose_name=u'Procédure', limit_choices_to={'active': True}, blank = True, null = True)
     
     def __unicode__(self):
         return u"%s%s" % (self.label, self.procedure and u" (%s)" % (self.procedure,))
@@ -192,7 +192,10 @@ class Ticket(models.Model):
             return
         
         from claritick import get_observer
-        old_ticket = Ticket.objects.get(id=new_ticket.id)
+        try:
+            old_ticket = Ticket.objects.get(id=new_ticket.id)
+        except Ticket.DoesNotExist:
+            return
         if old_ticket.assigned_to and old_ticket.assigned_to != new_ticket.assigned_to:
             # Vérif ya t'il un google event ?
             observer = get_observer(old_ticket.assigned_to)
