@@ -35,7 +35,7 @@
     </th>
     {% endfor %}
 </tr>
-{% for row in table.rows %}
+{% for row in table.rows.page %}
     {% get_comment_count for ticket.ticket row.id as comment_count %}
     <tr class="{% cycle 'row1' 'row2' %}">
         <td style="width: 60px;"><a href="/ticket/modify/{{ row.id }}">{{ row.id }}</a></td>
@@ -51,6 +51,10 @@
     </tr>
 {% endfor %}
 </table>
+
+{% load diggpaginator %}
+{% diggpaginator table.page %}
+
 {% else %}
 <h3>Aucun résultat</h3>
 {% endif %}

@@ -9,10 +9,13 @@ from django.template import RequestContext
 from django.template.loader import render_to_string
 from django.utils.html import escape
 from django.contrib.auth.decorators import login_required
+from django.conf import settings
 
 from claritick.ticket.models import Ticket
 from claritick.ticket.forms import *
 from claritick.ticket.tables import DefaultTicketTable
+
+from claritick.common.diggpaginator import DiggPaginator
 
 @login_required
 def list_me(request, *args, **kw):
@@ -56,8 +59,8 @@ def list_all(request, qs=None, *args, **kw):
     except AttributeError:
         pass
     table = DefaultTicketTable(data=qs, order_by=request.GET.get('sort', 'last_modified'))
-    
-    return render_to_response('ticket/list.html', {'table': table, 'form': form }, context_instance=RequestContext(request))
+    table.paginate(DiggPaginator, settings.TICKETS_PER_PAGE, page=request.GET.get("page", 1), orphans=10)
+    return render_to_response('ticket/list.html', {'table': table, 'form': form}, context_instance=RequestContext(request))
 
 @login_required
 def partial_new(request, form=None):

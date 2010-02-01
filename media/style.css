@@ -215,7 +215,7 @@ form {
     width: 70%;
 }
 
-.tableau_center {
+.tableau_center, .center {
     margin-left:auto;
     margin-right:auto;
     text-align: left;
@@ -511,6 +511,54 @@ div#contenu .selector select {
 }
 .comment pre.row2 {
 	background-color: #dedede;
+}
+
+
+ol#pagination-digg {
+	text-align: center;
+	padding: 0;
+	margin: 0;
+	margin-top: 15px;
+}
+
+#pagination-digg li{
+	border:0; margin:0; padding:0;
+	font-size:11px;
+	list-style:none;
+	margin-right:2px;
+	display:inline;
+}
+#pagination-digg a{
+	border:solid 1px #9aafe5;
+	margin-right:2px;
+}
+#pagination-digg .previous-off,
+#pagination-digg .next-off {
+	border:solid 1px #DEDEDE
+	color:#888888;
+	font-weight:bold;
+	margin-right:2px;
+	padding:3px 4px;
+}
+#pagination-digg .next a,
+#pagination-digg .previous a {
+	font-weight:bold;
+} 
+#pagination-digg .active{
+	background:#2e6ab1;
+	color:#FFFFFF;
+	font-weight:bold;
+	padding:4px 6px;
+}
+#pagination-digg a:link,
+#pagination-digg a:visited {
+	color:#0e509e;
+	display:inline;
+	padding:3px 6px;
+	text-decoration:none;
+}
+#pagination-digg a:hover{
+	border:solid 1px #0e509e
 }
 
 /* EOF */

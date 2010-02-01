@@ -41,6 +41,10 @@
     </tr>
 {% endfor %}
 </table>
+
+{% load diggpaginator %}
+{% diggpaginator table.page %}
+
 {% else %}
 <h3>Aucun résultat</h3>
 {% endif %}

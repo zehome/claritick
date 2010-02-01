@@ -12,12 +12,18 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
-DATABASE_ENGINE = 'sqlite3'           # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-DATABASE_NAME = 'claritick.db'             # Or path to database file if using sqlite3.
-DATABASE_USER = ''             # Not used with sqlite3.
+#~ DATABASE_ENGINE = 'sqlite3'           # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
+#~ DATABASE_NAME = 'claritick.db'             # Or path to database file if using sqlite3.
+#~ DATABASE_USER = ''             # Not used with sqlite3.
+#~ DATABASE_PASSWORD = ''         # Not used with sqlite3.
+#~ DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
+#~ DATABASE_PORT = ''             # Set to empty string for default. Not used with sqlite3.
+DATABASE_ENGINE = 'postgresql_psycopg2' # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
+DATABASE_NAME = 'claritick'    # Or path to database file if using sqlite3.
+DATABASE_USER = 'claritick'    # Not used with sqlite3.
 DATABASE_PASSWORD = ''         # Not used with sqlite3.
-DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
-DATABASE_PORT = ''             # Set to empty string for default. Not used with sqlite3.
+DATABASE_HOST = '192.168.3.6'  # Set to empty string for localhost. Not used with sqlite3.
+DATABASE_PORT = '5432'         # Set to empty string for default. Not used with sqlite3.
 
 DEFAULT_FROM_EMAIL = 'claritick@clarisys.fr'
 SERVER_EMAIL = DEFAULT_FROM_EMAIL
@@ -129,3 +135,5 @@ EMAIL_HOST = "192.168.3.7"
 DIALOG_DIALOG = '/usr/bin/dialog'
 DIALOG_WIDTH=80
 DIALOG_HEIGHT=25
+
+TICKETS_PER_PAGE=50

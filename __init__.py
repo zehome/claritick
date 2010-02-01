@@ -136,4 +136,3 @@ try:
     register_all_users()
 except:
     print "Unable to register google calendars."
-    raise

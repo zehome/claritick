@@ -3,10 +3,12 @@
 from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
+from django.conf import settings
 
 from claritick.clariadmin.models import Host
 from claritick.clariadmin.forms import *
 from claritick.clariadmin.tables import DefaultHostTable
+from claritick.common.diggpaginator import DiggPaginator
 
 @login_required
 def list_all(request, *args, **kw):
@@ -38,7 +40,7 @@ def list_all(request, *args, **kw):
     except AttributeError:
         pass
     table = DefaultHostTable(data=qs, order_by=request.GET.get('sort', 'title'))
-    
+    table.paginate(DiggPaginator, settings.TICKETS_PER_PAGE, page=request.GET.get("page", 1), orphans=10)
     return render_to_response('clariadmin/list.html', {'table': table, 'form': form }, context_instance=RequestContext(request))
 
 @login_required
