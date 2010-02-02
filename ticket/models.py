@@ -169,6 +169,26 @@ class Ticket(models.Model):
     
     template = models.BooleanField("Modèle", default=False)
     
+    # Used for "reporting" tool
+    @property
+    def reporting_state_open(self):
+        return self.state and (self.state.id in (1,2,3) and 1 or 0) or 0
+    @property
+    def reporting_state_closed(self):
+        return self.state and (self.state.id == 4 and 1 or 0) or 0
+    @property
+    def reporting_priority_low(self):
+        return self.priority and (self.priority.id == 1 and 1 or 0) or 0
+    @property
+    def reporting_priority_normal(self):
+        return self.priority and (self.priority.id == 2 and 1 or 0) or 0
+    @property
+    def reporting_priority_high(self):
+        return self.priority and (self.priority.id == 3 and 1 or 0) or 0
+    @property
+    def reporting_priority_critical(self):
+        return self.priority and (self.priority.id == 4 and 1 or 0) or 0
+    
     @property
     def close_style(self):
         if self.date_close or self.state.id == 4:

@@ -456,10 +456,17 @@ div#contenu.admin div#content-related {
 
 div#contenu.admin div#content-main {
 	float: left;
-	min-width: 600px;
+	min-width: 800px;
 	width: auto;
 }
-
+div#contenu.admin table td {
+	min-width: 150px;
+	padding: 5px;
+	white-space: nowrap;
+}
+div#contenu.admin table tr {
+	height: 22px;
+}
 div#contenu.admin .object-tools {
 	float: none;
 	position: absolute;

@@ -8,7 +8,7 @@ class TicketReport(reporting.Report):
     model = Ticket
     verbose_name = 'Ticket report'
     annotate = (                    # Annotation fields (tupples of field, func, title)
-        ('id', Count, 'Total'),     # example of custom title for column 
+        ('id', Count, 'Total'),     # example of custom title for column
     )
     aggregate = (                   # columns that will be aggregated (syntax the same as for annotate)
         ('id', Count, 'Total'),
@@ -25,10 +25,10 @@ class TicketReport(reporting.Report):
         'category',
     ]
     
-    detail_list_display = [        # if detail_list_display is defined user will be able to see how rows was grouped  
-        'client', 
-        'state',
-    ]
+    #~ detail_list_display = [        # if detail_list_display is defined user will be able to see how rows was grouped  
+        #~ 'client', 
+        #~ 'state',
+    #~ ]
 
     date_hierarchy = 'date_open' # the same as django-admin
 

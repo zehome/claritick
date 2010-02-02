@@ -52,7 +52,7 @@
       
 
       {% block result_list %}
-      <div id="changelist" class="filtered">
+      <div id="changelist" class="filtered" style="min-width: 800px;">
 			<table>
 			{% if not report.show_details %}
 				<thead>
@@ -65,7 +65,7 @@
 			{% endif %}
 			{% for row in report.results %}
 			{% if not report.show_details %}
-				<tr class="row{% if forloop.counter0|divisibleby:"2" %}1{%else%}2{% endif %}">
+				<tr style="width: 600px;" class="row{% if forloop.counter0|divisibleby:"2" %}1{%else%}2{% endif %}">
 					{% for value in row.values %}<td>{{value}}</td>{% endfor %}
 				</tr>
 			{% else%}
