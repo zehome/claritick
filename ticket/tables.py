@@ -20,6 +20,9 @@ class DefaultTicketTable(tables.ModelTable):
     last_modification = tables.Column(verbose_name='MAJ')
     opened_by = tables.Column(verbose_name='Par')
     assigned_to = tables.Column(verbose_name='Pour')
+    close_style = tables.Column(visible=False)
+    priority_text_style = tables.Column(visible=False)
+    priority_back_style = tables.Column(visible=False)
     
     class Meta:
         sortable = True

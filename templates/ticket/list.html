@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% load comments %}
+{% load comments %}{% load diggpaginator %}
 
 {% block title %}Liste des tickets{% endblock %}
 {% block content_title %}Liste des tickets{% endblock %}
@@ -19,8 +19,8 @@
   </form>
 </fieldset>
 
-<h2>Résultats</h2>
 {% if table.rows %}
+{% diggpaginator table.page %}
 <table class="resultat">
 <tr>
     {% for column in table.columns %}
@@ -37,22 +37,21 @@
 </tr>
 {% for row in table.rows.page %}
     {% get_comment_count for ticket.ticket row.id as comment_count %}
-    <tr class="{% cycle 'row1' 'row2' %}">
-        <td style="width: 60px;"><a href="/ticket/modify/{{ row.id }}">{{ row.id }}</a></td>
+    <tr class="bigrow {% cycle 'row1' 'row2' %}">
+        <td style="width: 60px;{{ row.close_style }}{{ row.priority_back_style }}"><a style="{{ row.priority_text_style }}" href="/ticket/modify/{{ row.id }}">{{ row.id }}</a></td>
         <td style="width: 200px;">{{ row.client }}</td>
         <td style="width: 100px;">{{ row.category }}</td>
         <td style="width: 100px;">{% if row.project %}{{ row.project }}{% endif %}</td>
-        <td style="min-width: 250px;"><a href="/ticket/modify/{{ row.id }}">{{ row.title }}</a></td>
+        <td style="min-width: 250px;{{ row.close_style }}"><a style="{{ row.priority_text_style }}" href="/ticket/modify/{{ row.id }}">{{ row.title }}</a></td>
         <td>({{ comment_count }})</td>
         <td>{{ row.contact }}</td>
-        <td style="width: 150px;">{{ row.last_modification|date:'d/m/Y H\hi' }}</td>
+        <td style="width: 150px;">{{ row.last_modification|date:'d/m/y H\hi' }}</td>
         <td>{{ row.opened_by }}</td>
         <td>{{ row.assigned_to }}</td>
     </tr>
 {% endfor %}
 </table>
 
-{% load diggpaginator %}
 {% diggpaginator table.page %}
 
 {% else %}

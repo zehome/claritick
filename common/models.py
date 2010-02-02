@@ -56,7 +56,7 @@ class ClientField(models.ForeignKey):
 class Client(models.Model):
     class Meta:
         verbose_name = "Client"
-        ordering = ['label']
+        ordering = ['parent__label', 'label']
     
     label = models.CharField("Nom", max_length=64) 
     parent = ClientField('Client', verbose_name='Parent', null=True, blank=True, limit_choices_to = {'parent__parent': None})

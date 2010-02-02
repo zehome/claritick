@@ -19,12 +19,12 @@ from claritick.common.diggpaginator import DiggPaginator
 
 @login_required
 def list_me(request, *args, **kw):
-    qs = Ticket.tickets.filter(assigned_to__username__exact=request.user.username)
+    qs = Ticket.open_tickets.filter(assigned_to__username__exact=request.user.username)
     return list_all(request, qs, *args, **kw)
 
 @login_required
 def list_unassigned(request, *args, **kw):
-    qs = Ticket.tickets.filter(assigned_to__isnull=True)
+    qs = Ticket.open_tickets.filter(assigned_to__isnull=True)
     return list_all(request, qs, *args, **kw)
 
 @login_required
@@ -43,22 +43,26 @@ def list_all(request, qs=None, *args, **kw):
     form.is_valid()
     
     if qs is None:
-        qs = Ticket.tickets.all()
+        if not form.cleaned_data.get("state"):
+            qs = Ticket.open_tickets.all()
+        else:
+            qs = Ticket.tickets.all()
     
     # Form cleaned_data ?
-    try:
-        if form.cleaned_data:
-            cd = form.cleaned_data
-            for key, value in cd.items():
+    if form.cleaned_data:
+        cd = form.cleaned_data
+        for key, value in cd.items():
+            try:
                 if value:
                     try:
                         lookup = search_mapping[key]
                     except KeyError:
                         lookup = 'exact'
                     qs = qs.filter(**{"%s__%s"%(key,lookup):value})
-    except AttributeError:
-        pass
-    table = DefaultTicketTable(data=qs, order_by=request.GET.get('sort', 'last_modified'))
+            except AttributeError:
+                pass
+    
+    table = DefaultTicketTable(data=qs, order_by=request.GET.get('sort', '-id'))
     table.paginate(DiggPaginator, settings.TICKETS_PER_PAGE, page=request.GET.get("page", 1), orphans=10)
     return render_to_response('ticket/list.html', {'table': table, 'form': form}, context_instance=RequestContext(request))
 

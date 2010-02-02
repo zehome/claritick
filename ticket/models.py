@@ -120,6 +120,12 @@ class TicketManager(models.Manager):
         qs = qs.exclude(template__exact=True)
         return qs
 
+class OpenTicketManager(TicketManager):
+    def get_query_set(self):
+        qs = super(OpenTicketManager, self).get_query_set()
+        qs = qs.exclude(state__id__in = (1,4))
+        return qs
+    
 class Ticket(models.Model):
     class Meta:
         verbose_name = "Ticket"
@@ -127,7 +133,8 @@ class Ticket(models.Model):
     
     objects = models.Manager()
     tickets = TicketManager()
-    
+    open_tickets = OpenTicketManager()
+
     # Info client
     client = ClientField(Client, verbose_name="Client", blank=True, null=True)
     contact = models.CharField("Contact", max_length=128, blank=True)
@@ -161,6 +168,30 @@ class Ticket(models.Model):
     calendar_title = models.CharField("Titre évenement", max_length=64, blank=True, null=True)
     
     template = models.BooleanField("Modèle", default=False)
+    
+    @property
+    def close_style(self):
+        if self.date_close or self.state.id == 4:
+            return "text-decoration: line-through;"
+        return ""
+    
+    @property
+    def priority_text_style(self):
+        style = ""
+        if self.priority:
+            p = self.priority
+            if p.forecolor:
+                style += "color: %s;" % (p.forecolor,)
+        return style
+    
+    @property
+    def priority_back_style(self):
+        style = ""
+        p = self.priority
+        if p:
+            if p.backcolor:
+                style += "background-color: %s;" % (p.backcolor,)
+        return style
     
     def is_valid(self):
         return bool(self.text and self.title)

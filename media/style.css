@@ -362,6 +362,10 @@ div#gauche a:hover {
 	margin: 10px;
 }
 
+#contenu table tr.bigrow {
+	height: 45px;
+}
+
 #contenu table td label {
     vertical-align: top;
 }
