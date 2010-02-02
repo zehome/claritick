@@ -467,6 +467,9 @@ div#contenu.admin table td {
 div#contenu.admin table tr {
 	height: 22px;
 }
+div#contenu.admin table th {
+	vertical-align: middle;
+}
 div#contenu.admin .object-tools {
 	float: none;
 	position: absolute;

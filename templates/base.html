@@ -47,6 +47,9 @@
             {% if user.is_staff %}
             <li><a href="/admin/">Administration</a></li>
             {% endif %}
+            {% if perms.can_view_report %}
+            <li><a href="/reporting/ticket/">Reporting</a></li>
+            {% endif %}
         </ul>
         
         <h2><img src="/media/images/icon-new.png" alt="+" />Création</h2>

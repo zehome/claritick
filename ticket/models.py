@@ -130,6 +130,9 @@ class Ticket(models.Model):
     class Meta:
         verbose_name = "Ticket"
         ordering = ['-last_modification']
+        permissions = (
+            ("can_view_report", "Consulter les rapports"),
+        )
     
     objects = models.Manager()
     tickets = TicketManager()
