@@ -123,7 +123,7 @@ class TicketManager(models.Manager):
 class OpenTicketManager(TicketManager):
     def get_query_set(self):
         qs = super(OpenTicketManager, self).get_query_set()
-        qs = qs.exclude(state__id__in = (1,4))
+        qs = qs.exclude(state__id__in = (0,4))
         return qs
     
 class Ticket(models.Model):

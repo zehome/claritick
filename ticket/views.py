@@ -19,16 +19,18 @@ from claritick.common.diggpaginator import DiggPaginator
 
 @login_required
 def list_me(request, *args, **kw):
-    qs = Ticket.open_tickets.filter(assigned_to__username__exact=request.user.username)
-    return list_all(request, qs, *args, **kw)
+    form = None
+    if not request.POST.get("assigned_to", None):
+        form = SearchTicketForm({'assigned_to': request.user.id}, request.POST)
+    return list_all(request, form, *args, **kw)
 
 @login_required
 def list_unassigned(request, *args, **kw):
-    qs = Ticket.open_tickets.filter(assigned_to__isnull=True)
-    return list_all(request, qs, *args, **kw)
+    filterdict = {'assigned_to__isnull': True}
+    return list_all(request, None, filterdict = filterdict, *args, **kw)
 
 @login_required
-def list_all(request, qs=None, *args, **kw):
+def list_all(request, form=None, filterdict=None, *args, **kw):
     """
     
     Liste tous les tickets sans aucun filtre
@@ -38,15 +40,19 @@ def list_all(request, qs=None, *args, **kw):
         'contact': 'icontains',
         'keywords': 'icontains',
     }
-    
-    form = SearchTicketForm(request.POST)
+        
+    if not form:
+        form = SearchTicketForm(request.POST)
     form.is_valid()
+
+    if not form.cleaned_data.get("state"):
+        qs = Ticket.open_tickets.all()
+    else:
+        qs = Ticket.tickets.all()
     
-    if qs is None:
-        if not form.cleaned_data.get("state"):
-            qs = Ticket.open_tickets.all()
-        else:
-            qs = Ticket.tickets.all()
+    # unassigned
+    if filterdict:
+        qs = qs.filter(**filterdict)
     
     # Form cleaned_data ?
     if form.cleaned_data:
