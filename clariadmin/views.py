@@ -2,7 +2,7 @@
 
 from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.template import RequestContext
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.conf import settings
 
 from claritick.clariadmin.models import Host
@@ -11,6 +11,7 @@ from claritick.clariadmin.tables import DefaultHostTable
 from claritick.common.diggpaginator import DiggPaginator
 
 @login_required
+@permission_required("clariadmin.can_access_clariadmin")
 def list_all(request, *args, **kw):
     """
     
@@ -44,6 +45,7 @@ def list_all(request, *args, **kw):
     return render_to_response('clariadmin/list.html', {'table': table, 'form': form }, context_instance=RequestContext(request))
 
 @login_required
+@permission_required("clariadmin.can_access_clariadmin")
 def new(request):
     """
     Create a new host.
@@ -57,6 +59,7 @@ def new(request):
     return render_to_response('clariadmin/host.html', {'form': form }, context_instance=RequestContext(request))
 
 @login_required
+@permission_required("clariadmin.can_access_clariadmin")
 def modify(request, host_id):
     host = get_object_or_404(Host, pk=host_id)
     if not request.POST:

@@ -47,7 +47,7 @@
             {% if user.is_staff %}
             <li><a href="/admin/">Administration</a></li>
             {% endif %}
-            {% if perms.can_view_report %}
+            {% if perms.ticket.can_view_report %}
             <li><a href="/reporting/ticket/">Reporting</a></li>
             {% endif %}
         </ul>
@@ -55,7 +55,9 @@
         <h2><img src="/media/images/icon-new.png" alt="+" />Création</h2>
         <ul class="menu">
             <li><a href="/ticket/partial_new">Ticket</a></li>
+            {% if perms.clariadmin.can_access_clariadmin %}
             <li><a href="/admin/clariadmin/host/add/">Machine</a></li>
+            {% endif %}
             {% if user.is_staff %}
             <li><a href="/admin/common/client/add/">Client</a></li>
             <li><a href="/admin/auth/user/add/">Utilisateur</a></li>
@@ -64,17 +66,17 @@
         
         <h2><img src="/media/images/icon-list.png" alt="/" />Tickets</h2>
         <ul class="menu">
-            <li><a href="/ticket/list/all">tous</a></li>
+            <li><a href="/ticket/list/all">Tous</a></li>
             <li><a href="/ticket/list/me">Les miens</a></li>
             <li><a href="/ticket/list/unassigned">Non affectés</a></li>
             <!-- Loop products -->
-            
             <!-- /Loop poducts -->
         </ul>
-
+        {% if perms.clariadmin.can_access_clariadmin %}
         <h2><img src="/media/images/oxygen/computer.png" alt="/" />Clariadmin</h2>
         <ul class="menu">
             <li><a href="/clariadmin/list/all">Toute machine</a></li>
+        {% endif %}
       {% endif %}
         </ul>
         {% endblock %}
