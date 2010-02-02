@@ -4,6 +4,8 @@ from django.conf.urls.defaults import *
 from django.shortcuts import render_to_response
 from django.contrib import admin
 
+import reporting
+
 import settings
 import django.contrib.auth.views
 from django.template import RequestContext
@@ -13,7 +15,7 @@ import claritick.ticket.urls
 import claritick.clariadmin.urls
 # Init code
 admin.autodiscover()
-
+reporting.autodiscover()
 
 # Utilities
 def flatpage(template, data={}):
@@ -47,4 +49,7 @@ urlpatterns = patterns('',
     ## Auth
     (r'^accounts/$', 'django.contrib.auth.views.login'),
     (r'^accounts/', include('django.contrib.auth.urls')),
+    
+    ## Reporting
+    (r'^reporting/', include('reporting.urls')),
 )

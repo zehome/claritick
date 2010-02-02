@@ -94,6 +94,7 @@ INSTALLED_APPS = (
     'django.contrib.sites', # Needed for comment
     'django.contrib.contenttypes',
     'django.contrib.sessions',
+    'reporting',               # Override admin templates
     'django.contrib.admin',    # Site admin
     'django.contrib.comments', # Commentaires
     'formfieldset',            # Form Field set for smart form
