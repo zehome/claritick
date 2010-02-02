@@ -105,6 +105,9 @@ def modify(request, ticket_id):
     ticket = get_object_or_404(Ticket, pk=ticket_id)
     if not ticket.text:
         ticket.title = None
+        ticket.state = State.objects.get(pk=1)
+        ticket.priority = Priority.objects.get(pk=2)
+        ticket.validated_by = request.user
     
     if request.POST:
         form = NewTicketForm(request.POST, instance=ticket)

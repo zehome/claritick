@@ -398,6 +398,13 @@ div#gauche a:hover {
 	color: black;
 }
 
+#contenu form fieldset table tr {
+	height: 25px;
+}
+#contenu form fieldset table td {
+	vertical-align: middle;
+}
+
 
 #contenu div.breadcrumbs {
 	background: transparent;

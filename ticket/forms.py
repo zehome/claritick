@@ -20,8 +20,8 @@ class NewTicketForm(forms.ModelForm):
          widget=df.FilteringSelect(attrs={'queryExpr': '${0}*'}), empty_label='', required=False)
     keywords = forms.CharField(widget=forms.TextInput(attrs={'size': '80'}), required=False)
 
-    calendar_start_time = df.DateTimeField()
-    calendar_end_time = df.DateTimeField()
+    calendar_start_time = df.DateTimeField(required=False)
+    calendar_end_time = df.DateTimeField(required=False)
     
     class Meta:
         model = Ticket
