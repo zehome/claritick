@@ -72,6 +72,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'dojango.middleware.DojoCollector',
+    'django.middleware.csrf.CsrfViewMiddleware',
 )
 
 TEMPLATE_CONTEXT_PROCESSOR = ("django.core.context_processors.auth",
@@ -138,3 +139,8 @@ DIALOG_WIDTH=80
 DIALOG_HEIGHT=25
 
 TICKETS_PER_PAGE=50
+
+try:
+    from local_settings import *
+except ImportError:
+    pass
