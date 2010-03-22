@@ -69,7 +69,8 @@ def list_all(request, form=None, filterdict=None, *args, **kw):
             except AttributeError:
                 pass
     
-    qs = qs.order_by(request.GET.get('sort', '-id'))
+    qs = qs.order_by(request.GET.get('sort', '-id')).select_related("opened_by", "assigned_to", 
+        "priority", "state", "validated_by", "category", "project", "client", "client__coordinates", "client__parent")
 
     return list_detail.object_list(request, queryset=qs, paginate_by=settings.TICKETS_PER_PAGE, page=request.GET.get("page", 1),
         template_name="ticket/list.html", extra_context={"form": form})

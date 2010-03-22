@@ -29,7 +29,7 @@ class NewTicketForm(forms.ModelForm):
 
 class SearchTicketForm(df.Form, ModelFormTableMixin):
     title = df.CharField(widget=df.TextInput(attrs={'size':'64'}), required=False)
-    client = df.ModelChoiceField(queryset = Client.objects.all(),
+    client = df.ModelChoiceField(queryset = Client.objects.all().select_related("parent"),
         widget=df.FilteringSelect(attrs={'queryExpr': '${0}*'}), empty_label='', required=False)
     category = df.ModelChoiceField(queryset = Category.objects.all(), 
         widget=df.FilteringSelect(), empty_label='', required=False)
