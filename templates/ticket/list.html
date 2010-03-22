@@ -10,7 +10,7 @@
 
 <fieldset>
   <legend>Filtrage</legend>
-  <form method="POST">
+  <form method="POST">{% csrf_token %}
     <table class="search">
 {{ form.as_column_table }}
     </table>
@@ -19,8 +19,8 @@
   </form>
 </fieldset>
 
-{% if table.rows %}
-{% diggpaginator table.page %}
+{% if object_list %}
+{% diggpaginator page_obj %}
 <table class="resultat">
 <tr>
     {% for column in table.columns %}
@@ -35,7 +35,7 @@
     </th>
     {% endfor %}
 </tr>
-{% for row in table.rows.page %}
+{% for row in object_list %}
     {% get_comment_count for ticket.ticket row.id as comment_count %}
     <tr class="bigrow {% cycle 'row1' 'row2' %}">
         <td style="width: 60px;{{ row.close_style }}{{ row.priority_back_style }}"><a style="{{ row.priority_text_style }}" href="/ticket/modify/{{ row.id }}">{{ row.id }}</a></td>
@@ -52,7 +52,7 @@
 {% endfor %}
 </table>
 
-{% diggpaginator table.page %}
+{% diggpaginator page_obj %}
 
 {% else %}
 <h3>Aucun résultat</h3>

@@ -10,6 +10,7 @@ from django.template.loader import render_to_string
 from django.utils.html import escape
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
+from django.views.generic import list_detail
 
 from claritick.ticket.models import Ticket
 from claritick.ticket.forms import *
@@ -40,7 +41,7 @@ def list_all(request, form=None, filterdict=None, *args, **kw):
         'contact': 'icontains',
         'keywords': 'icontains',
     }
-        
+
     if not form:
         form = SearchTicketForm(request.POST)
     form.is_valid()
@@ -68,9 +69,10 @@ def list_all(request, form=None, filterdict=None, *args, **kw):
             except AttributeError:
                 pass
     
-    table = DefaultTicketTable(data=qs, order_by=request.GET.get('sort', '-id'))
-    table.paginate(DiggPaginator, settings.TICKETS_PER_PAGE, page=request.GET.get("page", 1), orphans=10)
-    return render_to_response('ticket/list.html', {'table': table, 'form': form}, context_instance=RequestContext(request))
+    qs = qs.order_by(request.GET.get('sort', '-id'))
+
+    return list_detail.object_list(request, queryset=qs, paginate_by=settings.TICKETS_PER_PAGE, page=request.GET.get("page", 1),
+        template_name="ticket/list.html", extra_context={"form": form})
 
 @login_required
 def partial_new(request, form=None):

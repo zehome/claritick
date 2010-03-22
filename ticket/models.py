@@ -80,7 +80,9 @@ class Project(models.Model):
     procedure = models.ForeignKey('Procedure', verbose_name=u'Procédure', limit_choices_to={'active': True}, blank = True, null = True)
     
     def __unicode__(self):
-        return u"%s%s" % (self.label, self.procedure and u" (%s)" % (self.procedure,))
+        if self.procedure:
+            return u"%s (%s)" % (self.label, self.procedure)
+        return u"%s" % self.label 
     
     def save(self, client_id=None):
         """ Override save in order to pass "client" from ModelAdmin form """
@@ -141,7 +143,7 @@ class Ticket(models.Model):
     # Info client
     client = ClientField(Client, verbose_name="Client", blank=True, null=True)
     contact = models.CharField("Contact", max_length=128, blank=True)
-    telephone = models.CharField("Téléphone", max_length=10, blank=True)
+    telephone = models.CharField("Téléphone", max_length=20, blank=True)
     
     date_open = models.DateTimeField("Date d'ouverture", auto_now_add=True)
     last_modification = models.DateTimeField("Dernière modification", auto_now_add=True,auto_now=True)

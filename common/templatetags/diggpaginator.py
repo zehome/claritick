@@ -16,7 +16,7 @@ class DiggPaginatorNode(template.Node):
     {% if page.has_previous %}
         <li class="previous"><a href="?page={{ page.previous_page_number }}">«Précédent</a></li>
     {% endif %}
-    {% for num in page.page_range %}
+    {% for num in page.paginator.page_range %}
         {% if not num %}<li><a href="#">...</a></li>
         {% else %}
             {% ifequal page.number num %}<li class="active">{{ num }}</li>
