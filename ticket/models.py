@@ -292,7 +292,7 @@ class Ticket(models.Model):
             if old_ticket is None:
                 r = u"Création du ticket"
                 send_email_reasons = [ r, ]
-                senf_fax_reasons = [ r, ]
+                send_fax_reasons = [ r, ]
             else:
                 if old_ticket.state and old_ticket.state != self.state:
                     r = u"Status modifié: %s => %s" % (old_ticket.state, self.state)
@@ -301,7 +301,7 @@ class Ticket(models.Model):
                 if old_ticket.client and old_ticket.client != self.client:
                     r = u"Erreur d'affectation client"
                     send_email_reasons.append(r)
-                    senf_fax_reasons.append(r)
+                    send_fax_reasons.append(r)
                 if old_ticket.validated_by is None and self.validated_by:
                     send_email_reasons.append(u"Ticket accepté par %s" % (self.validated_by,))
                 if (old_ticket.assigned_to and old_ticket.assigned_to != self.assigned_to):
