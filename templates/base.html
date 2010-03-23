@@ -14,6 +14,11 @@
     {% block blockbots %}<meta name="robots" content="NONE,NOARCHIVE" />{% endblock %}
     <!-- End admin -->
     {% include "dojango/include.html" %}
+
+    <script type="text/javascript" charset="utf-8">
+        var MENU_CAN_HIDE = true;
+    </script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/menu.js"></script>
 {{ form.media }}
   </head>
 {% load i18n %}
@@ -36,7 +41,7 @@
         </td>
       </tr>
     </table>
-    
+
     <div id="gauche">
         {% block claritick_menu %}
         <h2><img src="/media/images/icon-home.png" alt="home" />Général</h2>
@@ -66,7 +71,7 @@
         
         <h2><img src="/media/images/icon-list.png" alt="/" />Tickets</h2>
         <ul class="menu">
-            <li><a href="/ticket/list/all">Tous</a></li>
+            <li><a href="/ticket/list/all?reset=1">Tous</a></li>
             <li><a href="/ticket/list/me">Les miens</a></li>
             <li><a href="/ticket/list/unassigned">Non affectés</a></li>
             <!-- Loop products -->
@@ -81,7 +86,9 @@
         </ul>
         {% endblock %}
     </div>
-    
+    <div id="gauche-spin">
+    </div>
+
     <div id="contenu" class="{% block admin_class %}claritick{% endblock %}">
         <h1 class="title">{% block content_title %}{% if title %}{{ title }}{% endif %}{% endblock content_title %}</h1>
         <div class="image">{% block image %}{% endblock image %}</div>

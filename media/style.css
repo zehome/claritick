@@ -257,8 +257,8 @@ form {
 /* Menu de gauche */
 
 #gauche {
-    position: absolute;
-    left:10px;
+    position: fixed;
+    left:20px;
     width: 170px;
     height:98%;
     background-color:#98b3e9;
@@ -266,10 +266,25 @@ form {
     background-repeat:repeat-x;
     background-position:top;
     color:#013368;
-    border-left:#013368 1px solid;
+    /*border-left:#013368 1px solid;*/
     border-bottom:#013368 1px solid;
     border-right:#013368 1px solid;
     text-align:center;
+    z-index: 1;
+    display: none;
+}
+
+#gauche-spin {
+    position: fixed;
+    cursor: pointer;
+    top: 0px;
+    left: 0px;
+    height: 100%;
+    width: 20px;
+    background-color: #98B3E9;
+    background-image:url('/media/images/deg_menugauche.png');
+    background-repeat:repeat-x;
+    background-position:top;
 }
 
 div#gauche ul.menu {
@@ -336,7 +351,7 @@ div#gauche a:hover {
 /************** div contenu **************/
 #contenu {
     text-align: center;
-    margin-left: 190px;
+    margin-left: 30px;
 }
 
 #contenu p {
