@@ -20,10 +20,12 @@
 </fieldset>
 
 {% if object_list %}
+{% if page_obj.paginator.num_pages > 1 %}
 {% diggpaginator page_obj %}
+{% endif %}
 <table class="resultat">
 <tr>
-    {% for column in table.columns %}
+    {% for column in columns %}
     <th><a href="?sort={{ column.name_toggled }}">{{ column }}</a> 
     {% if column.is_ordered %}
       {% if column.is_ordered_straight %}
@@ -52,7 +54,9 @@
 {% endfor %}
 </table>
 
+{% if page_obj.paginator.num_pages > 1 %}
 {% diggpaginator page_obj %}
+{% endif %}
 
 {% else %}
 <h3>Aucun résultat</h3>
