@@ -4,6 +4,7 @@ from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required, permission_required
 from django.conf import settings
+from django.views.generic import list_detail
 
 from claritick.clariadmin.models import Host
 from claritick.clariadmin.forms import *
@@ -40,9 +41,11 @@ def list_all(request, *args, **kw):
                     qs = qs.filter(**{"%s__%s"%(key,lookup):value})
     except AttributeError:
         pass
-    table = DefaultHostTable(data=qs, order_by=request.GET.get('sort', 'title'))
-    table.paginate(DiggPaginator, settings.TICKETS_PER_PAGE, page=request.GET.get("page", 1), orphans=10)
-    return render_to_response('clariadmin/list.html', {'table': table, 'form': form }, context_instance=RequestContext(request))
+
+    columns = [""]
+    qs = qs.order_by(request.GET.get('sort', '-id'))
+    return list_detail.object_list(request, queryset=qs, paginate_by=settings.TICKETS_PER_PAGE, page=request.GET.get("page", 1),
+        template_name="clariadmin/list.html", extra_context={"form": form, "columns": columns})
 
 @login_required
 @permission_required("clariadmin.can_access_clariadmin")

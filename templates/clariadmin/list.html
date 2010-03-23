@@ -17,11 +17,11 @@
   </form>
 </fieldset>
 
+{% if object_list %}
 <h2>Résultats</h2>
-{% if table.rows %}
 <table class="resultat" dojoType="dijit.Grid">
 <tr>
-    {% for column in table.columns %}
+    {% for column in columns %}
     <th><a href="?sort={{ column.name_toggled }}">{{ column }}</a> 
     {% if column.is_ordered %}
       {% if column.is_ordered_straight %}
@@ -43,7 +43,9 @@
 </table>
 
 {% load diggpaginator %}
-{% diggpaginator table.page %}
+{% if page_obj.paginator.num_pages > 1 %}
+{% diggpaginator page_obj %}
+{% endif %}
 
 {% else %}
 <h3>Aucun résultat</h3>

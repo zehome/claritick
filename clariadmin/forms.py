@@ -9,8 +9,8 @@ class HostForm(df.ModelForm):
     class Meta:
         model = Host
 
-class SearchHostForm(df.ModelForm, ModelFormTableMixin):
-    site = df.ModelChoiceField(queryset = Client.objects.all(),
+class SearchHostForm(df.Form, ModelFormTableMixin):
+    site = df.ModelChoiceField(queryset = Client.objects.all().select_related("parent"),
         widget=df.FilteringSelect(), empty_label='', required=False)
     type = df.ModelChoiceField(queryset = HostType.objects.all(),
         widget=df.FilteringSelect(), empty_label='', required=False)
@@ -20,5 +20,3 @@ class SearchHostForm(df.ModelForm, ModelFormTableMixin):
     
     class Meta:
         fields = ('site', 'type', 'hostname', 'os', 'automate', 'ip')
-        model = Host
-    
