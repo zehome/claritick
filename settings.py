@@ -81,6 +81,7 @@ TEMPLATE_CONTEXT_PROCESSOR = ("django.core.context_processors.auth",
     "django.core.context_processors.media",
     "django.contrib.messages.context_processors.messages",
     "dojango.context_processors.config",
+    'django.core.context_processors.csrf',
 )
 
 
