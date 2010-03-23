@@ -115,7 +115,15 @@ class Procedure(models.Model):
     def __unicode__(self):
         return u"%s" % (self.label,)
 
-class TicketManager(models.Manager):
+class BaseTicketManager(models.Manager):
+    def get_query_set(self):
+        qs = super(BaseTicketManager, self).get_query_set().\
+            select_related("opened_by", "assigned_to", 
+            "priority", "state", "validated_by", "category", "project", 
+            "client", "client__coordinates", "client__parent")
+        return qs
+
+class TicketManager(BaseTicketManager):
     def get_query_set(self):
         qs = super(TicketManager, self).get_query_set()
         qs = qs.filter(text__isnull=False)
@@ -127,7 +135,7 @@ class OpenTicketManager(TicketManager):
         qs = super(OpenTicketManager, self).get_query_set()
         qs = qs.exclude(state__id__in = (0,4))
         return qs
-    
+
 class Ticket(models.Model):
     class Meta:
         verbose_name = "Ticket"
@@ -136,7 +144,7 @@ class Ticket(models.Model):
             ("can_view_report", "Consulter les rapports"),
         )
     
-    objects = models.Manager()
+    objects = BaseTicketManager()
     tickets = TicketManager()
     open_tickets = OpenTicketManager()
 
@@ -173,6 +181,12 @@ class Ticket(models.Model):
     calendar_title = models.CharField("Titre évenement", max_length=64, blank=True, null=True)
     
     template = models.BooleanField("Modèle", default=False)
+
+    # TODO nombre de comments
+    nb_comments = models.IntegerField(default=0, editable=False)
+
+    # Par defaut à false
+    update_google = False
     
     # Used for "reporting" tool
     @property
@@ -236,6 +250,7 @@ class Ticket(models.Model):
         
         ticket = comment.content_object
         ticket.last_modification=datetime.datetime.now()
+        ticket.nb_comments = Comment.objects.filter(content_type__model="ticket", object_pk=ticket.pk).count()
         ticket.save()
         
         # Send email

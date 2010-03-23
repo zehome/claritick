@@ -10,7 +10,7 @@
 {{ form.errors }}
 
 <form action="/ticket/modify/{{ ticket.id }}" method="POST">
-
+{% csrf_token %}
 <fieldset class="inline">
   <legend>Général</legend>
   <div><label for="id_category">Categorie</label> {{ form.category }}</div>

@@ -16,7 +16,7 @@ class PartialNewTicketForm(forms.ModelForm):
 class NewTicketForm(forms.ModelForm):
     title = forms.CharField(widget=forms.TextInput(attrs={'size': '80'}))
     text = df.CharField(widget=df.Textarea(attrs={'cols':'90', 'rows': '20'}))
-    client = df.ModelChoiceField(queryset = Client.objects.all(),
+    client = df.ModelChoiceField(queryset = Client.objects.all().select_related("parent"),
          widget=df.FilteringSelect(attrs={'queryExpr': '${0}*'}), empty_label='', required=False)
     keywords = forms.CharField(widget=forms.TextInput(attrs={'size': '80'}), required=False)
 

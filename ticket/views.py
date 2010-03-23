@@ -18,16 +18,28 @@ from claritick.ticket.tables import DefaultTicketTable
 
 from claritick.common.diggpaginator import DiggPaginator
 
+def get_filters(request):
+    if request.method == "POST":
+        return request.POST
+    return request.session["list_filters"]
+
+def set_filters(request, datas=None):
+    request.session["list_filters"] = request.POST.copy()
+    if datas:
+        request.session["list_filters"].update(datas)
+
 @login_required
 def list_me(request, *args, **kw):
     form = None
     if not request.POST.get("assigned_to", None):
-        form = SearchTicketForm({'assigned_to': request.user.id}, request.POST)
+        form = SearchTicketForm({'assigned_to': request.user.id}, get_filters(request))
+        set_filters(request, form.data)
     return list_all(request, form, *args, **kw)
 
 @login_required
 def list_unassigned(request, *args, **kw):
     filterdict = {'assigned_to__isnull': True}
+    set_filters(request, filterdict)
     return list_all(request, None, filterdict = filterdict, *args, **kw)
 
 @login_required
@@ -42,8 +54,14 @@ def list_all(request, form=None, filterdict=None, *args, **kw):
         'keywords': 'icontains',
     }
 
+    if request.GET.get("reset", False):
+        request.session["list_filters"] = {}
+
     if not form:
-        form = SearchTicketForm(request.POST)
+        if request.method == "POST":
+            set_filters(request, filterdict)
+        form = SearchTicketForm(get_filters(request))
+
     form.is_valid()
 
     if not form.cleaned_data.get("state"):
@@ -69,11 +87,11 @@ def list_all(request, form=None, filterdict=None, *args, **kw):
             except AttributeError:
                 pass
     
-    qs = qs.order_by(request.GET.get('sort', '-id')).select_related("opened_by", "assigned_to", 
-        "priority", "state", "validated_by", "category", "project", "client", "client__coordinates", "client__parent")
-
+    qs = qs.order_by(request.GET.get('sort', '-id'))
+    
+    columns = ["Priority", "Client", "Category", "Project", "Title", "Comments", "Contact", "Last modification", "Opened by", "Assigned to"]
     return list_detail.object_list(request, queryset=qs, paginate_by=settings.TICKETS_PER_PAGE, page=request.GET.get("page", 1),
-        template_name="ticket/list.html", extra_context={"form": form})
+        template_name="ticket/list.html", extra_context={"form": form, "columns": columns})
 
 @login_required
 def partial_new(request, form=None):
