@@ -258,6 +258,7 @@ form {
 
 #gauche {
     position: fixed;
+    top: 0px;
     left:20px;
     width: 170px;
     height:98%;
