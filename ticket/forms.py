@@ -16,7 +16,7 @@ class PartialNewTicketForm(forms.ModelForm):
 class NewTicketForm(forms.ModelForm):
     title = forms.CharField(widget=forms.TextInput(attrs={'size': '80'}))
     text = df.CharField(widget=df.Textarea(attrs={'cols':'90', 'rows': '20'}))
-    client = df.ModelChoiceField(queryset = Client.objects.all().select_related("parent"),
+    client = df.ModelChoiceField(queryset = Client.objects.all(),
          widget=df.FilteringSelect(attrs={'queryExpr': '${0}*'}), empty_label='', required=False)
     keywords = forms.CharField(widget=forms.TextInput(attrs={'size': '80'}), required=False)
 
@@ -29,7 +29,7 @@ class NewTicketForm(forms.ModelForm):
 
 class SearchTicketForm(df.Form, ModelFormTableMixin):
     title = df.CharField(widget=df.TextInput(attrs={'size':'64'}), required=False)
-    client = df.ModelChoiceField(queryset = Client.objects.all().select_related("parent"),
+    client = df.ModelChoiceField(queryset = Client.objects.all(),
         widget=df.FilteringSelect(attrs={'queryExpr': '${0}*'}), empty_label='', required=False)
     category = df.ModelChoiceField(queryset = Category.objects.all(), 
         widget=df.FilteringSelect(), empty_label='', required=False)

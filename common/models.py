@@ -52,6 +52,12 @@ class ClientField(models.ForeignKey):
         defaults=kwargs
         return super(ClientField, self).formfield(**defaults)
 
+class ClinetManager(models.Manager):
+    
+    def get_query_set(self):
+        qs = super(ClinetManager, self).get_query_set().select_related("parent")
+        return qs
+
 # Models
 class Client(models.Model):
     class Meta:
@@ -63,7 +69,9 @@ class Client(models.Model):
     coordinates = models.ForeignKey(Coordinate, verbose_name=u'Coordonnées', blank=True, null=True)
     emails = models.CharField("Emails séparés par des virgule", max_length=2048, blank=True, null=True)
     notifications_by_fax = models.BooleanField(u"Transmission des notifications par fax", default=False)
-    
+
+    objects = ClinetManager()
+
     def __unicode__(self):
         if self.parent:
             return u"%s - %s" % (self.label, self.parent)
