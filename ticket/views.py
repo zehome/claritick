@@ -8,7 +8,7 @@ from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.template import RequestContext
 from django.template.loader import render_to_string
 from django.utils.html import escape
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.conf import settings
 from django.views.generic import list_detail
 
@@ -93,6 +93,7 @@ def list_all(request, form=None, filterdict=None, *args, **kw):
     return list_detail.object_list(request, queryset=qs, paginate_by=settings.TICKETS_PER_PAGE, page=request.GET.get("page", 1),
         template_name="ticket/list.html", extra_context={"form": form, "columns": columns})
 
+@permission_required("ticket.add_ticket")
 @login_required
 def partial_new(request, form=None):
     """
@@ -102,6 +103,7 @@ def partial_new(request, form=None):
         form = PartialNewTicketForm()
     return render_to_response('ticket/partial_new.html', {'form': form }, context_instance=RequestContext(request))
 
+@permission_required("ticket.add_ticket")
 @login_required
 def new(request):
     """
@@ -119,9 +121,10 @@ def new(request):
     ticket.save()
     return redirect("/ticket/modify/%d" % (ticket.id,) )
 
+@permission_required("ticket.change_ticket")
 @login_required
 def modify(request, ticket_id):
-    data = request.POST.copy()
+    # TODO verifier que l'utilisateur a les droits de modifier le ticket_id
     
     ticket = get_object_or_404(Ticket, pk=ticket_id)
     if not ticket.text:
@@ -130,13 +133,11 @@ def modify(request, ticket_id):
         ticket.priority = Priority.objects.get(pk=2)
         ticket.validated_by = request.user
     
-    if request.POST:
+    if request.method == "POST":
         form = NewTicketForm(request.POST, instance=ticket)
-    else:
-        form = NewTicketForm(instance=ticket)
-    
-    if data:
         if form.is_valid():
             form.save()
+    else:
+        form = NewTicketForm(instance=ticket)
 
     return render_to_response("ticket/modify.html", {"form": form, "ticket": ticket}, context_instance=RequestContext(request))

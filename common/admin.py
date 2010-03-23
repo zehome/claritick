@@ -9,7 +9,10 @@ class CoordinateAdmin(admin.ModelAdmin):
         "telephone", "fax", "gsm",
         "email", "more")
 
-admin.site.register(Client)
+class ClientAdmin(admin.ModelAdmin):
+    search_fields = ["label", "parent__label"]
+
+admin.site.register(Client, ClientAdmin)
 admin.site.register(UserProfile)
 admin.site.register(GoogleAccount)
 admin.site.register(Coordinate, CoordinateAdmin)

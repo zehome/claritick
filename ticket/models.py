@@ -319,19 +319,20 @@ class Ticket(models.Model):
     
     def send_fax(self, reasons=[u'Demande spécifique']):
         """ Send a fax for this particuliar ticket """
-        faxes = set(self.client.get_faxes())
-        
-        if self.client and self.client.notifications_by_fax:
-            print "send_fax to %s reasons: %s" % (faxes, reasons,)
-        else:
-            print "no send_fax: le client ne veut pas être faxé"
+        if self.client is not None:
+            faxes = set(self.client.get_faxes())
+            
+            if self.client and self.client.notifications_by_fax:
+                print "send_fax to %s reasons: %s" % (faxes, reasons,)
+            else:
+                print "no send_fax: le client ne veut pas être faxé"
     
     def send_email(self, reasons=[u"Demande spécifique",]):
         """ Send an email for this particuliar ticket """
         dests = set()
         if self.client:
-            dests.union(set(self.client.get_emails()))
-        
+            dests = dests.union(set(self.client.get_emails()))
+
         # La personne qui a ouvert
         if self.opened_by.email:
             dests.add(self.opened_by.email)
@@ -344,7 +345,7 @@ class Ticket(models.Model):
         # LC: TODO watchers
         
         # Ceux qui ont participé (comments)
-        dests.union( set([ c.user.email for c in Comment.objects.for_model(self) if c.user and c.user.email ]))
+        dests = dests.union( set([ c.user.email for c in Comment.objects.for_model(self) if c.user and c.user.email ]))
         
         print "Envoi d'email à %s. Raisons: %s" % (dests, reasons)
         if not dests:
