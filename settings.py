@@ -75,15 +75,15 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
 )
 
-TEMPLATE_CONTEXT_PROCESSOR = ("django.core.context_processors.auth",
+TEMPLATE_CONTEXT_PROCESSORS = ("django.core.context_processors.auth",
     "django.core.context_processors.debug",
     "django.core.context_processors.i18n",
     "django.core.context_processors.media",
     "django.contrib.messages.context_processors.messages",
     "dojango.context_processors.config",
     'django.core.context_processors.csrf',
+    'ticket.context_processors.ticket_views',
 )
-
 
 ROOT_URLCONF = 'claritick.urls'
 

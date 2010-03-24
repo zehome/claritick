@@ -74,6 +74,11 @@
             <li><a href="/ticket/list/all?reset=1">Tous</a></li>
             <li><a href="/ticket/list/me">Les miens</a></li>
             <li><a href="/ticket/list/unassigned">Non affectés</a></li>
+            {% if ticket_views %}
+            {% for view in ticket_views %}
+            <li><a href="/ticket/list/{{ view.pk }}/">{{ view.name }}</a></li>
+            {% endfor %}
+            {% endif %}
             <!-- Loop products -->
             <!-- /Loop poducts -->
         </ul>

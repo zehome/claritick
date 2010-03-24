@@ -2,7 +2,20 @@
 
 from django.contrib.auth.models import User, Group
 from django.db import models
+from django.utils import simplejson
 from claritick.common.widgets import ColorPickerWidget
+
+class JsonField(models.TextField):
+
+    __metaclass__ = models.SubfieldBase
+
+    def to_python(self, value):
+        if isinstance(value, (str, unicode)) and value != "":
+            return simplejson.loads(value)
+        return value
+
+    def get_prep_value(self, value):
+        return simplejson.dumps(value)
 
 class TelephoneField(models.CharField):
     def __init__(self, *args, **kw):

@@ -11,8 +11,9 @@ from django.utils.html import escape
 from django.contrib.auth.decorators import login_required, permission_required
 from django.conf import settings
 from django.views.generic import list_detail
+from django.utils import simplejson
 
-from claritick.ticket.models import Ticket
+from claritick.ticket.models import Ticket, TicketUserFilter
 from claritick.ticket.forms import *
 from claritick.ticket.tables import DefaultTicketTable
 
@@ -44,7 +45,7 @@ def list_unassigned(request, *args, **kw):
     return list_all(request, None, filterdict = filterdict, *args, **kw)
 
 @login_required
-def list_all(request, form=None, filterdict=None, *args, **kw):
+def list_all(request, form=None, filterdict=None, view_id=None, *args, **kw):
     """
     
     Liste tous les tickets sans aucun filtre
@@ -55,8 +56,12 @@ def list_all(request, form=None, filterdict=None, *args, **kw):
         'keywords': 'icontains',
     }
 
-    if request.GET.get("reset", False):
+    if request.GET.get("reset", False) or view_id is not None:
         request.session["list_filters"] = {}
+
+    if view_id is not None:
+        view = TicketUserFilter.objects.get(pk=view_id)
+        set_filters(request, view.filters)
 
     if not form:
         if request.method == "POST":
@@ -100,9 +105,20 @@ def list_all(request, form=None, filterdict=None, *args, **kw):
     if request.user.has_perm("can_commit_full"):
         template_name = ""
     
+    # On va enregistrer les criteres actuels en tant que nouvelle liste
+    saved_list_form = SavedListForm(request.POST, user=request.user)
+    if request.method == "POST" and request.POST.get("save_new_list", False) and saved_list_form.is_valid():
+        tuf, created = TicketUserFilter.objects.get_or_create(user=request.user, name=saved_list_form.cleaned_data["filter_list"])
+        tuf.filters = form.data
+        tuf.save()
+
     columns = ["Priority", "Client", "Category", "Project", "Title", "Comments", "Contact", "Last modification", "Opened by", "Assigned to"]
     return list_detail.object_list(request, queryset=qs,  paginate_by=settings.TICKETS_PER_PAGE, page=request.GET.get("page", 1),
-        template_name="ticket/list.html", extra_context={"form": form, "columns": columns})
+        template_name="ticket/list.html", extra_context={
+            "form": form, 
+            "columns": columns, 
+            "saved_list_form": saved_list_form
+        })
 
 @permission_required("ticket.add_ticket")
 @login_required

@@ -71,3 +71,13 @@ class SearchTicketForm(df.Form, ModelFormTableMixin):
             filter_form_for_user(self, kwargs["user"])
             del kwargs["user"] # user= ne doit pas arriver a l'init parent ...
         super(SearchTicketForm, self).__init__(*args, **kwargs)
+
+class SavedListForm(df.Form):
+    filter_list = df.CharField()
+
+    def __init__(self, *args, **kwargs):
+        if "user" in kwargs:
+            self.base_fields["filter_list"].choices = [(x.pk, x.name) for x in TicketUserFilter.objects.filter(user=kwargs["user"])]
+            self.base_fields["filter_list"].choices.insert(0, ("", ""))
+            del kwargs["user"]
+        super(SavedListForm, self).__init__(*args, **kwargs)

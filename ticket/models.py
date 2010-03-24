@@ -15,7 +15,7 @@ from django.template.loader import get_template
 from django.template import Context, Template
 
 # Clarisys fields
-from claritick.common.models import ColorField, Client, ClientField
+from claritick.common.models import ColorField, Client, ClientField, JsonField
 from claritick.common.widgets import ColorPickerWidget 
 from django.db.models import AutoField
 
@@ -380,5 +380,10 @@ class TicketCommentModerator(CommentModerator):
         if user and user.is_staff:
             return False
         return True
-    
+ 
+class TicketUserFilter(models.Model):
+    user = models.ForeignKey(User)
+    name = models.TextField()
+    filters = JsonField()
+
 #moderator.register(Ticket, TicketCommentModerator)
