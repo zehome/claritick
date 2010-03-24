@@ -63,7 +63,6 @@ class ClientManager(models.Manager):
             Effectue un WITH RECURSIVE Postgres sur field à partir de l'objet object_pk.
         """
         from django.db import connection
-        cursor = connection.cursor()
         qn = connection.ops.quote_name
 
         # le nom de la table
@@ -94,7 +93,7 @@ class ClientManager(models.Manager):
             "relation_field": qn(db_field),
             "value": object_pk,
         }
-        return self.extra(where=["%s IN (%s)" % (qn(pk), query)])
+        return self.extra(where=["%s.%s IN (%s)" % (qn(db_table), qn(pk), query)])
 
 # Models
 class Client(models.Model):
@@ -153,3 +152,10 @@ class UserProfile(models.Model):
         if self.client:
             ustr += u" (%s)" % (self.client,)
         return ustr
+
+    def get_clients(self):
+        if self.user.is_superuser:
+            return Client.objects.all()
+        if self.client:
+            return Client.objects.get_childs("parent", self.client.pk)
+        return Client.objects.none()

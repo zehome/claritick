@@ -142,6 +142,8 @@ class Ticket(models.Model):
         ordering = ['-last_modification']
         permissions = (
             ("can_view_report", u"Consulter les rapports"),
+            ("add_ticket_full", u"Peut creer des tickets complet"),
+            ("can_resolve", u"Peut resoudre des tickets"),
         )
     
     objects = BaseTicketManager()

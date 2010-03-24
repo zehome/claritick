@@ -2,7 +2,7 @@
 
 from django import http
 from django.conf import settings
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.db import models
 from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.template import RequestContext
@@ -33,7 +33,7 @@ def set_filters(request, datas=None):
 def list_me(request, *args, **kw):
     form = None
     if not request.POST.get("assigned_to", None):
-        form = SearchTicketForm({'assigned_to': request.user.id}, get_filters(request))
+        form = SearchTicketForm({'assigned_to': request.user.id}, get_filters(request), user=request.user)
         set_filters(request, form.data)
     return list_all(request, form, *args, **kw)
 
@@ -61,7 +61,7 @@ def list_all(request, form=None, filterdict=None, *args, **kw):
     if not form:
         if request.method == "POST":
             set_filters(request, filterdict)
-        form = SearchTicketForm(get_filters(request))
+        form = SearchTicketForm(get_filters(request), user=request.user)
 
     form.is_valid()
 
@@ -88,17 +88,20 @@ def list_all(request, form=None, filterdict=None, *args, **kw):
             except AttributeError:
                 pass
 
+    # On va filtrer la liste des tickets en fonction de la relation user => client
     try:
-        user_client = request.user.get_profile().client
-        if user_client is not None:
-            qs = qs.filter(client__in=Client.objects.get_childs("parent", user_client.pk))
+        client_list = request.user.get_profile().get_clients()
+        qs = qs.filter(client__pk__in=[x.id for x in client_list])
     except UserProfile.DoesNotExist:
-        pass # TODO pas de profile, on fait quoi ?
+        pass # TODO pas de profile, on affiche tous les tickets ? Aucuns ?
 
     qs = qs.order_by(request.GET.get('sort', '-id'))
+
+    if request.user.has_perm("can_commit_full"):
+        template_name = ""
     
     columns = ["Priority", "Client", "Category", "Project", "Title", "Comments", "Contact", "Last modification", "Opened by", "Assigned to"]
-    return list_detail.object_list(request, queryset=qs, paginate_by=settings.TICKETS_PER_PAGE, page=request.GET.get("page", 1),
+    return list_detail.object_list(request, queryset=qs,  paginate_by=settings.TICKETS_PER_PAGE, page=request.GET.get("page", 1),
         template_name="ticket/list.html", extra_context={"form": form, "columns": columns})
 
 @permission_required("ticket.add_ticket")
@@ -132,9 +135,15 @@ def new(request):
 @permission_required("ticket.change_ticket")
 @login_required
 def modify(request, ticket_id):
-    # TODO verifier que l'utilisateur a les droits de modifier le ticket_id
-    
     ticket = get_object_or_404(Ticket, pk=ticket_id)
+
+    # On verifie que l'utilisateur a les droits de modifier le ticket_id
+    try:
+        if ticket.client not in request.user.get_profile().get_clients():
+            raise PermissionDenied()
+    except UserProfile.DoesNotExist:
+        # TODO que fait-on ?
+
     if not ticket.text:
         ticket.title = None
         ticket.state = State.objects.get(pk=1)
@@ -142,10 +151,15 @@ def modify(request, ticket_id):
         ticket.validated_by = request.user
     
     if request.method == "POST":
-        form = NewTicketForm(request.POST, instance=ticket)
+        form = NewTicketForm(request.POST, instance=ticket, user=request.user)
         if form.is_valid():
             form.save()
     else:
-        form = NewTicketForm(instance=ticket)
+        form = NewTicketForm(instance=ticket, user=request.user)
 
-    return render_to_response("ticket/modify.html", {"form": form, "ticket": ticket}, context_instance=RequestContext(request))
+    if request.user.has_perm("ticket.add_ticket_full"):
+        template_name = "ticket/modify.html"
+    else:
+        template_name = "ticket/modify_small.html"
+
+    return render_to_response(template_name, {"form": form, "ticket": ticket}, context_instance=RequestContext(request))
