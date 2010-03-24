@@ -142,7 +142,7 @@ def modify(request, ticket_id):
         if ticket.client not in request.user.get_profile().get_clients():
             raise PermissionDenied()
     except UserProfile.DoesNotExist:
-        # TODO que fait-on ?
+        pass # TODO que fait-on ?
 
     if not ticket.text:
         ticket.title = None
