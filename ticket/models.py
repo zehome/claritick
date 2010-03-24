@@ -141,7 +141,7 @@ class Ticket(models.Model):
         verbose_name = "Ticket"
         ordering = ['-last_modification']
         permissions = (
-            ("can_view_report", "Consulter les rapports"),
+            ("can_view_report", u"Consulter les rapports"),
         )
     
     objects = BaseTicketManager()

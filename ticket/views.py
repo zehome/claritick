@@ -17,6 +17,7 @@ from claritick.ticket.forms import *
 from claritick.ticket.tables import DefaultTicketTable
 
 from claritick.common.diggpaginator import DiggPaginator
+from claritick.common.models import Client, UserProfile
 
 def get_filters(request):
     if request.method == "POST":
@@ -68,11 +69,11 @@ def list_all(request, form=None, filterdict=None, *args, **kw):
         qs = Ticket.open_tickets.all()
     else:
         qs = Ticket.tickets.all()
-    
+
     # unassigned
     if filterdict:
         qs = qs.filter(**filterdict)
-    
+
     # Form cleaned_data ?
     if form.cleaned_data:
         cd = form.cleaned_data
@@ -86,7 +87,14 @@ def list_all(request, form=None, filterdict=None, *args, **kw):
                     qs = qs.filter(**{"%s__%s"%(key,lookup):value})
             except AttributeError:
                 pass
-    
+
+    try:
+        user_client = request.user.get_profile().client
+        if user_client is not None:
+            qs = qs.filter(client__in=Client.objects.get_childs("parent", user_client.pk))
+    except UserProfile.DoesNotExist:
+        pass # TODO pas de profile, on fait quoi ?
+
     qs = qs.order_by(request.GET.get('sort', '-id'))
     
     columns = ["Priority", "Client", "Category", "Project", "Title", "Comments", "Contact", "Last modification", "Opened by", "Assigned to"]
