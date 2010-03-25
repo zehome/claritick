@@ -74,7 +74,7 @@ class SearchTicketForm(df.Form, ModelFormTableMixin):
         super(SearchTicketForm, self).__init__(*args, **kwargs)
 
 class SavedListForm(df.Form):
-    filter_list = forms.CharField(widget=df.TextInput())
+    view_name = forms.CharField(widget=df.TextInput())
 
 class TicketActionsForm(df.Form):
     actions     = df.ChoiceField(widget=df.FilteringSelect(), required=False)

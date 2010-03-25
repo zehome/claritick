@@ -51,22 +51,24 @@ def list_unassigned(request, *args, **kw):
 def list_view(request, view_id=None):
     if view_id:
         view = get_object_or_404(TicketView, pk=view_id, user=request.user)
-        set_filters(request, view.filters)
+        data = view.filters
+        data.update({"view_name": view.name})
+        set_filters(request, data)
 
     form = SearchTicketForm(get_filters(request), user=request.user)
 
     # On va enregistrer les criteres actuels en tant que nouvelle liste
-    saved_list_form = SavedListForm(request.POST)
+    saved_list_form = SavedListForm(get_filters(request))
     if request.method == "POST"  and saved_list_form.is_valid():
         if view_id:
             TicketView.objects.filter(pk=view_id).update(
-                name=saved_list_form.cleaned_data["filter_list"],
+                name=saved_list_form.cleaned_data["view_name"],
                 filters=form.data
             )
         else:
             t = TicketView.objects.create(
                 user=request.user,
-                name=saved_list_form.cleaned_data["filter_list"],
+                name=saved_list_form.cleaned_data["view_name"],
                 filters=form.data
             )        
         return redirect("ticket_list_view", view_id=view_id or t.pk)
