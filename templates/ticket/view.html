@@ -1,0 +1,15 @@
+{% extends "ticket/list.html" %}
+
+{% block list_filters %}
+<fieldset class="form">
+  <legend>Filtrage</legend>
+    <table class="search">
+        {{ form.as_column_table }}
+        <tr>
+            <th><label for="">Nom de la vue</label></th>
+            <td>{{ saved_list_form.filter_list }}</td>
+        </tr>
+    </table>
+    <button type="submit" dojoType="dijit.form.Button">Enregistrer</button> 
+</fieldset>
+{% endblock %}

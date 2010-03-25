@@ -33,7 +33,6 @@ class NewTicketForm(forms.ModelForm):
     client = df.ModelChoiceField(queryset = Client.objects.all(),
          widget=df.FilteringSelect(attrs={'queryExpr': '${0}*'}), empty_label='', required=False)
     keywords = forms.CharField(widget=forms.TextInput(attrs={'size': '80'}), required=False)
-
     calendar_start_time = df.DateTimeField(required=False)
     calendar_end_time = df.DateTimeField(required=False)
     
@@ -48,16 +47,16 @@ class NewTicketForm(forms.ModelForm):
         super(NewTicketForm, self).__init__(*args, **kwargs)
 
 class SearchTicketForm(df.Form, ModelFormTableMixin):
-    title = df.CharField(widget=df.TextInput(attrs={'size':'64'}), required=False)
-    client = df.ModelChoiceField(queryset = Client.objects.all(),
+    title       = df.CharField(widget=df.TextInput(attrs={'size':'64'}), required=False)
+    client      = df.ModelChoiceField(queryset = Client.objects.all(),
         widget=df.FilteringSelect(attrs={'queryExpr': '${0}*'}), empty_label='', required=False)
-    category = df.ModelChoiceField(queryset = Category.objects.all(), 
+    category    = df.ModelChoiceField(queryset = Category.objects.all(), 
         widget=df.FilteringSelect(), empty_label='', required=False)
-    project = df.ModelChoiceField(queryset = Project.objects.all(), 
+    project     = df.ModelChoiceField(queryset = Project.objects.all(), 
         widget=df.FilteringSelect(), empty_label='', required=False)
-    state = df.ModelChoiceField(queryset = State.objects.all(), 
+    state       = df.ModelChoiceField(queryset = State.objects.all(), 
         widget=df.FilteringSelect(), empty_label='', required=False)
-    priority = df.ModelChoiceField(queryset = Priority.objects.all(), 
+    priority    = df.ModelChoiceField(queryset = Priority.objects.all(), 
         widget=df.FilteringSelect(), empty_label='', required=False)
     assigned_to = df.ModelChoiceField(queryset = User.objects.all(), 
         widget=df.FilteringSelect(), empty_label='', required=False)
@@ -75,28 +74,41 @@ class SearchTicketForm(df.Form, ModelFormTableMixin):
         super(SearchTicketForm, self).__init__(*args, **kwargs)
 
 class SavedListForm(df.Form):
-    filter_list = forms.CharField()
-
-    def __init__(self, *args, **kwargs):
-        if "user" in kwargs:
-            self.base_fields["filter_list"].choices = [(x.pk, x.name) for x in TicketView.objects.filter(user=kwargs["user"])]
-            self.base_fields["filter_list"].choices.insert(0, ("", ""))
-            del kwargs["user"]
-        super(SavedListForm, self).__init__(*args, **kwargs)
+    filter_list = forms.CharField(widget=df.TextInput())
 
 class TicketActionsForm(df.Form):
-    actions = df.ChoiceField(widget=df.FilteringSelect(), required=False)
+    actions     = df.ChoiceField(widget=df.FilteringSelect(), required=False)
+    assigned_to = df.ModelChoiceField(queryset=User.objects.all(), 
+        widget=df.FilteringSelect(), empty_label='', required=False)
+    category    = df.ModelChoiceField(queryset = Category.objects.all(), 
+        widget=df.FilteringSelect(), empty_label='', required=False)
+    project     = df.ModelChoiceField(queryset = Project.objects.all(), 
+        widget=df.FilteringSelect(), empty_label='', required=False)
+    state       = df.ModelChoiceField(queryset = State.objects.all(), 
+        widget=df.FilteringSelect(), empty_label='', required=False)
+    priority    = df.ModelChoiceField(queryset = Priority.objects.all(), 
+        widget=df.FilteringSelect(), empty_label='', required=False)
+
     model = Ticket.objects
 
     def __init__(self, *args, **kwargs):
-        self.queryset = self.model.filter(id__in=args[0].getlist("ticket_checked"))
+        try:
+            self.queryset = self.model.filter(id__in=args[0].getlist("ticket_checked"))
+        except KeyError:
+            self.queryset = self.model.none()
+
         self.base_fields["actions"].choices = self.get_actions()
         self.base_fields["actions"].choices.insert(0, ("", ""))
         super(TicketActionsForm, self).__init__(*args, **kwargs)
 
     def get_actions(self):
         return [
-            ("close_tickets", u"Fermer les tickets sélectionnés"),
+            ("action_close_tickets", u"Fermer les tickets sélectionnés"),
+            ("action_change_assigned_to", u"Modifier l'assignation"),
+            ("action_change_category", u"Modifier la catégorie"),
+            ("action_change_project", u"Modifier le projet"),
+            ("action_change_state", u"Modifier l'état"),
+            ("action_change_priority", u"Modifier la priorité"),
         ]
 
     def process_actions(self):
@@ -105,8 +117,24 @@ class TicketActionsForm(df.Form):
             try:
                 attr = getattr(self, action)
                 attr(self.queryset)
+                return True
             except AttributeError:
                 return
 
-    def close_tickets(self, qs):
+    def action_close_tickets(self, qs):
         qs.update(state=settings.TICKET_STATE_CLOSED)
+
+    def action_change_assigned_to(self, qs):
+        qs.update(assigned_to=self.cleaned_data["assigned_to"])
+
+    def action_change_category(self, qs):
+        qs.update(category=self.cleaned_data["category"])
+
+    def action_change_project(self, qs):
+        qs.update(project=self.cleaned_data["project"])
+
+    def action_change_state(self, qs):
+        qs.update(state=self.cleaned_data["state"])
+
+    def action_change_priority(self, qs):
+        qs.update(priority=self.cleaned_data["priority"])

@@ -153,7 +153,6 @@ class GoogleAccount(models.Model):
     
     def __unicode__(self):
         return u"Compte google %s" % (self.login,)
-    
 
 class UserProfile(models.Model):
     user = models.ForeignKey(User, verbose_name="Utilisateur", unique=True)

@@ -1,0 +1,43 @@
+Liste des tickets / Droits utilisateurs
+=======================================
+
+* Fermer un ticket
+    * ajout commentaire de fermeture
+
+* comitter reduit
+    * enlever
+        * opened_by
+        * assigned_to
+        * project
+    * actions
+        * uniquement "Fermer un ticket"
+    * template avec filtres uniquempent : client / etat / texte
+
+Ajout / Modification d'un ticket
+================================
+
+* comitter reduit
+    * enlever
+        * categorie
+        * project
+        * mot clef
+        * planification
+    * priorité normale par défaut
+    * etat new par defaut
+
+General
+=======
+
+* creer une case "aller au ticket"
+* opened_by et assinged_to
+    * ajouter le nom du client
+
+* clients
+    * ajout des vues pour modifier les coordonnées
+
+Tickets / Vues
+==============
+
+* Ajouter nom court / description
+* pavé de filtre experts
+* checkbox "supprimer la vue"

@@ -11,8 +11,7 @@
 <form action="/ticket/new/" method="POST">
 {% csrf_token %}
 {{ form }}
-<hr />
-<span class="bouton"><img class="bouton_img" src="/media/images/oxygen/ok.png" /><input type="submit" value="Créer" /></span>
+<button type="submit" dojoType="dijit.form.Button">Créer</button>
 </form>
 
 {% endblock %}

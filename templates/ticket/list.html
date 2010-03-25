@@ -8,6 +8,13 @@
 
 {% block extrajs %}
 <script type="text/javascript" charset="utf-8">
+
+    function hide_actions() {
+        dojo.query("#widget_id_action-assigned_to, #widget_id_action-category, #widget_id_action-project, #widget_id_action-state, #widget_id_action-priority").forEach(function(tag) {
+            dojo.style(tag, "display", "none");
+        });
+    }
+
     dojo.addOnLoad(function() {
         dojo.connect(dojo.byId("select_all"), "onclick", function(evt) {
             if (dojo.byId("select_all").checked)
@@ -19,22 +26,64 @@
                 tag.checked = val;
             });
         });
+
+        hide_actions();
+
+        dojo.connect(dijit.byId("id_action-actions"), "onChange", function(evt) {
+            var widget_name = "";
+            switch (dijit.byId("id_action-actions").attr("value")) {
+                case "action_change_assigned_to":
+                    widget_name = "widget_id_action-assigned_to";
+                    break;
+                case "action_change_category":
+                    widget_name = "widget_id_action-category";
+                    break;
+                case "action_change_project":
+                    widget_name = "widget_id_action-project";
+                    break;
+                case "action_change_state":
+                    widget_name = "widget_id_action-state";
+                    break;
+                case "action_change_priority":
+                    widget_name = "widget_id_action-priority";
+                    break;
+                default:
+                    hide_actions();
+                    return;
+            }
+            hide_actions();
+            dojo.style(widget_name, "display", "inline-block");
+        });
     });
 </script>
 {% endblock %}
 
 {% block content %}
 
-<form method="POST" action="?reset=1">{% csrf_token %}
+<form method="POST" action="" id="list_form">{% csrf_token %}
+{% block list_filters %}
 <fieldset class="form">
   <legend>Filtrage</legend>
     <table class="search">
-{{ form.as_column_table }}
+        {{ form.as_column_table }}
     </table>
-    <button type="reset" dojoType="dijit.form.Button">Annuler</button>
-    <button type="submit" dojoType="dijit.form.Button">Rechercher</button>
-    <button name="save_new_list" value="1" type="submit" dojoType="dijit.form.Button">Enregistrer en tant que liste</button> {{ saved_list_form.filter_list }}
+    <button type="reset" dojoType="dijit.form.Button">Annuler
+        <script type="dojo/method" event="onClick">
+            dojo.doc.location = "?reset=1";
+        </script>
+    </button>
+    <button type="submit" dojoType="dijit.form.Button">Rechercher
+        <script type="dojo/method" event="onClick">
+            dojo.byId("list_form").action = "?page=1"
+        </script>
+    </button>
+    <button type="button" dojoType="dijit.form.Button">Créer une nouvelle vue
+        <script type="dojo/method" event="onClick">
+            dojo.doc.location = "{% url ticket_list_view %}";
+        </script>
+    </button>
 </fieldset>
+{% endblock %}
 
 {% if object_list %}
 
@@ -45,7 +94,7 @@
 <table class="resultat">
 <tr class="form">
     <td colspan="11">
-        {{ action_form.actions }}  <button dojoType="dijit.form.Button" type="submit">Valider</button>
+        {{ action_form.actions }} {{ action_form.assigned_to }} {{ action_form.category }} {{ action_form.project }} {{ action_form.state }} {{ action_form.priority }}<button dojoType="dijit.form.Button" type="submit">Valider</button>
     </td>
 </tr>
 <tr>

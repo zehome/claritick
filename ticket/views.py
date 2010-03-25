@@ -20,6 +20,7 @@ from claritick.ticket.tables import DefaultTicketTable
 from claritick.common.diggpaginator import DiggPaginator
 from claritick.common.models import Client, UserProfile
 from common.exceptions import NoProfileException
+from common.utils import user_has_perms_on_client
 
 def get_filters(request):
     if request.method == "POST":
@@ -27,7 +28,8 @@ def get_filters(request):
     return request.session["list_filters"]
 
 def set_filters(request, datas=None):
-    request.session["list_filters"] = request.POST.copy()
+    if request.method == "POST":
+        request.session["list_filters"] = request.POST.copy()
     if datas:
         request.session["list_filters"].update(datas)
 
@@ -46,30 +48,53 @@ def list_unassigned(request, *args, **kw):
     return list_all(request, None, filterdict = filterdict, *args, **kw)
 
 @login_required
-def list_all(request, form=None, filterdict=None, view_id=None, *args, **kw):
+def list_view(request, view_id=None):
+    if view_id:
+        view = get_object_or_404(TicketView, pk=view_id, user=request.user)
+        set_filters(request, view.filters)
+
+    form = SearchTicketForm(get_filters(request), user=request.user)
+
+    # On va enregistrer les criteres actuels en tant que nouvelle liste
+    saved_list_form = SavedListForm(request.POST)
+    if request.method == "POST"  and saved_list_form.is_valid():
+        if view_id:
+            TicketView.objects.filter(pk=view_id).update(
+                name=saved_list_form.cleaned_data["filter_list"],
+                filters=form.data
+            )
+        else:
+            t = TicketView.objects.create(
+                user=request.user,
+                name=saved_list_form.cleaned_data["filter_list"],
+                filters=form.data
+            )        
+        return redirect("ticket_list_view", view_id=view_id or t.pk)
+
+    return list_all(request, template_name="ticket/view.html", form=form, context={"saved_list_form": saved_list_form})
+
+@login_required
+def list_all(request, form=None, filterdict=None, view_id=None, template_name=None, context={}, *args, **kw):
     """
-    
     Liste tous les tickets sans aucun filtre
     """
-    search_mapping={'title': 'icontains',
+    search_mapping = {
+        'title': 'icontains',
         'text': 'icontains',
         'contact': 'icontains',
         'keywords': 'icontains',
     }
 
-    action_form = TicketActionsForm(request.POST)
-    action_form.process_actions()
+    action_form = TicketActionsForm(request.POST, prefix="action")
+    if action_form.process_actions():
+        return http.HttpResponseRedirect("%s?%s" % (request.META["PATH_INFO"], request.META["QUERY_STRING"]))
 
     if request.GET.get("reset", False) or view_id is not None:
         request.session["list_filters"] = {}
-
-    if view_id is not None:
-        view = TicketView.objects.get(pk=view_id)
-        set_filters(request, view.filters)
+        return http.HttpResponseRedirect(".")
 
     if not form:
-        if request.method == "POST":
-            set_filters(request, filterdict)
+        set_filters(request, filterdict)
         form = SearchTicketForm(get_filters(request), user=request.user)
 
     form.is_valid()
@@ -106,24 +131,21 @@ def list_all(request, form=None, filterdict=None, view_id=None, *args, **kw):
 
     qs = qs.order_by(request.GET.get('sort', '-id'))
 
+    # TODO choisir le bon template en fonction des permissions
     if request.user.has_perm("can_commit_full"):
-        template_name = ""
-    
-    # On va enregistrer les criteres actuels en tant que nouvelle liste
-    saved_list_form = SavedListForm(request.POST, user=request.user)
-    if request.method == "POST" and request.POST.get("save_new_list", False) and saved_list_form.is_valid():
-        tuf, created = TicketView.objects.get_or_create(user=request.user, name=saved_list_form.cleaned_data["filter_list"])
-        tuf.filters = form.data
-        tuf.save()
+        pass
 
+    # Les colonnes a afficher
     columns = ["Priority", "Client", "Category", "Project", "Title", "Comments", "Contact", "Last modification", "Opened by", "Assigned to"]
+
+    context.update({
+        "form": form, 
+        "columns": columns, 
+        "action_form": action_form,
+    })
+
     return list_detail.object_list(request, queryset=qs,  paginate_by=settings.TICKETS_PER_PAGE, page=request.GET.get("page", 1),
-        template_name="ticket/list.html", extra_context={
-            "form": form, 
-            "columns": columns, 
-            "saved_list_form": saved_list_form,
-            "action_form": action_form,
-        })
+        template_name=template_name or "ticket/list.html", extra_context=context)
 
 @permission_required("ticket.add_ticket")
 @login_required
@@ -159,11 +181,8 @@ def modify(request, ticket_id):
     ticket = get_object_or_404(Ticket, pk=ticket_id)
 
     # On verifie que l'utilisateur a les droits de modifier le ticket_id
-    try:
-        if ticket.client and ticket.client not in request.user.get_profile().get_clients():
-            raise PermissionDenied()
-    except UserProfile.DoesNotExist:
-        raise NoProfileException(request.user)
+    if not user_has_perms_on_client(request.user, ticket.client):
+        raise PermissionDenied
 
     if not ticket.text:
         ticket.title = None
@@ -172,6 +191,7 @@ def modify(request, ticket_id):
         ticket.validated_by = request.user
     
     if request.method == "POST":
+        # TODO avant de sauver le ticket, retirer du request.POST toutes les infos que l'utilisateur n'a pas le droit de modifier
         form = NewTicketForm(request.POST, instance=ticket, user=request.user)
         if form.is_valid():
             form.save()

@@ -167,7 +167,7 @@ form {
     /*background-color: #eeeeff;*/
 }
 
-#widget_id_actions {
+#widget_id_action-actions {
     width: 250px;
 }
 
@@ -273,7 +273,7 @@ form {
     top: 0px;
     left:20px;
     width: 170px;
-    height:98%;
+    height:100%;
     background-color:#98b3e9;
     background-image:url('/media/images/deg_menugauche.png');
     background-repeat:repeat-x;
@@ -444,7 +444,7 @@ div#gauche a:hover {
 	text-align: left;
 	padding-top: 15px;
 	border: 1px solid #999;
-	background-color: #dedede;
+	/*background-color: #dedede;*/
 }
 
 .inline div {
