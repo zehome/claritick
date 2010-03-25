@@ -19,6 +19,7 @@ from claritick.ticket.tables import DefaultTicketTable
 
 from claritick.common.diggpaginator import DiggPaginator
 from claritick.common.models import Client, UserProfile
+from common.exceptions import NoProfileException
 
 def get_filters(request):
     if request.method == "POST":
@@ -98,7 +99,7 @@ def list_all(request, form=None, filterdict=None, view_id=None, *args, **kw):
         client_list = request.user.get_profile().get_clients()
         qs = qs.filter(client__pk__in=[x.id for x in client_list])
     except UserProfile.DoesNotExist:
-        pass # TODO pas de profile, on affiche tous les tickets ? Aucuns ?
+        raise NoProfileException(request.user)
 
     qs = qs.order_by(request.GET.get('sort', '-id'))
 
@@ -158,7 +159,7 @@ def modify(request, ticket_id):
         if ticket.client not in request.user.get_profile().get_clients():
             raise PermissionDenied()
     except UserProfile.DoesNotExist:
-        pass # TODO que fait-on ?
+        raise NoProfileException(request.user)
 
     if not ticket.text:
         ticket.title = None

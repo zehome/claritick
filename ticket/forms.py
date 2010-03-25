@@ -8,16 +8,17 @@ from claritick.ticket.models import *
 from claritick.common.widgets import *
 from claritick.common.forms import ModelFormTableMixin
 from claritick.common.models import UserProfile
+from common.exceptions import NoProfileException
 
 def filter_form_for_user(form, user):
+
     if user.is_superuser:
         form.base_fields["client"].choices = [(x.pk, x) for x in Client.objects.all()]
     else:
         try:
             form.base_fields["client"].choices = [(x.pk, x) for x in user.get_profile().get_clients()]
         except UserProfile.DoesNotExist:
-            # TODO Pas de profil, on affiche tous les clients ? Aucuns ?
-            form.base_fields["client"].choices = []
+            raise NoProfileException(user)
     form.base_fields["client"].choices.insert(0, ("", ""))
 
 class PartialNewTicketForm(forms.ModelForm):
