@@ -13,7 +13,7 @@ from django.conf import settings
 from django.views.generic import list_detail
 from django.utils import simplejson
 
-from claritick.ticket.models import Ticket, TicketUserFilter
+from claritick.ticket.models import Ticket, TicketView
 from claritick.ticket.forms import *
 from claritick.ticket.tables import DefaultTicketTable
 
@@ -60,7 +60,7 @@ def list_all(request, form=None, filterdict=None, view_id=None, *args, **kw):
         request.session["list_filters"] = {}
 
     if view_id is not None:
-        view = TicketUserFilter.objects.get(pk=view_id)
+        view = TicketView.objects.get(pk=view_id)
         set_filters(request, view.filters)
 
     if not form:
@@ -108,7 +108,7 @@ def list_all(request, form=None, filterdict=None, view_id=None, *args, **kw):
     # On va enregistrer les criteres actuels en tant que nouvelle liste
     saved_list_form = SavedListForm(request.POST, user=request.user)
     if request.method == "POST" and request.POST.get("save_new_list", False) and saved_list_form.is_valid():
-        tuf, created = TicketUserFilter.objects.get_or_create(user=request.user, name=saved_list_form.cleaned_data["filter_list"])
+        tuf, created = TicketView.objects.get_or_create(user=request.user, name=saved_list_form.cleaned_data["filter_list"])
         tuf.filters = form.data
         tuf.save()
 

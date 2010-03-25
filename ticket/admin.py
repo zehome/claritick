@@ -2,7 +2,7 @@
 
 from django.contrib import admin
 from dojango import forms as df
-from claritick.ticket.models import Ticket, Priority, State, Category, Project, Procedure
+from claritick.ticket.models import Ticket, Priority, State, Category, Project, Procedure, TicketView
 from claritick.common.models import Client
 
 class ProjectAdmin(admin.ModelAdmin):
@@ -24,9 +24,13 @@ class ProjectAdmin(admin.ModelAdmin):
 class ProcedureAdmin(admin.ModelAdmin):
     filter_horizontal = ('tickets',)
 
+class TicketViewAdmin(admin.ModelAdmin):
+    list_display = ("user", "name")
+
 admin.site.register(Ticket)
 admin.site.register(State)
 admin.site.register(Priority)
 admin.site.register(Category)
+admin.site.register(TicketView, TicketViewAdmin)
 admin.site.register(Project, ProjectAdmin)
 admin.site.register(Procedure, ProcedureAdmin)

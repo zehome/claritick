@@ -381,9 +381,12 @@ class TicketCommentModerator(CommentModerator):
             return False
         return True
  
-class TicketUserFilter(models.Model):
+class TicketView(models.Model):
     user = models.ForeignKey(User)
     name = models.TextField()
     filters = JsonField()
+
+    def __unicode__(self):
+        return u"%s (%s)" % (self.name, self.user)
 
 #moderator.register(Ticket, TicketCommentModerator)

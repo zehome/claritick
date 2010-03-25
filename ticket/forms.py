@@ -77,7 +77,7 @@ class SavedListForm(df.Form):
 
     def __init__(self, *args, **kwargs):
         if "user" in kwargs:
-            self.base_fields["filter_list"].choices = [(x.pk, x.name) for x in TicketUserFilter.objects.filter(user=kwargs["user"])]
+            self.base_fields["filter_list"].choices = [(x.pk, x.name) for x in TicketView.objects.filter(user=kwargs["user"])]
             self.base_fields["filter_list"].choices.insert(0, ("", ""))
             del kwargs["user"]
         super(SavedListForm, self).__init__(*args, **kwargs)
