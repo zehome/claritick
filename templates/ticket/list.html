@@ -6,26 +6,50 @@
 {% block content_title %}Liste des tickets{% endblock %}
 {% block image %}<img src="/media/images/oxygen/search.png" />{% endblock %}
 
+{% block extrajs %}
+<script type="text/javascript" charset="utf-8">
+    dojo.addOnLoad(function() {
+        dojo.connect(dojo.byId("select_all"), "onclick", function(evt) {
+            if (dojo.byId("select_all").checked)
+                var val = true;
+            else
+                var val = false;
+
+            dojo.query("input[type^='checkbox'][id^='ticket_select']").forEach(function(tag) {
+                tag.checked = val;
+            });
+        });
+    });
+</script>
+{% endblock %}
+
 {% block content %}
 
-<fieldset>
+<form method="POST" action="?reset=1">{% csrf_token %}
+<fieldset class="form">
   <legend>Filtrage</legend>
-  <form method="POST" action="?reset=1">{% csrf_token %}
     <table class="search">
 {{ form.as_column_table }}
     </table>
-    <span class="bouton"><img class="bouton_img" src="/media/images/oxygen/cancel.png" /><input type="reset" value="Annuler" /></span>
-    <span class="bouton"><img class="bouton_img" src="/media/images/oxygen/ok.png" /><input type="submit" value="Rechercher" /></span>
-    <span class="bouton"><input type="submit" value="Enregistrer en tant que nouvelle liste" name="save_new_list" /></span> {{ saved_list_form.filter_list }}
-  </form>
+    <button type="reset" dojoType="dijit.form.Button">Annuler</button>
+    <button type="submit" dojoType="dijit.form.Button">Rechercher</button>
+    <button name="save_new_list" value="1" type="submit" dojoType="dijit.form.Button">Enregistrer en tant que liste</button> {{ saved_list_form.filter_list }}
 </fieldset>
 
 {% if object_list %}
+
 {% if page_obj.paginator.num_pages > 1 %}
 {% diggpaginator page_obj %}
 {% endif %}
+
 <table class="resultat">
+<tr class="form">
+    <td colspan="11">
+        {{ action_form.actions }}  <button dojoType="dijit.form.Button" type="submit">Valider</button>
+    </td>
+</tr>
 <tr>
+    <th style="text-align: center;"><input type="checkbox" id="select_all" /></th>
     {% for column in columns %}
     <th><a href="?sort={{ column.name_toggled }}">{{ column }}</a> 
     {% if column.is_ordered %}
@@ -41,6 +65,7 @@
 {% for row in object_list %}
     {# get_comment_count for ticket.ticket row.id as comment_count #}
     <tr class="bigrow {% cycle 'row1' 'row2' %}">
+        <td><input type="checkbox" name="ticket_checked" id="ticket_select_{{ forloop.counter }}" value="{{ row.pk }}" /></td>
         <td style="width: 60px;{{ row.close_style }}{{ row.priority_back_style }}"><a style="{{ row.priority_text_style }}" href="/ticket/modify/{{ row.id }}">{{ row.id }}</a></td>
         <td style="width: 200px;">{% if row.client %}{{ row.client }}{% endif %}</td>
         <td style="width: 100px;">{{ row.category }}</td>
@@ -54,6 +79,7 @@
     </tr>
 {% endfor %}
 </table>
+</form>
 
 {% if page_obj.paginator.num_pages > 1 %}
 {% diggpaginator page_obj %}

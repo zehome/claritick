@@ -44,6 +44,7 @@ class Priority(models.Model):
         return u"%s" % (self.label,)
 
 class State(models.Model):
+
     class Meta:
         verbose_name = "État"
         verbose_name_plural = "État"
@@ -385,6 +386,9 @@ class TicketView(models.Model):
     user = models.ForeignKey(User)
     name = models.TextField()
     filters = JsonField()
+
+    class Meta:
+        verbose_name = u"Vue"
 
     def __unicode__(self):
         return u"%s (%s)" % (self.name, self.user)

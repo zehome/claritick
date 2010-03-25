@@ -140,6 +140,7 @@ DIALOG_WIDTH=80
 DIALOG_HEIGHT=25
 
 TICKETS_PER_PAGE=50
+TICKET_STATE_CLOSED = 4 # pk de l'etat fermé
 
 try:
     from local_settings import *

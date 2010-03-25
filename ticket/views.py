@@ -57,6 +57,9 @@ def list_all(request, form=None, filterdict=None, view_id=None, *args, **kw):
         'keywords': 'icontains',
     }
 
+    action_form = TicketActionsForm(request.POST)
+    action_form.process_actions()
+
     if request.GET.get("reset", False) or view_id is not None:
         request.session["list_filters"] = {}
 
@@ -118,7 +121,8 @@ def list_all(request, form=None, filterdict=None, view_id=None, *args, **kw):
         template_name="ticket/list.html", extra_context={
             "form": form, 
             "columns": columns, 
-            "saved_list_form": saved_list_form
+            "saved_list_form": saved_list_form,
+            "action_form": action_form,
         })
 
 @permission_required("ticket.add_ticket")
@@ -156,7 +160,7 @@ def modify(request, ticket_id):
 
     # On verifie que l'utilisateur a les droits de modifier le ticket_id
     try:
-        if ticket.client not in request.user.get_profile().get_clients():
+        if ticket.client and ticket.client not in request.user.get_profile().get_clients():
             raise PermissionDenied()
     except UserProfile.DoesNotExist:
         raise NoProfileException(request.user)

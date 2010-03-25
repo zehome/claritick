@@ -2,6 +2,7 @@
 
 from django import forms
 from dojango import forms as df
+from django.conf import settings
 
 from django.contrib.auth.models import User
 from claritick.ticket.models import *
@@ -74,7 +75,7 @@ class SearchTicketForm(df.Form, ModelFormTableMixin):
         super(SearchTicketForm, self).__init__(*args, **kwargs)
 
 class SavedListForm(df.Form):
-    filter_list = df.CharField()
+    filter_list = forms.CharField()
 
     def __init__(self, *args, **kwargs):
         if "user" in kwargs:
@@ -82,3 +83,30 @@ class SavedListForm(df.Form):
             self.base_fields["filter_list"].choices.insert(0, ("", ""))
             del kwargs["user"]
         super(SavedListForm, self).__init__(*args, **kwargs)
+
+class TicketActionsForm(df.Form):
+    actions = df.ChoiceField(widget=df.FilteringSelect(), required=False)
+    model = Ticket.objects
+
+    def __init__(self, *args, **kwargs):
+        self.queryset = self.model.filter(id__in=args[0].getlist("ticket_checked"))
+        self.base_fields["actions"].choices = self.get_actions()
+        self.base_fields["actions"].choices.insert(0, ("", ""))
+        super(TicketActionsForm, self).__init__(*args, **kwargs)
+
+    def get_actions(self):
+        return [
+            ("close_tickets", u"Fermer les tickets sélectionnés"),
+        ]
+
+    def process_actions(self):
+        if self.is_valid():
+            action = self.cleaned_data["actions"]
+            try:
+                attr = getattr(self, action)
+                attr(self.queryset)
+            except AttributeError:
+                return
+
+    def close_tickets(self, qs):
+        qs.update(state=settings.TICKET_STATE_CLOSED)
