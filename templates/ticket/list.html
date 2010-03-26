@@ -79,7 +79,7 @@
     </button>
     <button type="button" dojoType="dijit.form.Button">Créer une nouvelle vue
         <script type="dojo/method" event="onClick">
-            dojo.doc.location = "{% url ticket_list_view %}";
+            dojo.doc.location = "{% url ticket_list_view %}?reset=1";
         </script>
     </button>
 </fieldset>

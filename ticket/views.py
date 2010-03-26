@@ -27,7 +27,7 @@ def get_filters(request):
         return request.POST
     return request.session["list_filters"]
 
-def set_filters(request, form, datas=None):
+def set_filters(request, datas=None):
     if not "list_filters" in request.session:
         request.session["list_filters"] = {}
     if request.method == "POST":
@@ -46,7 +46,7 @@ def list_me(request, *args, **kw):
 @login_required
 def list_unassigned(request, *args, **kw):
     filterdict = {'assigned_to__isnull': True}
-    set_filters(request, filterdict)
+    #set_filters(request, filterdict)
     return list_all(request, None, filterdict = filterdict, *args, **kw)
 
 @login_required
@@ -58,7 +58,7 @@ def list_view(request, view_id=None):
         else:
             data = view.filters
         data.update({"view_name": view.name})
-        set_filters(request, data)
+        set_filters(request)
 
     form = SearchTicketViewForm(get_filters(request), user=request.user)
 

@@ -76,6 +76,16 @@ class SearchTicketForm(df.Form, ModelFormTableMixin):
 class SearchTicketViewForm(SearchTicketForm):
     view_name = forms.CharField(widget=df.TextInput(), label="Nom de la vue", required=False)
     state       = forms.MultipleChoiceField(choices=State.objects.values_list("pk", "label"), required=False, widget=df.CheckboxSelectMultiple())
+    category = forms.MultipleChoiceField(choices=Category.objects.values_list("pk", "label"), required=False, widget=df.CheckboxSelectMultiple())
+    project  = forms.MultipleChoiceField(choices=Project.objects.values_list("pk", "label"), required=False, widget=df.CheckboxSelectMultiple())
+    priority = forms.MultipleChoiceField(choices=Priority.objects.values_list("pk", "label"), required=False, widget=df.CheckboxSelectMultiple())
+    assigned_to = forms.MultipleChoiceField(required=False, widget=df.CheckboxSelectMultiple())
+    opened_by   = forms.MultipleChoiceField(required=False, widget=df.CheckboxSelectMultiple())
+
+    def __init__(self, *args, **kwargs):
+        self.base_fields["assigned_to"].choices = [(x.pk, x) for x in User.objects.all()]
+        self.base_fields["opened_by"].choices = self.base_fields["assigned_to"].choices
+        super(SearchTicketViewForm, self).__init__(*args, **kwargs)
 
 class TicketActionsForm(df.Form):
     actions     = df.ChoiceField(widget=df.FilteringSelect(), required=False)
