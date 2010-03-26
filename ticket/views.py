@@ -2,7 +2,7 @@
 
 from django import http
 from django.conf import settings
-from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
+from django.core.exceptions import ObjectDoesNotExist, PermissionDenied, FieldError
 from django.db import models
 from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.template import RequestContext
@@ -27,7 +27,9 @@ def get_filters(request):
         return request.POST
     return request.session["list_filters"]
 
-def set_filters(request, datas=None):
+def set_filters(request, form, datas=None):
+    if not "list_filters" in request.session:
+        request.session["list_filters"] = {}
     if request.method == "POST":
         request.session["list_filters"] = request.POST.copy()
     if datas:
@@ -51,32 +53,34 @@ def list_unassigned(request, *args, **kw):
 def list_view(request, view_id=None):
     if view_id:
         view = get_object_or_404(TicketView, pk=view_id, user=request.user)
-        data = view.filters
+        if request.method == "POST":
+            data = {}
+        else:
+            data = view.filters
         data.update({"view_name": view.name})
         set_filters(request, data)
 
-    form = SearchTicketForm(get_filters(request), user=request.user)
+    form = SearchTicketViewForm(get_filters(request), user=request.user)
 
     # On va enregistrer les criteres actuels en tant que nouvelle liste
-    saved_list_form = SavedListForm(get_filters(request))
-    if request.method == "POST"  and saved_list_form.is_valid():
+    if request.method == "POST" and form.is_valid():
         if view_id:
             TicketView.objects.filter(pk=view_id).update(
-                name=saved_list_form.cleaned_data["view_name"],
-                filters=form.data
+                name=form.cleaned_data["view_name"],
+                filters=form.cleaned_data
             )
         else:
             t = TicketView.objects.create(
                 user=request.user,
-                name=saved_list_form.cleaned_data["view_name"],
-                filters=form.data
+                name=form.cleaned_data["view_name"],
+                filters=form.cleaned_data
             )        
         return redirect("ticket_list_view", view_id=view_id or t.pk)
 
-    return list_all(request, template_name="ticket/view.html", form=form, context={"saved_list_form": saved_list_form})
+    return list_all(request, template_name="ticket/view.html", form=form)
 
 @login_required
-def list_all(request, form=None, filterdict=None, view_id=None, template_name=None, context={}, *args, **kw):
+def list_all(request, form=None, filterdict=None, template_name=None, context={}, *args, **kw):
     """
     Liste tous les tickets sans aucun filtre
     """
@@ -91,38 +95,43 @@ def list_all(request, form=None, filterdict=None, view_id=None, template_name=No
     if action_form.process_actions():
         return http.HttpResponseRedirect("%s?%s" % (request.META["PATH_INFO"], request.META["QUERY_STRING"]))
 
-    if request.GET.get("reset", False) or view_id is not None:
+    if request.GET.get("reset", False):
         request.session["list_filters"] = {}
         return http.HttpResponseRedirect(".")
 
     if not form:
-        set_filters(request, filterdict)
-        form = SearchTicketForm(get_filters(request), user=request.user)
+        if request.method == "POST":
+            form = SearchTicketForm(request.POST, user=request.user)
+            if form.is_valid():
+                set_filters(request, filterdict)
+        else:
+            form = SearchTicketForm(get_filters(request), user=request.user)
 
-    form.is_valid()
-
-    if not form.cleaned_data.get("state"):
+    if not get_filters(request).get("state"):
         qs = Ticket.open_tickets.all()
     else:
         qs = Ticket.tickets.all()
 
-    # unassigned
-    if filterdict:
-        qs = qs.filter(**filterdict)
-
     # Form cleaned_data ?
-    if form.cleaned_data:
+    if form.is_valid():
         cd = form.cleaned_data
-        for key, value in cd.items():
+        for key, value in form.cleaned_data.items():
             try:
                 if value:
                     try:
                         lookup = search_mapping[key]
                     except KeyError:
-                        lookup = 'exact'
-                    qs = qs.filter(**{"%s__%s"%(key,lookup):value})
-            except AttributeError:
+                        if isinstance(value, (list, models.query.QuerySet)):
+                            lookup = "in"
+                        else:
+                            lookup = 'exact'
+                    qs = qs.filter(**{"%s__%s"%(str(key),lookup): value})
+            except (AttributeError, FieldError):
                 pass
+
+    # unassigned
+    if filterdict:
+        qs = qs.filter(**filterdict)
 
     # On va filtrer la liste des tickets en fonction de la relation user => client
     try:

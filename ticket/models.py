@@ -384,7 +384,7 @@ class TicketCommentModerator(CommentModerator):
  
 class TicketView(models.Model):
     user = models.ForeignKey(User)
-    name = models.TextField()
+    name = models.TextField(default=u"Nom de la vue")
     filters = JsonField()
 
     class Meta:

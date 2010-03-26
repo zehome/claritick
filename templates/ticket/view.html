@@ -1,15 +1,35 @@
 {% extends "ticket/list.html" %}
 
+{% block extrastyle %}
+{{ block.super }}
+<style type="text/css">
+    #filtres-title {
+        cursor: pointer;
+    }
+</style>
+{% endblock %}
+
+{% block extrajs %}
+{{ block.super }}
+<script type="text/javascript" charset="utf-8">
+    dojo.addOnLoad(function() {
+        dojo.connect(dojo.byId("filtres-title"), "onclick", function() {
+            toggleFadding("filtres-table", null, null, null, null);
+        });
+    });
+</script>
+{% endblock %}
+
 {% block list_filters %}
 <fieldset class="form">
-  <legend>Filtrage</legend>
-    <table class="search">
+  <legend id="filtres-title">Filtrage</legend>
+    <table class="search" id="filtres-table">
         {{ form.as_column_table }}
         <tr>
-            <th><label for="">Nom de la vue</label></th>
-            <td>{{ saved_list_form.view_name }}</td>
+            <td>
+                <button type="submit" dojoType="dijit.form.Button">Enregistrer</button> 
+            </td>
         </tr>
     </table>
-    <button type="submit" dojoType="dijit.form.Button">Enregistrer</button> 
 </fieldset>
 {% endblock %}

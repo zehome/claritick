@@ -48,8 +48,8 @@ class NewTicketForm(forms.ModelForm):
 
 class SearchTicketForm(df.Form, ModelFormTableMixin):
     title       = df.CharField(widget=df.TextInput(attrs={'size':'64'}), required=False)
-    client      = df.ModelChoiceField(queryset = Client.objects.all(),
-        widget=df.FilteringSelect(attrs={'queryExpr': '${0}*'}), empty_label='', required=False)
+    client      = df.ChoiceField(choices=[(x.pk, x) for x in Client.objects.all()],
+        widget=df.FilteringSelect(attrs={'queryExpr': '${0}*'}), required=False)
     category    = df.ModelChoiceField(queryset = Category.objects.all(), 
         widget=df.FilteringSelect(), empty_label='', required=False)
     project     = df.ModelChoiceField(queryset = Project.objects.all(), 
@@ -73,8 +73,9 @@ class SearchTicketForm(df.Form, ModelFormTableMixin):
             del kwargs["user"] # user= ne doit pas arriver a l'init parent ...
         super(SearchTicketForm, self).__init__(*args, **kwargs)
 
-class SavedListForm(df.Form):
-    view_name = forms.CharField(widget=df.TextInput())
+class SearchTicketViewForm(SearchTicketForm):
+    view_name = forms.CharField(widget=df.TextInput(), label="Nom de la vue", required=False)
+    state       = forms.MultipleChoiceField(choices=State.objects.values_list("pk", "label"), required=False, widget=df.CheckboxSelectMultiple())
 
 class TicketActionsForm(df.Form):
     actions     = df.ChoiceField(widget=df.FilteringSelect(), required=False)
