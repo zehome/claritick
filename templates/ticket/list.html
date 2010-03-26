@@ -65,14 +65,46 @@
 <fieldset class="form">
   <legend>Filtrage</legend>
     <table class="search">
-        {{ form.as_column_table }}
+        <tr>
+            <th>{{ form.title.label_tag }}</th>
+            <td>{{ form.title }}</td>
+            <th>{{ form.client.label_tag }}</th>
+            <td>{{ form.client }}</td>
+            <th>{{ form.category.label_tag }}</th>
+            <td>{{ form.category }}</td>
+        </tr>
+        <tr>
+            <th>{{ form.project.label_tag }}</th>
+            <td>{{ form.project }}</td>
+            <th>{{ form.state.label_tag }}</th>
+            <td>{{ form.state }}</td>
+            <th>{{ form.priority.label_tag }}</th>
+            <td>{{ form.priority }}</td>
+        </tr>
+        <tr>
+            <th>{{ form.assigned_to.label_tag }}</th>
+            <td>{{ form.assigned_to }}</td>
+            <th>{{ form.text.label_tag }}</th>
+            <td>{{ form.text }}</td>
+            <th>{{ form.opened_by.label_tag }}</th>
+            <td>{{ form.opened_by }}</td>
+        </tr>
+        <tr>
+            <th>{{ form.keywords.label_tag }}</th>
+            <td>{{ form.keywords }}</td>
+            <th>{{ form.contact.label_tag }}</th>
+            <td>{{ form.contact }}</td>
+            <th></th>
+            <td></td>
+        </tr>
+
     </table>
     <button type="reset" dojoType="dijit.form.Button">Annuler
         <script type="dojo/method" event="onClick">
             dojo.doc.location = "?reset=1";
         </script>
     </button>
-    <button type="submit" dojoType="dijit.form.Button">Rechercher
+    <button type="submit" dojoType="dijit.form.Button" name="validate-filters" value="1">Rechercher
         <script type="dojo/method" event="onClick">
             dojo.byId("list_form").action = "?page=1"
         </script>
@@ -84,6 +116,7 @@
     </button>
 </fieldset>
 {% endblock %}
+</form>
 
 {% if object_list %}
 
@@ -91,25 +124,25 @@
 {% diggpaginator page_obj %}
 {% endif %}
 
+<form method="POST">{% csrf_token %}
 <table class="resultat">
 <tr class="form">
     <td colspan="11">
-        {{ action_form.actions }} {{ action_form.assigned_to }} {{ action_form.category }} {{ action_form.project }} {{ action_form.state }} {{ action_form.priority }}<button dojoType="dijit.form.Button" type="submit">Valider</button>
+        {{ action_form.actions }} {{ action_form.assigned_to }} {{ action_form.category }} {{ action_form.project }} {{ action_form.state }} {{ action_form.priority }}<button dojoType="dijit.form.Button" type="submit" name="validate-actions" value="1">Valider</button>
     </td>
 </tr>
 <tr>
     <th style="text-align: center;"><input type="checkbox" id="select_all" /></th>
-    {% for column in columns %}
-    <th><a href="?sort={{ column.name_toggled }}">{{ column }}</a> 
-    {% if column.is_ordered %}
-      {% if column.is_ordered_straight %}
-      <img src="/media/images/oxygen/arrow-up.png" alt="up" />
-      {% else %}
-      <img src="/media/images/oxygen/arrow-down.png" alt="down" />
-      {% endif %}
-    {% endif %}
-    </th>
-    {% endfor %}
+    <th><a href="">Priorité</a></th>
+    <th><a href="">Client</a></th>
+    <th><a href="">Catégorie</a></th>
+    <th><a href="">Projet</a></th>
+    <th><a href="">Titre</a></th>
+    <th><a href="">Commentaires</a></th>
+    <th><a href="">Contact</a></th>
+    <th><a href="">Dernières modif.</a></th>
+    <th><a href="">Ouvert par</a></th>
+    <th><a href="">Assiné à</a></th>
 </tr>
 {% for row in object_list %}
     {# get_comment_count for ticket.ticket row.id as comment_count #}

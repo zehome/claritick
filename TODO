@@ -5,13 +5,8 @@ Liste des tickets / Droits utilisateurs
     * ajout commentaire de fermeture
 
 * comitter reduit
-    * enlever
-        * opened_by
-        * assigned_to
-        * project
     * actions
         * uniquement "Fermer un ticket"
-    * template avec filtres uniquempent : client / etat / texte
 
 Ajout / Modification d'un ticket
 ================================
@@ -34,6 +29,8 @@ General
 
 * clients
     * ajout des vues pour modifier les coordonnées
+    * def unicode
+        * ne pas mettre le label du parent racine
 
 Tickets / Vues
 ==============

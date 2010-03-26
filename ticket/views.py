@@ -23,8 +23,8 @@ from common.exceptions import NoProfileException
 from common.utils import user_has_perms_on_client
 
 def get_filters(request):
-    if request.method == "POST":
-        return request.POST
+    #if request.method == "POST":
+    #    return request.POST
     return request.session["list_filters"]
 
 def set_filters(request, datas=None):
@@ -51,16 +51,19 @@ def list_unassigned(request, *args, **kw):
 
 @login_required
 def list_view(request, view_id=None):
+    context = {}
+
     if view_id:
         view = get_object_or_404(TicketView, pk=view_id, user=request.user)
-        if request.method == "POST":
-            data = {}
+        if request.method == "POST" and request.POST.get("validate-filters", None):
+            data = request.POST.copy()
         else:
             data = view.filters
             data.update({"view_name": view.name})
             request.session["list_filters"] = data
+        context["view"] = view
 
-    form = SearchTicketViewForm(get_filters(request), user=request.user)
+    form = SearchTicketViewForm(data, user=request.user)
 
     # On va enregistrer les criteres actuels en tant que nouvelle liste
     if request.method == "POST" and form.is_valid():
@@ -74,10 +77,16 @@ def list_view(request, view_id=None):
                 user=request.user,
                 name=form.cleaned_data["view_name"],
                 filters=form.cleaned_data
-            )        
-        return redirect("ticket_list_view", view_id=view_id or t.pk)
+            )
+        if request.POST.get("validate-actions", None):
+            return redirect("ticket_list_view", view_id=view_id or t.pk)
 
-    return list_all(request, template_name="ticket/view.html", form=form)
+    if request.user.has_perm("can_commit_full") or request.user.is_superuser:
+        template_name = "ticket/view.html"
+    else:
+        template_name = "ticket/view_small.html"
+
+    return list_all(request, template_name=template_name, form=form, context=context)
 
 @login_required
 def list_all(request, form=None, filterdict=None, template_name=None, context={}, *args, **kw):
@@ -91,7 +100,11 @@ def list_all(request, form=None, filterdict=None, template_name=None, context={}
         'keywords': 'icontains',
     }
 
-    action_form = TicketActionsForm(request.POST, prefix="action")
+    if request.user.has_perm("can_commit_full") or request.user.is_superuser:
+        action_form = TicketActionsForm(request.POST, prefix="action")
+    else:
+        action_form = TicketActionsSmallForm(request.POST, prefix="action")
+
     if action_form.process_actions():
         return http.HttpResponseRedirect("%s?%s" % (request.META["PATH_INFO"], request.META["QUERY_STRING"]))
 
@@ -100,7 +113,7 @@ def list_all(request, form=None, filterdict=None, template_name=None, context={}
         return http.HttpResponseRedirect(".")
 
     if not form:
-        if request.method == "POST":
+        if request.method == "POST" and request.POST.get("validate-filters", None):
             form = SearchTicketForm(request.POST, user=request.user)
             if form.is_valid():
                 set_filters(request, filterdict)
@@ -143,15 +156,14 @@ def list_all(request, form=None, filterdict=None, template_name=None, context={}
     qs = qs.order_by(request.GET.get('sort', '-id'))
 
     # TODO choisir le bon template en fonction des permissions
-    if request.user.has_perm("can_commit_full"):
-        pass
-
-    # Les colonnes a afficher
-    columns = ["Priority", "Client", "Category", "Project", "Title", "Comments", "Contact", "Last modification", "Opened by", "Assigned to"]
+    if template_name is None:
+        if request.user.has_perm("can_commit_full") or request.user.is_superuser:
+            template_name = "ticket/list.html"
+        else:
+            template_name = "ticket/list_small.html"
 
     context.update({
         "form": form, 
-        "columns": columns, 
         "action_form": action_form,
     })
 

@@ -20,14 +20,57 @@
 </script>
 {% endblock %}
 
+{% block content_title %}
+{{ block.super }}{% if view %} : {{ view.name }}{% endif %}
+{% endblock %}
+
 {% block list_filters %}
 <fieldset class="form">
   <legend id="filtres-title">Filtrage</legend>
-    <table class="search" id="filtres-table">
-        {{ form.as_column_table }}
+    <table class="search" id="filtres-table" {% if view %}style="display: none;"{% endif %}>
         <tr>
-            <td>
-                <button type="submit" dojoType="dijit.form.Button">Enregistrer</button> 
+            <th>{{ form.client.label_tag }}</th>
+            <td>{{ form.client }}</td>
+            <th rowspan="7">{{ form.assigned_to.label_tag }}</th>
+            <td rowspan="7" class="checkbox-list">{{ form.assigned_to }}</td>
+            <th rowspan="7">{{ form.opened_by.label_tag }}</th>
+            <td class="checkbox-list" rowspan="7">{{ form.opened_by }}</td>
+            <th rowspan="6">{{ form.category.label_tag }}</th>
+            <td class="checkbox-list" rowspan="6">{{ form.category }}</td>
+            <th rowspan="6">{{ form.project.label_tag }}</th>
+            <td class="checkbox-list" rowspan="6">{{ form.project }}</td>
+        </tr>
+        <tr>
+            <th>{{ form.title.label_tag }}</th>
+            <td>{{ form.title }}</td>
+        </tr>
+        <tr>
+            <th>{{ form.text.label_tag }}</th>
+            <td>{{ form.text }}</td>
+        </tr>
+        <tr>
+            <th>{{ form.keywords.label_tag }}</th>
+            <td>{{ form.keywords }}</td>
+        </tr>
+        <tr>
+            <th>{{ form.contact.label_tag }}</th>
+            <td>{{ form.contact }}</td>
+        </tr>
+        <tr>
+            <th>{{ form.view_name.label_tag }}</th>
+            <td>{{ form.view_name }}</td>
+        </tr>
+        <tr>
+            <th></th>
+            <td></td>
+            <th>{{ form.state.label_tag }}</th>
+            <td class="checkbox-list">{{ form.state }}</td>
+            <th>{{ form.priority.label_tag }}</th>
+            <td class="checkbox-list">{{ form.priority }}</td>
+        </tr>
+        <tr>
+            <td colspan="10">
+                <button type="submit" dojoType="dijit.form.Button" name="validate-filters" value="1">Enregistrer</button> 
             </td>
         </tr>
     </table>

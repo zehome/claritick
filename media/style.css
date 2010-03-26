@@ -171,6 +171,18 @@ form {
     width: 250px;
 }
 
+.checkbox-list ul {
+    text-align: left;
+}
+
+.checkbox-list ul li {
+    list-style-type: none;
+}
+
+#filtres-table td, #filtres-table th {
+    vertical-align: top !important;
+}
+
 /******************* Boutons de validation ********************/
 .bouton {
     background-color:#FFFFFF;

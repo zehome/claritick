@@ -74,6 +74,8 @@ class SearchTicketForm(df.Form, ModelFormTableMixin):
         super(SearchTicketForm, self).__init__(*args, **kwargs)
 
 class SearchTicketViewForm(SearchTicketForm):
+    client      = df.ChoiceField(choices=[(x.pk, x) for x in Client.objects.all()],
+        widget=df.FilteringSelect(attrs={'queryExpr': '${0}*'}), required=False)
     view_name = forms.CharField(widget=df.TextInput(), label="Nom de la vue", required=False)
     state       = forms.MultipleChoiceField(choices=State.objects.values_list("pk", "label"), required=False, widget=df.CheckboxSelectMultiple())
     category = forms.MultipleChoiceField(choices=Category.objects.values_list("pk", "label"), required=False, widget=df.CheckboxSelectMultiple())
@@ -86,6 +88,12 @@ class SearchTicketViewForm(SearchTicketForm):
         self.base_fields["assigned_to"].choices = [(x.pk, x) for x in User.objects.all()]
         self.base_fields["opened_by"].choices = self.base_fields["assigned_to"].choices
         super(SearchTicketViewForm, self).__init__(*args, **kwargs)
+
+    def clean_view_name(self):
+        name = self.cleaned_data["view_name"]
+        if name == "" or name is None:
+            return u"Nouvelle vue"
+        return name
 
 class TicketActionsForm(df.Form):
     actions     = df.ChoiceField(widget=df.FilteringSelect(), required=False)
@@ -149,3 +157,16 @@ class TicketActionsForm(df.Form):
 
     def action_change_priority(self, qs):
         qs.update(priority=self.cleaned_data["priority"])
+
+class TicketActionsSmallForm(TicketActionsForm):
+
+    def get_actions(self):
+        return [
+            ("action_close_tickets", u"Fermer les tickets sélectionnés"),
+        ]
+
+    def process_actions_(self):
+        if self.is_valid():
+            if self.cleaned_data["actions"] != "action_close_tickets":
+                return False
+            return super(TicketActionsSmallForm, self).process_actions()
