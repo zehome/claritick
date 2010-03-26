@@ -23,8 +23,6 @@ from common.exceptions import NoProfileException
 from common.utils import user_has_perms_on_client
 
 def get_filters(request):
-    #if request.method == "POST":
-    #    return request.POST
     return request.session["list_filters"]
 
 def set_filters(request, datas=None):
@@ -34,6 +32,46 @@ def set_filters(request, datas=None):
         request.session["list_filters"] = request.POST.copy()
     if datas:
         request.session["list_filters"].update(datas)
+
+def filter_quersyset(qs, filters):
+    """
+        Filtre un queryset de ticket a partir d'un dictionnaire de fields lookup.
+    """
+    search_mapping = {
+        'title': 'icontains',
+        'text': 'icontains',
+        'contact': 'icontains',
+        'keywords': 'icontains',
+    }
+
+    d = {}
+    for key, value in filters.items():
+        try:
+            if value:
+                try:
+                    lookup = search_mapping[key]
+                except KeyError:
+                    if isinstance(value, (list, models.query.QuerySet)):
+                        lookup = "in"
+                    else:
+                        lookup = 'exact'
+                qs = qs.filter(**{"%s__%s"%(str(key),lookup): value})
+        except (AttributeError, FieldError):
+            pass
+
+    return qs
+
+def filter_ticket_by_user(qs, user):
+    """
+        Filtre un queryset de ticket en fonction des clients qu'a le droit de voir l'utilisateur.
+    """
+    try:
+        client_list = user.get_profile().get_clients()
+        qs = qs.filter(client__pk__in=[x.id for x in client_list])
+    except UserProfile.DoesNotExist:
+        raise NoProfileException(request.user)
+
+    return qs
 
 @login_required
 def list_me(request, *args, **kw):
@@ -53,6 +91,7 @@ def list_unassigned(request, *args, **kw):
 def list_view(request, view_id=None):
     context = {}
 
+    # On charge la vue de la liste
     if view_id:
         view = get_object_or_404(TicketView, pk=view_id, user=request.user)
         if request.method == "POST" and request.POST.get("validate-filters", None):
@@ -60,11 +99,32 @@ def list_view(request, view_id=None):
         else:
             data = view.filters
             data.update({"view_name": view.name})
-            request.session["list_filters"] = data
+            #request.session["list_filters"] = data
         context["view"] = view
 
+    # le form de filtres
     form = SearchTicketViewForm(data, user=request.user)
 
+    # le template a charger
+    if request.user.has_perm("can_commit_full") or request.user.is_superuser:
+        template_name = "ticket/view.html"
+    else:
+        template_name = "ticket/view_small.html"
+
+    # le form d'actions
+    if request.user.has_perm("can_commit_full") or request.user.is_superuser:
+        action_form = TicketActionsForm(request.POST, prefix="action")
+    else:
+        action_form = TicketActionsSmallForm(request.POST, prefix="action")
+
+    if action_form.process_actions():
+        return http.HttpResponseRedirect("%s?%s" % (request.META["PATH_INFO"], request.META["QUERY_STRING"]))
+
+    if not data.get("state"):
+        qs = Ticket.open_tickets.all()
+    else:
+        qs = Ticket.tickets.all()
+    
     # On va enregistrer les criteres actuels en tant que nouvelle liste
     if request.method == "POST" and form.is_valid():
         if view_id:
@@ -78,28 +138,33 @@ def list_view(request, view_id=None):
                 name=form.cleaned_data["view_name"],
                 filters=form.cleaned_data
             )
+
+
         if request.POST.get("validate-actions", None):
             return redirect("ticket_list_view", view_id=view_id or t.pk)
 
-    if request.user.has_perm("can_commit_full") or request.user.is_superuser:
-        template_name = "ticket/view.html"
-    else:
-        template_name = "ticket/view_small.html"
+    # On filtre la liste a partir des datas de la vue
+    qs = filter_quersyset(qs, data)
 
-    return list_all(request, template_name=template_name, form=form, context=context)
+    # On va filtrer la liste des tickets en fonction de la relation user => client
+    qs = filter_ticket_by_user(qs, request.user)
+
+    # Le tri
+    qs = qs.order_by(request.GET.get('sort', '-id'))
+
+    context.update({
+        "form": form,
+        "action_form": action_form,
+    })
+
+    return list_detail.object_list(request, queryset=qs,  paginate_by=settings.TICKETS_PER_PAGE, page=request.GET.get("page", 1),
+        template_name=template_name, extra_context=context)
 
 @login_required
 def list_all(request, form=None, filterdict=None, template_name=None, context={}, *args, **kw):
     """
-    Liste tous les tickets sans aucun filtre
+        Liste tous les tickets sans aucun filtre
     """
-    search_mapping = {
-        'title': 'icontains',
-        'text': 'icontains',
-        'contact': 'icontains',
-        'keywords': 'icontains',
-    }
-
     if request.user.has_perm("can_commit_full") or request.user.is_superuser:
         action_form = TicketActionsForm(request.POST, prefix="action")
     else:
@@ -127,32 +192,16 @@ def list_all(request, form=None, filterdict=None, template_name=None, context={}
 
     # Form cleaned_data ?
     if form.is_valid():
-        cd = form.cleaned_data
-        for key, value in form.cleaned_data.items():
-            try:
-                if value:
-                    try:
-                        lookup = search_mapping[key]
-                    except KeyError:
-                        if isinstance(value, (list, models.query.QuerySet)):
-                            lookup = "in"
-                        else:
-                            lookup = 'exact'
-                    qs = qs.filter(**{"%s__%s"%(str(key),lookup): value})
-            except (AttributeError, FieldError):
-                pass
+        qs = filter_quersyset(qs, form.cleaned_data)
 
     # unassigned
     if filterdict:
         qs = qs.filter(**filterdict)
 
     # On va filtrer la liste des tickets en fonction de la relation user => client
-    try:
-        client_list = request.user.get_profile().get_clients()
-        qs = qs.filter(client__pk__in=[x.id for x in client_list])
-    except UserProfile.DoesNotExist:
-        raise NoProfileException(request.user)
+    qs = filter_ticket_by_user(qs, request.user)
 
+    # Le tri
     qs = qs.order_by(request.GET.get('sort', '-id'))
 
     # TODO choisir le bon template en fonction des permissions
