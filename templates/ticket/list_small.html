@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+
+{% load comments diggpaginator %}
+
+{% block title %}Liste des tickets{% endblock %}
+{% block content_title %}Liste des tickets{% endblock %}
+{% block image %}<img src="/media/images/oxygen/search.png" />{% endblock %}
+
+{% block extrajs %}
+<script type="text/javascript" charset="utf-8">
+
+    function hide_actions() {
+        dojo.query("#widget_id_action-assigned_to, #widget_id_action-category, #widget_id_action-project, #widget_id_action-state, #widget_id_action-priority").forEach(function(tag) {
+            dojo.style(tag, "display", "none");
+        });
+    }
+
+    dojo.addOnLoad(function() {
+        dojo.connect(dojo.byId("select_all"), "onclick", function(evt) {
+            if (dojo.byId("select_all").checked)
+                var val = true;
+            else
+                var val = false;
+
+            dojo.query("input[type^='checkbox'][id^='ticket_select']").forEach(function(tag) {
+                tag.checked = val;
+            });
+        });
+
+        hide_actions();
+
+        dojo.connect(dijit.byId("id_action-actions"), "onChange", function(evt) {
+            hide_actions();
+            dojo.style(widget_name, "display", "inline-block");
+        });
+    });
+</script>
+{% endblock %}
+
+{% block content %}
+
+<form method="POST" action="" id="list_form">{% csrf_token %}
+{% block list_filters %}
+<fieldset class="form">
+  <legend>Filtrage</legend>
+    <table class="search">
+        <tr>
+            <th>{{ form.client.label_tag }}</th>
+            <td>{{ form.client }}</td>
+            <th>{{ form.state.label_tag }}</th>
+            <td>{{ form.state }}</td>
+            <th>{{ form.text.label_tag }}</th>
+            <td>{{ form.text }}</td>
+        </tr>
+    </table>
+    <button type="reset" dojoType="dijit.form.Button">Annuler
+        <script type="dojo/method" event="onClick">
+            dojo.doc.location = "?reset=1";
+        </script>
+    </button>
+    <button type="submit" dojoType="dijit.form.Button" name="validate-filters" value="1">Rechercher
+        <script type="dojo/method" event="onClick">
+            dojo.byId("list_form").action = "?page=1"
+        </script>
+    </button>
+    <button type="button" dojoType="dijit.form.Button">Créer une nouvelle vue
+        <script type="dojo/method" event="onClick">
+            dojo.doc.location = "{% url ticket_list_view %}?reset=1";
+        </script>
+    </button>
+</fieldset>
+{% endblock %}
+
+{% if object_list %}
+
+{% if page_obj.paginator.num_pages > 1 %}
+{% diggpaginator page_obj %}
+{% endif %}
+
+<table class="resultat">
+<tr class="form">
+    <td colspan="11">
+        {{ action_form.actions }}<button dojoType="dijit.form.Button" type="submit">Valider</button>
+    </td>
+</tr>
+<tr>
+    <th style="text-align: center;"><input type="checkbox" id="select_all" /></th>
+    <th><a href="">Priorité</a></th>
+    <th><a href="">Client</a></th>
+    <th><a href="">Catégorie</a></th>
+    <th><a href="">Titre</a></th>
+    <th><a href="">Commentaires</a></th>
+    <th><a href="">Contact</a></th>
+    <th><a href="">Dernières modif.</a></th>
+</tr>
+{% for row in object_list %}
+    {# get_comment_count for ticket.ticket row.id as comment_count #}
+    <tr class="bigrow {% cycle 'row1' 'row2' %}">
+        <td><input type="checkbox" name="ticket_checked" id="ticket_select_{{ forloop.counter }}" value="{{ row.pk }}" /></td>
+        <td style="width: 60px;{{ row.close_style }}{{ row.priority_back_style }}"><a style="{{ row.priority_text_style }}" href="/ticket/modify/{{ row.id }}">{{ row.id }}</a></td>
+        <td style="width: 200px;">{% if row.client %}{{ row.client }}{% endif %}</td>
+        <td style="width: 100px;">{{ row.category }}</td>
+        <td style="min-width: 250px;{{ row.close_style }}"><a style="{{ row.priority_text_style }}" href="/ticket/modify/{{ row.id }}">{{ row.title }}</a></td>
+        <td>({{ row.nb_comments }})</td>
+        <td>{{ row.contact }}</td>
+        <td style="width: 150px;">{{ row.last_modification|date:'d/m/y H\hi' }}</td>
+    </tr>
+{% endfor %}
+</table>
+</form>
+
+{% if page_obj.paginator.num_pages > 1 %}
+{% diggpaginator page_obj %}
+{% endif %}
+
+{% else %}
+<h3>Aucun résultat</h3>
+{% endif %}
+
+{% endblock %}

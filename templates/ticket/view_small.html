@@ -1,0 +1,55 @@
+{% extends "ticket/list_small.html" %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style type="text/css">
+    #filtres-title {
+        cursor: pointer;
+    }
+</style>
+{% endblock %}
+
+{% block extrajs %}
+{{ block.super }}
+<script type="text/javascript" charset="utf-8">
+    dojo.addOnLoad(function() {
+        dojo.connect(dojo.byId("filtres-title"), "onclick", function() {
+            toggleFadding("filtres-table", null, null, null, null);
+        });
+    });
+</script>
+{% endblock %}
+
+{% block content_title %}
+{{ block.super }}{% if view %} : {{ view.name }}{% endif %}
+{% endblock %}
+
+{% block list_filters %}
+<fieldset class="form">
+  <legend id="filtres-title">Filtrage</legend>
+    <table class="search" id="filtres-table" {% if view %}style="display: none;"{% endif %}>
+        <tr>
+            <th>{{ form.client.label_tag }}</th>
+            <td>{{ form.client }}</td>
+            <th>{{ form.state.label_tag }}</th>
+            <td rowspan="3" class="checkbox-list">{{ form.state }}</td>
+        </tr>
+        <tr>
+            <th>{{ form.text.label_tag }}</th>
+            <td>{{ form.text }}</td>
+            <th></th>
+            
+        </tr>
+        <tr>
+            <th>{{ form.view_name.label_tag }}</th>
+            <td>{{ form.view_name }}</td>
+            <th></th>
+        </tr>
+        <tr>
+            <td colspan="4">
+                <button type="submit" dojoType="dijit.form.Button" name="validate-filters" value="1">Enregistrer</button> 
+            </td>
+        </tr>
+    </table>
+</fieldset>
+{% endblock %}
