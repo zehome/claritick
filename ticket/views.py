@@ -57,8 +57,8 @@ def list_view(request, view_id=None):
             data = {}
         else:
             data = view.filters
-        data.update({"view_name": view.name})
-        set_filters(request)
+            data.update({"view_name": view.name})
+            request.session["list_filters"] = data
 
     form = SearchTicketViewForm(get_filters(request), user=request.user)
 
