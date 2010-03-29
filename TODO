@@ -1,17 +1,31 @@
 Liste des tickets / Droits utilisateurs
 =======================================
 
+* liste des tickets à valider
+* purge des tickets créées non validés
+
 Ajout / Modification d'un ticket
 ================================
+
+* modele de ticket
+    * gerer le delta de planification
+
+* Synchro google agenda
+    * crontab => liste des 4 derniers mois
+    * verifier dates avant synchro
+
+* Ajout de commentaire a revoir
 
 General
 =======
 
-* creer une case "aller au ticket"
-
 * clients
     * classement des clients dans les combobox
     * ajout des vues pour modifier les coordonnées
+* Voir la mise en page des erreurs
+* bug sur le filtering select de dojo
+* tracabilité des emails 
+    * stocké par ticket en brut
 
 Tickets / Vues
 ==============
