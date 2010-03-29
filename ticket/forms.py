@@ -10,6 +10,7 @@ from claritick.common.widgets import *
 from claritick.common.forms import ModelFormTableMixin
 from claritick.common.models import UserProfile
 from common.exceptions import NoProfileException
+from common.models import UserProfile
 
 def filter_form_for_user(form, user):
 
@@ -64,12 +65,10 @@ class SearchTicketForm(df.Form, ModelFormTableMixin):
         widget=df.FilteringSelect(), empty_label='', required=False)
     priority    = df.ModelChoiceField(queryset = Priority.objects.all(), 
         widget=df.FilteringSelect(), empty_label='', required=False)
-    assigned_to = df.ModelChoiceField(queryset = User.objects.all(), 
-        widget=df.FilteringSelect(), empty_label='', required=False)
+    assigned_to = df.ChoiceField(widget=df.FilteringSelect(), required=False)
     
     text = df.CharField(required=False)
-    opened_by = df.ModelChoiceField(queryset = User.objects.all(), 
-        widget=df.FilteringSelect(), required=False)
+    opened_by = df.ChoiceField(widget=df.FilteringSelect(), required=False)
     keywords = df.CharField(required=False)
     contact = df.CharField(required=False)
 
@@ -77,6 +76,9 @@ class SearchTicketForm(df.Form, ModelFormTableMixin):
         if "user" in kwargs:
             filter_form_for_user(self, kwargs["user"])
             del kwargs["user"] # user= ne doit pas arriver a l'init parent ...
+        self.base_fields["assigned_to"].choices = [(x.user.pk, x.display_in_combo()) for x in UserProfile.objects.all().select_related("user", "client")]
+        self.base_fields["assigned_to"].choices.insert(0, ("", ""))
+        self.base_fields["opened_by"].choices = self.base_fields["assigned_to"].choices
         super(SearchTicketForm, self).__init__(*args, **kwargs)
 
 class SearchTicketViewForm(SearchTicketForm):
@@ -91,9 +93,11 @@ class SearchTicketViewForm(SearchTicketForm):
     opened_by   = forms.MultipleChoiceField(required=False, widget=df.CheckboxSelectMultiple())
 
     def __init__(self, *args, **kwargs):
-        self.base_fields["assigned_to"].choices = [(x.pk, x) for x in User.objects.all()]
-        self.base_fields["opened_by"].choices = self.base_fields["assigned_to"].choices
         super(SearchTicketViewForm, self).__init__(*args, **kwargs)
+
+        # On retire les choix vide, provenant de SearchTicketForm
+        del self.base_fields["assigned_to"].choices[0]
+        del self.base_fields["opened_by"].choices[0]
 
     def clean_view_name(self):
         name = self.cleaned_data["view_name"]
@@ -124,6 +128,8 @@ class TicketActionsForm(df.Form):
 
         self.base_fields["actions"].choices = self.get_actions()
         self.base_fields["actions"].choices.insert(0, ("", ""))
+        self.base_fields["assigned_to"].choices = [(x.user.pk, x.display_in_combo()) for x in UserProfile.objects.all().select_related("user", "client")]
+        self.base_fields["assigned_to"].choices.insert(0, ("", ""))
         super(TicketActionsForm, self).__init__(*args, **kwargs)
 
     def get_actions(self):

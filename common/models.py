@@ -68,7 +68,7 @@ class ClientField(models.ForeignKey):
 class ClientManager(models.Manager):
     
     def get_query_set(self):
-        qs = super(ClientManager, self).get_query_set().select_related("parent", "parent__parent")
+        qs = super(ClientManager, self).get_query_set().select_related("parent", "parent__parent", "coordinates")
         return qs
 
     def get_childs(self, field, object_pk):
@@ -164,6 +164,14 @@ class UserProfile(models.Model):
         if self.client:
             ustr += u" (%s)" % (self.client,)
         return ustr
+
+    def display_in_combo(self):
+        """
+            Raccourci pour l'affichage dans un combo box.
+        """
+        if self.client:
+            return "%s (%s)" % (self.user, self.client.label)
+        return self.user
 
     def get_clients(self):
         if self.user.is_superuser:

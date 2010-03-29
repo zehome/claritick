@@ -121,7 +121,7 @@ class BaseTicketManager(models.Manager):
         qs = super(BaseTicketManager, self).get_query_set().\
             select_related("opened_by", "assigned_to", 
             "priority", "state", "validated_by", "category", "project", 
-            "client", "client__coordinates", "client__parent")
+            "client", "client__coordinates", "client__parent", "client__parent__coordinates", "client__parent__parent")
         return qs
 
 class TicketManager(BaseTicketManager):

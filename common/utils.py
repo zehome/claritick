@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
+from django.contrib.auth.models import User
 from common.exceptions import NoProfileException
+from common.models import UserProfile
 
 def user_has_perms_on_client(user, client):
     """
