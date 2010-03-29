@@ -2,22 +2,32 @@
 <form action="{% comment_form_target %}" method="post">
    {% csrf_token %}
   {% if next %}<input type="hidden" name="next" value="{{ next }}" />{% endif %}
+  <table>
   {% for field in form %}
     {% if field.is_hidden %}
-      {{ field }}
+    <tr>
+      <td colspan="2">{{ field }}</td>
+    </tr>
     {% else %}
-      {% if field.errors %}{{ field.errors }}{% endif %}
-      <p
+      
+      {% if field.errors %}<tr><td colspan="2">{{ field.errors }}</td></tr>{% endif %}
+      <tr
         {% if field.errors %} class="error"{% endif %}
         {% ifequal field.name "url" %} style="display:none;"{% endifequal %}
         {% ifequal field.name "email" %} style="display:none;"{% endifequal %}
         {% ifequal field.name "name" %} style="display:none;"{% endifequal %}
         {% ifequal field.name "honeypot" %} style="display:none;"{% endifequal %}>
-        {{ field.label_tag }} {{ field }}
-      </p>
+        <td class="large">
+            {{ field.label_tag }}
+        </td>
+        <td class="right">{{ field }}</td>
+      </tr>
     {% endif %}
   {% endfor %}
-  <p class="submit">
-    <button dojoType="dijit.form.Button" type="submit">{% trans "Post" %}</button>
-  </p>
+  <tr>
+    <td class="large"></td>
+    <td class="right"><button dojoType="dijit.form.Button" type="submit">{% trans "Post" %}</button></td>
+  </tr>
+  </table>
+  <input type="hidden" name="next" value="{% url ticket_modify ticket.pk %}" />
 </form>

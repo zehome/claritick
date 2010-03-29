@@ -43,15 +43,34 @@
 
 <fieldset class="block form">
   <legend>Contenu</legend>
-  <p><label for="id_title">Titre</label> {{ form.title }}</p>
-  <p>{{ form.text }}</p>
-  <p><label for="id_keywords">Mots clefs:</label> {{ form.keywords }}</p>
+  <table>
+    <tr>
+        <th class="large">{{ form.title.label_tag }}</th>
+        <td class="large right">{{ form.title }}</td>
+    </tr>
+    <tr>
+        <th></th>
+        <td class="right">{{ form.text }}</td>
+    </tr>
+    <tr>
+        <th>{{ form.keywords.label_tag }}</th>
+        <td class="right">{{ form.keywords }}</td>
+    </tr>
+  </table>
 </fieldset>
 
 <fieldset class="block form">
   <legend>Planification</legend>
-  <p><label for="id_calendar_start_time">Date de début</label> {{ form.calendar_start_time }}</p>
-  <p><label for="id_calendar_end_time">Date de fin</label> {{ form.calendar_end_time }}</p>
+  <table>
+    <tr>
+        <th class="large">{{ form.calendar_start_time.label_tag }}</th>
+        <td class="right">{{ form.calendar_start_time }}</td>
+    </tr>
+    <tr>
+        <th class="large">{{ form.calendar_end_time.label_tag }}</th>
+        <td class="right">{{ form.calendar_end_time }}</td>
+    </tr>
+  </table>
 </fieldset>
 
 <hr />

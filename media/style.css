@@ -163,6 +163,10 @@ form {
     border: 1px solid lightgrey;
 
 }
+.form-aligned label {
+    float: left;
+    margin-right: 80px;
+}
 #contenu form {
     /*background-color: #eeeeff;*/
 }
