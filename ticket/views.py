@@ -90,6 +90,7 @@ def list_unassigned(request, *args, **kw):
 @login_required
 def list_view(request, view_id=None):
     context = {}
+    data = request.POST
 
     # On charge la vue de la liste
     if view_id:
@@ -140,7 +141,7 @@ def list_view(request, view_id=None):
             )
 
 
-        if request.POST.get("validate-actions", None):
+        if request.POST.get("validate-filters", None):
             return redirect("ticket_list_view", view_id=view_id or t.pk)
 
     # On filtre la liste a partir des datas de la vue
