@@ -152,9 +152,21 @@ class TicketActionsForm(df.Form):
 
     def clean(self):
         cd = self.cleaned_data
-        if cd["actions"] == "action_close_tickets":
+        if cd["actions"] == "action_close_tickets" or (
+            cd["actions"] == "action_change_state" and cd["state"] and cd["state"].pk == settings.TICKET_STATE_CLOSED):
             if not cd["comment"]:
                 raise forms.ValidationError(u"Vous devez saisir un commentaire de clotûre pour le/les tickets sélectionné(s).")
+
+        if cd["actions"] == "action_change_state" and not cd["state"]:
+            raise forms.ValidationError(u"Vous devez choisir un état à appliquer.")
+        if cd["actions"] == "action_change_assigned_to" and not cd["assigned_to"]:
+            raise forms.ValidationError(u"Vous devez choisir une nouvelle assignation.")
+        if cd["actions"] == "action_change_category" and not cd["category"]:
+            raise forms.ValidationError(u"Vous devez choisir une nouvelle catégorie.")
+        if cd["actions"] == "action_change_project" and not cd["project"]:
+            raise forms.ValidationError(u"Vous devez choisir un nouveau project.")
+        if cd["actions"] == "action_change_priority" and not cd["priority"]:
+            raise forms.ValidationError(u"Vous devez choisir une nouvelle priorité.")
  
         return cd
 
@@ -183,6 +195,9 @@ class TicketActionsForm(df.Form):
         qs.update(project=self.cleaned_data["project"])
 
     def action_change_state(self, qs, request):
+        if self.cleaned_data["state"].pk == settings.TICKET_STATE_CLOSED:
+            self.action_close_tickets(qs, request)
+            return
         qs.update(state=self.cleaned_data["state"])
 
     def action_change_priority(self, qs, request):
