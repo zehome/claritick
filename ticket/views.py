@@ -12,6 +12,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.conf import settings
 from django.views.generic import list_detail
 from django.utils import simplejson
+from django.core.urlresolvers import reverse
 
 from claritick.ticket.models import Ticket, TicketView
 from claritick.ticket.forms import *
@@ -244,9 +245,11 @@ def new(request):
     ticket = form.save(commit=False)
     ticket.opened_by = request.user
     ticket.title = "Invalid title"
-    ticket.state = None
+    #ticket.state = None
+    ticket.state = State.objects.get(pk=settings.TICKET_STATE_NEW)
+    ticket.priority = Priority.objects.get(pk=settings.TICKET_PRIORITY_NORMAL)
     ticket.save()
-    return redirect("/ticket/modify/%d" % (ticket.id,) )
+    return redirect("ticket_modify", ticket_id=ticket.pk)
 
 @permission_required("ticket.change_ticket")
 @login_required
@@ -259,21 +262,23 @@ def modify(request, ticket_id):
 
     if not ticket.text:
         ticket.title = None
-        ticket.state = State.objects.get(pk=1)
-        ticket.priority = Priority.objects.get(pk=2)
+        #ticket.state = State.objects.get(pk=settings.TICKET_STATE_NEW)
+        #ticket.priority = Priority.objects.get(pk=settings.TICKET_PRIORITY_NORMAL)
         ticket.validated_by = request.user
     
+    if request.user.has_perm("ticket.add_ticket_full"):
+        template_name = "ticket/modify.html"
+        TicketForm = NewTicketForm
+    else:
+        template_name = "ticket/modify_small.html"
+        TicketForm = NewTicketSmallForm
+
     if request.method == "POST":
         # TODO avant de sauver le ticket, retirer du request.POST toutes les infos que l'utilisateur n'a pas le droit de modifier
-        form = NewTicketForm(request.POST, instance=ticket, user=request.user)
+        form = TicketForm(request.POST, instance=ticket, user=request.user)
         if form.is_valid():
             form.save()
     else:
-        form = NewTicketForm(instance=ticket, user=request.user)
-
-    if request.user.has_perm("ticket.add_ticket_full"):
-        template_name = "ticket/modify.html"
-    else:
-        template_name = "ticket/modify_small.html"
+        form = TicketForm(instance=ticket, user=request.user)
 
     return render_to_response(template_name, {"form": form, "ticket": ticket}, context_instance=RequestContext(request))

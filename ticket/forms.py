@@ -46,6 +46,12 @@ class NewTicketForm(forms.ModelForm):
             del kwargs["user"] # user= ne doit pas arriver a l'init parent ...
         super(NewTicketForm, self).__init__(*args, **kwargs)
 
+class NewTicketSmallForm(NewTicketForm):
+
+    class Meta:
+        model = Ticket
+        exclude = ("opened_by", "category", "project", "keywords", "state", "priority")
+
 class SearchTicketForm(df.Form, ModelFormTableMixin):
     title       = df.CharField(widget=df.TextInput(attrs={'size':'64'}), required=False)
     client      = df.ChoiceField(choices=[(x.pk, x) for x in Client.objects.all()],

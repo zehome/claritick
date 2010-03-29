@@ -4,21 +4,8 @@ Liste des tickets / Droits utilisateurs
 * Fermer un ticket
     * ajout commentaire de fermeture
 
-* comitter reduit
-    * actions
-        * uniquement "Fermer un ticket"
-
 Ajout / Modification d'un ticket
 ================================
-
-* comitter reduit
-    * enlever
-        * categorie
-        * project
-        * mot clef
-        * planification
-    * priorité normale par défaut
-    * etat new par defaut
 
 General
 =======
