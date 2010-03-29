@@ -70,7 +70,8 @@ class SearchTicketForm(df.Form, ModelFormTableMixin):
         if "user" in kwargs:
             filter_form_for_user(self, kwargs["user"])
             del kwargs["user"] # user= ne doit pas arriver a l'init parent ...
-        self.base_fields["assigned_to"].choices = [(x.user.pk, x.display_in_combo()) for x in UserProfile.objects.all().select_related("user", "client").order_by("client__label")]
+        self.base_fields["assigned_to"].choices = [(x.user.pk, x.display_in_combo()) 
+            for x in UserProfile.objects.all().select_related("user", "client").order_by("client__label")]
         self.base_fields["assigned_to"].choices.insert(0, ("", ""))
         self.base_fields["opened_by"].choices = self.base_fields["assigned_to"].choices
         super(SearchTicketForm, self).__init__(*args, **kwargs)
@@ -123,7 +124,8 @@ class TicketActionsForm(df.Form):
 
         self.base_fields["actions"].choices = self.get_actions()
         self.base_fields["actions"].choices.insert(0, ("", ""))
-        self.base_fields["assigned_to"].choices = [(x.user.pk, x.display_in_combo()) for x in UserProfile.objects.all().select_related("user", "client").order_by("client__label")]
+        self.base_fields["assigned_to"].choices = [(x.user.pk, x.display_in_combo()) 
+            for x in UserProfile.objects.all().select_related("user", "client").order_by("client__label")]
         self.base_fields["assigned_to"].choices.insert(0, ("", ""))
         super(TicketActionsForm, self).__init__(*args, **kwargs)
 
