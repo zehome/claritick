@@ -1,5 +1,5 @@
 {% load comments i18n %}
-<form action="{% comment_form_target %}" method="post">
+<form action="{% comment_form_target %}" method="post" id="id_comment_form">
    {% csrf_token %}
   {% if next %}<input type="hidden" name="next" value="{{ next }}" />{% endif %}
   <table>
@@ -26,7 +26,18 @@
   {% endfor %}
   <tr>
     <td class="large"></td>
-    <td class="right"><button dojoType="dijit.form.Button" type="submit">{% trans "Post" %}</button></td>
+    <td class="right"><button dojoType="dijit.form.Button" type="button">{% trans "Post" %}
+        <script type="dojo/method" event="onClick">
+            dojo.xhrPost({
+                form: "id_comment_form",
+                handleAs: "text",
+                load: function(data) {
+                    dojo.doc.location.reload();
+                }
+            });
+            return false;
+        </script>
+    </button></td>
   </tr>
   </table>
   <input type="hidden" name="next" value="{% url ticket_modify ticket.pk %}" />
