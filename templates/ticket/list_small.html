@@ -9,12 +9,6 @@
 {% block extrajs %}
 <script type="text/javascript" charset="utf-8">
 
-    function hide_actions() {
-        dojo.query("#widget_id_action-assigned_to, #widget_id_action-category, #widget_id_action-project, #widget_id_action-state, #widget_id_action-priority").forEach(function(tag) {
-            dojo.style(tag, "display", "none");
-        });
-    }
-
     dojo.addOnLoad(function() {
         dojo.connect(dojo.byId("select_all"), "onclick", function(evt) {
             if (dojo.byId("select_all").checked)
@@ -27,12 +21,13 @@
             });
         });
 
-        hide_actions();
-
         dojo.connect(dijit.byId("id_action-actions"), "onChange", function(evt) {
-            hide_actions();
-            dojo.style(widget_name, "display", "inline-block");
+            if (dijit.byId("id_action-actions").attr("value") == "action_close_tickets")
+                dojo.style("id_close_comment", "display", "inline-block");
+            else
+                dojo.style("id_close_comment", "display", "none");
         });
+        dojo.style("id_close_comment", "display", "none");
     });
 </script>
 {% endblock %}
@@ -77,10 +72,30 @@
 {% diggpaginator page_obj %}
 {% endif %}
 
+{{ action_form.errors }}
+{{ action_form.comment }}
 <table class="resultat">
 <tr class="form">
     <td colspan="11">
-        {{ action_form.actions }}<button dojoType="dijit.form.Button" type="submit">Valider</button>
+        {{ action_form.actions }}
+
+        <div id="id_close_comment">
+            <div dojoType="dijit.form.DropDownButton" >
+                <span>Commentaire de clotûre</span>
+                <div dojoType="dijit.TooltipDialog">
+                    <textarea cols="50" rows="10" id="id_tooltip_comment"></textarea>
+                    <script type="dojo/method" event="onClose">
+                            dijit.byId("id_action-comment").attr("value", dojo.byId("id_tooltip_comment").value);
+                    </script>
+                </div>
+            </div>
+        </div>
+        <button dojoType="dijit.form.Button" type="submit" name="validate-actions" id="validate-actions" value="1">Valider
+            <script type="dojo/method" event="onClick">
+                // TODO Tester les champs obligatoire avant de valider
+                return true;
+            </script>
+        </button>
     </td>
 </tr>
 <tr>

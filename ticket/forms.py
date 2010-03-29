@@ -1,14 +1,18 @@
 # -*- coding: utf-8 -*-
 
+import datetime
 from django import forms
 from dojango import forms as df
 from django.conf import settings
-
 from django.contrib.auth.models import User
+from django.contrib.comments.models import Comment
+from django.contrib.sites.models import Site
+
 from claritick.ticket.models import *
 from claritick.common.widgets import *
 from claritick.common.forms import ModelFormTableMixin
 from claritick.common.models import UserProfile
+
 from common.exceptions import NoProfileException
 from common.models import UserProfile
 from common.utils import filter_form_for_user
@@ -107,6 +111,7 @@ class TicketActionsForm(df.Form):
         widget=df.FilteringSelect(), empty_label='', required=False)
     priority    = df.ModelChoiceField(queryset = Priority.objects.all(), 
         widget=df.FilteringSelect(), empty_label='', required=False)
+    comment     = df.CharField(widget=df.HiddenInput(), required=False)
 
     model = Ticket.objects
 
@@ -132,32 +137,53 @@ class TicketActionsForm(df.Form):
             ("action_change_priority", u"Modifier la priorité"),
         ]
 
-    def process_actions(self):
+    def process_actions(self, request):
         if self.is_valid():
             action = self.cleaned_data["actions"]
             try:
                 attr = getattr(self, action)
-                attr(self.queryset)
+                attr(self.queryset, request)
                 return True
             except AttributeError:
-                return
+                return False
+        return False
 
-    def action_close_tickets(self, qs):
-        qs.update(state=settings.TICKET_STATE_CLOSED)
+    def clean(self):
+        cd = self.cleaned_data
+        if cd["actions"] == "action_close_tickets":
+            if not cd["comment"]:
+                raise forms.ValidationError(u"Vous devez saisir un commentaire de clotûre pour le/les tickets sélectionné(s).")
+ 
+        return cd
 
-    def action_change_assigned_to(self, qs):
+    def action_close_tickets(self, qs, request):
+        qs.update(state=settings.TICKET_STATE_CLOSED, date_close=datetime.datetime.now())
+        for ticket in qs:
+            Comment.objects.create(
+                content_object=ticket,
+                site=Site.objects.get_current(),
+                user=request.user,
+                user_name=request.user.username,
+                user_email=request.user.email,
+                comment=self.cleaned_data["comment"],
+                submit_date=datetime.datetime.now(),
+                is_public=True,
+                is_removed=False
+            )
+
+    def action_change_assigned_to(self, qs, request):
         qs.update(assigned_to=self.cleaned_data["assigned_to"])
 
-    def action_change_category(self, qs):
+    def action_change_category(self, qs, request):
         qs.update(category=self.cleaned_data["category"])
 
-    def action_change_project(self, qs):
+    def action_change_project(self, qs, request):
         qs.update(project=self.cleaned_data["project"])
 
-    def action_change_state(self, qs):
+    def action_change_state(self, qs, request):
         qs.update(state=self.cleaned_data["state"])
 
-    def action_change_priority(self, qs):
+    def action_change_priority(self, qs, request):
         qs.update(priority=self.cleaned_data["priority"])
 
 class TicketActionsSmallForm(TicketActionsForm):

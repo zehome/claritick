@@ -122,7 +122,7 @@ def list_view(request, view_id=None):
     else:
         action_form = TicketActionsSmallForm(request.POST, prefix="action")
 
-    if action_form.process_actions():
+    if action_form.process_actions(request):
         return http.HttpResponseRedirect("%s?%s" % (request.META["PATH_INFO"], request.META["QUERY_STRING"]))
 
     if not data.get("state"):
@@ -160,6 +160,7 @@ def list_view(request, view_id=None):
     context.update({
         "form": form,
         "action_form": action_form,
+        "TICKET_STATE_CLOSED": settings.TICKET_STATE_CLOSED
     })
 
     return list_detail.object_list(request, queryset=qs,  paginate_by=settings.TICKETS_PER_PAGE, page=request.GET.get("page", 1),
@@ -175,7 +176,7 @@ def list_all(request, form=None, filterdict=None, template_name=None, context={}
     else:
         action_form = TicketActionsSmallForm(request.POST, prefix="action")
 
-    if action_form.process_actions():
+    if action_form.process_actions(request):
         return http.HttpResponseRedirect("%s?%s" % (request.META["PATH_INFO"], request.META["QUERY_STRING"]))
 
     if request.GET.get("reset", False):
@@ -219,6 +220,7 @@ def list_all(request, form=None, filterdict=None, template_name=None, context={}
     context.update({
         "form": form, 
         "action_form": action_form,
+        "TICKET_STATE_CLOSED": settings.TICKET_STATE_CLOSED
     })
 
     return list_detail.object_list(request, queryset=qs,  paginate_by=settings.TICKETS_PER_PAGE, page=request.GET.get("page", 1),
