@@ -27,7 +27,8 @@
 {% block list_filters %}
 <fieldset class="form">
   <legend id="filtres-title">Filtrage</legend>
-    <table class="search" id="filtres-table" {% if view %}style="display: none;"{% endif %}>
+  <div id="filtres-table" {% if view %}style="display: none;"{% endif %}>
+    <table class="search">
         <tr>
             <th>{{ form.client.label_tag }}</th>
             <td>{{ form.client }}</td>
@@ -51,5 +52,7 @@
             </td>
         </tr>
     </table>
+        <input id="delete_view" name="delete_view" dojoType="dijit.form.CheckBox" value="1" /><label for="delete_view">Supprimer cette vue</label><button type="submit" dojoType="dijit.form.Button" name="validate-filters" value="1">Enregistrer</button>
+    </div>
 </fieldset>
 {% endblock %}

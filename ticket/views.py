@@ -97,6 +97,9 @@ def list_view(request, view_id=None):
     if view_id:
         view = get_object_or_404(TicketView, pk=view_id, user=request.user)
         if request.method == "POST" and request.POST.get("validate-filters", None):
+            if request.POST.get("delete_view", None):
+                view.delete()
+                return redirect("ticket_list")
             data = request.POST.copy()
         else:
             data = view.filters

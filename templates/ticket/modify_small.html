@@ -12,7 +12,7 @@
 <form action="{% url ticket_modify ticket.id %}" method="POST">
 {% csrf_token %}
 
-<fieldset class="block">
+<fieldset class="block form">
   <legend>Contact</legend>
   <table>
     <tr>
@@ -34,17 +34,17 @@
   </table>
 </fieldset>
 
-<fieldset class="block">
+<fieldset class="block form">
   <legend>Contenu</legend>
   <p><label for="id_title">Titre</label> {{ form.title }}</p>
   <p>{{ form.text }}</p>
 </fieldset>
 
 <hr />
-<span class="bouton"><img class="bouton_img" src="/media/images/oxygen/ok.png" /><input type="submit" value="Modifier/Valider" /></span>
+<button dojoType="dijit.form.Button" type="submit">Modifier / Valider</button>
 </form>
 
-<fieldset class="block" style="padding: 0;">
+<fieldset class="block form" style="padding: 0;">
   <legend>Réponses</legend>
 {% load comments %}
 {% render_comment_form for ticket %}
