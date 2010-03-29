@@ -15,9 +15,8 @@ General
     * ajouter le nom du client
 
 * clients
+    * classement des clients dans les combobox
     * ajout des vues pour modifier les coordonnées
-    * def unicode
-        * ne pas mettre le label du parent racine
 
 Tickets / Vues
 ==============

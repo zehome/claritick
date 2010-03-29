@@ -68,7 +68,7 @@ class ClientField(models.ForeignKey):
 class ClientManager(models.Manager):
     
     def get_query_set(self):
-        qs = super(ClientManager, self).get_query_set().select_related("parent")
+        qs = super(ClientManager, self).get_query_set().select_related("parent", "parent__parent")
         return qs
 
     def get_childs(self, field, object_pk):
@@ -123,7 +123,7 @@ class Client(models.Model):
     objects = ClientManager()
 
     def __unicode__(self):
-        if self.parent:
+        if self.parent and self.parent.parent:
             return u"%s - %s" % (self.label, self.parent.label)
         return u"%s" % (self.label,)
     
