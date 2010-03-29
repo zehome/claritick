@@ -17,6 +17,18 @@
 
     <script type="text/javascript" charset="utf-8">
         var MENU_CAN_HIDE = true;
+
+        function go_to_ticket(num) {
+            dojo.doc.location = '/ticket/modify/' + num + "/";
+        }
+        dojo.addOnLoad(function() {
+            dojo.connect(dojo.byId("id_num_ticket"), "onchange", function() {
+                go_to_ticket(dojo.byId("id_num_ticket").value);
+            });
+            dojo.connect(dijit.byId("id_go_ticket"), "onClick", function() {
+                go_to_ticket(dojo.byId("id_num_ticket").value);
+            });
+        });
     </script>
     {% block extrajs %}{% endblock %}
     <script type="text/javascript" src="{{ MEDIA_URL }}js/menu.js"></script>
@@ -39,6 +51,7 @@
             <a class="bouton" href="/accounts/logout"><img src="/media/images/oxygen/disconnect.png" />Déconnexion</a>
           </p>
           {% endif %}
+          Aller au ticket # <input type="text" id="id_num_ticket" size="5" /> <button dojoType="dijit.form.Button" id="id_go_ticket">Go</button>
         </td>
       </tr>
     </table>
