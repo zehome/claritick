@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from django.contrib import admin
+from django.contrib.auth.models import User
+from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
 from common.models import Client, UserProfile, GoogleAccount, Coordinate
 
 class CoordinateAdmin(admin.ModelAdmin):
@@ -12,7 +14,15 @@ class CoordinateAdmin(admin.ModelAdmin):
 class ClientAdmin(admin.ModelAdmin):
     search_fields = ["label", "parent__label"]
 
+class UserProfileInline(admin.TabularInline):
+    model = UserProfile
+
+class UserAdmin(DjangoUserAdmin):
+    inlines = [UserProfileInline]
+    list_display = ["username", "email", "first_name", "last_name", "is_staff", "get_profile"]
+
+admin.site.unregister(User)
 admin.site.register(Client, ClientAdmin)
-admin.site.register(UserProfile)
+admin.site.register(User, UserAdmin)
 admin.site.register(GoogleAccount)
 admin.site.register(Coordinate, CoordinateAdmin)
