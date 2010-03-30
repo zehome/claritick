@@ -10,6 +10,8 @@
 <script type="text/javascript" charset="utf-8">
 
     dojo.addOnLoad(function() {
+
+        // Selection des checkbox en masse
         dojo.connect(dojo.byId("select_all"), "onclick", function(evt) {
             if (dojo.byId("select_all").checked)
                 var val = true;
@@ -18,6 +20,19 @@
 
             dojo.query("input[type^='checkbox'][id^='ticket_select']").forEach(function(tag) {
                 tag.checked = val;
+                if (val)
+                    dojo.addClass(tag.parentNode.parentNode, "selected");
+                else
+                    dojo.removeClass(tag.parentNode.parentNode, "selected");
+            });
+        });
+
+        dojo.query("input[type^='checkbox'][id^='ticket_select']").forEach(function(tag) {
+            dojo.connect(tag, "onchange", function() {
+                if (tag.checked)
+                    dojo.addClass(tag.parentNode.parentNode, "selected");
+                else
+                    dojo.removeClass(tag.parentNode.parentNode, "selected");
             });
         });
 
