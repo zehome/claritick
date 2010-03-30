@@ -19,7 +19,6 @@ General
 
 * clients
     * classement des clients dans les combobox
-    * ajout des vues pour modifier les coordonnées
 * Voir la mise en page des erreurs
 * bug sur le filtering select de dojo
 * tracabilité des emails 
