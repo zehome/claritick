@@ -182,16 +182,16 @@
 </tr>
 <tr>
     <th style="text-align: center;"><input type="checkbox" id="select_all" /></th>
-    <th><a href="">Priorité</a></th>
-    <th><a href="">Client</a></th>
-    <th><a href="">Catégorie</a></th>
-    <th><a href="">Projet</a></th>
-    <th><a href="">Titre</a></th>
-    <th><a href="">Commentaires</a></th>
-    <th><a href="">Contact</a></th>
-    <th><a href="">Dernières modif.</a></th>
-    <th><a href="">Ouvert par</a></th>
-    <th><a href="">Assiné à</a></th>
+    <th><a href="?sort=priority&sort_order={{ sort_order }}">Priorité</a></th>
+    <th><a href="?sort=client&sort_order={{ sort_order }}">Client</a></th>
+    <th><a href="?sort=category&sort_order={{ sort_order }}">Catégorie</a></th>
+    <th><a href="?sort=project&sort_order={{ sort_order }}">Projet</a></th>
+    <th><a href="?sort=title&sort_order={{ sort_order }}">Titre</a></th>
+    <th><a href="?sort=nb_comments&sort_order={{ sort_order }}">Commentaires</a></th>
+    <th><a href="?sort=contact&sort_order={{ sort_order }}">Contact</a></th>
+    <th><a href="?sort=last_modification&sort_order={{ sort_order }}">Dernières modif.</a></th>
+    <th><a href="?sort=opened_by&sort_order={{ sort_order }}">Ouvert par</a></th>
+    <th><a href="?sort=assigned_to&sort_order={{ sort_order }}">Assigné à</a></th>
 </tr>
 {% for row in object_list %}
     {# get_comment_count for ticket.ticket row.id as comment_count #}

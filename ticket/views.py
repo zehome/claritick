@@ -26,7 +26,9 @@ from common.exceptions import NoProfileException
 from common.utils import user_has_perms_on_client
 
 def get_filters(request):
-    return request.session["list_filters"]
+    if "list_filters" in request.session:
+        return request.session["list_filters"]
+    return {}
 
 def set_filters(request, datas=None):
     if not "list_filters" in request.session:
@@ -76,6 +78,20 @@ def filter_ticket_by_user(qs, user):
 
     return qs
 
+def add_order_by(queryset, request):
+    """
+        Rajoute le orderby au queryset en fonction du GET de la requete.
+    """
+    sort = request.GET.get('sort', 'id')
+    sort_order = int(request.GET.get("sort_order", 1))
+    return queryset.order_by("%s%s" % (not sort_order and "-" or "", sort))
+
+def get_context(request):
+    return {
+        "TICKET_STATE_CLOSED": settings.TICKET_STATE_CLOSED,
+        "sort_order": int(not int(request.GET.get("sort_order", 1)))
+    }
+
 @login_required
 def list_me(request, *args, **kw):
     form = None
@@ -99,7 +115,7 @@ def list_nonvalide(request):
 
 @login_required
 def list_view(request, view_id=None):
-    context = {}
+    context = get_context(request)
     data = request.POST
 
     # On charge la vue de la liste
@@ -163,22 +179,23 @@ def list_view(request, view_id=None):
     qs = filter_ticket_by_user(qs, request.user)
 
     # Le tri
-    qs = qs.order_by(request.GET.get('sort', '-id'))
+    qs = add_order_by(qs, request)
 
     context.update({
         "form": form,
         "action_form": action_form,
-        "TICKET_STATE_CLOSED": settings.TICKET_STATE_CLOSED
     })
 
     return list_detail.object_list(request, queryset=qs,  paginate_by=settings.TICKETS_PER_PAGE, page=request.GET.get("page", 1),
         template_name=template_name, extra_context=context)
 
 @login_required
-def list_all(request, form=None, filterdict=None, template_name=None, context={}, *args, **kw):
+def list_all(request, form=None, filterdict=None, template_name=None, *args, **kw):
     """
         Liste tous les tickets sans aucun filtre
     """
+    context = get_context(request)
+
     if request.user.has_perm("can_commit_full") or request.user.is_superuser:
         action_form = TicketActionsForm(request.POST, prefix="action")
     else:
@@ -216,7 +233,7 @@ def list_all(request, form=None, filterdict=None, template_name=None, context={}
     qs = filter_ticket_by_user(qs, request.user)
 
     # Le tri
-    qs = qs.order_by(request.GET.get('sort', '-id'))
+    qs = add_order_by(qs, request)
 
     # TODO choisir le bon template en fonction des permissions
     if template_name is None:
@@ -228,7 +245,6 @@ def list_all(request, form=None, filterdict=None, template_name=None, context={}
     context.update({
         "form": form, 
         "action_form": action_form,
-        "TICKET_STATE_CLOSED": settings.TICKET_STATE_CLOSED
     })
 
     return list_detail.object_list(request, queryset=qs,  paginate_by=settings.TICKETS_PER_PAGE, page=request.GET.get("page", 1),
