@@ -192,6 +192,9 @@ form {
     max-height: inherit !important;
 }
 
+.selected {
+    background-color: #FFC !important;
+}
 /******************* Boutons de validation ********************/
 .bouton {
     background-color:#FFFFFF;

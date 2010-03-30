@@ -183,6 +183,8 @@ class ClaritickUser(User):
         return self.client or u""
 
     class Meta:
+        verbose_name = u"Utilisateur Claritick"
+        verbose_name_plural = u"Utilisateurs Claritick"
         proxy = True
 
 class UserProfile(models.Model):

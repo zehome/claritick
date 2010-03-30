@@ -30,8 +30,8 @@ class NewTicketForm(forms.ModelForm):
     keywords = forms.CharField(widget=forms.TextInput(attrs={'size': '80'}), required=False)
     calendar_start_time = df.DateTimeField(required=False)
     calendar_end_time = df.DateTimeField(required=False)
-    assigned_to = df.ModelChoiceField(widget=df.FilteringSelect(), queryset=ClaritickUser.objects.all())
-    validated_by = df.ModelChoiceField(widget=df.FilteringSelect(), queryset=ClaritickUser.objects.all())
+    assigned_to = df.ModelChoiceField(widget=df.FilteringSelect(), queryset=ClaritickUser.objects.all(), required=False)
+    validated_by = df.ModelChoiceField(widget=df.FilteringSelect(), queryset=ClaritickUser.objects.all(), required=False)
     
     class Meta:
         model = Ticket
@@ -47,7 +47,7 @@ class NewTicketSmallForm(NewTicketForm):
 
     class Meta:
         model = Ticket
-        exclude = ("opened_by", "category", "project", "keywords", "state", "priority")
+        exclude = ("opened_by", "category", "project", "keywords", "state", "priority", "assigned_to", "validated_by")
 
 class SearchTicketForm(df.Form, ModelFormTableMixin):
     title       = df.CharField(widget=df.TextInput(attrs={'size':'64'}), required=False)

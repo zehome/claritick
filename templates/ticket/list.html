@@ -16,6 +16,8 @@
     }
 
     dojo.addOnLoad(function() {
+
+        // Selection des checkbox en masse
         dojo.connect(dojo.byId("select_all"), "onclick", function(evt) {
             if (dojo.byId("select_all").checked)
                 var val = true;
@@ -24,11 +26,25 @@
 
             dojo.query("input[type^='checkbox'][id^='ticket_select']").forEach(function(tag) {
                 tag.checked = val;
+                if (val)
+                    dojo.addClass(tag.parentNode.parentNode, "selected");
+                else
+                    dojo.removeClass(tag.parentNode.parentNode, "selected");
+            });
+        });
+
+        dojo.query("input[type^='checkbox'][id^='ticket_select']").forEach(function(tag) {
+            dojo.connect(tag, "onchange", function() {
+                if (tag.checked)
+                    dojo.addClass(tag.parentNode.parentNode, "selected");
+                else
+                    dojo.removeClass(tag.parentNode.parentNode, "selected");
             });
         });
 
         hide_actions();
 
+        // Gestion des actions
         dojo.connect(dijit.byId("id_action-actions"), "onChange", function(evt) {
             var widget_name = "";
             switch (dijit.byId("id_action-actions").attr("value")) {
