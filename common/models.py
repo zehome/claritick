@@ -154,18 +154,29 @@ class GoogleAccount(models.Model):
     def __unicode__(self):
         return u"Compte google %s" % (self.login,)
 
-class UserProfileManager(models.Manager):
+class ClaritickUserManager(models.Manager):
+    def get_query_set(self):
+        return super(ClaritickUserManager, self).get_query_set().\
+            extra(select={"client": '"common_client"."label"'}).\
+            select_related("userprofile", "userprofile__client")
+
+class ClaritickUser(User):
     
-    def get_for_combo(self):
-        return [(x.user.pk, x) for x in self.get_query_set().select_related("user", "client").order_by("client__label")]
+    objects_with_clients = ClaritickUserManager()
+
+    def __unicode__(self):
+        if self.client:
+            return u"%s (%s)" % (self.username, self.client)
+        return u"%s" % self.username
+
+    class Meta:
+        proxy = True
 
 class UserProfile(models.Model):
     user = models.ForeignKey(User, verbose_name="Utilisateur", unique=True)
     google_account = models.ForeignKey(GoogleAccount, verbose_name="Compte google", null=True, blank=True)
     client = ClientField(Client, verbose_name="Client", blank=True, null=True)
     
-    objects = UserProfileManager()
-
     def __unicode__(self):
         if self.client:
             return u"%s (%s)" % (self.user, self.client.label)

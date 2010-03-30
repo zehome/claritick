@@ -14,7 +14,7 @@ from claritick.common.forms import ModelFormTableMixin
 from claritick.common.models import UserProfile
 
 from common.exceptions import NoProfileException
-from common.models import UserProfile
+from common.models import UserProfile, ClaritickUser
 from common.utils import filter_form_for_user
 
 class PartialNewTicketForm(forms.ModelForm):
@@ -30,8 +30,8 @@ class NewTicketForm(forms.ModelForm):
     keywords = forms.CharField(widget=forms.TextInput(attrs={'size': '80'}), required=False)
     calendar_start_time = df.DateTimeField(required=False)
     calendar_end_time = df.DateTimeField(required=False)
-    #assigned_to = df.ChoiceField(widget=df.FilteringSelect())
-    #validated_by = df.ChoiceField(widget=df.FilteringSelect())
+    assigned_to = df.ModelChoiceField(widget=df.FilteringSelect(), queryset=ClaritickUser.objects_with_clients.all())
+    validated_by = df.ModelChoiceField(widget=df.FilteringSelect(), queryset=ClaritickUser.objects_with_clients.all())
     
     class Meta:
         model = Ticket
@@ -41,9 +41,6 @@ class NewTicketForm(forms.ModelForm):
         if "user" in kwargs:
             filter_form_for_user(self, kwargs["user"])
             del kwargs["user"] # user= ne doit pas arriver a l'init parent ...
-        #self.base_fields["assigned_to"].choices = UserProfile.objects.get_for_combo()
-        #self.base_fields["assigned_to"].choices.insert(0, ("", ""))
-        #self.base_fields["validated_by"].choices = self.base_fields["assigned_to"].choices
         super(NewTicketForm, self).__init__(*args, **kwargs)
 
 class NewTicketSmallForm(NewTicketForm):
@@ -75,7 +72,7 @@ class SearchTicketForm(df.Form, ModelFormTableMixin):
         if "user" in kwargs:
             filter_form_for_user(self, kwargs["user"])
             del kwargs["user"] # user= ne doit pas arriver a l'init parent ...
-        self.base_fields["assigned_to"].choices = UserProfile.objects.get_for_combo()
+        self.base_fields["assigned_to"].choices = [(x.pk, x) for x in ClaritickUser.objects_with_clients.all()]
         self.base_fields["assigned_to"].choices.insert(0, ("", ""))
         self.base_fields["opened_by"].choices = self.base_fields["assigned_to"].choices
         super(SearchTicketForm, self).__init__(*args, **kwargs)
@@ -128,7 +125,7 @@ class TicketActionsForm(df.Form):
 
         self.base_fields["actions"].choices = self.get_actions()
         self.base_fields["actions"].choices.insert(0, ("", ""))
-        self.base_fields["assigned_to"].choices = UserProfile.objects.get_for_combo()
+        self.base_fields["assigned_to"].choices = [(x.pk, x) for x in ClaritickUser.objects_with_clients.all()]
         self.base_fields["assigned_to"].choices.insert(0, ("", ""))
         super(TicketActionsForm, self).__init__(*args, **kwargs)
 
