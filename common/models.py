@@ -155,13 +155,23 @@ class GoogleAccount(models.Model):
         return u"Compte google %s" % (self.login,)
 
 class ClaritickUserManager(models.Manager):
+    """
+        ModelManager de ClaritickUser
+    """
     def get_query_set(self):
+        """
+            On va chercher le userprofile et client.
+            En sortie, l'objet aura un attribut client correspondant au userprofile__client__label de l'utilisateur.
+        """
         return super(ClaritickUserManager, self).get_query_set().\
             extra(select={"client": '"common_client"."label"'}).\
             select_related("userprofile", "userprofile__client")
 
 class ClaritickUser(User):
-    
+    """
+        Model proxy de User.
+    """
+
     objects_with_clients = ClaritickUserManager()
 
     def __unicode__(self):
