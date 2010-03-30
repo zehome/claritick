@@ -16,7 +16,6 @@ from django.core.urlresolvers import reverse
 
 from claritick.ticket.models import Ticket, TicketView
 from claritick.ticket.forms import *
-from claritick.ticket.tables import DefaultTicketTable
 
 from claritick.common.diggpaginator import DiggPaginator
 from claritick.common.models import Client, UserProfile
