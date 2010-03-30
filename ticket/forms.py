@@ -30,8 +30,8 @@ class NewTicketForm(forms.ModelForm):
     keywords = forms.CharField(widget=forms.TextInput(attrs={'size': '80'}), required=False)
     calendar_start_time = df.DateTimeField(required=False)
     calendar_end_time = df.DateTimeField(required=False)
-    assigned_to = df.ModelChoiceField(widget=df.FilteringSelect(), queryset=ClaritickUser.objects_with_clients.all())
-    validated_by = df.ModelChoiceField(widget=df.FilteringSelect(), queryset=ClaritickUser.objects_with_clients.all())
+    assigned_to = df.ModelChoiceField(widget=df.FilteringSelect(), queryset=ClaritickUser.objects.all())
+    validated_by = df.ModelChoiceField(widget=df.FilteringSelect(), queryset=ClaritickUser.objects.all())
     
     class Meta:
         model = Ticket
@@ -72,7 +72,7 @@ class SearchTicketForm(df.Form, ModelFormTableMixin):
         if "user" in kwargs:
             filter_form_for_user(self, kwargs["user"])
             del kwargs["user"] # user= ne doit pas arriver a l'init parent ...
-        self.base_fields["assigned_to"].choices = [(x.pk, x) for x in ClaritickUser.objects_with_clients.all()]
+        self.base_fields["assigned_to"].choices = [(x.pk, x) for x in ClaritickUser.objects.all()]
         self.base_fields["assigned_to"].choices.insert(0, ("", ""))
         self.base_fields["opened_by"].choices = self.base_fields["assigned_to"].choices
         super(SearchTicketForm, self).__init__(*args, **kwargs)
@@ -125,7 +125,7 @@ class TicketActionsForm(df.Form):
 
         self.base_fields["actions"].choices = self.get_actions()
         self.base_fields["actions"].choices.insert(0, ("", ""))
-        self.base_fields["assigned_to"].choices = [(x.pk, x) for x in ClaritickUser.objects_with_clients.all()]
+        self.base_fields["assigned_to"].choices = [(x.pk, x) for x in ClaritickUser.objects.all()]
         self.base_fields["assigned_to"].choices.insert(0, ("", ""))
         super(TicketActionsForm, self).__init__(*args, **kwargs)
 

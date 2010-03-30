@@ -165,19 +165,22 @@ class ClaritickUserManager(models.Manager):
         """
         return super(ClaritickUserManager, self).get_query_set().\
             extra(select={"client": '"common_client"."label"'}).\
-            select_related("userprofile", "userprofile__client")
+            select_related("userprofile", "userprofile__client").order_by("userprofile__client__label")
 
 class ClaritickUser(User):
     """
         Model proxy de User.
     """
 
-    objects_with_clients = ClaritickUserManager()
+    objects = ClaritickUserManager()
 
     def __unicode__(self):
         if self.client:
             return u"%s (%s)" % (self.username, self.client)
         return u"%s" % self.username
+
+    def get_client(self):
+        return self.client or u""
 
     class Meta:
         proxy = True
