@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+<form method="POST">
+    {% csrf_token %}
+    <fieldset class="block form">
+        <legend>Mes coordonnées</legend>
+            <table>
+            {% for field in coordinate_form %}
+                <tr>
+                    <th class="large">{{ field.label_tag }}</th>
+                    <td class="right">{{ field }}{{ field.errors }}</td>
+                </tr>
+            {% endfor %}
+
+            {% for field in form %}
+                <tr>
+                    <th class="large">{{ field.label_tag }}</th>
+                    <td class="right">{{ field }}{{ field.errors }}</td>
+                </tr>
+            {% endfor %}
+            </table>
+        <button type="submit" dojoType="dijit.form.Button">Enregistrer</button>
+    </fieldset>
+</form>
+{% endblock %}

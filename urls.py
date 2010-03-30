@@ -12,7 +12,9 @@ from django.template import RequestContext
 
 # Custom models
 import claritick.ticket.urls
+import claritick.common.urls
 import claritick.clariadmin.urls
+
 # Init code
 admin.autodiscover()
 reporting.autodiscover()
@@ -42,6 +44,7 @@ urlpatterns = patterns('',
     (r'^comments/', include('django.contrib.comments.urls')),
     (r'^admin/', include(admin.site.urls)),
     (r'^ticket/', include(claritick.ticket.urls)),
+    (r'^common/', include(claritick.common.urls)),
     (r'^clariadmin/', include(claritick.clariadmin.urls)),
     (r'^agenda/$', agenda),
     (r'^dojango/', include('dojango.urls')), # Dojango requires

@@ -2,9 +2,14 @@
 
 # Customization
 from django.forms.forms import BoundField
+from django import forms
 from django.utils.html import conditional_escape
 from django.utils.encoding import StrAndUnicode, smart_unicode, force_unicode
 from django.utils.safestring import mark_safe
+
+from dojango import forms as df
+
+from common.models import Client, Coordinate
 
 class ModelFormTableMixin(object):
     def my_html_output(self, normal_row, error_row, row_ender, help_text_html, errors_on_separate_row, cols):
@@ -76,3 +81,14 @@ class ModelFormTableMixin(object):
     def as_column_table(self, cols=3):
         "Returns this form rendered as HTML <tr>s -- excluding the <table></table>."
         return self.my_html_output(u'<th>%(label)s</th><td>%(errors)s%(field)s%(help_text)s</td>', u'<td colspan="2">%s</td>', '</td></tr>', u'<br />%s', False, cols=cols)
+
+class ClientForm(df.ModelForm):
+    class Meta:
+        model = Client
+        exclude = ["parent", "label", "coordinates", "emails"]
+
+class CoordinateForm(df.ModelForm):
+    more = df.CharField(required=False, widget=forms.Textarea())
+
+    class Meta:
+        model = Coordinate
