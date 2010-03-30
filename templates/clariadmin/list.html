@@ -9,6 +9,7 @@
 <fieldset>
   <legend>Filtrage</legend>
   <form method="POST">
+  {% csrf_token %}
     <table class="search">
 {{ form.as_column_table }}
     </table>

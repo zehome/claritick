@@ -154,24 +154,22 @@ class GoogleAccount(models.Model):
     def __unicode__(self):
         return u"Compte google %s" % (self.login,)
 
+class UserProfileManager(models.Manager):
+    
+    def get_for_combo(self):
+        return [(x.user.pk, x) for x in self.get_query_set().select_related("user", "client").order_by("client__label")]
+
 class UserProfile(models.Model):
     user = models.ForeignKey(User, verbose_name="Utilisateur", unique=True)
     google_account = models.ForeignKey(GoogleAccount, verbose_name="Compte google", null=True, blank=True)
     client = ClientField(Client, verbose_name="Client", blank=True, null=True)
     
-    def __unicode__(self):
-        ustr = u"Profil %s" % (self.user,)
-        if self.client:
-            ustr += u" (%s)" % (self.client,)
-        return ustr
+    objects = UserProfileManager()
 
-    def display_in_combo(self):
-        """
-            Raccourci pour l'affichage dans un combo box.
-        """
+    def __unicode__(self):
         if self.client:
-            return "%s (%s)" % (self.user, self.client.label)
-        return self.user
+            return u"%s (%s)" % (self.user, self.client.label)
+        return u"%s" % self.user
 
     def get_clients(self):
         if self.user.is_superuser:

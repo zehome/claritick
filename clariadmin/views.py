@@ -8,7 +8,6 @@ from django.views.generic import list_detail
 
 from claritick.clariadmin.models import Host
 from claritick.clariadmin.forms import *
-#from claritick.clariadmin.tables import DefaultHostTable
 from claritick.common.diggpaginator import DiggPaginator
 
 @login_required

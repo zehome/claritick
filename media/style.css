@@ -187,6 +187,11 @@ form {
     vertical-align: top !important;
 }
 
+#id_text {
+    height: inherit !important;
+    max-height: inherit !important;
+}
+
 /******************* Boutons de validation ********************/
 .bouton {
     background-color:#FFFFFF;
