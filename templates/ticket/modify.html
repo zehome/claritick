@@ -9,8 +9,9 @@
 
 {{ form.errors }}
 
-<form action="/ticket/modify/{{ ticket.id }}" method="POST">
+<form action="{% url ticket_modify ticket.id %}" method="POST">
 {% csrf_token %}
+{% block content_ticket %}
 <fieldset class="inline form">
   <legend>Général</legend>
   <div><label for="id_category">Categorie</label> {{ form.category }}</div>
@@ -75,12 +76,36 @@
 
 <hr />
 <button dojoType="dijit.form.Button" type="submit">Modifier / Valider</button>
-</form>
+
+{% endblock %}
 
 <fieldset class="block form" style="padding: 0;">
   <legend>Réponses</legend>
 {% load comments %}
-{% render_comment_form for ticket %}
+
+{% block comment_form %}
+    <div style="display: none">
+    {{ form_comment.timestamp }}
+    {{ form_comment.object_pk }}
+    {{ form_comment.security_hash }}
+    {{ form_comment.content_type }}
+
+    <input type="hidden" name="email" value="{% if request.user.email %}{{ request.user.email }}{% else %}noreply@invalid.com{% endif %}" />
+    <input type="hidden" name="name" value="{% if request.user.username%}{{ request.user.username }}{% else %}anonyme{% endif %}" />
+    </div>
+    <table>
+        <tr>
+            <td colspan="2">{{ form_comment.errors }}</td>
+        </tr>
+        <tr>
+            <th class="large">{{ form_comment.comment.label_tag }}</th>
+            <td class="right">{{ form_comment.comment }}</td>
+        </tr>
+        <tr>
+            <td colspan="2"><button dojoType="dijit.form.Button" type="submit" name="submit-comment" value="1">Valider</button></td>
+        </tr>
+    </table>
+{% endblock %}
 {% get_comment_list for ticket as comment_list %}
 
 {% for comment in comment_list %}
@@ -90,4 +115,5 @@
 </div>
 {% endfor %}
 </fieldset>
+</form>
 {% endblock %}

@@ -14,6 +14,9 @@ from django.views.generic import list_detail
 from django.utils import simplejson
 from django.core.urlresolvers import reverse
 
+from django.contrib.comments.forms import CommentForm
+from django.contrib.comments.views.comments import post_comment
+
 from claritick.ticket.models import Ticket, TicketView
 from claritick.ticket.forms import *
 
@@ -282,11 +285,18 @@ def modify(request, ticket_id):
         TicketForm = NewTicketSmallForm
 
     if request.method == "POST":
-        # TODO avant de sauver le ticket, retirer du request.POST toutes les infos que l'utilisateur n'a pas le droit de modifier
+
         form = TicketForm(request.POST, instance=ticket, user=request.user)
-        if form.is_valid():
-            form.save()
+        if not request.POST.get("submit-comment", None):
+            comment_form  = CommentForm(ticket)
+            if form.is_valid():
+                form.save()
+        else:
+            comment_form = CommentForm(ticket, data=request.POST)
+            if comment_form .is_valid():
+                post_comment(request)
     else:
         form = TicketForm(instance=ticket, user=request.user)
+        comment_form  = CommentForm(ticket)
 
-    return render_to_response(template_name, {"form": form, "ticket": ticket}, context_instance=RequestContext(request))
+    return render_to_response(template_name, {"form": form, "ticket": ticket, "form_comment": comment_form }, context_instance=RequestContext(request))

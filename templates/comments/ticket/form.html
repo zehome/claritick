@@ -1,8 +1,11 @@
 {% load comments i18n %}
-<form action="{% comment_form_target %}" method="post" id="id_comment_form">
+<form action="" method="post" id="id_comment_form">
    {% csrf_token %}
   {% if next %}<input type="hidden" name="next" value="{{ next }}" />{% endif %}
   <table>
+    <tr>
+        <td colspan="2"><input type="hidden" name="email" value="{% if request.user.email %}{{ request.user.email }}{% else %}noreply@invalid.com{% endif %}">
+    </tr>
   {% for field in form %}
     {% if field.is_hidden %}
     <tr>
@@ -11,6 +14,7 @@
     {% else %}
       
       {% if field.errors %}<tr><td colspan="2">{{ field.errors }}</td></tr>{% endif %}
+        {% if field.name != "email" %}
       <tr
         {% if field.errors %} class="error"{% endif %}
         {% ifequal field.name "url" %} style="display:none;"{% endifequal %}
@@ -22,17 +26,20 @@
         </td>
         <td class="right">{{ field }}</td>
       </tr>
+        {% endif %}
     {% endif %}
   {% endfor %}
   <tr>
     <td class="large"></td>
-    <td class="right"><button dojoType="dijit.form.Button" type="button">{% trans "Post" %}
-        <script type="dojo/method" event="onClick">
+    <td class="right"><button dojoType="dijit.form.Button" type="submit" name="submit-comment" value="1">{% trans "Post" %}
+        <script type="dojo/method" event="onClicke">
             dojo.xhrPost({
                 form: "id_comment_form",
                 handleAs: "text",
                 load: function(data) {
-                    dojo.doc.location.reload();
+                    //console.log(data);
+                    //dojo.doc.location.reload();
+                    dojo.byId("id_comment_form").innerHTML = data;
                 }
             });
             return false;

@@ -1,17 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
-{% extends "base.html" %}
+{% extends "ticket/modify.html" %}
 
-{% block title %}Ticket numéro {{ ticket.id }}{% endblock %}
-{% block content_title %}Ticket numéro {{ ticket.id }}{% endblock %}
-{% block image %}<img src="/media/images/oxygen/folder-open.png" />{% endblock %}
-
-{% block content %}
-
-{{ form.errors }}
-
-<form action="{% url ticket_modify ticket.id %}" method="POST">
-{% csrf_token %}
-
+{% block content_ticket %}
 <fieldset class="block form">
   <legend>Contact</legend>
   <table>
@@ -42,19 +32,5 @@
 
 <hr />
 <button dojoType="dijit.form.Button" type="submit">Modifier / Valider</button>
-</form>
 
-<fieldset class="block form" style="padding: 0;">
-  <legend>Réponses</legend>
-{% load comments %}
-{% render_comment_form for ticket %}
-{% get_comment_list for ticket as comment_list %}
-
-{% for comment in comment_list %}
-<div class="comment">
-    <h3><b>{{ comment.user.first_name }} {{ comment.user.last_name }}</b> ({{ comment.user_name }})<br/><i>{{ comment.submit_date|date:'d/m/Y H\hi' }}</i></h3>
-    <pre class="{% cycle 'row1' 'row2' %}">{{ comment.comment }}</pre>
-</div>
-{% endfor %}
-</fieldset>
 {% endblock %}

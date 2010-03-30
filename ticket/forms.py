@@ -30,8 +30,8 @@ class NewTicketForm(forms.ModelForm):
     keywords = forms.CharField(widget=forms.TextInput(attrs={'size': '80'}), required=False)
     calendar_start_time = df.DateTimeField(required=False)
     calendar_end_time = df.DateTimeField(required=False)
-    assigned_to = df.ChoiceField(widget=df.FilteringSelect())
-    validated_by = df.ChoiceField(widget=df.FilteringSelect())
+    #assigned_to = df.ChoiceField(widget=df.FilteringSelect())
+    #validated_by = df.ChoiceField(widget=df.FilteringSelect())
     
     class Meta:
         model = Ticket
@@ -41,9 +41,9 @@ class NewTicketForm(forms.ModelForm):
         if "user" in kwargs:
             filter_form_for_user(self, kwargs["user"])
             del kwargs["user"] # user= ne doit pas arriver a l'init parent ...
-        self.base_fields["assigned_to"].choices = UserProfile.objects.get_for_combo()
-        self.base_fields["assigned_to"].choices.insert(0, ("", ""))
-        self.base_fields["validated_by"].choices = self.base_fields["assigned_to"].choices
+        #self.base_fields["assigned_to"].choices = UserProfile.objects.get_for_combo()
+        #self.base_fields["assigned_to"].choices.insert(0, ("", ""))
+        #self.base_fields["validated_by"].choices = self.base_fields["assigned_to"].choices
         super(NewTicketForm, self).__init__(*args, **kwargs)
 
 class NewTicketSmallForm(NewTicketForm):
