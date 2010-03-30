@@ -88,6 +88,7 @@
             <li><a href="{% url ticket_list_all %}?reset=1">Tous</a></li>
             <li><a href="{% url ticket_list_me %}">Les miens</a></li>
             <li><a href="{% url ticket_list_unassigned %}">Non affectés</a></li>
+            <li><a href="{% url ticket_list_nonvalide %}">A valider</a></li>
             {% if ticket_views %}
             {% for view in ticket_views %}
             <li><a href="{% url ticket_list_view view.pk %}">{{ view.name }}</a></li>

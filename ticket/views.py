@@ -85,8 +85,15 @@ def list_me(request, *args, **kw):
 @login_required
 def list_unassigned(request, *args, **kw):
     filterdict = {'assigned_to__isnull': True}
-    #set_filters(request, filterdict)
     return list_all(request, None, filterdict = filterdict, *args, **kw)
+
+@login_required
+def list_nonvalide(request):
+    """
+        Liste des tickets à valider.
+    """
+    filterdict = {"validated_by__isnull": True}
+    return list_all(request, filterdict=filterdict)
 
 @login_required
 def list_view(request, view_id=None):
@@ -104,7 +111,6 @@ def list_view(request, view_id=None):
         else:
             data = view.filters
             data.update({"view_name": view.name})
-            #request.session["list_filters"] = data
         context["view"] = view
 
     # le form de filtres
@@ -200,7 +206,7 @@ def list_all(request, form=None, filterdict=None, template_name=None, context={}
     if form.is_valid():
         qs = filter_quersyset(qs, form.cleaned_data)
 
-    # unassigned
+    # unassigned / nonvalide
     if filterdict:
         qs = qs.filter(**filterdict)
 
@@ -212,7 +218,7 @@ def list_all(request, form=None, filterdict=None, template_name=None, context={}
 
     # TODO choisir le bon template en fonction des permissions
     if template_name is None:
-        if request.user.has_perm("can_commit_full") or request.user.is_superuser:
+        if request.user.has_perm("ticket.can_list_all") or request.user.is_superuser:
             template_name = "ticket/list.html"
         else:
             template_name = "ticket/list_small.html"
@@ -267,8 +273,6 @@ def modify(request, ticket_id):
 
     if not ticket.text:
         ticket.title = None
-        #ticket.state = State.objects.get(pk=settings.TICKET_STATE_NEW)
-        #ticket.priority = Priority.objects.get(pk=settings.TICKET_PRIORITY_NORMAL)
         ticket.validated_by = request.user
     
     if request.user.has_perm("ticket.add_ticket_full"):

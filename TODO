@@ -1,7 +1,6 @@
 Liste des tickets / Droits utilisateurs
 =======================================
 
-* liste des tickets à valider
 * purge des tickets créées non validés
 
 Ajout / Modification d'un ticket
@@ -13,6 +12,9 @@ Ajout / Modification d'un ticket
 * Synchro google agenda
     * crontab => liste des 4 derniers mois
     * verifier dates avant synchro
+
+* assigné a et valider par
+    * ajouter nom des clients
 
 General
 =======

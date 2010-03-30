@@ -197,8 +197,8 @@ class TicketActionsForm(df.Form):
     def action_change_state(self, qs, request):
         if self.cleaned_data["state"].pk == settings.TICKET_STATE_CLOSED:
             self.action_close_tickets(qs, request)
-            return
-        qs.update(state=self.cleaned_data["state"])
+        else:
+            qs.update(state=self.cleaned_data["state"])
 
     def action_change_priority(self, qs, request):
         qs.update(priority=self.cleaned_data["priority"])
