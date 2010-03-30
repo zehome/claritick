@@ -140,6 +140,7 @@ class TicketActionsForm(df.Form):
             ("action_change_project", u"Modifier le projet"),
             ("action_change_state", u"Modifier l'état"),
             ("action_change_priority", u"Modifier la priorité"),
+            ("action_validate_tickets", u"Valider les tickets sélectionnées"),
         ]
 
     def process_actions(self, request):
@@ -205,6 +206,9 @@ class TicketActionsForm(df.Form):
 
     def action_change_priority(self, qs, request):
         qs.update(priority=self.cleaned_data["priority"])
+    
+    def action_validate_tickets(self, qs, request):
+        qs.update(validated_by=request.user)
 
 class TicketActionsSmallForm(TicketActionsForm):
 
@@ -215,6 +219,6 @@ class TicketActionsSmallForm(TicketActionsForm):
 
     def process_actions_(self):
         if self.is_valid():
-            if self.cleaned_data["actions"] != "action_close_tickets":
+            if self.cleaned_data["actions"] not in ("action_close_tickets"):
                 return False
             return super(TicketActionsSmallForm, self).process_actions()
