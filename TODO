@@ -1,7 +1,7 @@
 Liste des tickets / Droits utilisateurs
 =======================================
 
-* purge des tickets créées non validés
+* purge des tickets créés non validés
 
 Ajout / Modification d'un ticket
 ================================
@@ -19,8 +19,6 @@ General
 * clients
     * classement des clients dans les combobox
 * Voir la mise en page des erreurs
-* tracabilité des emails 
-    * stocké par ticket en brut
 
 Tickets / Vues
 ==============

@@ -2,23 +2,21 @@
 
 import datetime
 
+from django.conf import settings
 from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.comments.moderation import CommentModerator, moderator
 from django.contrib.comments.models import Comment
 from django.contrib.comments.signals import comment_was_posted, comment_will_be_posted
-from django.contrib.contenttypes.models import ContentType
 
 # for email
-from django.core.mail import send_mail
+from django.core.mail import EmailMessage
 from django.template.loader import get_template
 from django.template import Context, Template
 
 # Clarisys fields
 from claritick.common.models import ColorField, Client, ClientField, JsonField, Base64Field
-from claritick.common.widgets import ColorPickerWidget 
 from django.db.models import AutoField
-
 
 def copy_model_instance(obj):
     initial = dict([(f.name, getattr(obj, f.name))
@@ -363,14 +361,12 @@ class Ticket(models.Model):
         
         template = Template("[Ticket {{ ticket.id }}]: {{ ticket.title|striptags|truncatewords:64 }}")
         subject = template.render(context)
-        # Send the email
-        send_mail(subject, data, u"support@clarisys.fr", dests)
-        
-# Update last_modification time
-comment_was_posted.connect(Ticket.handle_comment_posted_signal)
 
-# Google calendar sync
-models.signals.pre_save.connect(Ticket.handle_ticket_presave_signal, sender=Ticket)
+        # Send the email
+        mail = EmailMessage(subject, data, settings.DEFAULT_FROM_EMAIL, dests)
+        message = mail.message()
+        self.ticketmailtrace_set.create(date_sent=datetime.datetime.now(), email=message)
+        mail.send()
 
 ## Ticket moderation
 class TicketCommentModerator(CommentModerator):
@@ -384,6 +380,9 @@ class TicketCommentModerator(CommentModerator):
         return True
  
 class TicketView(models.Model):
+    """
+        Represente un ensemble de critere de recherches.
+    """
     user = models.ForeignKey(User)
     name = models.TextField(default=u"Nom de la vue")
     filters = JsonField()
@@ -395,9 +394,30 @@ class TicketView(models.Model):
         return u"%s (%s)" % (self.name, self.user)
 
 class TicketFile(models.Model):
+    """
+        Pièces jointe attachées aux tickets.
+    """
     ticket = models.ForeignKey(Ticket)
     filename = models.TextField()
     content_type = models.TextField()
     data = Base64Field()
 
+class TicketMailTrace(models.Model):
+    """
+        Trace des mails envoyés par tickets.
+    """
+    ticket = models.ForeignKey(Ticket)
+    date_sent = models.DateTimeField()
+    email = models.TextField()
+
+    class Meta:
+        verbose_name = u"Logs des mails envoyés"
+        verbose_name_plural = u"Logs des mails envoyés"
+
 #moderator.register(Ticket, TicketCommentModerator)
+
+# Update last_modification time
+comment_was_posted.connect(Ticket.handle_comment_posted_signal)
+
+# Google calendar sync
+models.signals.pre_save.connect(Ticket.handle_ticket_presave_signal, sender=Ticket)
