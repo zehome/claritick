@@ -129,7 +129,7 @@ def list_view(request, view_id=None):
         if request.method == "POST" and request.POST.get("validate-filters", None):
             if request.POST.get("delete_view", None):
                 view.delete()
-                return redirect("ticket_list")
+                return redirect("ticket_list_view")
             data = request.POST.copy()
         else:
             data = view.filters
