@@ -12,7 +12,6 @@ Ajout / Modification d'un ticket
 * Synchro google agenda
     * crontab => liste des 4 derniers mois
     * verifier dates avant synchro
-* possiblité d'attacher un fichier à un ticket
 
 General
 =======
@@ -20,7 +19,6 @@ General
 * clients
     * classement des clients dans les combobox
 * Voir la mise en page des erreurs
-* bug sur le filtering select de dojo
 * tracabilité des emails 
     * stocké par ticket en brut
 
