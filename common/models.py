@@ -5,7 +5,9 @@ import base64
 from django.contrib.auth.models import User, Group
 from django.db import models
 from django.utils import simplejson
+
 from claritick.common.widgets import ColorPickerWidget
+from common.utils import sort_queryset
 
 class Base64Field(models.TextField):
 
@@ -129,7 +131,7 @@ class ClientManager(models.Manager):
 class Client(models.Model):
     class Meta:
         verbose_name = "Client"
-        ordering = ['parent__label', 'label']
+        ordering = ['parent__label', 'parent__parent__label', 'label']
     
     label = models.CharField("Nom", max_length=64) 
     parent = ClientField('Client', verbose_name='Parent', null=True, blank=True, limit_choices_to = {'parent__parent': None})
@@ -141,7 +143,7 @@ class Client(models.Model):
 
     def __unicode__(self):
         if self.parent and self.parent.parent:
-            return u"%s - %s" % (self.label, self.parent.label)
+            return u"%s - %s" % (self.parent.label, self.label)
         return u"%s" % (self.label,)
     
     def get_emails(self):
@@ -216,7 +218,7 @@ class UserProfile(models.Model):
 
     def get_clients(self):
         if self.user.is_superuser:
-            return Client.objects.all()
+            return sort_queryset(Client.objects.all())
         if self.client:
-            return Client.objects.get_childs("parent", self.client.pk)
+            return sort_queryset(Client.objects.get_childs("parent", self.client.pk))
         return Client.objects.none()

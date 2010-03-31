@@ -2,7 +2,17 @@
 
 from django.contrib.auth.models import User
 from common.exceptions import NoProfileException
-from common.models import UserProfile, Client
+
+def sort_queryset(queryset):
+    """
+        Tri un queryset par rapport au def __unicode__ de chaque objets.
+
+        Retourne une liste python, pas un queryset.
+    """
+    objects = list(queryset)
+    my_cmp = lambda x, y: cmp(str(x), str(y))
+    objects.sort(my_cmp)
+    return objects
 
 def user_has_perms_on_client(user, client):
     """
@@ -17,12 +27,12 @@ def user_has_perms_on_client(user, client):
     return True
 
 def filter_form_for_user(form, user):
-
+    from common.models import UserProfile, Client
     if user.is_superuser:
-        form.base_fields["client"].choices = [(x.pk, x) for x in Client.objects.all()]
+        form.base_fields["client"].choices = [(x.pk, x) for x in sort_queryset(Client.objects.all())]
     else:
         try:
-            form.base_fields["client"].choices = [(x.pk, x) for x in user.get_profile().get_clients()]
+            form.base_fields["client"].choices = [(x.pk, x) for x in sort_queryset(user.get_profile().get_clients())]
         except UserProfile.DoesNotExist:
             raise NoProfileException(user)
     form.base_fields["client"].choices.insert(0, ("", ""))

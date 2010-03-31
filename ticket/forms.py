@@ -15,7 +15,7 @@ from claritick.common.models import UserProfile
 
 from common.exceptions import NoProfileException
 from common.models import UserProfile, ClaritickUser
-from common.utils import filter_form_for_user
+from common.utils import filter_form_for_user, sort_queryset
 from common.widgets import FilteringSelect
 
 class PartialNewTicketForm(forms.ModelForm):
@@ -53,7 +53,7 @@ class NewTicketSmallForm(NewTicketForm):
 
 class SearchTicketForm(df.Form, ModelFormTableMixin):
     title       = df.CharField(widget=df.TextInput(attrs={'size':'64'}), required=False)
-    client      = df.ChoiceField(choices=[(x.pk, x) for x in Client.objects.all()],
+    client      = df.ChoiceField(choices=[(x.pk, x) for x in sort_queryset(Client.objects.all())],
         widget=FilteringSelect(), required=False)
     category    = df.ModelChoiceField(queryset = Category.objects.all(), 
         widget=FilteringSelect(), empty_label='', required=False)
@@ -80,7 +80,7 @@ class SearchTicketForm(df.Form, ModelFormTableMixin):
         super(SearchTicketForm, self).__init__(*args, **kwargs)
 
 class SearchTicketViewForm(SearchTicketForm):
-    client      = df.ChoiceField(choices=[(x.pk, x) for x in Client.objects.all()],
+    client      = df.ChoiceField(choices=[(x.pk, x) for x in sort_queryset(Client.objects.all())],
         widget=FilteringSelect(), required=False)
     view_name = forms.CharField(widget=df.TextInput(), label="Nom de la vue", required=False)
     state       = forms.MultipleChoiceField(choices=State.objects.values_list("pk", "label"), required=False, widget=df.CheckboxSelectMultiple())
