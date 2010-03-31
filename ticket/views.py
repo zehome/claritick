@@ -82,6 +82,9 @@ def add_order_by(queryset, request):
     return queryset.order_by("%s%s" % (not sort_order and "-" or "", sort))
 
 def get_context(request):
+    """
+        Context commun aux listes de tickets.
+    """
     return {
         "TICKET_STATE_CLOSED": settings.TICKET_STATE_CLOSED,
         "sort_order": int(not int(request.GET.get("sort_order", 1)))

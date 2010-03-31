@@ -6,19 +6,19 @@
 
 {% block content %}
 
-<fieldset>
+<fieldset class="block form">
   <legend>Filtrage</legend>
   <form method="POST">
   {% csrf_token %}
     <table class="search">
 {{ form.as_column_table }}
     </table>
-    <span class="bouton"><img class="bouton_img" src="/media/images/oxygen/cancel.png" /><input type="reset" value="Annuler" /></span>
-    <span class="bouton"><img class="bouton_img" src="/media/images/oxygen/ok.png" /><input type="submit" value="Rechercher" /></span>
+    <button type="reset" dojoType="dijit.form.Button">Annuler</button>
+    <button type="submit" dojoType="dijit.form.Button">Rechercher</button>
   </form>
 </fieldset>
 
-{% if object_list %}
+{% if page.object_list %}
 <h2>Résultats</h2>
 <table class="resultat" dojoType="dijit.Grid">
 <tr>
@@ -34,18 +34,16 @@
     </th>
     {% endfor %}
 </tr>
-{% for row in table.rows %}
+{% for row in page.object_list %}
     <tr>
-        {% for value in row %}
-            <td><a href="/admin/clariadmin/host/{{ row.id }}/">{{ value }}</a></td>
-        {% endfor %}
+        <td><a href="/admin/clariadmin/host/{{ row.id }}/">{{ row }}</a></td>
     </tr>
 {% endfor %}
 </table>
 
 {% load diggpaginator %}
-{% if page_obj.paginator.num_pages > 1 %}
-{% diggpaginator page_obj %}
+{% if page.paginator.num_pages > 1 %}
+{% diggpaginator page %}
 {% endif %}
 
 {% else %}

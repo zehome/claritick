@@ -43,8 +43,13 @@ def list_all(request, *args, **kw):
 
     columns = [""]
     qs = qs.order_by(request.GET.get('sort', '-id'))
-    return list_detail.object_list(request, queryset=qs, paginate_by=settings.TICKETS_PER_PAGE, page=request.GET.get("page", 1),
-        template_name="clariadmin/list.html", extra_context={"form": form, "columns": columns})
+    paginator = DiggPaginator(qs, settings.TICKETS_PER_PAGE, body=5, tail=2, padding=2)
+    page = paginator.page(request.GET.get("page", 1))
+
+    return render_to_response("clariadmin/list.html", {
+        "page": page,
+        "form": form,
+    }, context_instance=RequestContext(request))
 
 @login_required
 @permission_required("clariadmin.can_access_clariadmin")

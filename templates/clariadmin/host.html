@@ -8,16 +8,16 @@
 {% block content %}
 
 <form method="POST">
-{% csrf_token %}
-<fieldset>
-    <legend>Machine</legend>
-    <table>
-{{ form }}
-    </table>
-</fieldset>
+    {% csrf_token %}
+    <fieldset>
+        <legend>Machine</legend>
+        <table>
+            {{ form }}
+        </table>
+    </fieldset>
 
-<hr />
-<span class="bouton"><img class="bouton_img" src="/media/images/oxygen/ok.png" /><input type="submit" value="Modifier/Valider" /></span>
+    <hr />
+    <button type="submit" dojoType="dijit.form.Button">Modifier/Valider</button>
 </form>
 
 {% if host %}
