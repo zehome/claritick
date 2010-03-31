@@ -13,4 +13,5 @@ urlpatterns = patterns('claritick.ticket.views',
     url(r'^list/me/$',              'list_me', name="ticket_list_me"),
     url(r'^list/unassigned/$',      'list_unassigned', name="ticket_list_unassigned"),
     url(r'^list/nonvalide/$',                 'list_nonvalide', name="ticket_list_nonvalide"),
+    url(r'^getfile/(?P<file_id>\d+)/$',   'get_file', name="ticket_get_file"),
 )

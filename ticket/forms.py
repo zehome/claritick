@@ -32,6 +32,7 @@ class NewTicketForm(forms.ModelForm):
     calendar_end_time = df.DateTimeField(required=False)
     assigned_to = df.ModelChoiceField(widget=df.FilteringSelect(), queryset=ClaritickUser.objects.all(), required=False)
     validated_by = df.ModelChoiceField(widget=df.FilteringSelect(), queryset=ClaritickUser.objects.all(), required=False)
+    file = df.FileField(required=False)
     
     class Meta:
         model = Ticket

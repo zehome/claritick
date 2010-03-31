@@ -15,7 +15,7 @@ from django.template.loader import get_template
 from django.template import Context, Template
 
 # Clarisys fields
-from claritick.common.models import ColorField, Client, ClientField, JsonField
+from claritick.common.models import ColorField, Client, ClientField, JsonField, Base64Field
 from claritick.common.widgets import ColorPickerWidget 
 from django.db.models import AutoField
 
@@ -393,5 +393,11 @@ class TicketView(models.Model):
 
     def __unicode__(self):
         return u"%s (%s)" % (self.name, self.user)
+
+class TicketFile(models.Model):
+    ticket = models.ForeignKey(Ticket)
+    filename = models.TextField()
+    content_type = models.TextField()
+    data = Base64Field()
 
 #moderator.register(Ticket, TicketCommentModerator)

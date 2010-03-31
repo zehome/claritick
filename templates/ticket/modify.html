@@ -9,7 +9,7 @@
 
 {{ form.non_field_errors }}
 
-<form action="{% url ticket_modify ticket.id %}" method="POST">
+<form enctype="multipart/form-data" action="{% url ticket_modify ticket.id %}" method="POST">
 {% csrf_token %}
 {% block content_ticket %}
 <fieldset class="inline form">
@@ -74,6 +74,19 @@
   </table>
 </fieldset>
 
+<fieldset class="block form">
+    <legend>Fichiers joint</legend>
+    <table>
+        {% for file in ticket.ticketfile_set.all %}
+        <tr>
+            <td><a href="{% url ticket_get_file file.pk %}">{{ file.filename }}</a></td>
+        </tr>
+        {% endfor %}
+        <tr>
+            <td>{{ form.file }}</td>
+        </tr>
+    </table>
+</fieldset>
 <hr />
 <button dojoType="dijit.form.Button" type="submit">Modifier / Valider</button>
 
