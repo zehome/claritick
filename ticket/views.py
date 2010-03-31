@@ -6,12 +6,7 @@ from django.core.exceptions import ObjectDoesNotExist, PermissionDenied, FieldEr
 from django.db import models
 from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.template import RequestContext
-from django.template.loader import render_to_string
-from django.utils.html import escape
 from django.contrib.auth.decorators import login_required, permission_required
-from django.conf import settings
-from django.views.generic import list_detail
-from django.utils import simplejson
 from django.core.urlresolvers import reverse
 
 from django.contrib.comments.forms import CommentForm
@@ -91,6 +86,13 @@ def get_context(request):
         "TICKET_STATE_CLOSED": settings.TICKET_STATE_CLOSED,
         "sort_order": int(not int(request.GET.get("sort_order", 1)))
     }
+
+def get_pagination(queryset, request):
+    """
+        Mets en place la pagination via DiggPaginator.
+    """
+    paginator = DiggPaginator(queryset, settings.TICKETS_PER_PAGE, body=5, tail=2, padding=2)
+    return paginator.page(request.GET.get("page", 1))
 
 @login_required
 def list_me(request, *args, **kw):
@@ -184,10 +186,10 @@ def list_view(request, view_id=None):
     context.update({
         "form": form,
         "action_form": action_form,
+        "tickets": get_pagination(qs, request),
     })
 
-    return list_detail.object_list(request, queryset=qs,  paginate_by=settings.TICKETS_PER_PAGE, page=request.GET.get("page", 1),
-        template_name=template_name, extra_context=context)
+    return render_to_response(template_name, context, context_instance=RequestContext(request))
 
 @login_required
 def list_all(request, form=None, filterdict=None, template_name=None, *args, **kw):
@@ -245,10 +247,9 @@ def list_all(request, form=None, filterdict=None, template_name=None, *args, **k
     context.update({
         "form": form, 
         "action_form": action_form,
+        "tickets": get_pagination(qs, request),
     })
-
-    return list_detail.object_list(request, queryset=qs,  paginate_by=settings.TICKETS_PER_PAGE, page=request.GET.get("page", 1),
-        template_name=template_name or "ticket/list.html", extra_context=context)
+    return render_to_response(template_name or "ticket/list.html", context, context_instance=RequestContext(request))
 
 @permission_required("ticket.add_ticket")
 @login_required
@@ -307,10 +308,12 @@ def modify(request, ticket_id):
             comment_form  = CommentForm(ticket)
             if form.is_valid():
                 form.save()
+                return redirect("ticket_modify", ticket_id=ticket_id)
         else:
             comment_form = CommentForm(ticket, data=request.POST)
-            if comment_form .is_valid():
+            if comment_form.is_valid():
                 post_comment(request)
+                return redirect("ticket_modify", ticket_id=ticket_id)
     else:
         form = TicketForm(instance=ticket, user=request.user)
         comment_form  = CommentForm(ticket)

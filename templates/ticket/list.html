@@ -148,14 +148,14 @@
 {% endblock %}
 </form>
 
-{% if object_list %}
+{% if tickets.object_list %}
 
-{% if page_obj.paginator.num_pages > 1 %}
-{% diggpaginator page_obj %}
+{% if tickets.paginator.num_pages > 1 %}
+{% diggpaginator tickets %}
 {% endif %}
 
 <form method="POST" name="action_form">{% csrf_token %}
-{{ action_form.errors }}
+{{ action_form.non_field_errors }}
 {{ action_form.comment }}
 <table class="resultat">
 <tr class="form">
@@ -193,7 +193,7 @@
     <th><a href="?sort=opened_by&sort_order={{ sort_order }}">Ouvert par</a></th>
     <th><a href="?sort=assigned_to&sort_order={{ sort_order }}">Assigné à</a></th>
 </tr>
-{% for row in object_list %}
+{% for row in tickets.object_list %}
     {# get_comment_count for ticket.ticket row.id as comment_count #}
     <tr class="bigrow {% cycle 'row1' 'row2' %}">
         <td><input type="checkbox" name="ticket_checked" id="ticket_select_{{ forloop.counter }}" value="{{ row.pk }}" /></td>
@@ -201,7 +201,7 @@
         <td style="width: 200px;">{% if row.client %}{{ row.client }}{% endif %}</td>
         <td style="width: 100px;">{{ row.category }}</td>
         <td style="width: 100px;">{% if row.project %}{{ row.project }}{% endif %}</td>
-        <td style="min-width: 250px;{{ row.close_style }}"><a style="{{ row.priority_text_style }}" href="/ticket/modify/{{ row.id }}">{{ row.title }}</a></td>
+        <td style="min-width: 250px;{{ row.close_style }}"><a stle="{{ row.priority_text_style }}" href="/ticket/modify/{{ row.id }}">{{ row.title }}</a></td>
         <td>({{ row.nb_comments }})</td>
         <td>{{ row.contact }}</td>
         <td style="width: 150px;">{{ row.last_modification|date:'d/m/y H\hi' }}</td>
@@ -212,8 +212,8 @@
 </table>
 </form>
 
-{% if page_obj.paginator.num_pages > 1 %}
-{% diggpaginator page_obj %}
+{% if tickets.paginator.num_pages > 1 %}
+{% diggpaginator tickets %}
 {% endif %}
 
 {% else %}

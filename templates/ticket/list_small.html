@@ -81,13 +81,13 @@
 </fieldset>
 {% endblock %}
 
-{% if object_list %}
+{% if tickets.object_list %}
 
-{% if page_obj.paginator.num_pages > 1 %}
-{% diggpaginator page_obj %}
+{% if tickets.paginator.num_pages > 1 %}
+{% diggpaginator tickets %}
 {% endif %}
 
-{{ action_form.errors }}
+{{ action_form.non_field_errors }}
 {{ action_form.comment }}
 <table class="resultat">
 <tr class="form">
@@ -123,7 +123,7 @@
     <th><a href="?sort=contact&sort_order={{ sort_order }}">Contact</a></th>
     <th><a href="?sort=last_modification&sort_order={{ sort_order }}">Dernières modif.</a></th>
 </tr>
-{% for row in object_list %}
+{% for row in tickets.object_list %}
     {# get_comment_count for ticket.ticket row.id as comment_count #}
     <tr class="bigrow {% cycle 'row1' 'row2' %}">
         <td><input type="checkbox" name="ticket_checked" id="ticket_select_{{ forloop.counter }}" value="{{ row.pk }}" /></td>
@@ -139,8 +139,8 @@
 </table>
 </form>
 
-{% if page_obj.paginator.num_pages > 1 %}
-{% diggpaginator page_obj %}
+{% if tickets.paginator.num_pages > 1 %}
+{% diggpaginator tickets %}
 {% endif %}
 
 {% else %}

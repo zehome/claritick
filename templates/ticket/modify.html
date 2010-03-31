@@ -7,7 +7,7 @@
 
 {% block content %}
 
-{{ form.errors }}
+{{ form.non_field_errors }}
 
 <form action="{% url ticket_modify ticket.id %}" method="POST">
 {% csrf_token %}
@@ -95,11 +95,11 @@
     </div>
     <table>
         <tr>
-            <td colspan="2">{{ form_comment.errors }}</td>
+            <td colspan="2">{{ form_comment.non_field_errors }}</td>
         </tr>
         <tr>
             <th class="large">{{ form_comment.comment.label_tag }}</th>
-            <td class="right">{{ form_comment.comment }}</td>
+            <td class="right">{{ form_comment.comment.errors }}{{ form_comment.comment }}</td>
         </tr>
         <tr>
             <td colspan="2"><button dojoType="dijit.form.Button" type="submit" name="submit-comment" value="1">Valider</button></td>
