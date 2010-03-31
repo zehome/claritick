@@ -82,6 +82,7 @@ TEMPLATE_CONTEXT_PROCESSORS = ("django.core.context_processors.auth",
     "django.contrib.messages.context_processors.messages",
     "dojango.context_processors.config",
     'django.core.context_processors.csrf',
+    'django.core.context_processors.request',
     'ticket.context_processors.ticket_views',
 )
 

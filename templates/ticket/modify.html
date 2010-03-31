@@ -95,7 +95,6 @@
 <fieldset class="block form" style="padding: 0;">
   <legend>Réponses</legend>
 {% load comments %}
-
 {% block comment_form %}
     <div style="display: none">
     {{ form_comment.timestamp }}
@@ -104,7 +103,7 @@
     {{ form_comment.content_type }}
 
     <input type="hidden" name="email" value="{% if request.user.email %}{{ request.user.email }}{% else %}noreply@invalid.com{% endif %}" />
-    <input type="hidden" name="name" value="{% if request.user.username%}{{ request.user.username }}{% else %}anonyme{% endif %}" />
+    <input type="hidden" name="name" value="{% if request.user.username %}{{ request.user.username }}{% else %}anonyme{% endif %}" />
     </div>
     <table>
         <tr>
