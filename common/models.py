@@ -131,7 +131,7 @@ class ClientManager(models.Manager):
 class Client(models.Model):
     class Meta:
         verbose_name = "Client"
-        ordering = ['parent__label', 'parent__parent__label', 'label']
+        ordering = ['parent__label', 'label']
     
     label = models.CharField("Nom", max_length=64) 
     parent = ClientField('Client', verbose_name='Parent', null=True, blank=True, limit_choices_to = {'parent__parent': None})
