@@ -15,14 +15,43 @@
         });
     }
 
+    function show_selected_action(value) {
+        var widget_name = "";
+        switch (value) {
+            case "action_change_assigned_to":
+                widget_name = "widget_id_action-assigned_to";
+                break;
+            case "action_change_category":
+                widget_name = "widget_id_action-category";
+                break;
+            case "action_change_project":
+                widget_name = "widget_id_action-project";
+                break;
+            case "action_change_state":
+                widget_name = "widget_id_action-state";
+                break;
+            case "action_change_priority":
+                widget_name = "widget_id_action-priority";
+                break;
+            case "action_validate_tickets":
+                widget_name = "id_validate_tickets";
+                break;
+            case "action_close_tickets":
+                widget_name = "id_close_comment";
+                break;
+            default:
+                hide_actions();
+                return;
+        }
+        hide_actions();
+        dojo.style(widget_name, "display", "inline-block");
+    }
+
     dojo.addOnLoad(function() {
 
         // Selection des checkbox en masse
         dojo.connect(dojo.byId("select_all"), "onclick", function(evt) {
-            if (dojo.byId("select_all").checked)
-                var val = true;
-            else
-                var val = false;
+            var val = dojo.byId("select_all").checked;
 
             dojo.query("input[type^='checkbox'][id^='ticket_select']").forEach(function(tag) {
                 tag.checked = val;
@@ -44,35 +73,7 @@
 
         // Gestion des actions
         dojo.connect(dijit.byId("id_action-actions"), "onChange", function(evt) {
-            var widget_name = "";
-            switch (dijit.byId("id_action-actions").attr("value")) {
-                case "action_change_assigned_to":
-                    widget_name = "widget_id_action-assigned_to";
-                    break;
-                case "action_change_category":
-                    widget_name = "widget_id_action-category";
-                    break;
-                case "action_change_project":
-                    widget_name = "widget_id_action-project";
-                    break;
-                case "action_change_state":
-                    widget_name = "widget_id_action-state";
-                    break;
-                case "action_change_priority":
-                    widget_name = "widget_id_action-priority";
-                    break;
-                case "action_validate_tickets":
-                    widget_name = "id_validate_tickets";
-                    break;
-                case "action_close_tickets":
-                    widget_name = "id_close_comment";
-                    break;
-                default:
-                    hide_actions();
-                    return;
-            }
-            hide_actions();
-            dojo.style(widget_name, "display", "inline-block");
+            show_selected_action(dijit.byId("id_action-actions").attr("value"));
         });
 
         dojo.connect(dijit.byId("id_action-state"), "onChange", function(evt) {
@@ -82,6 +83,9 @@
                 dojo.style("id_close_comment", "display", "none");
             }
         });
+
+        // Au chargement de la page, si une action est deja selectionnée, on affiche le combo associé
+        show_selected_action(dijit.byId("id_action-actions").attr("value"));
     });
 </script>
 {% endblock %}

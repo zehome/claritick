@@ -16,14 +16,13 @@ except ImportError:
 from claritick.common.widgets import ColorPickerWidget
 from common.utils import sort_queryset
 
-class ByteaField(models.Field):
-    
+class ByteaField(models.TextField):
+    """
+        Field pour gerer le type bytea de porstgres.
+
+        psycopg2 obligatoire.
+    """    
     description = "A field to handle postgres bytea fields"
-    
-    __metaclass__ = models.SubfieldBase
-    
-    def __init__(self,*args,**kwargs):
-        super(ByteaField,self).__init__(*args,**kwargs)
     
     def db_type(self):
         return 'bytea'
@@ -31,15 +30,24 @@ class ByteaField(models.Field):
     def get_db_prep_lookup(self, lookup_type, value):
         raise TypeError('Lookup type %r not supported.' % lookup_type)
 
-    def get_internal_type(self):
-        return "CustomByetaField"
+    def get_prep_value(self, value):
+        return buffer(value)
+
+class PickleField(models.TextField):
+    """
+        Un ByteaField qui fait des pickle loads/dumps en entrée/sortie.
+    """
     
-    def formfield(self, form_class, **kwargs):
-        form_class = models.TextField()
-        return super(ByteaField, self).formfield(form_class, **kwargs)
+    __metaclass__ = models.SubfieldBase
+    
+    def db_type(self):
+        return 'bytea'
+    
+    def get_db_prep_lookup(self, lookup_type, value):
+        raise TypeError('Lookup type %r not supported.' % lookup_type)
 
     def get_prep_value(self, value):
-        return psycopg2.Binary(pickle.dumps(value))
+        return buffer(pickle.dumps(value))
 
     def to_python(self, value):
         if isinstance(value, buffer):
@@ -227,7 +235,7 @@ class ClaritickUser(User):
     """
         Model proxy de User.
     """
-
+    client = u""
     objects = ClaritickUserManager()
 
     def __unicode__(self):
@@ -236,7 +244,10 @@ class ClaritickUser(User):
         return u"%s" % self.username
 
     def get_client(self):
-        return self.client or u""
+        if hasattr(self, "client"):
+            return self.client or u""
+        return u""
+    get_client.short_description = u"Client"
 
     class Meta:
         verbose_name = u"Utilisateur Claritick"

@@ -2,6 +2,10 @@ Liste des tickets / Droits utilisateurs
 =======================================
 
 * purge des tickets créés non validés
+* Reaffichage des combos d'actions quand action en erreur
+
+* Comitter reduit
+    * Recherche texte => doit rechercher sur titre + text
 
 Ajout / Modification d'un ticket
 ================================
@@ -13,12 +17,17 @@ Ajout / Modification d'un ticket
     * crontab => liste des 4 derniers mois
     * verifier dates avant synchro
 * logs des mails (pickle de l'objet EmailMessage)
-* fihcier joint en bytea
+* Comitter
+    * assigned_to
+        * Seulement les users de son client
+* validated_by
+    * Bouton qui valide avec le user courant
 
 General
 =======
 
 * Voir la mise en page des erreurs
+* Claritick user => generer le password
 
 Tickets / Vues
 ==============

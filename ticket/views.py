@@ -340,7 +340,7 @@ def get_file(request, file_id):
         Retourne au client le TicketFile file_id avec le bon mimetype.
     """
     file = get_object_or_404(TicketFile, pk=file_id)
-
+    
     if not user_has_perms_on_client(request.user, file.ticket.client):
         raise PermissionDenied
     response = http.HttpResponse(file.data, mimetype=file.content_type)
