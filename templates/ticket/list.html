@@ -42,8 +42,6 @@
             });
         });
 
-        hide_actions();
-
         // Gestion des actions
         dojo.connect(dijit.byId("id_action-actions"), "onChange", function(evt) {
             var widget_name = "";
@@ -160,7 +158,7 @@
 <tr class="form">
     <td colspan="11">
         {{ action_form.actions }} {{ action_form.assigned_to }} {{ action_form.category }} {{ action_form.project }} {{ action_form.state }} {{ action_form.priority }}
-        <div id="id_close_comment">
+        <div id="id_close_comment" style="display: none;">
             <div dojoType="dijit.form.DropDownButton" >
                 <span>Commentaire de clotûre</span>
                 <div dojoType="dijit.TooltipDialog">

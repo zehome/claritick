@@ -106,15 +106,15 @@ class SearchTicketViewForm(SearchTicketForm):
 class TicketActionsForm(df.Form):
     actions     = df.ChoiceField(widget=df.FilteringSelect(), required=False)
     assigned_to = df.ModelChoiceField(queryset=User.objects.all(), 
-        widget=FilteringSelect(), empty_label='', required=False)
+        widget=FilteringSelect(attrs={"style": "display: none;"}), empty_label='', required=False)
     category    = df.ModelChoiceField(queryset = Category.objects.all(), 
-        widget=FilteringSelect(), empty_label='', required=False)
+        widget=FilteringSelect(attrs={"style": "display: none;"}), empty_label='', required=False)
     project     = df.ModelChoiceField(queryset = Project.objects.all(), 
-        widget=FilteringSelect(), empty_label='', required=False)
+        widget=FilteringSelect(attrs={"style": "display: none;"}), empty_label='', required=False)
     state       = df.ModelChoiceField(queryset = State.objects.all(), 
-        widget=FilteringSelect(), empty_label='', required=False)
+        widget=FilteringSelect(attrs={"style": "display: none;"}), empty_label='', required=False)
     priority    = df.ModelChoiceField(queryset = Priority.objects.all(), 
-        widget=FilteringSelect(), empty_label='', required=False)
+        widget=FilteringSelect(attrs={"style": "display: none;"}), empty_label='', required=False)
     comment     = df.CharField(widget=df.HiddenInput(), required=False)
 
     model = Ticket.objects

@@ -12,6 +12,8 @@ Ajout / Modification d'un ticket
 * Synchro google agenda
     * crontab => liste des 4 derniers mois
     * verifier dates avant synchro
+* logs des mails (pickle de l'objet EmailMessage)
+* fihcier joint en bytea
 
 General
 =======
