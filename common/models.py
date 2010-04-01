@@ -1,13 +1,50 @@
 # -*- coding: utf-8 -*-
 
 import base64
+import cPickle as pickle
 
 from django.contrib.auth.models import User, Group
 from django.db import models
 from django.utils import simplejson
 
+# On charge psycopg2 pour ByteaField
+try:
+    import psycopg2
+except ImportError:
+    raise Exception(u"le module pyscopg2 est indispensable pour le field ByetaField.")
+
 from claritick.common.widgets import ColorPickerWidget
 from common.utils import sort_queryset
+
+class ByteaField(models.Field):
+    
+    description = "A field to handle postgres bytea fields"
+    
+    __metaclass__ = models.SubfieldBase
+    
+    def __init__(self,*args,**kwargs):
+        super(ByteaField,self).__init__(*args,**kwargs)
+    
+    def db_type(self):
+        return 'bytea'
+    
+    def get_db_prep_lookup(self, lookup_type, value):
+        raise TypeError('Lookup type %r not supported.' % lookup_type)
+
+    def get_internal_type(self):
+        return "CustomByetaField"
+    
+    def formfield(self, form_class, **kwargs):
+        form_class = models.TextField()
+        return super(ByteaField, self).formfield(form_class, **kwargs)
+
+    def get_prep_value(self, value):
+        return psycopg2.Binary(pickle.dumps(value))
+
+    def to_python(self, value):
+        if isinstance(value, buffer):
+            return pickle.loads(str(value))
+        return value
 
 class Base64Field(models.TextField):
 

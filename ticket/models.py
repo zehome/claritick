@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import datetime
+import cPickle as pickle
 
 from django.conf import settings
 from django.db import models
@@ -15,7 +16,7 @@ from django.template.loader import get_template
 from django.template import Context, Template
 
 # Clarisys fields
-from claritick.common.models import ColorField, Client, ClientField, JsonField, Base64Field
+from claritick.common.models import ColorField, Client, ClientField, JsonField, Base64Field, ByteaField
 from django.db.models import AutoField
 
 def copy_model_instance(obj):
@@ -364,8 +365,7 @@ class Ticket(models.Model):
 
         # Send the email
         mail = EmailMessage(subject, data, settings.DEFAULT_FROM_EMAIL, dests)
-        message = mail.message()
-        self.ticketmailtrace_set.create(date_sent=datetime.datetime.now(), email=message)
+        self.ticketmailtrace_set.create(date_sent=datetime.datetime.now(), email=mail)
         mail.send()
 
 ## Ticket moderation
@@ -408,7 +408,7 @@ class TicketMailTrace(models.Model):
     """
     ticket = models.ForeignKey(Ticket)
     date_sent = models.DateTimeField()
-    email = models.TextField()
+    email = ByteaField()
 
     class Meta:
         verbose_name = u"Logs des mails envoyés"
