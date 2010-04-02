@@ -69,7 +69,7 @@ def filter_ticket_by_user(qs, user):
         client_list = user.get_profile().get_clients()
         qs = qs.filter(client__pk__in=[x.id for x in client_list])
     except UserProfile.DoesNotExist:
-        raise NoProfileException(request.user)
+        raise NoProfileException(user)
 
     return qs
 
