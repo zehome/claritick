@@ -3,7 +3,7 @@
 from djangogcal.adapter import CalendarAdapter, CalendarEventData
 from djangogcal.observer import CalendarObserver
 from claritick.ticket.models import Ticket
-from claritick.common.models import UserProfile, GoogleAccount
+from claritick.common.models import UserProfile, GoogleAccount, ClaritickUser
 from django.contrib.auth.models import User
 from django.db.models import signals
 
@@ -104,7 +104,7 @@ def handle_del_user_signal(sender, **kw):
 
 def handle_update_profile_signal(sender, **kw):
     userprofile = kw["instance"]
-    created = kw["created"]
+    created = kw.get("created", False)
     if not userprofile.user:
         return
     if not created and userprofile.user and userprofile.google_account:
@@ -123,12 +123,19 @@ def handle_update_googleaccount_signal(sender, **kw):
     del_observer(user)
     set_observer(user)
 
+def handle_claritickuser_add_signal(sender, **kwargs):
+    """
+        Lorsqu'un ClaritickUser est ajouté.
+    """
+    if kwargs["created"]:
+        kwargs["instance"].userprofile_set.create()
 
 try:
     # User and profile modifications
     print "Connecting all user/calendar related signals."
     signals.post_save.connect(handle_update_user_signal, sender=User)
     signals.pre_delete.connect(handle_del_user_signal, sender=User)
+    signals.post_save.connect(handle_claritickuser_add_signal, sender=ClaritickUser)
     signals.post_save.connect(handle_update_profile_signal, sender=UserProfile)
     signals.pre_delete.connect(handle_update_profile_signal, sender=UserProfile)
     signals.post_save.connect(handle_update_googleaccount_signal, sender=GoogleAccount)

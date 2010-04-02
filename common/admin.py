@@ -3,7 +3,9 @@
 from django.contrib import admin
 from django.contrib.auth.models import User
 from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
+
 from common.models import Client, UserProfile, GoogleAccount, Coordinate, ClaritickUser
+from common.forms import ClaritickUserCreationForm
 
 class CoordinateAdmin(admin.ModelAdmin):
     fields = ( "destinataire", "address_line1", "address_line2", "address_line3",
@@ -21,7 +23,14 @@ class UserAdmin(DjangoUserAdmin):
     inlines = [UserProfileInline]
     list_display = ["username", "email", "first_name", "last_name", "is_staff", "get_client"]
 
-#admin.site.unregister(User)
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': ('username',)}
+        ),
+    )
+    add_form = ClaritickUserCreationForm
+
 admin.site.register(Client, ClientAdmin)
 admin.site.register(ClaritickUser, UserAdmin)
 admin.site.register(GoogleAccount)

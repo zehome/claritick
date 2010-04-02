@@ -9,7 +9,24 @@ from django.utils.safestring import mark_safe
 
 from dojango import forms as df
 
-from common.models import Client, Coordinate
+from common.models import Client, Coordinate, ClaritickUser
+
+class ClaritickUserCreationForm(forms.ModelForm):
+    """
+        Formulaire de creation d'un utilisateur Claritick avec generation aléatoire de mot de passe.
+    """
+    class Meta:
+        model = ClaritickUser
+        fields = ("username",)
+
+    def save(self, commit=True):
+        user = super(ClaritickUserCreationForm, self).save(commit=False)
+        p = ClaritickUser.generate_random_password()
+        print p
+        user.set_password(p)
+        if commit:
+            user.save()
+        return user
 
 class ModelFormTableMixin(object):
     def my_html_output(self, normal_row, error_row, row_ender, help_text_html, errors_on_separate_row, cols):

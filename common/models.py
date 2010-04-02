@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import base64
+import random, string
 import cPickle as pickle
 
 from django.contrib.auth.models import User, Group
@@ -253,14 +254,25 @@ class ClaritickUser(User):
         """
             Retourne tous les ClaritickUser de l'arbre client de l'utilisateur.
         """
-        return ClaritickUser.objects.filter(
-            userprofile__client__in=Client.objects.get_childs("parent", self.get_profile().client.pk)
-        )
+        client = self.get_profile().client
+        if client:
+            return ClaritickUser.objects.filter(
+                userprofile__client__in=Client.objects.get_childs("parent", self.get_profile().client.pk)
+            )
+        return ClaritickUser.objects.none()
 
     class Meta:
         verbose_name = u"Utilisateur Claritick"
         verbose_name_plural = u"Utilisateurs Claritick"
         proxy = True
+
+    @staticmethod
+    def generate_random_password():
+        """
+            Genere un mot de passe aléatoire de 8 caracteres.
+        """
+        words = string.letters + string.digits
+        return "".join(map(lambda x: random.choice(words), range(8)))
 
 class UserProfile(models.Model):
     user = models.ForeignKey(User, verbose_name="Utilisateur", unique=True)
