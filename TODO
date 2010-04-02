@@ -3,9 +3,6 @@ Liste des tickets / Droits utilisateurs
 
 * purge des tickets créés non validés
 
-* Comitter reduit
-    * Recherche texte => doit rechercher sur titre + text
-
 Ajout / Modification d'un ticket
 ================================
 
@@ -15,9 +12,6 @@ Ajout / Modification d'un ticket
 * Synchro google agenda
     * crontab => liste des 4 derniers mois
     * verifier dates avant synchro
-* Comitter
-    * assigned_to
-        * Seulement les users de son client
 
 General
 =======

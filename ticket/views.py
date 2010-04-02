@@ -178,7 +178,11 @@ def list_view(request, view_id=None):
             return redirect("ticket_list_view", view_id=view_id or t.pk)
 
     # On filtre la liste a partir des datas de la vue
-    qs = filter_quersyset(qs, data)
+    filters = data.copy()
+    if not request.user.has_perm("ticket.can_list_all") and data.get("text"):
+        qs = qs.filter(models.Q(title__icontains=data["text"]) | models.Q(text__icontains=data["text"]))
+        del filters["text"]
+    qs = filter_quersyset(qs, filters)
 
     # On va filtrer la liste des tickets en fonction de la relation user => client
     qs = filter_ticket_by_user(qs, request.user)
@@ -228,7 +232,11 @@ def list_all(request, form=None, filterdict=None, template_name=None, *args, **k
 
     # Form cleaned_data ?
     if form.is_valid():
-        qs = filter_quersyset(qs, form.cleaned_data)
+        data = form.cleaned_data.copy()
+        if not request.user.has_perm("ticket.can_list_all") and form.cleaned_data["text"]:
+            qs = qs.filter(models.Q(title__icontains=form.cleaned_data["text"]) | models.Q(text__icontains=form.cleaned_data["text"]))
+            del data["text"]
+        qs = filter_quersyset(qs, data)
 
     # unassigned / nonvalide
     if filterdict:

@@ -19,15 +19,17 @@
 
         // Selection des checkbox en masse
         dojo.connect(dojo.byId("select_all"), "onclick", function(evt) {
-            var val = dojo.byId("select_all").checked;
+            if (dojo.byId("select_all")) {
+                var val = dojo.byId("select_all").checked;
 
-            dojo.query("input[type^='checkbox'][id^='ticket_select']").forEach(function(tag) {
-                tag.checked = val;
-                if (val)
-                    dojo.addClass(tag.parentNode.parentNode, "selected");
-                else
-                    dojo.removeClass(tag.parentNode.parentNode, "selected");
-            });
+                dojo.query("input[type^='checkbox'][id^='ticket_select']").forEach(function(tag) {
+                    tag.checked = val;
+                    if (val)
+                        dojo.addClass(tag.parentNode.parentNode, "selected");
+                    else
+                        dojo.removeClass(tag.parentNode.parentNode, "selected");
+                });
+            }
         });
 
         dojo.query("input[type^='checkbox'][id^='ticket_select']").forEach(function(tag) {
@@ -42,7 +44,8 @@
         dojo.connect(dijit.byId("id_action-actions"), "onChange", function(evt) {
             show_selected_action(dijit.byId("id_action-actions").attr("value"));
         });
-        show_selected_action(dijit.byId("id_action-actions").attr("value"));
+        if (dijit.byId("id_action-actions"))
+            show_selected_action(dijit.byId("id_action-actions").attr("value"));
     });
 </script>
 {% endblock %}
