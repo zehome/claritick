@@ -37,7 +37,14 @@
     </tr>
     <tr>
         <td class="large">&nbsp;</td><td></td>
-        <td class="large right"><label for="id_validated_by">Validé par</label></td><td>{{ form.validated_by }}</td>
+        <td class="large right">
+            {% if ticket.validated_by %}
+                <strong>Validé par</strong></td><td>{{ ticket.validated_by }}
+            {% else %}
+                {% if perms.ticket.can_validate_ticket %}
+                    <td colspan="2"><button type="submit" dojoType="dijit.form.Button" name="_validate-ticket" value="Valider ce ticket">Valider ce ticket</button></td>
+                {% endif %}
+            {% endif %}</td>
     </tr>
   </table>
 </fieldset>

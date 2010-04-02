@@ -32,12 +32,12 @@ class NewTicketForm(forms.ModelForm):
     calendar_start_time = df.DateTimeField(required=False)
     calendar_end_time = df.DateTimeField(required=False)
     assigned_to = df.ModelChoiceField(widget=FilteringSelect(), queryset=ClaritickUser.objects.all(), required=False)
-    validated_by = df.ModelChoiceField(widget=FilteringSelect(), queryset=ClaritickUser.objects.all(), required=False)
+    #validated_by = df.ModelChoiceField(widget=FilteringSelect(), queryset=ClaritickUser.objects.all(), required=False)
     file = df.FileField(required=False)
     
     class Meta:
         model = Ticket
-        exclude = ("opened_by",)
+        exclude = ("opened_by", "validated_by")
 
     def __init__(self, *args, **kwargs):
         if "user" in kwargs:

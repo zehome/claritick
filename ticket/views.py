@@ -295,8 +295,7 @@ def modify(request, ticket_id):
 
     if not ticket.text:
         ticket.title = None
-        ticket.validated_by = request.user
-    
+
     if request.user.has_perm("ticket.add_ticket_full"):
         template_name = "ticket/modify.html"
         TicketForm = NewTicketForm
@@ -305,7 +304,10 @@ def modify(request, ticket_id):
         TicketForm = NewTicketSmallForm
 
     if request.method == "POST":
-
+        if request.POST.get("_validate-ticket", None) and request.user.has_perm("ticket.can_validate_ticket")\
+            and ticket.validated_by is None:
+            ticket.validated_by = request.user
+            ticket.save()
         form = TicketForm(request.POST, request.FILES, instance=ticket, user=request.user)
         if not request.POST.get("submit-comment", None):
             comment_form  = CommentForm(ticket)

@@ -143,7 +143,8 @@ class Ticket(models.Model):
             ("can_view_report", u"Consulter les rapports"),
             ("add_ticket_full", u"Peut creer des tickets complet"),
             ("can_resolve", u"Peut resoudre des tickets"),
-            ("can_list_all", u"Peut voir la liste détaillée")
+            ("can_list_all", u"Peut voir la liste détaillée"),
+            ("can_validate_ticket", u"Peut valider un ticket"),
         )
     
     objects = BaseTicketManager()

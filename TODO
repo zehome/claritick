@@ -15,12 +15,9 @@ Ajout / Modification d'un ticket
 * Synchro google agenda
     * crontab => liste des 4 derniers mois
     * verifier dates avant synchro
-* logs des mails (pickle de l'objet EmailMessage)
 * Comitter
     * assigned_to
         * Seulement les users de son client
-* validated_by
-    * Bouton qui valide avec le user courant
 
 General
 =======
