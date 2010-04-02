@@ -16,7 +16,7 @@ from claritick.ticket.models import Ticket, TicketView, TicketFile
 from claritick.ticket.forms import *
 
 from claritick.common.diggpaginator import DiggPaginator
-from claritick.common.models import Client, UserProfile
+from claritick.common.models import Client, UserProfile, ClaritickUser
 from common.exceptions import NoProfileException
 from common.utils import user_has_perms_on_client
 
@@ -140,13 +140,13 @@ def list_view(request, view_id=None):
     form = SearchTicketViewForm(data, user=request.user)
 
     # le template a charger
-    if request.user.has_perm("can_commit_full") or request.user.is_superuser:
+    if request.user.has_perm("ticket.can_list_all") or request.user.is_superuser:
         template_name = "ticket/view.html"
     else:
         template_name = "ticket/view_small.html"
 
     # le form d'actions
-    if request.user.has_perm("can_commit_full") or request.user.is_superuser:
+    if request.user.has_perm("ticket.can_list_all") or request.user.is_superuser:
         action_form = TicketActionsForm(request.POST, prefix="action")
     else:
         action_form = TicketActionsSmallForm(request.POST, prefix="action")
@@ -312,6 +312,10 @@ def modify(request, ticket_id):
         if not request.POST.get("submit-comment", None):
             comment_form  = CommentForm(ticket)
             if form.is_valid():
+                # Si l'utilisateur peut assigner ce ticket à l'utilisateur passé en POST
+                if not request.user.is_superuser and form.cleaned_data["assigned_to"] and form.cleaned_data["assigned_to"]\
+                        not in ClaritickUser.objects.get(pk=request.user.pk).get_child_users():
+                    raise PermissionDenied()
                 form.save()
                 file = form.cleaned_data["file"]
                 if file:

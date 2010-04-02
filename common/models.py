@@ -249,6 +249,14 @@ class ClaritickUser(User):
         return u""
     get_client.short_description = u"Client"
 
+    def get_child_users(self):
+        """
+            Retourne tous les ClaritickUser de l'arbre client de l'utilisateur.
+        """
+        return ClaritickUser.objects.filter(
+            userprofile__client__in=Client.objects.get_childs("parent", self.get_profile().client.pk)
+        )
+
     class Meta:
         verbose_name = u"Utilisateur Claritick"
         verbose_name_plural = u"Utilisateurs Claritick"

@@ -27,12 +27,15 @@ def user_has_perms_on_client(user, client):
     return True
 
 def filter_form_for_user(form, user):
-    from common.models import UserProfile, Client
+    from common.models import UserProfile, Client, ClaritickUser
     if user.is_superuser:
         form.base_fields["client"].choices = [(x.pk, x) for x in sort_queryset(Client.objects.all())]
+        form.base_fields["assigned_to"].choices = [(x.pk, x) for x in ClaritickUser.objects.all()]
     else:
         try:
             form.base_fields["client"].choices = [(x.pk, x) for x in sort_queryset(user.get_profile().get_clients())]
+            form.base_fields["assigned_to"].choices = [(x.pk, x) for x in ClaritickUser.objects.get(pk=user.pk).get_child_users()]
         except UserProfile.DoesNotExist:
             raise NoProfileException(user)
     form.base_fields["client"].choices.insert(0, ("", ""))
+    form.base_fields["assigned_to"].choices.insert(0, ("", ""))
