@@ -161,7 +161,7 @@
 <form method="POST" name="action_form">{% csrf_token %}
 {{ action_form.non_field_errors }}
 {{ action_form.comment }}
-<table class="resultat">
+<table class="resultat trafiquable exportables">
 <tr class="form">
     <td colspan="11">
         {{ action_form.actions }} {{ action_form.assigned_to }} {{ action_form.category }} {{ action_form.project }} {{ action_form.state }} {{ action_form.priority }}
@@ -184,6 +184,7 @@
         </button>
     </td>
 </tr>
+<thead>
 <tr>
     <th style="text-align: center;"><input type="checkbox" id="select_all" /></th>
     <th><a href="?sort=priority&sort_order={{ sort_order }}">Priorité</a></th>
@@ -197,6 +198,8 @@
     <th><a href="?sort=opened_by&sort_order={{ sort_order }}">Ouvert par</a></th>
     <th><a href="?sort=assigned_to&sort_order={{ sort_order }}">Assigné à</a></th>
 </tr>
+</thead>
+<tbody>
 {% for row in tickets.object_list %}
     {# get_comment_count for ticket.ticket row.id as comment_count #}
     <tr class="bigrow {% cycle 'row1' 'row2' %}">
@@ -213,6 +216,7 @@
         <td>{{ row.assigned_to }}</td>
     </tr>
 {% endfor %}
+</tbody>
 </table>
 </form>
 

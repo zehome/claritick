@@ -7,6 +7,7 @@ import cPickle as pickle
 from django.contrib.auth.models import User, Group
 from django.db import models
 from django.utils import simplejson
+import simplejson as json
 
 # On charge psycopg2 pour ByteaField
 try:
@@ -278,7 +279,8 @@ class UserProfile(models.Model):
     user = models.ForeignKey(User, verbose_name="Utilisateur", unique=True)
     google_account = models.ForeignKey(GoogleAccount, verbose_name="Compte google", null=True, blank=True)
     client = ClientField(Client, verbose_name="Client", blank=True, null=True)
-    
+    trafiquables = models.TextField(null = True, blank = True)
+
     def __unicode__(self):
         if self.client:
             return u"%s (%s)" % (self.user, self.client.label)
@@ -290,3 +292,31 @@ class UserProfile(models.Model):
         if self.client:
             return sort_queryset(Client.objects.get_childs("parent", self.client.pk))
         return Client.objects.none()
+
+    # Trafiquables
+    def _get_trafiquables(self):
+        try:
+            traf = json.loads(self.trafiquables)
+        except TypeError:
+            traf = {}
+        return traf
+    
+    def set_trafiquable(self, id_table, liste_colonnes):
+        traf = self._get_trafiquables()
+        traf.update({id_table: liste_colonnes})
+        self.trafiquables = json.dumps(traf)
+        self.save()
+    
+    def get_trafiquable(self, id_table):
+        traf = self._get_trafiquables()
+        if not traf.has_key(id_table):
+            return []
+        return traf[id_table]
+    
+    def clear_trafiquable(self, id_table):
+        traf = self._get_trafiquables()
+        traf.pop(id_table)
+        self.trafiquables = json.dumps(traf)
+        self.save()
+
+
