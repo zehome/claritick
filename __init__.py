@@ -109,7 +109,7 @@ def handle_update_googleaccount_signal(sender, **kw):
     global observers
     good_user=None
     for user, observer in observers.items():
-        if googleaccount.email == observer.email:
+        if googleaccount.login == observer.email:
             good_user = user
     if not good_user:
         return
