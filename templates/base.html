@@ -71,7 +71,7 @@
 {% load i18n %}
   <body class="{{ DOJANGO.THEME }} {% if is_popup %}popup {% endif %}{% block bodyclass %}claritick{% endblock %}">
     {% if not is_popup %}
-    <table class="menuPrincipal" summary="Menu">
+    <table id="menuPrincipal" summary="Menu">
       <tr>
         <td align="left" width="33%">
           <a href="/"><img src="/media/images/accueil.png"></a>

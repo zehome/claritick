@@ -1,8 +1,11 @@
-function toggleFadding(element, onBeginFadeInCallback, onEndFadeInCallback, onBeginFadeOutCallback, onEndFadeOutCallback) {
+function toggleFadding(element, onBeginFadeInCallback, onEndFadeInCallback, onBeginFadeOutCallback, onEndFadeOutCallback, defaultduration) {
+    if (! defaultduration) {
+        defaultduration = 250;
+    }
     if (dojo.style(element, "display") == "none") {
         dojo.fadeIn({
             node: element,
-            duration: 100,
+            duration: defaultduration,
             onBegin: function() {
                 dojo.style(element, "display", "block");
                 if (onBeginFadeInCallback)
@@ -13,7 +16,7 @@ function toggleFadding(element, onBeginFadeInCallback, onEndFadeInCallback, onBe
     } else {
         dojo.fadeOut({
             node: element,
-            duration: 100,
+            duration: defaultduration,
             onBegin: onBeginFadeOutCallback,
             onEnd: function() {
                 dojo.style(element, "display", "none");

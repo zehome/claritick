@@ -49,7 +49,7 @@ h2 {
     margin-top: 20px;
 }
 
-.menuPrincipal ul {
+#menuPrincipal ul {
 	padding: 0;
 	margin: 0;
 }
@@ -124,15 +124,16 @@ table a:hover {
 ################## LA BARRE DE MENU ################
 ##################################################*/
 
-table.menuPrincipal{
+table#menuPrincipal{
     background:white;
     color:black;
     width:100%;
+	padding-left: 15px;
 	border-collapse: separate;
     border-bottom:gray solid 1px;
 }
 
-.menuPrincipal td {
+#menuPrincipal td {
     padding:1px;
     vertical-align: middle;
 }
@@ -479,11 +480,11 @@ div#gauche a:hover {
 	font-weight: bold;
 }
 
-table.menuPrincipal p img {
+table#menuPrincipal p img {
 	position: relative;
 	top: -5px;
 }
-table.menuPrincipal a {
+table#menuPrincipal a {
 	color: #555;
 }
 
