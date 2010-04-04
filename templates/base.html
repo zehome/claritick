@@ -45,7 +45,9 @@
             {
             dojo.forEach(dojo.query("table.trafiquable"), function(table, index)
                 {
-                new Trafiquable(table.id,'{% url claritick.common.views.trafiquable %}');
+                  if (table.id) { 
+                    new Trafiquable(table.id,'{% url claritick.common.views.trafiquable %}');
+                  }
                 });
             });
     </script>

@@ -20,7 +20,8 @@
 
 {% if page.object_list %}
 <h2>Résultats</h2>
-<table class="resultat" dojoType="dijit.Grid">
+<table class="resultat trafiquable exportable" dojoType="dijit.Grid" id="clariadmin_result_all">
+<thead>
 <tr>
     {% for column in columns %}
     <th><a href="?sort={{ column.name_toggled }}">{{ column }}</a> 
@@ -34,11 +35,14 @@
     </th>
     {% endfor %}
 </tr>
+</thead>
+<tbody>
 {% for row in page.object_list %}
     <tr>
         <td><a href="/admin/clariadmin/host/{{ row.id }}/">{{ row }}</a></td>
     </tr>
 {% endfor %}
+</tbody>
 </table>
 
 {% load diggpaginator %}

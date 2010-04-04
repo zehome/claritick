@@ -92,7 +92,7 @@
 
 {{ action_form.non_field_errors }}
 {{ action_form.comment }}
-<table class="resultat">
+<table class="resultat" id="ticket_result_small">
 <tr class="form">
     <td colspan="11">
         {{ action_form.actions }}
@@ -116,6 +116,7 @@
         </button>
     </td>
 </tr>
+<thead>
 <tr>
     <th style="text-align: center;"><input type="checkbox" id="select_all" /></th>
     <th><a href="?sort=priority&sort_order={{ sort_order }}">Priorité</a></th>
@@ -126,6 +127,8 @@
     <th><a href="?sort=contact&sort_order={{ sort_order }}">Contact</a></th>
     <th><a href="?sort=last_modification&sort_order={{ sort_order }}">Dernières modif.</a></th>
 </tr>
+</thead>
+<tbody>
 {% for row in tickets.object_list %}
     {# get_comment_count for ticket.ticket row.id as comment_count #}
     <tr class="bigrow {% cycle 'row1' 'row2' %}">
@@ -139,6 +142,7 @@
         <td style="width: 150px;">{{ row.last_modification|date:'d/m/y H\hi' }}</td>
     </tr>
 {% endfor %}
+</tbody>
 </table>
 </form>
 
