@@ -64,11 +64,11 @@ SECRET_KEY = '9hart)zyl_0=u7$xj@+!d@6(^8&nmvni5r@898ko!rrp5spj-e'
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.load_template_source',
     'django.template.loaders.app_directories.load_template_source',
-#     'django.template.loaders.eggs.load_template_source',
 )
 
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
+  #  'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'dojango.middleware.DojoCollector',
@@ -108,7 +108,9 @@ INSTALLED_APPS = (
     'claritick.clariadmin',    # Clariadmin
     'claritick',
     'importv1',
+    'qsstats',                  # Fun with aggregates ;)
 )
+
 
 GCAL_MAIN_LOGIN = "ed@zehome.com" # Compte société
 GCAL_MAIN_PASSWORD = ""   # Explicite
