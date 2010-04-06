@@ -297,7 +297,7 @@ class UserProfile(models.Model):
     def _get_trafiquables(self):
         try:
             traf = json.loads(self.trafiquables)
-        except TypeError:
+        except (ValueError, TypeError):
             traf = {}
         return traf
     
