@@ -52,7 +52,7 @@
 
 {% block content %}
 
-<form method="POST" action="" id="list_form">{% csrf_token %}
+<form method="POST" action="?page=1" id="list_form">{% csrf_token %}
 {% block list_filters %}
 <fieldset class="form">
   <legend>Filtrage</legend>

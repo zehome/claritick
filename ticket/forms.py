@@ -83,14 +83,18 @@ class SearchTicketViewForm(SearchTicketForm):
     client      = df.ChoiceField(choices=[(x.pk, x) for x in sort_queryset(Client.objects.all())],
         widget=FilteringSelect(), required=False)
     view_name = forms.CharField(widget=df.TextInput(), label="Nom de la vue", required=False)
-    state       = forms.MultipleChoiceField(choices=State.objects.values_list("pk", "label"), required=False, widget=df.CheckboxSelectMultiple())
-    category = forms.MultipleChoiceField(choices=Category.objects.values_list("pk", "label"), required=False, widget=df.CheckboxSelectMultiple())
-    project  = forms.MultipleChoiceField(choices=Project.objects.values_list("pk", "label"), required=False, widget=df.CheckboxSelectMultiple())
-    priority = forms.MultipleChoiceField(choices=Priority.objects.values_list("pk", "label"), required=False, widget=df.CheckboxSelectMultiple())
+    state       = forms.MultipleChoiceField(required=False, widget=df.CheckboxSelectMultiple())
+    category = forms.MultipleChoiceField(required=False, widget=df.CheckboxSelectMultiple())
+    project  = forms.MultipleChoiceField(required=False, widget=df.CheckboxSelectMultiple())
+    priority = forms.MultipleChoiceField(required=False, widget=df.CheckboxSelectMultiple())
     assigned_to = forms.MultipleChoiceField(required=False, widget=df.CheckboxSelectMultiple())
     opened_by   = forms.MultipleChoiceField(required=False, widget=df.CheckboxSelectMultiple())
 
     def __init__(self, *args, **kwargs):
+        self.base_fields["state"].choices = State.objects.values_list("pk", "label")
+        self.base_fields["category"].choices = Category.objects.values_list("pk", "label")
+        self.base_fields["project"].choices = Project.objects.values_list("pk", "label")
+        self.base_fields["priority"].choices = Priority.objects.values_list("pk", "label")
         super(SearchTicketViewForm, self).__init__(*args, **kwargs)
 
         # On retire les choix vide, provenant de SearchTicketForm

@@ -4,6 +4,12 @@
 {% block content_title %}Liste des machines{% endblock %}
 {% block image %}<img src="/media/images/oxygen/search.png" />{% endblock %}
 
+{% block extrajs %}
+{{ block.super }}
+<script type="text/javascript" charset="utf-8">
+    dojo.require("dojox.grid.DataGrid");
+</script>
+{% endblock %}
 {% block content %}
 
 <fieldset class="block form">
@@ -20,11 +26,11 @@
 
 {% if page.object_list %}
 <h2>Résultats</h2>
-<table class="resultat trafiquable exportable" dojoType="dijit.Grid" id="clariadmin_result_all">
+<table class="resultat trafiquable exportable" id="clariadmin_result_all">
 <thead>
 <tr>
     {% for column in columns %}
-    <th><a href="?sort={{ column.name_toggled }}">{{ column }}</a> 
+    <th field="test"><a href="?sort={{ column.name_toggled }}">{{ column }}</a> 
     {% if column.is_ordered %}
       {% if column.is_ordered_straight %}
       <img src="/media/images/oxygen/arrow-up.png" alt="up" />

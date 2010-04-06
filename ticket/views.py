@@ -65,6 +65,10 @@ def filter_ticket_by_user(qs, user):
     """
         Filtre un queryset de ticket en fonction des clients qu'a le droit de voir l'utilisateur.
     """
+    # Si on est root, on ne filtre pas la liste
+    if user.is_superuser:
+        return qs
+
     try:
         client_list = user.get_profile().get_clients()
         qs = qs.filter(client__pk__in=[x.id for x in client_list])
@@ -303,6 +307,10 @@ def modify(request, ticket_id):
 
     if not ticket.text:
         ticket.title = None
+
+    # Si le ticket n'est pas rattaché à aucun client, on l'affecte au client de l'utilisateur
+    if not ticket.client:
+        ticket.client = request.user.get_profile().client
 
     if request.user.has_perm("ticket.add_ticket_full"):
         template_name = "ticket/modify.html"
