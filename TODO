@@ -17,6 +17,7 @@ General
 =======
 
 * Voir la mise en page des erreurs
+* Passer a un syst�me asynchrone sur google gcal
 
 Tickets / Vues
 ==============
@@ -45,24 +46,30 @@ Questionnement, bug possible
 ----------------------------
 
 On peut associer le même compte google à deux utilisateurs, est-ce que ça risque de poser problème ?
+=> LC: Oui, TODO Confirm�
 
 je vois que les nouveaux tickets qu'on crée ont des numéros "petits" (38 par exemple) alors que les tickets importés ont des gros numéros, il risque pas d'y avoir un conflit à un moment ?
     * -> faut réinitialiser la séquence des numéros de ticket
 
 j'ai configuré mon google account et quand je vais sur agenda, il me demande mon email/mot de passe.... est-ce que c'est parce que j'étais déjà identifié sur google avec un autre compte ?
+=> LC: OUI, c'est pas possible
 
 A quoi sert la couleur d'un projet ?
+=> LC: A rien
 
 Fonctionnel
 -----------
 
 un utilisateur non admin ne peut pas changer son mot de passe
+=> LC: TODO
 
 Dans création de google account ça serait bien que le mot de passe soit masqué
+=> LC: Bof
 
 Si je crée une vue avec un nom à rallonge par exemple : "Améliorations Claritick en cours (assignées à seb)", ben dans le menu c'est vraiment moche et du coup si j'en crée une autre, les noms se chevauchent
 
 Dans l'admin, on n'a plus le breadcrumb, c'est chiant pour naviguer
+=> LC: TODO
 
 On ne peut pas modifier un ticket et poster un commentaire en même temps. C'est embêtant parce que je peux décider par exemple de modifier l'affectation et de taper un commentaire et si jamais je fais valider sur le commentaire, je perd mon affectation (encore c'est pas trop grave) mais si par malheur j'enregistre le ticket, je perd tout ce que j'avais saisi dans le commentaire
 
