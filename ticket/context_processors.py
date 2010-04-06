@@ -14,6 +14,7 @@ def get_ticket_text_statistics(request):
     statList = []
     statList.append(u"Tickets sans client: %s" % (Ticket.objects.filter(client__isnull = True).count()),)
     qs = Ticket.objects.all()
+    qs = filter_ticket_by_user(qs, request.user)
     qss = qsstats.QuerySetStats(qs, 'date_open')
     #tss = qss.time_series(days_ago, today)
     statList.append(u"Ouverts aujourd'hui: %s" % (qss.this_day(),))
