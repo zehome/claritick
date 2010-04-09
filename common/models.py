@@ -7,7 +7,11 @@ import cPickle as pickle
 from django.contrib.auth.models import User, Group
 from django.db import models
 from django.utils import simplejson
-import simplejson as json
+
+try:
+    import json
+except ImportError:
+    import simplejson as json
 
 # On charge psycopg2 pour ByteaField
 try:

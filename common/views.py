@@ -10,7 +10,10 @@ from django.http import HttpResponse, HttpResponseBadRequest
 from common.models import Client, Coordinate
 from common.forms import ClientForm, CoordinateForm
 
-import simplejson as json
+try:
+    import json
+except ImportError:
+    import simplejson as json
 
 @login_required
 def modify_client(request):
