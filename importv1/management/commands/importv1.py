@@ -30,7 +30,7 @@ class Command(BaseCommand):
             print "Ok, cool..."
             print "Creation des etats"
             for etat_data in [(1,'Nouveau',0),(2,'Actif',1),(3,'En attente',2),(4,'Fermé',3)]:
-                if not tmod.State.objects.filter(pk = etat_data[0]):
+                if not tmod.State.objects.filter(pk = etat_data[0]).count():
                     etat = tmod.State(id = etat_data[0], label = etat_data[1], weight = etat_data[2])
                     etat.save()
             print "Done"
@@ -47,7 +47,7 @@ class Command(BaseCommand):
             db.query("SELECT * from support_priority")
             r = db.store_result()
             for prio_data in r.fetch_row(maxrows = 0):
-                if not tmod.Priority.objects.filter(pk = prio_data[0]):
+                if not tmod.Priority.objects.filter(pk = prio_data[0]).count():
                     prio = tmod.Priority(id = prio_data[0], label = prio_data[1], warning_duration = prio_data[3])
                     prio.save()
             print "Done"
@@ -56,7 +56,7 @@ class Command(BaseCommand):
             db.query("SELECT * from support_client")
             r = db.store_result()
             for pro_data in r.fetch_row(maxrows = 0):
-                if not tmod.Project.objects.filter(pk = pro_data[0]):
+                if not tmod.Project.objects.filter(pk = pro_data[0]).count():
                     pro = tmod.Project(id = pro_data[0], label = recoder(pro_data[1]))
                     pro.save()
             print "Done"
@@ -67,13 +67,13 @@ class Command(BaseCommand):
             rows = r.fetch_row(maxrows = 0)
             for cl_data in rows:
                 parent = None
-                if not cmod.Client.objects.filter(pk = cl_data[0]):
+                if not cmod.Client.objects.filter(pk = cl_data[0]).count():
                     cl = cmod.Client(id = cl_data[0], label = recoder(cl_data[1]), parent = parent, emails = cl_data[3])
                     cl.save()
             for cl_data in rows:
-                if cl_data[2] != 0:
-                    cl = cmod.Client.objects.get(pk = cl_data[0])
-                    parent = cmod.Client.objects.get(pk = cl_data[2])
+                if cl_data[2] != '0':
+                    cl = cmod.Client.objects.get(pk = int(cl_data[0]))
+                    parent = cmod.Client.objects.get(pk = int(cl_data[2]))
                     cl.parent = parent
                     cl.save()
             print "Done"
@@ -82,7 +82,7 @@ class Command(BaseCommand):
             db.query("select distinct(field_ticket_type_value) from content_type_support_ticket where field_ticket_type_value is not null")
             r = db.store_result()
             for cat_data in r.fetch_row(maxrows = 0):
-                if not tmod.Category.objects.filter(pk = cl_data[0]):
+                if not tmod.Category.objects.filter(pk = cl_data[0]).count():
                     cat = tmod.Category(label = recoder(cat_data[0]))
                     cat.save()
             defcat = tmod.Category(label = 'Ticket')
@@ -110,7 +110,7 @@ class Command(BaseCommand):
             print "%s tickets a creer" % (len(rows),)
             cpt = 0
             for tic_data in rows:
-                if tmod.Ticket.objects.filter(pk = cl_data[0]):
+                if tmod.Ticket.objects.filter(pk = cl_data[0]).count():
                     continue
                 cpt += 1
                 try:
