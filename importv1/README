@@ -1,0 +1,11 @@
+-- SQL a passer après l'import
+insert into common_userprofile (user_id, client_id) SELECT id, 52 from auth_user where id not in (select user_id from common_userprofile);
+SELECT setval('ticket_ticket_id_seq', (SELECT max(id) from ticket_ticket));
+SELECT setval('ticket_project_id_seq', (SELECT max(id) from ticket_project));
+SELECT setval('ticket_state_id_seq', (SELECT max(id) from ticket_state));
+SELECT setval('django_comments_id_seq', (SELECT max(id) from django_comments));
+SELECT setval('ticket_priority_id_seq', (SELECT max(id) from ticket_priority));
+SELECT setval('ticket_category_id_seq', (SELECT max(id) from ticket_category));
+UPDATE common_client SET parent_id = (SELECT id FROM common_client where label = 'Clarisys') WHERE id != (SELECT id FROM common_client where label = 'Clarisys');
+UPDATE ticket_ticket SET nb_comments = (SELECT COUNT(*) FROM django_comments WHERE content_type_id = (select id from django_content_type where app_label = 'ticket' and model = 'ticket') AND object_pk::integer = ticket_ticket.id);
+UPDATE ticket_ticket SET validated_by_id = opened_by_id WHERE validated_by_id IS NULL;
