@@ -6,7 +6,7 @@ from django.contrib import admin
 
 import reporting
 
-import settings
+#import settings
 import django.contrib.auth.views
 from django.template import RequestContext
 
@@ -40,7 +40,7 @@ def agenda(request, data={}):
 urlpatterns = patterns('',
     (r'^/*$', flatpage("index.html")),
     ## Medias (STATIC Content)
-    (r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT}),
+    #(r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT}),
     (r'^comments/', include('django.contrib.comments.urls')),
     (r'^admin/', include(admin.site.urls)),
     (r'^ticket/', include(claritick.ticket.urls)),
