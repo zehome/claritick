@@ -23,15 +23,16 @@ class Command(BaseCommand):
         print "importing tickets from v1"
         print "tentative de connexion à la base drupal"
         try:
-            db = _mysql.connect("192.168.1.2","drupal","Ex9phaph","drupal")
+            db = _mysql.connect("192.168.1.2","drupal","drupal","drupal")
         except:
             print "Bah il m'aime pas : %s" % (traceback.format_exc(),)
         else:
             print "Ok, cool..."
             print "Creation des etats"
             for etat_data in [(1,'Nouveau',0),(2,'Actif',1),(3,'En attente',2),(4,'Fermé',3)]:
-                etat = tmod.State(id = etat_data[0], label = etat_data[1], weight = etat_data[2])
-                etat.save()
+                if not tmod.State.objects.filter(pk = etat_data[0]):
+                    etat = tmod.State(id = etat_data[0], label = etat_data[1], weight = etat_data[2])
+                    etat.save()
             print "Done"
             
             print "Creation des utilisateurs"
@@ -46,16 +47,18 @@ class Command(BaseCommand):
             db.query("SELECT * from support_priority")
             r = db.store_result()
             for prio_data in r.fetch_row(maxrows = 0):
-                prio = tmod.Priority(id = prio_data[0], label = prio_data[1], warning_duration = prio_data[3])
-                prio.save()
+                if not tmod.Priority.objects.filter(pk = prio_data[0]):
+                    prio = tmod.Priority(id = prio_data[0], label = prio_data[1], warning_duration = prio_data[3])
+                    prio.save()
             print "Done"
             
             print "Creation des projets"
             db.query("SELECT * from support_client")
             r = db.store_result()
             for pro_data in r.fetch_row(maxrows = 0):
-                pro = tmod.Project(id = pro_data[0], label = recoder(pro_data[1]))
-                pro.save()
+                if not tmod.Project.objects.filter(pk = pro_data[0]):
+                    pro = tmod.Project(id = pro_data[0], label = recoder(pro_data[1]))
+                    pro.save()
             print "Done"
             
             print "Creation des clients"
@@ -64,10 +67,11 @@ class Command(BaseCommand):
             rows = r.fetch_row(maxrows = 0)
             for cl_data in rows:
                 parent = None
-                cl = cmod.Client(id = cl_data[0], label = recoder(cl_data[1]), parent = parent, emails = cl_data[3])
-                cl.save()
+                if not cmod.Client.objects.filter(pk = cl_data[0]):
+                    cl = cmod.Client(id = cl_data[0], label = recoder(cl_data[1]), parent = parent, emails = cl_data[3])
+                    cl.save()
             for cl_data in rows:
-                if cl_data[2] != '0':
+                if cl_data[2] != 0:
                     cl = cmod.Client.objects.get(pk = cl_data[0])
                     parent = cmod.Client.objects.get(pk = cl_data[2])
                     cl.parent = parent
@@ -75,13 +79,12 @@ class Command(BaseCommand):
             print "Done"
             
             print "Creation des Categories"
-            for cat in tmod.Category.objects.all():
-                cat.delete()
             db.query("select distinct(field_ticket_type_value) from content_type_support_ticket where field_ticket_type_value is not null")
             r = db.store_result()
             for cat_data in r.fetch_row(maxrows = 0):
-                cat = tmod.Category(label = recoder(cat_data[0]))
-                cat.save()
+                if not tmod.Category.objects.filter(pk = cl_data[0]):
+                    cat = tmod.Category(label = recoder(cat_data[0]))
+                    cat.save()
             defcat = tmod.Category(label = 'Ticket')
             defcat.save()
             print "Done"
@@ -107,6 +110,8 @@ class Command(BaseCommand):
             print "%s tickets a creer" % (len(rows),)
             cpt = 0
             for tic_data in rows:
+                if tmod.Ticket.objects.filter(pk = cl_data[0]):
+                    continue
                 cpt += 1
                 try:
                     category = tmod.Category.objects.get(label = recoder(tic_data[10]))
@@ -125,6 +130,7 @@ class Command(BaseCommand):
                     contact = tic_data[1] and recoder(tic_data[1]) or '',
                     telephone = tic_data[2] and tic_data[2] or '',
                     date_open = datetime.datetime.fromtimestamp(int(tic_data[3])),
+                    last_modification = datetime.datetime.fromtimestamp(int(tic_data[3])),
                     state = tmod.State.objects.get(pk = int(tic_data[4])),
                     priority = tmod.Priority.objects.get(pk = int(tic_data[5])),
                     assigned_to = assigned_to,
