@@ -22,7 +22,7 @@ DATABASE_ENGINE = 'postgresql_psycopg2' # 'postgresql_psycopg2', 'postgresql', '
 DATABASE_NAME = 'claritick'    # Or path to database file if using sqlite3.
 DATABASE_USER = 'claritick'    # Not used with sqlite3.
 DATABASE_PASSWORD = ''         # Not used with sqlite3.
-DATABASE_HOST = '192.168.3.6'  # Set to empty string for localhost. Not used with sqlite3.
+DATABASE_HOST = '10.1.0.3'  # Set to empty string for localhost. Not used with sqlite3.
 DATABASE_PORT = '5432'         # Set to empty string for default. Not used with sqlite3.
 
 DEFAULT_FROM_EMAIL = 'claritick@clarisys.fr'
@@ -68,7 +68,6 @@ TEMPLATE_LOADERS = (
 
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
-  #  'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'dojango.middleware.DojoCollector',
@@ -100,7 +99,6 @@ INSTALLED_APPS = (
     'reporting',               # Override admin templates
     'django.contrib.admin',    # Site admin
     'django.contrib.comments', # Commentaires
-    'formfieldset',            # Form Field set for smart form
     'djangogcal',              # Google calendar OUTPUT integration
     'dojango',                 # Dojo/Django Dojango
     'claritick.common',
@@ -130,13 +128,13 @@ TIME_FORMAT = "H\hi"
 # Dojango config
 #DOJANGO_DOJO_PROFILE = "google"
 DOJANGO_DOJO_PROFILE = "local_release"
-DOJANGO_DOJO_VERSION = "1.4.0-dojango-optimized-with-dojo"
+DOJANGO_DOJO_VERSION = "custom_build_141"
 DOJO_BUILD_JAVA_EXEC = "/usr/bin/java"
 
 # Contrôle des emails
 EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
 EMAIL_FILE_PATH = '/tmp/claritick_emails'
-EMAIL_HOST = "192.168.3.7"
+#EMAIL_HOST = "192.168.3.7"
 
 DIALOG_DIALOG = '/usr/bin/dialog'
 DIALOG_WIDTH=80
