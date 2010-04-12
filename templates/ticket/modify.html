@@ -43,8 +43,11 @@
             {% else %}
                 {% if perms.ticket.can_validate_ticket %}
                     <td colspan="2"><button type="submit" dojoType="dijit.form.Button" name="_validate-ticket" value="Valider ce ticket">Valider ce ticket</button></td>
+                {% else %}
+                    <strong>Validation:</strong></td><td><strong>En attente</strong>
                 {% endif %}
-            {% endif %}</td>
+            {% endif %}
+        </td>
     </tr>
   </table>
 </fieldset>
@@ -66,38 +69,6 @@
     </tr>
   </table>
 </fieldset>
-
-<fieldset class="block form">
-  <legend>Planification</legend>
-  <table>
-    <tr>
-        <th class="large">{{ form.calendar_start_time.label_tag }}</th>
-        <td class="right">{{ form.calendar_start_time }}</td>
-    </tr>
-    <tr>
-        <th class="large">{{ form.calendar_end_time.label_tag }}</th>
-        <td class="right">{{ form.calendar_end_time }}</td>
-    </tr>
-  </table>
-</fieldset>
-
-<fieldset class="block form">
-    <legend>Fichiers joint</legend>
-    <table>
-        {% for file in ticket.ticketfile_set.all %}
-        <tr>
-            <td><a href="{% url ticket_get_file file.pk %}">{{ file.filename }}</a></td>
-        </tr>
-        {% endfor %}
-        <tr>
-            <td>{{ form.file }}</td>
-        </tr>
-    </table>
-</fieldset>
-<hr />
-<button dojoType="dijit.form.Button" type="submit">Modifier / Valider</button>
-
-{% endblock %}
 
 <fieldset class="block form" style="padding: 0;">
   <legend>Réponses</legend>
@@ -133,6 +104,39 @@
     </table>
 {% endblock %}
 </fieldset>
+
+
+<fieldset class="block form">
+  <legend>Planification</legend>
+  <table>
+    <tr>
+        <th class="large">{{ form.calendar_start_time.label_tag }}</th>
+        <td class="right">{{ form.calendar_start_time }}</td>
+    </tr>
+    <tr>
+        <th class="large">{{ form.calendar_end_time.label_tag }}</th>
+        <td class="right">{{ form.calendar_end_time }}</td>
+    </tr>
+  </table>
+</fieldset>
+
+<fieldset class="block form">
+    <legend>Fichiers joint</legend>
+    <table>
+        {% for file in ticket.ticketfile_set.all %}
+        <tr>
+            <td><a href="{% url ticket_get_file file.pk %}">{{ file.filename }}</a></td>
+        </tr>
+        {% endfor %}
+        <tr>
+            <td>{{ form.file }}</td>
+        </tr>
+    </table>
+</fieldset>
+<hr />
+<button dojoType="dijit.form.Button" type="submit">Modifier / Valider</button>
+
+{% endblock %}
 
 </form>
 {% endblock %}
