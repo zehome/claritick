@@ -32,7 +32,7 @@ function Exportable(id_table, service_url)
     var l_exportable = this;
     var help_dialog = new dijit.Dialog({
         title : "Aide sur la manipulation des tableaux",
-        content : "<h5>Certains tableaux comme celui-ci peuvent être exportés dans différents formats.</h5><p>En effectuant un clic-droit sur l'entête du tableau et en choisissant 'Exporter cette table' au format choisi, le contenu du tableau pourra être téléchargé et ouvert dans un tableur.</p></p><button dojoType=\"dijit.form.Button\" type=\"submit\">OK</button>",
+        content : "<h5>Certains tableaux comme celui-ci peuvent être exportés dans différents formats.</h5><p>En effectuant un clic-droit sur l'entête du tableau et en choisissant 'Exporter cette table' au format choisi, le contenu du tableau pourra être téléchargé et ouvert dans un tableur.</p></p><button dojoType=\"dijit.form.Button\" type=\"submit\">OK</button>"
         });
     dojo.forEach(titres, function(titre, index)
         {

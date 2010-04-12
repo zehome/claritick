@@ -26,27 +26,31 @@ function retrouver_menu(node)
 
 function Trafiquable(id_table, service_url)
     {
-    var table = dojo.byId(id_table);
-    var focused = dojo.query('*:focus', table);
+    var matable = dojo.byId(id_table);
+    if (dojo.isIE) { 
+        dojo.byId('status').innerText = "<p>IE detected"+dojo.isIE+"</p>";
+        return; 
+    }
+    var focused = dojo.query('*:focus', matable);
     var timeout_ordre_colonnes;
-    var ligne_titres = dojo.query("thead > tr", table)[0];
+    var ligne_titres = dojo.query("thead > tr", matable)[0];
     var titres = dojo.query(" > *", ligne_titres);
     var service_url = service_url;
     var dndSource = new dojo.dnd.Source(ligne_titres, {horizontal: true, accept: [id_table]});
     var le_trafiquable = this;
     var help_dialog = new dijit.Dialog({
         title : "Aide sur la manipulation des tableaux",
-        content : "<p><h5Certains tableaux comme celui-ci peuvent être personnalisés par l'utilisateur.</h5></p><p>Celui-ci peut décider de masquer certaines colonnes et peut choisir également l'ordre dans lequel les colonnes doivent s'afficher.</p><p><ul><li>Pour modifier l'ordre des colonnes, il suffit de déplacer celles-ci par 'glisser-déposer' (cliquer sur le titre d'une colonne, laisser le bouton de la souris enfoncé, déplacer la souris au nouvel emplacement et relacher le bouton).</li><li>En faisant un clic-droit sur le titre d'une colonne, un menu contextuel apparaît permettant de masquer cette colonne, de réafficher toutes les colonnes, de rétablir l'ordre par défaut des colonnes et de trier le tableau.</li></ul></p><button dojoType=\"dijit.form.Button\" type=\"submit\">OK</button>",
+        content : "<p><h5Certains tableaux comme celui-ci peuvent être personnalisés par l'utilisateur.</h5></p><p>Celui-ci peut décider de masquer certaines colonnes et peut choisir également l'ordre dans lequel les colonnes doivent s'afficher.</p><p><ul><li>Pour modifier l'ordre des colonnes, il suffit de déplacer celles-ci par 'glisser-déposer' (cliquer sur le titre d'une colonne, laisser le bouton de la souris enfoncé, déplacer la souris au nouvel emplacement et relacher le bouton).</li><li>En faisant un clic-droit sur le titre d'une colonne, un menu contextuel apparaît permettant de masquer cette colonne, de réafficher toutes les colonnes, de rétablir l'ordre par défaut des colonnes et de trier le tableau.</li></ul></p><button dojoType=\"dijit.form.Button\" type=\"submit\">OK</button>"
         });
     SimpleAjax(service_url,'action=get&id_table=' + id_table,function(ajax_response)
         {
         le_trafiquable.set_ordre_colonnes(ajax_response.ordre_colonnes);
-        dojo.style(table,"display","table");
+        dojo.style(matable,"display","table");
         });
     dojo.forEach(titres, function(titre, index)
         {
         dndSource.insertNodes(false,[titre]);
-        menu = retrouver_menu(titre);
+        var menu = retrouver_menu(titre);
         if (menu)
             {
             menu.addChild(new dijit.MenuSeparator());
@@ -78,7 +82,7 @@ function Trafiquable(id_table, service_url)
             help_dialog.show();
             }}));
         });
-    dojo.forEach(dojo.query("tr", table), function(le_tr)
+    dojo.forEach(dojo.query("tr", matable), function(le_tr)
         {
         dojo.forEach(dojo.query(" > *", le_tr), function(ce_td, index)
             {
@@ -98,7 +102,7 @@ function Trafiquable(id_table, service_url)
     
     this.trier = function(index_colonne, asc)
         {
-        var lignes = dojo.query("tbody > tr", table);
+        var lignes = dojo.query("tbody > tr", matable);
         var cellules = new Array();
         dojo.forEach(lignes, function (ligne, index)
             {
@@ -106,7 +110,7 @@ function Trafiquable(id_table, service_url)
             cellules.push(new Array(index, la_cellule, la_cellule.innerHTML));
             });
         cellules.sort(function (a,b) { if (asc) { return a[2] > b[2]; } else { return b[2] > a[2]; } });
-        var tbody = dojo.query("tbody",table)[0];
+        var tbody = dojo.query("tbody",matable)[0];
         tbody.innerHTML = "";
         dojo.forEach(cellules, function (info)
             {
@@ -118,7 +122,7 @@ function Trafiquable(id_table, service_url)
         {
         var ordre_colonnes = new Array();
         titres = dojo.query(" > *", ligne_titres);
-        ligne_titres.innerHTML = ""
+        ligne_titres.innerHTML = "";
         dojo.forEach(titres, function(entete1, index1)
             {
             dojo.forEach(titres, function(entete2, index2)
@@ -146,7 +150,7 @@ function Trafiquable(id_table, service_url)
             }
         titres = dojo.query(" > *", ligne_titres);
         var indexes = new Array();
-        ligne_titres.innerHTML = ""
+        ligne_titres.innerHTML = "";
         dojo.forEach(ordre_colonnes, function(infos_colonne)
             {
             var user_index = infos_colonne[0];
@@ -160,7 +164,7 @@ function Trafiquable(id_table, service_url)
 
     this.appliquer_ordre_colonnes = function(sauvegarder)
         {
-        var focused = dojo.query('*:focus', table);
+        var focused = dojo.query('*:focus', matable);
         var liste_colonnes = new Array();
         var etat_colonnes_masquees = new Array();
         titres = dojo.query(" > *", ligne_titres);
@@ -176,7 +180,7 @@ function Trafiquable(id_table, service_url)
                     }
                 });
             });
-        dojo.forEach(dojo.query(" > thead > tr, > tbody > tr", table), function(le_tr)
+        dojo.forEach(dojo.query(" > thead > tr, > tbody > tr", matable), function(le_tr)
             {
             var les_td = dojo.query(" > *", le_tr);
             if (les_td.length == liste_colonnes.length)
