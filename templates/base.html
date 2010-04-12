@@ -37,10 +37,10 @@
         });
     </script>
     {% block extrajs %}{% endblock %}
-    <script type="text/javascript" lang="javascript" src="{{ MEDIA_URL }}javascript/claritick.js"></script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}javascript/claritick.js"></script>
 {% block activation_trafiquables %}
-    <script type="text/javascript" lang="javascript" src="{{ MEDIA_URL }}javascript/trafiquable.js"></script>
-    <script type="text/javascript" lang="javascript">
+    <script type="text/javascript" src="{{ MEDIA_URL }}javascript/trafiquable.js"></script>
+    <script type="text/javascript">
         dojo.addOnLoad(function()
             {
             dojo.forEach(dojo.query("table.trafiquable"), function(table, index)
@@ -53,8 +53,8 @@
     </script>
 {% endblock %}
 {% block activation_exportables %}
-    <script type="text/javascript" lang="javascript" src="{{ MEDIA_URL }}javascript/exportable.js"></script>
-    <script type="text/javascript" lang="javascript">
+    <script type="text/javascript" src="{{ MEDIA_URL }}javascript/exportable.js"></script>
+    <script type="text/javascript">
         dojo.addOnLoad(function()
             {
             dojo.forEach(dojo.query("table.exportables"), function(table, index)
@@ -74,10 +74,10 @@
     <table id="menuPrincipal" summary="Menu">
       <tr>
         <td align="left" width="33%">
-          <a href="/"><img src="/media/images/accueil.png"></a>
+          <a href="/"><img src="/media/images/accueil.png" alt="accueil" /></a>
         </td>
         <td valign="middle" align="center" width="33%">
-          <a href="/"><img src="/media/images/logo_pt.png"></a>
+          <a href="/"><img src="/media/images/logo_pt.png" alt="logo" /></a>
         </td>
         <td align="right" width="33%">
           <span id="status">[ IDLE ]</span>
