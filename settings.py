@@ -3,8 +3,8 @@
 import os
 basepath = os.path.abspath(os.path.dirname(__file__))
 
-DEBUG = True
-TEMPLATE_DEBUG = DEBUG
+DEBUG = False
+TEMPLATE_DEBUG = False
 
 ADMINS = (
     ('Laurent Coustet', 'ed@zehome.com'),
@@ -72,6 +72,8 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'dojango.middleware.DojoCollector',
     'django.middleware.csrf.CsrfViewMiddleware',
+    'django.middleware.gzip.GZipMiddleware',
+    'common.exceptionmiddleware.UserBasedExceptionMiddleware',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = ("django.core.context_processors.auth",
@@ -130,6 +132,8 @@ TIME_FORMAT = "H\hi"
 DOJANGO_DOJO_PROFILE = "local_release"
 DOJANGO_DOJO_VERSION = "custom_build_141"
 DOJO_BUILD_JAVA_EXEC = "/usr/bin/java"
+DOJANGO_BASE_MEDIA_ROOT = os.path.join(basepath, 'dojango', 'dojo-media')
+DOJANGO_BASE_MEDIA_URL = "/dojango/dojo-media"
 
 # Contrôle des emails
 EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'

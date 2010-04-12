@@ -37,6 +37,9 @@ def agenda(request, data={}):
     
     return render_to_response(template, data, context_instance=RequestContext(request))
 
+def raise_trial_exception(*kw, **args):
+    raise Exception("Trial exception")
+
 urlpatterns = patterns('',
     (r'^/*$', flatpage("index.html")),
     ## Medias (STATIC Content)
@@ -55,4 +58,7 @@ urlpatterns = patterns('',
     
     ## Reporting
     (r'^reporting/', include('reporting.urls')),
+
+    ## Error testing
+    (r'^error/', raise_trial_exception),
 )

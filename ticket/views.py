@@ -83,7 +83,7 @@ def add_order_by(queryset, request):
     """
     sort = request.GET.get('sort', 'id')
     sort_order = int(request.GET.get("sort_order", 1))
-    return queryset.order_by("%s%s" % (not sort_order and "-" or "", sort))
+    return queryset.order_by("%s%s" % (sort_order and "-" or '', sort))
 
 def get_context(request):
     """
