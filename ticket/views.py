@@ -293,6 +293,10 @@ def new(request):
     #ticket.state = None
     ticket.state = State.objects.get(pk=settings.TICKET_STATE_NEW)
     ticket.priority = Priority.objects.get(pk=settings.TICKET_PRIORITY_NORMAL)
+    
+    if request.user.has_perm("ticket.add_ticket_full"):
+        ticket.validated_by = request.user
+
     ticket.save()
     return redirect("ticket_modify", ticket_id=ticket.pk)
 
