@@ -674,4 +674,9 @@ ol#pagination-digg {
     list-style-type: none;
 }
 
+.trafiquable {
+    display: none !important;
+    display: "table";
+}
+
 /* EOF */
