@@ -7,20 +7,20 @@ SUMMARY_TICKETS=15
 
 def get_critical_tickets(request):
     qs = Ticket.open_tickets.all()
-    qs = filter_ticket_by_user(qs, request.user).order_by('-date_open')
+    qs = filter_ticket_by_user(qs, request.user).filter(priority__gt=3).order_by('-date_open')
     return qs[:SUMMARY_TICKETS]
 
 def get_ticket_text_statistics(request):
     statList = []
-    statList.append(u"Tickets sans client: %s" % (Ticket.objects.filter(client__isnull = True).count()),)
-    qs = Ticket.objects.all()
-    qs = filter_ticket_by_user(qs, request.user)
-    if qs:
-        qss = qsstats.QuerySetStats(qs, 'date_open')
-        #tss = qss.time_series(days_ago, today)
-        statList.append(u"Ouverts aujourd'hui: %s" % (qss.this_day(),))
-        statList.append(u"Ouverts ce mois: %s" % (qss.this_month(),))
-        statList.append(u"Ouverts en %s: %s" % (datetime.date.today().year, qss.this_year(),))
+    #statList.append(u"Tickets sans client: %s" % (Ticket.objects.filter(client__isnull = True).count()),)
+    #qs = Ticket.objects.all()
+    #qs = filter_ticket_by_user(qs, request.user)
+    #if qs:
+    #    qss = qsstats.QuerySetStats(qs, 'date_open')
+    #    #tss = qss.time_series(days_ago, today)
+    #    statList.append(u"Ouverts aujourd'hui: %s" % (qss.this_day(),))
+    #    statList.append(u"Ouverts ce mois: %s" % (qss.this_month(),))
+    #    statList.append(u"Ouverts en %s: %s" % (datetime.date.today().year, qss.this_year(),))
     
 
     return statList
