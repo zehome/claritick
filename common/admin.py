@@ -15,6 +15,8 @@ class CoordinateAdmin(admin.ModelAdmin):
 
 class ClientAdmin(admin.ModelAdmin):
     search_fields = ["label", "parent__label"]
+    list_display = ('__unicode__', "coordinates" )
+    list_editable = ('coordinates',)
 
 class UserProfileInline(admin.TabularInline):
     model = UserProfile
