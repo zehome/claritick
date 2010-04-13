@@ -9,6 +9,7 @@ Ouvert par:            {{ ticket.opened_by.first_name }} {{ ticket.opened_by.las
 {% if ticket.assigned_to %}Assigné à:             {{ ticket.assigned_to.first_name }} {{ ticket.assigned_to.last_name }} ({{ ticket.assigned_to.username }}){% else %}
 Non assigné{% endif %}
 Contact:               {% if ticket.contact %}{{ ticket.contact }}{% else %}{{ ticket.client }}{% endif %}
+{% if ticket.client %}Site:                  {{ ticket.client }}{% endif %}
 
 =======================================================================
 {{ ticket.text|striptags|wordwrap:80 }}
@@ -34,4 +35,5 @@ Téléphone: 09 72 11 43 60    Fax: 05 11 11 11 11
 
 Email généré automatiquement par le système de suivi CLARITICK.
 Cet email vous est transmi pour la/les raison(s) suivante: 
-{% for reason in reasons %}{{ reason }}{% endfor %}{% endautoescape %}
+{% for reason in reasons %}{{ reason }}
+{% endfor %}{% endautoescape %}
