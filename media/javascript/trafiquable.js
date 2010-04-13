@@ -45,7 +45,7 @@ function Trafiquable(id_table, service_url)
     SimpleAjax(service_url,'action=get&id_table=' + id_table,function(ajax_response)
         {
         le_trafiquable.set_ordre_colonnes(ajax_response.ordre_colonnes);
-        dojo.style(matable,"display","table");
+        dojo.style(matable,"display","table !important");
         });
     dojo.forEach(titres, function(titre, index)
         {
@@ -231,7 +231,7 @@ function Trafiquable(id_table, service_url)
             {
             if (dojo.hasClass(entete, 'trafiquablecolonne' + num_colonne))
                 {
-                dojo.style(entete,"display","none");
+                dojo.style(entete,"display","none !important");
                 }
             });
         this.appliquer_ordre_colonnes(true);
