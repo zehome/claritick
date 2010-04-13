@@ -15,16 +15,17 @@
 <p>Merci de vous <a href="/accounts/login/">IDENTIFIER</a></p>
 {% else %}
 <div id="index_content">
+    {% if ticket_views %}
     <div id="list_filters">
         <h2>Mes filtres</h2>
         <ul>
-            {% if ticket_views %}
+            
             {% for view in ticket_views %}
             <li><a href="{% url ticket_list_view view.pk %}">{{ view.name }}</a></li>
             {% endfor %}
-            {% endif %}
         </ul>
     </div>
+    {% endif %}
     <div id="list_critical_tickets" style="width: 500px;">
         <h2>Tickets critiques</h2>
         <ul>
@@ -34,6 +35,7 @@
         </ul>
     </div>
     
+    {% if ticket_dashboard_text_statistics %}
     <div id="list_stats">
         <h2>Statistiques</h2>
         <ul>
@@ -41,7 +43,8 @@
             <li>{{ entry }}</a></li>
             {% endfor %}
         </ul>
-    </div>    
+    </div>
+    {% endif %}
 </div>
 {% endif %}
 
