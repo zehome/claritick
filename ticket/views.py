@@ -22,6 +22,8 @@ from claritick.common.models import Client, UserProfile, ClaritickUser
 from common.exceptions import NoProfileException
 from common.utils import user_has_perms_on_client
 
+INVALID_TITLE = "Invalid title"
+
 def get_filters(request):
     if "list_filters" in request.session:
         return request.session["list_filters"]
@@ -291,7 +293,7 @@ def new(request):
     
     ticket = form.save(commit=False)
     ticket.opened_by = request.user
-    ticket.title = "Invalid title"
+    ticket.title = INVALID_TITLE
     #ticket.state = None
     ticket.state = State.objects.get(pk=settings.TICKET_STATE_NEW)
     ticket.priority = Priority.objects.get(pk=settings.TICKET_PRIORITY_NORMAL)
@@ -311,7 +313,7 @@ def modify(request, ticket_id):
     if not user_has_perms_on_client(request.user, ticket.client):
         raise PermissionDenied
 
-    if not ticket.text:
+    if not ticket.text and ticket.title == INVALID_TITLE:
         ticket.title = None
 
     # Si le ticket n'est pas rattaché à aucun client, on l'affecte au client de l'utilisateur
@@ -371,7 +373,7 @@ def get_file(request, file_id):
     
     if not user_has_perms_on_client(request.user, file.ticket.client):
         raise PermissionDenied
-    response = http.HttpResponse(file.data, mimetype=file.content_type)
+    response = http.HttpResponse(str(file.data), mimetype=file.content_type)
     response["Content-Disposition"] = "attachment; filename=%s" % file.filename
     return response
 
