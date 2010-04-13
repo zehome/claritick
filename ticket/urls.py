@@ -14,4 +14,7 @@ urlpatterns = patterns('claritick.ticket.views',
     url(r'^list/unassigned/$',      'list_unassigned', name="ticket_list_unassigned"),
     url(r'^list/nonvalide/$',                 'list_nonvalide', name="ticket_list_nonvalide"),
     url(r'^getfile/(?P<file_id>\d+)/$',   'get_file', name="ticket_get_file"),
+    
+    ## Ajax
+    url(r'^ajax_load_telephone/', 'ajax_load_telephone', name='ajax_load_telephone'),
 )

@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+<!-- <?xml version='1.0' encoding='utf-8'?> -->
 {% extends "base.html" %}
 
 {% block title %}Ticket numéro {{ ticket.id }}{% endblock %}
@@ -32,7 +32,42 @@
         <td class="large right"><label for="id_opened_by">Ouvert par</label></td><td>{{ ticket.opened_by }} le {{ ticket.date_open|date:"d/m/Y à H:i" }}</td>
     </tr>
     <tr>
-        <td class="large"><label for="id_phone">Téléphone</label></td><td>{{ form.telephone }}</td>
+        <td class="large"><label for="id_phone">Téléphone</label></td><td>{{ form.telephone }}
+            <div dojoType="dijit.form.Button" onClick="loadTelephone();" id="telephoneContainer">Préselection</div>
+            <!-- Dojo dialog telephone preselection -->
+            <script type="text/javascript">
+            function loadTelephone() {
+                var client = dijit.byId("id_client");
+                var client_id = client.value;
+
+                SimpleAjax('{% url ajax_load_telephone %}', 'client_id='+client_id, function(ajax_response)
+                {
+                    if (! ajax_response.telephones) { return; }
+                    var menu = dijit.byId('telephone_menu');
+                    if (menu) {
+                        menu.destroyRecursive();
+                    } else {
+                        menu = new dijit.Menu({id: 'telephone_menu'});
+                        
+                        var telephone;
+                        dojo.forEach(ajax_response.telephones, function(telephone) {
+                            var menuItem = new dijit.MenuItem({
+                                    label: telephone[1],
+                                    onClick: function() {
+                                        dojo.byId('id_telephone').value = telephone[0];
+                                        menu.destroyRecursive();
+                                    }
+                                });
+                            menu.addChild(menuItem);
+                        });
+                        dojo.byId("telephoneContainer").appendChild(menu.domNode);
+                        menu.focus();
+                    }
+                });
+            }
+            </script>
+            <!-- / Telephone preselection -->
+        </td>
         <td class="large right"><label for="id_last_modification">Dernière modif.</label></td><td>le {{ ticket.last_modification|date:"d/m/Y à H:i" }}</td>
     </tr>
     <tr>

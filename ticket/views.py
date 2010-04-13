@@ -12,6 +12,8 @@ from django.core.urlresolvers import reverse
 from django.contrib.comments.forms import CommentForm
 from django.contrib.comments.views.comments import post_comment
 
+from dojango.decorators import json_response
+
 from claritick.ticket.models import Ticket, TicketView, TicketFile
 from claritick.ticket.forms import *
 
@@ -372,3 +374,52 @@ def get_file(request, file_id):
     response = http.HttpResponse(file.data, mimetype=file.content_type)
     response["Content-Disposition"] = "attachment; filename=%s" % file.filename
     return response
+
+@login_required
+@json_response
+def ajax_load_telephone(request):
+    """
+    
+    Renvoie un json contenant les numéros de téléphone/dernier numéro de téléphone du client/enfants
+    """
+    
+    ret = {}
+    
+    client_id = request.POST.get("client_id", None)
+    if not client_id:
+        raise PermissionDenied
+    
+    client = get_object_or_404(Client, pk=client_id)
+    if not user_has_perms_on_client(request.user, client):
+        raise PermissionDenied
+    
+    # Récupère la liste des numéros
+    telephones = []
+    
+    if settings.POSTGRESQL_VERSION >= 8.4:
+        client_and_childs = Client.objects.get_childs("parent", client.pk)
+    else:
+        client_and_childs = [ client, ]
+    
+    for client in client_and_childs:
+        coord = client.coordinates
+        if coord and coord.telephone:
+            coord_supp = ''
+            if coord.postalcode or coord.city:
+                coord_supp += ' (Labo '
+                if coord.postalcode:
+                    coord_supp += str(coord.postalcode)
+                if coord.city:
+                    coord_supp += ' ' + str(coord.city)
+                coord_supp += ')'
+            telephones.append((str(coord.telephone), "%s%s" % (coord.telephone, coord_supp)))
+    
+    # Récupère la liste des derniers tickets
+    tickets = Ticket.tickets.filter(client__in=client_and_childs).exclude(telephone__isnull=True).exclude(telephone='')
+    tickets = filter_ticket_by_user(tickets, request.user).order_by("-id")[:5]
+    for ticket in tickets:
+        telephones.append((str(ticket.telephone), "%s (Ticket %s de %s)" % (ticket.telephone, ticket.id, ticket.client)))
+    
+    ret["telephones"] = telephones
+    return ret
+    
