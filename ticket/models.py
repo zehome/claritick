@@ -288,7 +288,6 @@ class Ticket(models.Model):
             old_ticket = None
         
         r = super(Ticket, self).save()
-        
         send_fax_reasons = []
         send_email_reasons = []
         if self.is_valid():
@@ -325,10 +324,10 @@ class Ticket(models.Model):
         if self.client is not None:
             faxes = set(self.client.get_faxes())
             
-            if self.client and self.client.notifications_by_fax:
-                print "send_fax to %s reasons: %s" % (faxes, reasons,)
-            else:
-                print "no send_fax: le client ne veut pas être faxé"
+            #if self.client and self.client.notifications_by_fax:
+            #    print "send_fax to %s reasons: %s" % (faxes, reasons,)
+            #else:
+            #    print "no send_fax: le client ne veut pas être faxé"
     
     def send_email(self, reasons=[u"Demande spécifique",]):
         """ Send an email for this particuliar ticket """
@@ -350,9 +349,9 @@ class Ticket(models.Model):
         # Ceux qui ont participé (comments)
         dests = dests.union( set([ c.user.email for c in Comment.objects.for_model(self) if c.user and c.user.email ]))
         
-        print "Envoi d'email à %s. Raisons: %s" % (dests, reasons)
+        #print "Envoi d'email à %s. Raisons: %s" % (dests, reasons)
         if not dests:
-            print "Aucun destinataire email ?!"
+        #    print "Aucun destinataire email ?!"
             return
         
         # Application du template email
