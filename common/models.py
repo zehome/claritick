@@ -53,7 +53,7 @@ class PickleField(models.TextField):
         raise TypeError('Lookup type %r not supported.' % lookup_type)
 
     def get_prep_value(self, value):
-        return buffer(pickle.dumps(value))
+        return buffer(pickle.dumps(value, 2))
 
     def to_python(self, value):
         if isinstance(value, buffer):
