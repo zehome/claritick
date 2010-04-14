@@ -57,7 +57,7 @@ class PickleField(models.TextField):
 
     def to_python(self, value):
         if isinstance(value, buffer):
-            return pickle.loads(str(value))
+            return pickle.loads(unicode(value))
         return value
 
 class Base64Field(models.TextField):
