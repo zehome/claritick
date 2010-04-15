@@ -307,7 +307,8 @@ class Ticket(models.Model):
                 if old_ticket.validated_by is None and self.validated_by:
                     send_email_reasons.append(u"Ticket accepté par %s" % (self.validated_by,))
                 if (old_ticket.assigned_to and old_ticket.assigned_to != self.assigned_to):
-                    send_email_reasons.append(u"Ticket re-affecté à %s" % (self.assigned_to,))
+                    if old_ticket.assigned_to and self.assigned_to and old_ticket.assigned_to.pk != self.assigned_to.pk:
+                        send_email_reasons.append(u"Ticket re-affecté à %s" % (self.assigned_to,))
                 elif (not old_ticket.assigned_to and self.assigned_to):
                     send_email_reasons.append(u"Ticket affecté à %s" % (self.assigned_to,))
         
