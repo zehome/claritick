@@ -156,21 +156,21 @@
         </tr>
         <tr>
             <td>Nouvelle réponse: {{ form_comment.comment }}</td>
-            <div dojoType="dijit.Tooltip" connectId="id_comment" position="after">
-                <div id="commentaire_diffuse" style="display: none;">
-                    <img src="/media/images/oxygen/comment_public.png" alt="commentaire_public" />
-                    <p>Attention, la réponse sera transmise au client final.</p>
-                </div>
-                <div id="commentaire_interne">
-                    <img src="/media/images/oxygen/comment_internal.png" alt="commentaire_interne" />
-                    <p>La réponse sera concervée en interne.</p>
-                </div>
-            </div>
         </tr>
         <tr>
             <td><button dojoType="dijit.form.Button" type="submit" name="submit-comment" value="1">Ajouter le commentaire</button></td>
         </tr>
     </table>
+    <div dojoType="dijit.Tooltip" connectId="id_comment" position="after">
+        <div id="commentaire_diffuse" style="display: none;">
+            <img src="/media/images/oxygen/comment_public.png" alt="commentaire_public" />
+            <p>Attention, la réponse sera transmise au client final.</p>
+        </div>
+        <div id="commentaire_interne">
+            <img src="/media/images/oxygen/comment_internal.png" alt="commentaire_interne" />
+            <p>La réponse sera concervée en interne.</p>
+        </div>
+    </div>
     <p>{{ form_comment.internal }} Commentaire <b>interne</b> (Si cette case est cochée, cette réponse ne sera pas transmise au client final)</p>
     <script type="text/javascript">
     dojo.addOnLoad(function() {
