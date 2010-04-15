@@ -6,7 +6,7 @@ from django.conf import settings
 from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.comments.moderation import CommentModerator, moderator
-from django.contrib.comments.models import Comment
+import django.contrib.comments
 from django.contrib.comments.signals import comment_was_posted, comment_will_be_posted
 
 # for email
@@ -15,7 +15,7 @@ from django.template.loader import get_template
 from django.template import Context, Template
 
 # Clarisys fields
-from claritick.common.models import ColorField, Client, ClientField, JsonField, ByteaField, PickleField
+from common.models import ColorField, Client, ClientField, JsonField, ByteaField, PickleField
 from django.db.models import AutoField
 
 def copy_model_instance(obj):
@@ -253,11 +253,11 @@ class Ticket(models.Model):
         
         ticket = comment.content_object
         ticket.last_modification=datetime.datetime.now()
-        ticket.nb_comments = Comment.objects.filter(content_type__model="ticket", object_pk=ticket.pk).count()
+        ticket.nb_comments = django.contrib.comments.get_model().objects.filter(content_type__model="ticket", object_pk=ticket.pk).count()
         ticket.save()
         
         # Send email
-        ticket.send_email(reasons = [ u"Nouvelle réponse", ])
+        ticket.send_email(reasons = [ u"Nouvelle réponse%s" % (comment.internal and " (Diffusion interne seulement)" or ''), ])
     
     @staticmethod
     def handle_ticket_presave_signal(sender, **kwargs):
@@ -347,7 +347,7 @@ class Ticket(models.Model):
         # LC: TODO watchers
         
         # Ceux qui ont participé (comments)
-        dests = dests.union( set([ c.user.email for c in Comment.objects.for_model(self) if c.user and c.user.email ]))
+        dests = dests.union( set([ c.user.email for c in django.contrib.comments.get_model().objects.filter(content_type__model="ticket", object_pk=self.pk) if c.user and c.user.email ]))
         
         #print "Envoi d'email à %s. Raisons: %s" % (dests, reasons)
         if not dests:
@@ -367,17 +367,6 @@ class Ticket(models.Model):
         self.ticketmailtrace_set.create(email=mail)
         mail.send()
 
-## Ticket moderation
-class TicketCommentModerator(CommentModerator):
-    email_notification = False
-    enable_field = 'enable_comments'
-    
-    def moderate(comment, content_object, request):
-        """ Moderation for all non staff people is required. """
-        if user and user.is_staff:
-            return False
-        return True
- 
 class TicketView(models.Model):
     """
         Represente un ensemble de critere de recherches.

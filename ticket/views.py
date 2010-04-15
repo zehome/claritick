@@ -9,16 +9,16 @@ from django.template import RequestContext
 from django.contrib.auth.decorators import login_required, permission_required
 from django.core.urlresolvers import reverse
 
-from django.contrib.comments.forms import CommentForm
+import django.contrib.comments
 from django.contrib.comments.views.comments import post_comment
 
 from dojango.decorators import json_response
 
-from claritick.ticket.models import Ticket, TicketView, TicketFile
-from claritick.ticket.forms import *
+from ticket.models import Ticket, TicketView, TicketFile
+from ticket.forms import *
 
-from claritick.common.diggpaginator import DiggPaginator
-from claritick.common.models import Client, UserProfile, ClaritickUser
+from common.diggpaginator import DiggPaginator
+from common.models import Client, UserProfile, ClaritickUser
 from common.exceptions import NoProfileException
 from common.utils import user_has_perms_on_client
 
@@ -334,7 +334,7 @@ def modify(request, ticket_id):
             ticket.save()
         form = TicketForm(request.POST, request.FILES, instance=ticket, user=request.user)
         if not request.POST.get("submit-comment", None):
-            comment_form  = CommentForm(ticket)
+            comment_form = django.contrib.comments.get_form()(ticket) # Initialization vide
             if form.is_valid():
                 # Si l'utilisateur peut assigner ce ticket à l'utilisateur passé en POST
                 if not request.user.is_superuser and form.cleaned_data["assigned_to"] and form.cleaned_data["assigned_to"]\
@@ -354,13 +354,13 @@ def modify(request, ticket_id):
                     ticket_file.save()
                 return redirect("ticket_modify", ticket_id=ticket_id)
         else:
-            comment_form = CommentForm(ticket, data=request.POST)
+            comment_form = django.contrib.comments.get_form()(ticket, data=request.POST)
             if comment_form.is_valid():
                 post_comment(request)
                 return redirect("ticket_modify", ticket_id=ticket_id)
     else:
         form = TicketForm(instance=ticket, user=request.user)
-        comment_form  = CommentForm(ticket)
+        comment_form  = django.contrib.comments.get_form()(ticket)
 
     return render_to_response(template_name, {"form": form, "ticket": ticket, "form_comment": comment_form }, context_instance=RequestContext(request))
 

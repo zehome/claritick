@@ -1,5 +1,5 @@
-from claritick.ticket.models import TicketView, Ticket
-from claritick.ticket.views import filter_ticket_by_user
+from ticket.models import TicketView, Ticket
+from ticket.views import filter_ticket_by_user
 import qsstats
 import datetime
 

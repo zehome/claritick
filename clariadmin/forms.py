@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
 from dojango import forms as df
-from claritick.clariadmin.models import Host, OperatingSystem, HostType
-from claritick.common.models import Client
-from claritick.common.forms import ModelFormTableMixin
+from clariadmin.models import Host, OperatingSystem, HostType
+from common.models import Client
+from common.forms import ModelFormTableMixin
 
 class HostForm(df.ModelForm):
     class Meta:

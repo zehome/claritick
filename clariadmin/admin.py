@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from django.contrib import admin
-from claritick.clariadmin.models import OperatingSystem, HostType, Supplier, Host
+from clariadmin.models import OperatingSystem, HostType, Supplier, Host
 
 class HostAdmin(admin.ModelAdmin):
     fieldsets = (

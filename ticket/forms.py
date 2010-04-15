@@ -8,11 +8,10 @@ from django.contrib.auth.models import User
 from django.contrib.comments.models import Comment
 from django.contrib.sites.models import Site
 
-from claritick.ticket.models import *
-from claritick.common.widgets import *
-from claritick.common.forms import ModelFormTableMixin
-from claritick.common.models import UserProfile
-
+from ticket.models import *
+from common.widgets import *
+from common.forms import ModelFormTableMixin
+from common.models import UserProfile
 from common.exceptions import NoProfileException
 from common.models import UserProfile, ClaritickUser
 from common.utils import filter_form_for_user, sort_queryset

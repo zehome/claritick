@@ -46,7 +46,7 @@
             dojo.forEach(dojo.query("table.trafiquable"), function(table, index)
                 {
                   if (table.id) { 
-                    new Trafiquable(table.id,'{% url claritick.common.views.trafiquable %}');
+                    new Trafiquable(table.id,'{% url common.views.trafiquable %}');
                   }
                 });
             });
@@ -59,7 +59,7 @@
             {
             dojo.forEach(dojo.query("table.exportables"), function(table, index)
                 {
-                new Exportable(table.id, '{% url claritick.common.views.exportable %}');
+                new Exportable(table.id, '{% url common.views.exportable %}');
                 });
             });
     </script>

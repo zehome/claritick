@@ -110,14 +110,38 @@
 {% load comments %}
 {% get_comment_list for ticket as comment_list %}
 
-{% for comment in comment_list %}
-<div class="comment">
-    <h3><b>{{ comment.user.first_name }} {{ comment.user.last_name }}</b> ({{ comment.user_name }})<br/><i>{{ comment.submit_date|date:'d/m/Y H\hi' }}</i></h3>
-    <p class="{% cycle 'row1' 'row2' %}">{{ comment.comment }}</p>
-</div>
-{% endfor %}
+{% if comment_list %}
+<table class="comment_table">
+  <thead>
+    <tr>
+        <th width="50%">Interne</td>
+        <th width="50%">Diffusé au client</td>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td >
+      {% for comment in comment_list %}{% if comment.internal %}<div class="comment">
+        <h3><b>{{ comment.user.first_name }} {{ comment.user.last_name }}</b> ({{ comment.user_name }})&nbsp;<i>Le {{ comment.submit_date|date:'d/m/Y à H\hi' }}</i></h3>
+        <pre class="{% cycle 'row1' 'row2' %}">{{ comment.comment|wordwrap:80 }}</pre>
+      </div>{% endif %}{% endfor %}
+        </td>
+
+        <td>
+      {% for comment in comment_list %}{% if not comment.internal %}<div class="comment">
+        <h3><b>{{ comment.user.first_name }} {{ comment.user.last_name }}</b> ({{ comment.user_name }})&nbsp;<i>Le {{ comment.submit_date|date:'d/m/Y à H\hi' }}</i></h3>
+        <pre class="{% cycle 'row1' 'row2' %}">{{ comment.comment|wordwrap:80 }}</pre>
+      </div>{% endif %}{% endfor %}
+        </td>
+      </tr>
+    </tbody>
+</table>
+{% else %}
+<p>Aucune réponse.</p>
+{% endif %}
 
 {% block comment_form %}
+    {{ form_comment.errors }}
     <div style="display: none">
     {{ form_comment.timestamp }}
     {{ form_comment.object_pk }}
@@ -128,15 +152,40 @@
     </div>
     <table>
         <tr>
-            <td>{{ form_comment.comment.label_tag }} {{ form_comment.non_field_errors }}</td>
+            <td>{{ form_comment.non_field_errors }}</td>
         </tr>
         <tr>
-            <td>{{ form_comment.comment.errors }}{{ form_comment.comment }}</td>
+            <td>Nouvelle réponse: {{ form_comment.comment }}</td>
+            <div dojoType="dijit.Tooltip" connectId="id_comment" position="after">
+                <div id="commentaire_diffuse" style="display: none;">
+                    <img src="/media/images/oxygen/comment_public.png" alt="commentaire_public" />
+                    <p>Attention, la réponse sera transmise au client final.</p>
+                </div>
+                <div id="commentaire_interne">
+                    <img src="/media/images/oxygen/comment_internal.png" alt="commentaire_interne" />
+                    <p>La réponse sera concervée en interne.</p>
+                </div>
+            </div>
         </tr>
         <tr>
             <td><button dojoType="dijit.form.Button" type="submit" name="submit-comment" value="1">Ajouter le commentaire</button></td>
         </tr>
     </table>
+    <p>{{ form_comment.internal }} Commentaire <b>interne</b> (Si cette case est cochée, cette réponse ne sera pas transmise au client final)</p>
+    <script type="text/javascript">
+    dojo.addOnLoad(function() {
+        var checkbox_internal = dojo.byId("id_internal");
+        dojo.connect(checkbox_internal, "onchange", function() {
+            if (checkbox_internal.checked) {
+                dojo.style("commentaire_diffuse", "display", "none");
+                dojo.style("commentaire_interne", "display", "block");
+            } else {
+                dojo.style("commentaire_diffuse", "display", "block");
+                dojo.style("commentaire_interne", "display", "none");            
+            }
+        });
+    });
+    </script>
 {% endblock %}
 </fieldset>
 

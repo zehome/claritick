@@ -2,8 +2,8 @@
 
 from djangogcal.adapter import CalendarAdapter, CalendarEventData
 from djangogcal.observer import CalendarObserver
-from claritick.ticket.models import Ticket
-from claritick.common.models import UserProfile, GoogleAccount, ClaritickUser
+from ticket.models import Ticket
+from common.models import UserProfile, GoogleAccount, ClaritickUser
 from django.contrib.auth.models import User
 from django.db.models import signals
 

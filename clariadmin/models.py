@@ -4,7 +4,7 @@ from django.db import models
 from django.template.loader import get_template
 from django.template import Context
 
-from claritick.common.models import Client, ClientField
+from common.models import Client, ClientField
 
 class OperatingSystem(models.Model):
     class Meta:

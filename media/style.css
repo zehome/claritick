@@ -8,7 +8,7 @@
 ################### STYLE GENERAL ##################
 ##################################################*/
 
-* { font-family:"Lucida Grande","DejaVu Sans","Bitstream Vera Sans",Verdana,Arial,sans-serif; }
+body { font-family:"Lucida Grande","DejaVu Sans","Bitstream Vera Sans",Verdana,Arial,sans-serif !important; }
 
 .claritick body {
     margin:0;
@@ -142,9 +142,10 @@ table#menuPrincipal{
 #################### FORMULAIRES ###################
 ##################################################*/
 
-#contenu input, select, textarea {
+#contenu textarea {
     /*border: 1px solid #99afd6;*/
     /*padding: 2px 3px !important;*/
+	font-family: monospace !important;
 }
 
 .claritick #contenu nput[type="button"], .claritick #contenu input[type="submit"] {
@@ -557,29 +558,36 @@ div#contenu .selector-available, div#contenu .selector-chosen {
 div#contenu .selector select {
 	width: 500px;
 }
+
+.comment_table td {
+	vertical-align: top !important;
+}
+
+.comment_table th {
+	font-size: 2em;
+	font-weight: bold;
+	color: black;
+	text-align: center;
+}
 .comment h3 {
-	float: right;
 	padding: 0; 
 	margin: 0;
-	margin-right: 10px;
-	height: 45px;
-	width: 260px;
+	margin-top: 15px;
 	font-weight: normal;
 	vertical-align: top;
-	border: 1px solid grey;
 	background-color: white;
 }
 
-.comment p {
+.comment pre {
 	margin: 0;
 	background-color: #efefef;
 	border: 0;
+	padding: 2px;
 	border-top: 1px solid black;
 	margin-bottom: 5px;
-	padding: 5px;
-	min-height: 50px;
 	color: black;
-	font-family: "DejaVu Sans", mono;
+	line-height: 25px;
+	font-family: monospace !important;
 }
 
 .comment p.row1 {
@@ -672,11 +680,6 @@ ol#pagination-digg {
 #index_content ul li {
 	padding: 0;
     list-style-type: none;
-}
-
-.trafiquable {
-    display: none !important;
-    display: "table";
 }
 
 /* EOF */

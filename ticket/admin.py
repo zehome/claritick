@@ -2,8 +2,8 @@
 
 from django.contrib import admin
 from dojango import forms as df
-from claritick.ticket.models import Ticket, Priority, State, Category, Project, Procedure, TicketView, TicketMailTrace
-from claritick.common.models import Client
+from ticket.models import Ticket, Priority, State, Category, Project, Procedure, TicketView, TicketMailTrace
+from common.models import Client
 
 class ProjectAdmin(admin.ModelAdmin):
     def save_model(self, request, obj, form, change):

@@ -19,7 +19,7 @@ try:
 except ImportError:
     raise Exception(u"le module pyscopg2 est indispensable pour le field ByetaField.")
 
-from claritick.common.widgets import ColorPickerWidget
+from common.widgets import ColorPickerWidget
 from common.utils import sort_queryset
 
 class ByteaField(models.TextField):

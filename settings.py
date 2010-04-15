@@ -3,8 +3,8 @@
 import os
 basepath = os.path.abspath(os.path.dirname(__file__))
 
-DEBUG = False
-TEMPLATE_DEBUG = False
+DEBUG = True
+TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
     ('Laurent Coustet', 'ed@zehome.com'),
@@ -22,7 +22,7 @@ DATABASE_ENGINE = 'postgresql_psycopg2' # 'postgresql_psycopg2', 'postgresql', '
 DATABASE_NAME = 'claritick'    # Or path to database file if using sqlite3.
 DATABASE_USER = 'claritick'    # Not used with sqlite3.
 DATABASE_PASSWORD = ''         # Not used with sqlite3.
-DATABASE_HOST = '10.1.0.3'  # Set to empty string for localhost. Not used with sqlite3.
+DATABASE_HOST = 'database.local.zehome.com'  # Set to empty string for localhost. Not used with sqlite3.
 DATABASE_PORT = '5432'         # Set to empty string for default. Not used with sqlite3.
 
 DEFAULT_FROM_EMAIL = 'claritick@clarisys.fr'
@@ -103,17 +103,15 @@ INSTALLED_APPS = (
     'django.contrib.comments', # Commentaires
     'djangogcal',              # Google calendar OUTPUT integration
     'dojango',                 # Dojo/Django Dojango
-    'claritick.common',
-    'claritick.ticket',
-    'claritick.clariadmin',    # Clariadmin
-    'claritick',
+    'common',
+    'ticket',
+    'ticket_comments',
+    'clariadmin',              # Clariadmin
     'importv1',
-    'qsstats',                  # Fun with aggregates ;)
+    'qsstats',                 # Fun with aggregates ;)
 )
 
-
-GCAL_MAIN_LOGIN = "ed@zehome.com" # Compte société
-GCAL_MAIN_PASSWORD = ""   # Explicite
+COMMENTS_APP = 'ticket_comments'
 
 AUTH_PROFILE_MODULE = 'common.UserProfile'
 LOGIN_REDIRECT_URL = '/'
@@ -130,7 +128,8 @@ TIME_FORMAT = "H\hi"
 # Dojango config
 #DOJANGO_DOJO_PROFILE = "google"
 DOJANGO_DOJO_PROFILE = "local_release"
-DOJANGO_DOJO_VERSION = "custom_build_141"
+DOJANGO_DOJO_VERSION = "1.4.0-dojango-optimized-with-dojo"
+#DOJANGO_DOJO_VERSION = "custom_build_141"
 DOJO_BUILD_JAVA_EXEC = "/usr/bin/java"
 DOJANGO_BASE_MEDIA_ROOT = os.path.join(basepath, 'dojango', 'dojo-media')
 DOJANGO_BASE_MEDIA_URL = "/dojango/dojo-media"
@@ -150,7 +149,7 @@ TICKET_STATE_CLOSED = 4 # pk de l'etat fermé
 TICKET_STATE_NEW = 1 # pk de l'etat nouveau
 
 TICKET_PRIORITY_NORMAL = 2 # pk de la priorité normale
-
+POSTGRESQL_VERSION = 8.3
 try:
     from local_settings import *
 except ImportError:

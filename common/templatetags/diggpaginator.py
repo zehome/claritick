@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from django import template
-from claritick.common.diggpaginator import DiggPage
+from common.diggpaginator import DiggPage
 register = template.Library()
 
 class DiggPaginatorNode(template.Node):

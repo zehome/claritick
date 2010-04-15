@@ -3,8 +3,8 @@
 from django.core.management import base
 from django.db.models import Q
 
-from claritick.common.models import *
-from claritick.clariadmin.models import *
+from common.models import *
+from clariadmin.models import *
 import djangodialog as D
 
 def dialog_clariadmin():

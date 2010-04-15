@@ -2,7 +2,7 @@
 
 import reporting
 from django.db.models import Sum, Avg, Count
-from claritick.ticket.models import Ticket
+from ticket.models import Ticket
 
 class TicketReport(reporting.Report):
     model = Ticket

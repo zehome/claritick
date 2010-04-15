@@ -6,9 +6,9 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.conf import settings
 from django.views.generic import list_detail
 
-from claritick.clariadmin.models import Host
-from claritick.clariadmin.forms import *
-from claritick.common.diggpaginator import DiggPaginator
+from clariadmin.models import Host
+from clariadmin.forms import *
+from common.diggpaginator import DiggPaginator
 
 @login_required
 @permission_required("clariadmin.can_access_clariadmin")
