@@ -360,7 +360,7 @@ class Ticket(models.Model):
         context = Context({"ticket": self, 'reasons': reasons })
         data = template.render(context)
         
-        template = Template("[Ticket {{ ticket.id }}]: {{ ticket.title|striptags|truncatewords:64 }}")
+        template = Template("{% autoescape off %}[Ticket {{ ticket.id }}]: {{ ticket.title|striptags|truncatewords:64 }}{% endautoescape %}")
         subject = template.render(context)
 
         # Send the email
