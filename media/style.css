@@ -650,7 +650,7 @@ ol#pagination-digg {
 	text-align: left;
 }
 
-#index_content div {
+#index_content .container {
 	border: 1px solid #D2D9EB;
 	width: 350px;
 	float: left;
@@ -658,6 +658,13 @@ ol#pagination-digg {
 	height: 350px;
 	overflow: auto;
 	margin-right: 25px;
+	margin-top: 10px;
+}
+
+#index_content .chart {
+	width: 480px;
+	height: 200px;
+	overflow: visible !important;
 }
 
 #index_content div h2 {

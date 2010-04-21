@@ -16,7 +16,7 @@
 {% else %}
 <div id="index_content">
     {% if ticket_views %}
-    <div id="list_filters">
+    <div id="list_filters" class="container">
         <h2>Mes filtres</h2>
         <ul>
             
@@ -26,7 +26,7 @@
         </ul>
     </div>
     {% endif %}
-    <div id="list_critical_tickets" style="width: 500px;">
+    <div id="list_critical_tickets" class="container" style="width: 500px;" >
         <h2>Tickets critiques</h2>
         <ul>
             {% for ticket in ticket_dashboard_critical %}
@@ -36,15 +36,58 @@
     </div>
     
     {% if ticket_dashboard_text_statistics %}
-    <div id="list_stats">
+    <div id="list_stats" class="container">
         <h2>Statistiques</h2>
         <ul>
             {% for entry in ticket_dashboard_text_statistics %}
-            <li>{{ entry }}</a></li>
+            <li>{{ entry }}</li>
             {% endfor %}
         </ul>
     </div>
     {% endif %}
+    <div id="stats_graph" class="container" style="width: 500px; height: auto;">
+        <h2>Graphiques</h2>
+        <script type="text/javascript">
+        dojo.require("dojox.charting.Chart2D");
+        dojo.require("dojox.charting.themes.Harmony");
+        dojo.require("dojox.charting.widget.Legend");
+        
+        /* Helper to generate dojox chart */
+        function generate_graph(containerName, name, chart_data)
+        {
+            var chart1 = new dojox.charting.Chart2D("chart_"+name);
+            chart1.setTheme(dojox.charting.themes.Harmony);
+            chart1.addPlot("default", {
+                type: "Lines", 
+                shadows: {dx: 2, dy: 2, dw: 2},
+                tension: 4,
+                markers: true
+            });
+            chart1.addAxis("x", {labels: chart_data.x_labels});
+            chart1.addAxis("y", {
+                vertical: true, majorTicks: true, 
+                majorLabels: true, minorTicks: false, 
+                minorLabels: false, microTicks: false
+            });
+            chart1.addSeries("line", chart_data.y_values, chart_data.series_properties);
+            chart1.render();
+            var legend = new dojox.charting.widget.Legend({chart: chart1, horizontal: true}, "chart_legend_"+name);
+        } /* Chart helper */
+        
+        dojo.addOnLoad(function(){
+            SimpleAjax('{% url ajax_graph_permonth %}', '', function(ajax_response)
+            {
+                if (! ajax_response.charts) { return; }
+                dojo.forEach(ajax_response.charts, function(chart_data, index) {
+                    var name="permonth_"+index;
+                    dojo.create('div', {'id': 'chart_legend_'+name, 'style': {'padding': 0, 'margin': 0}}, "stats_graph");
+                    dojo.create('div', {'id': 'chart_'+name, 'class': 'chart'}, "stats_graph");
+                    generate_graph("graph_container", name, chart_data);
+                });
+            });
+        });
+        </script>
+    </div>
 </div>
 {% endif %}
 

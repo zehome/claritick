@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 
+import qsstats
+import datetime
+
 from django import http
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied, FieldError
@@ -21,6 +24,8 @@ from common.diggpaginator import DiggPaginator
 from common.models import Client, UserProfile, ClaritickUser
 from common.exceptions import NoProfileException
 from common.utils import user_has_perms_on_client
+
+#from backlinks.decorators import backlink_setter
 
 INVALID_TITLE = "Invalid title"
 
@@ -106,6 +111,7 @@ def get_pagination(queryset, request):
     return paginator.page(request.GET.get("page", 1))
 
 @login_required
+#@backlink_setter
 def list_me(request, *args, **kw):
     form = None
     if not request.POST.get("assigned_to", None):
@@ -114,11 +120,13 @@ def list_me(request, *args, **kw):
     return list_all(request, form, *args, **kw)
 
 @login_required
+#@backlink_setter
 def list_unassigned(request, *args, **kw):
     filterdict = {'assigned_to__isnull': True}
     return list_all(request, None, filterdict = filterdict, *args, **kw)
 
 @login_required
+#@backlink_setter
 def list_nonvalide(request):
     """
         Liste des tickets à valider.
@@ -127,6 +135,7 @@ def list_nonvalide(request):
     return list_all(request, filterdict=filterdict)
 
 @login_required
+#@backlink_setter
 def list_view(request, view_id=None):
     context = get_context(request)
     data = request.POST
@@ -425,3 +434,42 @@ def ajax_load_telephone(request):
     ret["telephones"] = telephones
     return ret
     
+@login_required
+@json_response
+def ajax_graph_permonth(request):
+    """
+    
+    """
+    ret = {}
+    
+    today = datetime.datetime.now()
+    qs = Ticket.objects.all()
+    qs = filter_ticket_by_user(qs, request.user)
+    if not qs:
+        return ret
+    
+    ret["charts"] = []
+    
+    def get_chart(tss, series_properties):
+        chart = {}
+        chart["y_values"] = [ t[1] for t in tss ]
+        chart["x_labels"] = [
+            {'value': idx+1, 'text': t[0].strftime("%b")} \
+            for idx, t in enumerate(tss)
+        ]
+        chart["series_properties"] = series_properties
+        return chart
+    
+    ## Opened ticket chart
+    qss = qsstats.QuerySetStats(qs, 'date_open')
+    tss = qss.time_series(today-datetime.timedelta(days=360), today, interval='months')
+    ret["charts"].append(get_chart(tss, series_properties = {'legend': 'Tickets ouverts'}))
+    
+    ## Critical tickets chart
+    chart = {}
+    qs = qs.filter(priority__gt=3)
+    qss = qsstats.QuerySetStats(qs, 'date_open')
+    tss = qss.time_series(today-datetime.timedelta(days=360), today, interval='months')
+    ret["charts"].append(get_chart(tss, series_properties = {'legend': 'Tickets critiques', 'stroke': 'red'}))
+
+    return ret
