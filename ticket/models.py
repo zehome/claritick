@@ -212,8 +212,12 @@ class Ticket(models.Model):
         return self.priority and (self.priority.id == 4 and 1 or 0) or 0
     
     @property
+    def is_closed(self):
+        return self.date_close or self.state.id == settings.TICKET_STATE_CLOSED
+    
+    @property
     def close_style(self):
-        if self.date_close or self.state.id == 4:
+        if self.is_closed:
             return "text-decoration: line-through;"
         return ""
     
@@ -286,6 +290,12 @@ class Ticket(models.Model):
             old_ticket = Ticket.objects.get(id=self.id)
         except Ticket.DoesNotExist:
             old_ticket = None
+        
+        # Override date_close
+        if not old_ticket.is_closed and self.is_closed:
+            self.date_close = datetime.datetime.now()
+        if old_ticket.is_closed and not self.is_closed:
+            self.date_close = None
         
         r = super(Ticket, self).save()
         send_fax_reasons = []
