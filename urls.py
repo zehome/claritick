@@ -60,7 +60,7 @@ urlpatterns = patterns('',
     (r'^reporting/', include('reporting.urls')),
     
     ## Backlinks
-    (r'^backlinks/', include('backlinks.urls')),
+#    (r'^backlinks/', include('backlinks.urls')),
 
     ## Error testing
     (r'^error/', raise_trial_exception),
