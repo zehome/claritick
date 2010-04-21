@@ -50,6 +50,7 @@
         <script type="text/javascript">
         dojo.require("dojox.charting.Chart2D");
         dojo.require("dojox.charting.themes.Harmony");
+        dojo.require("dojox.charting.themes.Shrooms");
         dojo.require("dojox.charting.widget.Legend");
         
         /* Helper to generate dojox chart */
@@ -78,7 +79,7 @@
         function generate_graph_average_delay(name, series, x_labels)
         {
             var chart2 = new dojox.charting.Chart2D("chart_"+name);
-            chart2.setTheme(dojox.charting.themes.Harmony);
+            chart2.setTheme(dojox.charting.themes.Shrooms);
             chart2.addPlot("default", {
                 type: "Lines", 
                 shadows: {dx: 2, dy: 2, dw: 2},
