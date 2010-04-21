@@ -53,7 +53,7 @@
         dojo.require("dojox.charting.widget.Legend");
         
         /* Helper to generate dojox chart */
-        function generate_graph(containerName, name, chart_data)
+        function generate_graph(name, chart_data)
         {
             var chart1 = new dojox.charting.Chart2D("chart_"+name);
             chart1.setTheme(dojox.charting.themes.Harmony);
@@ -74,6 +74,32 @@
             var legend = new dojox.charting.widget.Legend({chart: chart1, horizontal: true}, "chart_legend_"+name);
         } /* Chart helper */
         
+        /* Helper to generate dojox chart */
+        function generate_graph_average_delay(name, series, x_labels)
+        {
+            var chart2 = new dojox.charting.Chart2D("chart_"+name);
+            chart2.setTheme(dojox.charting.themes.Harmony);
+            chart2.addPlot("default", {
+                type: "Lines", 
+                shadows: {dx: 2, dy: 2, dw: 2},
+                tension: 4,
+                markers: true
+            });
+            chart2.addAxis("x", {labels: x_labels});
+            chart2.addAxis("y", {
+                vertical: true, majorTicks: true, 
+                majorLabels: true, minorTicks: false, 
+                minorLabels: false, microTicks: false
+            });
+            
+            dojo.forEach(series, function(serie, idx) {
+                chart2.addSeries("line"+idx, serie.values, serie.properties);
+            });
+            
+            chart2.render();
+            var legend2 = new dojox.charting.widget.Legend({chart: chart2, horizontal: true}, "chart_legend_"+name);
+        } /* Chart helper */
+    
         dojo.addOnLoad(function(){
             SimpleAjax('{% url ajax_graph_permonth %}', '', function(ajax_response)
             {
@@ -82,8 +108,16 @@
                     var name="permonth_"+index;
                     dojo.create('div', {'id': 'chart_legend_'+name, 'style': {'padding': 0, 'margin': 0}}, "stats_graph");
                     dojo.create('div', {'id': 'chart_'+name, 'class': 'chart'}, "stats_graph");
-                    generate_graph("graph_container", name, chart_data);
+                    generate_graph(name, chart_data);
                 });
+            });
+            SimpleAjax('{% url ajax_graph_average_close_time %}', '', function(ajax_response)
+            {
+                if (! ajax_response.series) { return; }
+                var name = "average_delay";
+                dojo.create('div', {'id': 'chart_legend_'+name, 'style': {'padding': 0, 'margin': 0}}, "stats_graph");
+                dojo.create('div', {'id': 'chart_'+name, 'class': 'chart'}, "stats_graph");
+                generate_graph_average_delay(name, ajax_response.series, ajax_response.x_labels);
             });
         });
         </script>

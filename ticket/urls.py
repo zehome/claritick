@@ -18,4 +18,6 @@ urlpatterns = patterns('ticket.views',
     ## Ajax
     url(r'^ajax_load_telephone/', 'ajax_load_telephone', name='ajax_load_telephone'),
     url(r'^ajax_graph_permonth/', 'ajax_graph_permonth', name='ajax_graph_permonth'),
+    url(r'^ajax_graph_average_close_time/', 'ajax_graph_average_close_time', name='ajax_graph_average_close_time'),
+
 )

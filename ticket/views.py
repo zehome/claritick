@@ -7,6 +7,7 @@ from django import http
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied, FieldError
 from django.db import models
+from django.db import connection, transaction
 from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required, permission_required
@@ -472,4 +473,73 @@ def ajax_graph_permonth(request):
     tss = qss.time_series(today-datetime.timedelta(days=360), today, interval='months')
     ret["charts"].append(get_chart(tss, series_properties = {'legend': 'Tickets critiques', 'stroke': 'red'}))
 
+    return ret
+
+@login_required
+@json_response
+def ajax_graph_average_close_time(request):
+    """
+    
+    Returns data for generating "average close time" graph
+    """
+    ret = {}
+    
+    rawquery = """SELECT 
+        extract('epoch' from AVG((date_close - date_open)::interval)) AS delay, 
+        date_trunc('month', date_open) AS date,
+        priority_id
+    FROM 
+        ticket_ticket 
+    WHERE
+        state_id = 4
+    AND
+        date_open > (now() - interval '1 year')
+    GROUP BY 
+        date, priority_id
+    HAVING
+        AVG((date_close - date_open)::interval) > interval '0'
+    ORDER BY
+        priority_id, date;"""
+    
+    today = datetime.datetime.now()
+    current_month = today.month
+    mapping = [ ((i+current_month) % 12)+1 for i in range(0,12) ]
+    text_mapping = ("Jan", "Fev", "Mar", "Avr", "Mai", "Jun", "Jul", "Aou", "Sep", "Oct", "Nov", "Dec")
+    
+    def get_chart(serie, properties):
+        chart = {}
+        chart["values"] = [ {'x': mapping.index(s[1].month)+1, 'y': s[0]/60} for s in serie ] # En minutes
+        chart["properties"] = properties
+        return chart
+    
+    cursor = connection.cursor()
+    cursor.execute(rawquery)
+    data = cursor.fetchall()
+    #data = [(850743.80952400004, datetime.datetime(2009, 7, 1, 0, 0), 1), (5205087.4000000004, datetime.datetime(2009, 8, 1, 0, 0), 1), (28206.0, datetime.datetime(2009, 9, 1, 0, 0), 1), (143188.5, datetime.datetime(2009, 11, 1, 0, 0), 1), (127069.333333, datetime.datetime(2009, 12, 1, 0, 0), 1), (162324.0, datetime.datetime(2010, 1, 1, 0, 0), 1), (1894222.096102, datetime.datetime(2010, 3, 1, 0, 0), 1), (522988.93457899999, datetime.datetime(2009, 7, 1, 0, 0), 2), (547603.640288, datetime.datetime(2009, 8, 1, 0, 0), 2), (368607.906716, datetime.datetime(2009, 9, 1, 0, 0), 2), (561494.17058799998, datetime.datetime(2009, 10, 1, 0, 0), 2), (623945.57837700006, datetime.datetime(2009, 11, 1, 0, 0), 2), (647219.15001900005, datetime.datetime(2009, 12, 1, 0, 0), 2), (399448.89853300003, datetime.datetime(2010, 1, 1, 0, 0), 2), (507396.04899099999, datetime.datetime(2010, 2, 1, 0, 0), 2), (204780.30123700001, datetime.datetime(2010, 3, 1, 0, 0), 2), (222393.817759, datetime.datetime(2010, 4, 1, 0, 0), 2), (1595656.538462, datetime.datetime(2009, 7, 1, 0, 0), 3), (600649.68421099999, datetime.datetime(2009, 8, 1, 0, 0), 3), (287347.47619000002, datetime.datetime(2009, 9, 1, 0, 0), 3), (746089.95833299996, datetime.datetime(2009, 10, 1, 0, 0), 3), (614552.60089300002, datetime.datetime(2009, 11, 1, 0, 0), 3), (289317.22395800002, datetime.datetime(2009, 12, 1, 0, 0), 3), (367416.75990300003, datetime.datetime(2010, 1, 1, 0, 0), 3), (148866.46093199999, datetime.datetime(2010, 2, 1, 0, 0), 3), (181966.69768000001, datetime.datetime(2010, 3, 1, 0, 0), 3), (72059.588652999999, datetime.datetime(2010, 4, 1, 0, 0), 3), (1288154.0, datetime.datetime(2009, 7, 1, 0, 0), 4), (10974.5, datetime.datetime(2009, 9, 1, 0, 0), 4), (479802.11111100001, datetime.datetime(2009, 10, 1, 0, 0), 4), (357279.33333300002, datetime.datetime(2009, 11, 1, 0, 0), 4), (1157326.5, datetime.datetime(2009, 12, 1, 0, 0), 4), (482023.45454499999, datetime.datetime(2010, 1, 1, 0, 0), 4), (26748.099999999999, datetime.datetime(2010, 2, 1, 0, 0), 4), (890311.0, datetime.datetime(2010, 3, 1, 0, 0), 4), (220048.82686900001, datetime.datetime(2010, 4, 1, 0, 0), 4)]
+    transaction.commit_unless_managed()
+    if not data:
+        return ret
+    
+    serie = []
+    series = []
+    old_priority = data[0][2]
+    for d in data:
+        if d[2] != old_priority:
+            if serie:
+                series.append(serie)
+            old_priority = d[2]
+            serie = []
+        serie.append(d)
+    
+    if serie:
+        series.append(serie)
+    
+    ret["series"] = [ get_chart(serie, 
+        properties = {
+            "legend": u"Priorité %s" % (serie[0][2],)
+        }) for serie in series ]
+    
+    ret["x_labels"] = [ {'value': idx+1, 'text': text_mapping[month-1]} for idx, month in enumerate(mapping) ]
+    
+    #print ret
     return ret
