@@ -20,7 +20,7 @@ class DiggPaginatorNode(template.Node):
         {% if not num %}<li><a href="#">...</a></li>
         {% else %}
             {% ifequal page.number num %}<li class="active">{{ num }}</li>
-            {% else %}<a href="?page={{ num }}">{{ num }}</a></li>
+            {% else %}<li><a href="?page={{ num }}">{{ num }}</a></li>
             {% endifequal %}
         {% endif %}
     {% endfor %}
