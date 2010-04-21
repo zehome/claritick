@@ -494,6 +494,8 @@ def ajax_graph_average_close_time(request):
         state_id = 4
     AND
         date_open > (now() - interval '1 year')
+    AND
+        ticket_ticket.id NOT IN (SELECT id FROM ticket_ticket WHERE (date_close-date_open) > interval '40 days')
     GROUP BY 
         date, priority_id
     HAVING
@@ -508,7 +510,7 @@ def ajax_graph_average_close_time(request):
     
     def get_chart(serie, properties):
         chart = {}
-        chart["values"] = [ {'x': mapping.index(s[1].month)+1, 'y': s[0]/60} for s in serie ] # En minutes
+        chart["values"] = [ {'x': mapping.index(s[1].month), 'y': s[0]/3600} for s in serie ] # En heures
         chart["properties"] = properties
         return chart
     
@@ -533,13 +535,13 @@ def ajax_graph_average_close_time(request):
     
     if serie:
         series.append(serie)
-    
     ret["series"] = [ get_chart(serie, 
         properties = {
-            "legend": u"Priorité %s" % (serie[0][2],)
+            "legend": u"Priorité %s" % (serie[0][2],),
+#            "color": Priority.objects.get(pk=int(serie[0][2])).forecolor,
+#            "stroke": Priority.objects.get(pk=int(serie[0][2])).forecolor
         }) for serie in series ]
     
     ret["x_labels"] = [ {'value': idx+1, 'text': text_mapping[month-1]} for idx, month in enumerate(mapping) ]
     
-    #print ret
     return ret
