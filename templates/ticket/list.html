@@ -215,11 +215,13 @@
         <td>{{ row.opened_by }}</td>
         <td>{{ row.assigned_to }}</td>
     </tr>
-<div dojoType="dijit.Tooltip" connectId="ticket_line_{{ forloop.counter }}" position="above"><p>{{ row.title|wordwrap:80|linebreaks }}</p></div>
 {% endfor %}
 </tbody>
 </table>
 </form>
+{% for row in ticket.object_list %}
+<div dojoType="dijit.Tooltip" connectId="ticket_line_{{ forloop.counter }}" position="above"><p>{{ row.title|wordwrap:80|linebreaks }}</p></div>
+{% endfor %}
 
 {% if tickets.paginator.num_pages > 1 %}
 {% diggpaginator tickets %}
