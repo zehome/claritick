@@ -328,7 +328,7 @@ def modify(request, ticket_id):
             backlinks = request.backlinks
             precedent = backlinks[-1:]
             if not precedent:
-                return redirect("ticket_all")
+                return redirect("ticket_modify", ticket_id=ticket_id) 
             else:
                 return precedent[0].redirect(request)
         else:
