@@ -232,7 +232,7 @@ def list_all(request, form=None, filterdict=None, template_name=None, *args, **k
     if action_form.process_actions(request):
         return http.HttpResponseRedirect("%s?%s" % (request.META["PATH_INFO"], request.META["QUERY_STRING"]))
 
-    if request.GET.get("reset", False) and request.session["list_filters"]:
+    if request.GET.get("reset", False) and request.session.get("list_filters", {}):
         request.session["list_filters"] = {}
         return http.HttpResponseRedirect(".")
 
