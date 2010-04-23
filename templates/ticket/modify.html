@@ -218,7 +218,10 @@
     </table>
 </fieldset>
 <hr />
-<button dojoType="dijit.form.Button" type="submit">Modifier / Valider</button>
+
+<button dojoType="dijit.form.Button" type="submit" name="savebutton" value="save" iconClass="dijitEditorIcon dijitEditorIconSave">Enregistrer</button>
+<button dojoType="dijit.form.Button" type="submit" name="savebutton" value="new" iconClass="dijitEditorIcon dijitEditorIconSave">Enregistrer et ajouter un nouveau</button>
+<button dojoType="dijit.form.Button" type="submit" name="savebutton" value="return" iconClass="dijitEditorIcon dijitEditorIconSave"  class="default">Enregistrer et retourner à la liste</button>
 
 {% endblock %}
 

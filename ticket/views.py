@@ -26,7 +26,7 @@ from common.models import Client, UserProfile, ClaritickUser
 from common.exceptions import NoProfileException
 from common.utils import user_has_perms_on_client
 
-#from backlinks.decorators import backlink_setter
+from backlinks.decorators import backlink_setter
 
 INVALID_TITLE = "Invalid title"
 
@@ -112,7 +112,7 @@ def get_pagination(queryset, request):
     return paginator.page(request.GET.get("page", 1))
 
 @login_required
-#@backlink_setter
+@backlink_setter
 def list_me(request, *args, **kw):
     form = None
     if not request.POST.get("assigned_to", None):
@@ -121,13 +121,13 @@ def list_me(request, *args, **kw):
     return list_all(request, form, *args, **kw)
 
 @login_required
-#@backlink_setter
+@backlink_setter
 def list_unassigned(request, *args, **kw):
     filterdict = {'assigned_to__isnull': True}
     return list_all(request, None, filterdict = filterdict, *args, **kw)
 
 @login_required
-#@backlink_setter
+@backlink_setter
 def list_nonvalide(request):
     """
         Liste des tickets à valider.
@@ -136,7 +136,7 @@ def list_nonvalide(request):
     return list_all(request, filterdict=filterdict)
 
 @login_required
-#@backlink_setter
+@backlink_setter
 def list_view(request, view_id=None):
     context = get_context(request)
     data = request.POST
@@ -217,6 +217,7 @@ def list_view(request, view_id=None):
     return render_to_response(template_name, context, context_instance=RequestContext(request))
 
 @login_required
+@backlink_setter
 def list_all(request, form=None, filterdict=None, template_name=None, *args, **kw):
     """
         Liste tous les tickets sans aucun filtre
@@ -231,7 +232,7 @@ def list_all(request, form=None, filterdict=None, template_name=None, *args, **k
     if action_form.process_actions(request):
         return http.HttpResponseRedirect("%s?%s" % (request.META["PATH_INFO"], request.META["QUERY_STRING"]))
 
-    if request.GET.get("reset", False):
+    if request.GET.get("reset", False) and request.session["list_filters"]:
         request.session["list_filters"] = {}
         return http.HttpResponseRedirect(".")
 
@@ -317,6 +318,22 @@ def new(request):
 @permission_required("ticket.change_ticket")
 @login_required
 def modify(request, ticket_id):
+    def exit_action():
+        saveaction = request.POST.get("savebutton", "save")
+        if saveaction == "save":
+            return redirect("ticket_modify", ticket_id=ticket_id) 
+        elif saveaction == "new":
+            return redirect("ticket_partial_new")
+        elif saveaction == "return":
+            backlinks = request.backlinks
+            precedent = backlinks[-1:]
+            if not precedent:
+                return redirect("ticket_all")
+            else:
+                return precedent[0].redirect(request)
+        else:
+            raise PermissionDenied("Hacking attempt!")
+    
     ticket = get_object_or_404(Ticket, pk=ticket_id)
 
     # On verifie que l'utilisateur a les droits de modifier le ticket_id
@@ -343,8 +360,8 @@ def modify(request, ticket_id):
             ticket.validated_by = request.user
             ticket.save()
         form = TicketForm(request.POST, request.FILES, instance=ticket, user=request.user)
-        if not request.POST.get("submit-comment", None):
-            comment_form = django.contrib.comments.get_form()(ticket) # Initialization vide
+        comment_form = django.contrib.comments.get_form()(ticket) # Initialization vide
+        if not request.POST.get("submit-comment", None): # Post du commentaire uniquement ?
             if form.is_valid():
                 # Si l'utilisateur peut assigner ce ticket à l'utilisateur passé en POST
                 if not request.user.is_superuser and form.cleaned_data["assigned_to"] and form.cleaned_data["assigned_to"]\
@@ -362,16 +379,24 @@ def modify(request, ticket_id):
                         data = file.read()
                     ticket_file.data = data
                     ticket_file.save()
-                return redirect("ticket_modify", ticket_id=ticket_id)
+                
+                # Peut être qu'il ya en meme temps un commentaire
+                comment_form = django.contrib.comments.get_form()(ticket, data=request.POST)
+                if comment_form.is_valid():
+                    post_comment(request)
+                
+                comment_form = django.contrib.comments.get_form()(ticket) # Initialization vide
+                return exit_action()
         else:
             comment_form = django.contrib.comments.get_form()(ticket, data=request.POST)
             if comment_form.is_valid():
                 post_comment(request)
-                return redirect("ticket_modify", ticket_id=ticket_id)
+                return exit_action()
     else:
         form = TicketForm(instance=ticket, user=request.user)
         comment_form  = django.contrib.comments.get_form()(ticket)
-
+    
+    # Just open
     return render_to_response(template_name, {"form": form, "ticket": ticket, "form_comment": comment_form }, context_instance=RequestContext(request))
 
 @login_required

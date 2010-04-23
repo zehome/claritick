@@ -689,4 +689,8 @@ ol#pagination-digg {
     list-style-type: none;
 }
 
+.default button {
+    font-weight: bold;
+}
+
 /* EOF */
