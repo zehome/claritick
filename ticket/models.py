@@ -292,10 +292,11 @@ class Ticket(models.Model):
             old_ticket = None
         
         # Override date_close
-        if not old_ticket.is_closed and self.is_closed:
-            self.date_close = datetime.datetime.now()
-        if old_ticket.is_closed and not self.is_closed:
-            self.date_close = None
+        if old_ticket:
+            if not old_ticket.is_closed and self.is_closed:
+                self.date_close = datetime.datetime.now()
+            if old_ticket.is_closed and not self.is_closed:
+                self.date_close = None
         
         r = super(Ticket, self).save()
         send_fax_reasons = []
