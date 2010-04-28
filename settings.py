@@ -71,9 +71,11 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'dojango.middleware.DojoCollector',
+    'django.middleware.transaction.TransactionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-    'django.middleware.gzip.GZipMiddleware',
     'common.exceptionmiddleware.UserBasedExceptionMiddleware',
+    'backlinks.middleware.BacklinksMiddleware',
+    'django.middleware.gzip.GZipMiddleware',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = ("django.core.context_processors.auth",
@@ -109,6 +111,7 @@ INSTALLED_APPS = (
     'clariadmin',              # Clariadmin
     'importv1',
     'qsstats',                 # Fun with aggregates ;)
+    'backlinks',               # Return to page saved in sessions
 )
 
 COMMENTS_APP = 'ticket_comments'
@@ -144,7 +147,7 @@ DIALOG_WIDTH=80
 DIALOG_HEIGHT=25
 
 TICKETS_PER_PAGE=50
-
+TICKET_EMAIL_DELAY=120 # delay for 120s before sending email. (Permits grouping)
 TICKET_STATE_CLOSED = 4 # pk de l'etat fermé
 TICKET_STATE_NEW = 1 # pk de l'etat nouveau
 

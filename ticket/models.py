@@ -176,14 +176,14 @@ class Ticket(models.Model):
     validated_by = models.ForeignKey(User, related_name="validated_by", verbose_name="Validé par", blank=True, null=True, default=None)
     
     # Pour faciliter la recherche
-    keywords = models.CharField("Mots clefs", max_length=1024, blank=True, null=True)
+    keywords = models.CharField(u"Mots clefs", max_length=1024, blank=True, null=True)
     
     # Calendar
-    calendar_start_time = models.DateTimeField("Début évenement", blank=True, null=True)
-    calendar_end_time = models.DateTimeField("Fin évenement", blank=True, null=True)
-    calendar_title = models.CharField("Titre évenement", max_length=64, blank=True, null=True)
+    calendar_start_time = models.DateTimeField(u"Début évenement", blank=True, null=True)
+    calendar_end_time = models.DateTimeField(u"Fin évenement", blank=True, null=True)
+    calendar_title = models.CharField(u"Titre évenement", max_length=64, blank=True, null=True)
     
-    template = models.BooleanField("Modèle", default=False)
+    template = models.BooleanField(u"Modèle", default=False)
 
     # TODO nombre de comments
     nb_comments = models.IntegerField(default=0, editable=False)
@@ -261,7 +261,9 @@ class Ticket(models.Model):
         ticket.save()
         
         # Send email
-        ticket.send_email(reasons = [ u"Nouvelle réponse%s" % (comment.internal and " (Diffusion interne seulement)" or ''), ])
+        send_email_reasons = [ u"Nouvelle réponse%s" % (comment.internal and " (Diffusion interne seulement)" or ''), ]
+        #ticket.send_email(reasons=send_email_reasons)
+        ticket.ticketmailaction_set.create(reasons=send_email_reasons)
     
     @staticmethod
     def handle_ticket_presave_signal(sender, **kwargs):
@@ -324,7 +326,9 @@ class Ticket(models.Model):
                     send_email_reasons.append(u"Ticket affecté à %s" % (self.assigned_to,))
         
         if send_email_reasons:
-            self.send_email(send_email_reasons)
+            # LC: Do not send the email right now, wait some time before for grouping actions.
+            #self.send_email(send_email_reasons)
+            self.ticketmailaction_set.create(reasons=send_email_reasons)
         
         if send_fax_reasons:
             self.send_fax(send_fax_reasons)
@@ -359,7 +363,7 @@ class Ticket(models.Model):
         # LC: TODO watchers
         
         # Ceux qui ont participé (comments)
-        dests = dests.union( set([ c.user.email for c in django.contrib.comments.get_model().objects.filter(content_type__model="ticket", object_pk=self.pk) if c.user and c.user.email ]))
+        dests = dests.union( set([ c.user.email for c in django.contrib.comments.get_model().objects.filter(content_type__model="ticket", object_pk=str(self.id)) if c.user and c.user.email ]))
         
         #print "Envoi d'email à %s. Raisons: %s" % (dests, reasons)
         if not dests:
@@ -401,6 +405,23 @@ class TicketFile(models.Model):
     filename = models.TextField()
     content_type = models.TextField()
     data = ByteaField()
+
+class TicketMailAction(models.Model):
+    """
+    
+    Une action d'envoie d'email a faire plus tard
+    """
+    
+    date = models.DateTimeField(verbose_name = u"Date d'ajout", auto_now_add = True, blank=False)
+    reasons = PickleField(blank=False)
+    ticket = models.ForeignKey(Ticket)
+
+    class Meta:
+        verbose_name = u"Email à envoyer"
+        verbose_name_plural = u"Emails à envoyer"
+    
+    def __unicode__(self):
+        return u"Email pour ticket %s à envoyer" % (self.ticket.id,)
 
 class TicketMailTrace(models.Model):
     """
