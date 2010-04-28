@@ -2,7 +2,10 @@
 
 import base64
 import random, string
-import cPickle as pickle
+try:
+    import cPickle as pickle
+except ImportError:
+    import pickle
 
 from django.contrib.auth.models import User, Group
 from django.db import models
@@ -57,7 +60,7 @@ class PickleField(models.TextField):
 
     def to_python(self, value):
         if isinstance(value, buffer):
-            return pickle.loads(unicode(value))
+            return pickle.loads(str(value))
         return value
 
 class Base64Field(models.TextField):
