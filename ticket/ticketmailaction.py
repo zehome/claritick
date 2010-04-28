@@ -8,8 +8,10 @@ Send really emails based on TicketMailAction
 from ticket.models import Ticket, TicketMailAction
 from django.conf import settings
 from django.db.models import Max
+from django.db import transaction
 import datetime
 
+@transaction.commit_on_success
 def send_emails():
     email_delay = getattr(settings, "TICKET_EMAIL_DELAY", 120)
     # Defaults to 120 seconds delay before sending tickets
