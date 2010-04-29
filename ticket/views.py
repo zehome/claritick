@@ -511,7 +511,7 @@ def ajax_graph_average_close_time(request):
     
     if not request.user.is_staff:
         client_list = request.user.get_profile().get_clients()
-        filterquery = """AND ticket_ticket.client_id IN (%s)""" % (",".join([ c.id for c in client_list ]),)
+        filterquery = """AND ticket_ticket.client_id IN (%s)""" % (",".join(map(str, [ c.id for c in client_list ])),)
     else:
         filterquery = ""
     
