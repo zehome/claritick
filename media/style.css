@@ -309,7 +309,7 @@ form {
     border-bottom:#013368 1px solid;
     border-right:#013368 1px solid;
     text-align:center;
-    z-index: 1;
+    z-index: 100;
     display: none;
 }
 
@@ -355,12 +355,12 @@ div#gauche a {
     display:block;
     padding-left:5px;
     width:160px;
-    height:25px;
+    min-height:25px;
     line-height:25px;
     background-color:#d6e2fa;
     background-image:url('/media/images/deg_menu.png');
     background-repeat:repeat-x;
-    background-position:left;
+    background-position:top left;
     color:#013368;
     font-size: 10pt;
     font-weight:bold;
@@ -372,7 +372,7 @@ div#gauche a:hover {
     background-color:#b0bfde;
     background-image:url('/media/images/deg_menusurvol.png');
     background-repeat:repeat-x;
-    background-position:left;
+    background-position:top left;
     color:#fff;
     border-bottom:#fff 1px solid;
 }
@@ -391,6 +391,7 @@ div#gauche a:hover {
 #contenu {
     text-align: center;
     margin-left: 30px;
+	margin-bottom: 40px; /* for fixed stuff */
 }
 
 #contenu p {
@@ -691,6 +692,16 @@ ol#pagination-digg {
 
 .default button {
     font-weight: bold;
+}
+
+#save_buttons {
+	border-top: 1px solid black;
+	background: white;
+	position: fixed;
+	bottom: 0;
+	height: 40px;
+	z-index: 20; /* over evrything */
+	width: 100%;
 }
 
 /* EOF */

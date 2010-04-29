@@ -9,7 +9,7 @@
 
 {{ form.non_field_errors }}
 
-<form enctype="multipart/form-data" action="{% url ticket_modify ticket.id %}" method="POST">
+<form enctype="multipart/form-data" action="{% url ticket_modify ticket.id %}" method="POST" id="form_ticket_modify">
 {% csrf_token %}
 {% block content_ticket %}
 <fieldset class="inline form">
@@ -120,18 +120,17 @@
   </thead>
   <tbody>
       <tr>
-        <td >
-      {% for comment in comment_list %}{% if comment.internal %}<div class="comment">
-        <h3><b>{{ comment.user.first_name }} {{ comment.user.last_name }}</b> ({{ comment.user_name }})&nbsp;<i>Le {{ comment.submit_date|date:'d/m/Y à H\hi' }}</i></h3>
-        <pre class="{% cycle 'row1' 'row2' %}">{{ comment.comment|wordwrap:80 }}</pre>
-      </div>{% endif %}{% endfor %}
-        </td>
-
         <td>
-      {% for comment in comment_list %}{% if not comment.internal %}<div class="comment">
-        <h3><b>{{ comment.user.first_name }} {{ comment.user.last_name }}</b> ({{ comment.user_name }})&nbsp;<i>Le {{ comment.submit_date|date:'d/m/Y à H\hi' }}</i></h3>
-        <pre class="{% cycle 'row1' 'row2' %}">{{ comment.comment|wordwrap:80 }}</pre>
-      </div>{% endif %}{% endfor %}
+            {% for comment in comment_list %}{% if comment.internal %}<div class="comment">
+                <h3><b>{{ comment.user.first_name }} {{ comment.user.last_name }}</b> ({{ comment.user_name }})&nbsp;<i>Le {{ comment.submit_date|date:'d/m/Y à H\hi' }}</i></h3>
+                <pre class="{% cycle 'row1' 'row2' %}">{{ comment.comment|wordwrap:80 }}</pre>
+            </div>{% endif %}{% endfor %}
+        </td>
+        <td>
+            {% for comment in comment_list %}{% if not comment.internal %}<div class="comment">
+                <h3><b>{{ comment.user.first_name }} {{ comment.user.last_name }}</b> ({{ comment.user_name }})&nbsp;<i>Le {{ comment.submit_date|date:'d/m/Y à H\hi' }}</i></h3>
+                <pre class="{% cycle 'row1' 'row2' %}">{{ comment.comment|wordwrap:80 }}</pre>
+            </div>{% endif %}{% endfor %}
         </td>
       </tr>
     </tbody>
@@ -219,10 +218,11 @@
 </fieldset>
 <hr />
 
-<button dojoType="dijit.form.Button" type="submit" name="savebutton" value="save" iconClass="dijitEditorIcon dijitEditorIconSave">Enregistrer</button>
-<button dojoType="dijit.form.Button" type="submit" name="savebutton" value="new" iconClass="dijitEditorIcon dijitEditorIconSave">Enregistrer et ajouter un nouveau</button>
-<button dojoType="dijit.form.Button" type="submit" name="savebutton" value="return" iconClass="dijitEditorIcon dijitEditorIconSave"  class="default">Enregistrer et retourner à la liste</button>
-
+<div id="save_buttons">
+  <button dojoType="dijit.form.Button" type="submit" name="savebutton" value="save" iconClass="dijitEditorIcon dijitEditorIconSave">Enregistrer</button>
+  <button dojoType="dijit.form.Button" type="submit" name="savebutton" value="new" iconClass="dijitEditorIcon dijitEditorIconSave">Enregistrer et ajouter un nouveau</button>
+  <button dojoType="dijit.form.Button" type="submit" name="savebutton" value="return" iconClass="dijitEditorIcon dijitEditorIconSave"  class="default">Enregistrer et retourner à la liste</button>
+</div>
 {% endblock %}
 
 </form>
