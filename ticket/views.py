@@ -509,6 +509,12 @@ def ajax_graph_average_close_time(request):
     """
     ret = {}
     
+    if not request.user.is_staff():
+        client_list = request.user.get_profile().get_clients()
+        filterquery = """AND ticket_ticket.client_id IN (%s)""" % ([ c.id for c in client_list ],)
+    else:
+        filterquery = ""
+    
     rawquery = """SELECT 
         extract('epoch' from AVG((date_close - date_open)::interval)) AS delay, 
         date_trunc('month', date_open) AS date,
@@ -521,12 +527,13 @@ def ajax_graph_average_close_time(request):
         date_open > (now() - interval '1 year')
     AND
         ticket_ticket.id NOT IN (SELECT id FROM ticket_ticket WHERE (date_close-date_open) > interval '40 days')
+    %s
     GROUP BY 
         date, priority_id
     HAVING
         AVG((date_close - date_open)::interval) > interval '0'
     ORDER BY
-        priority_id, date;"""
+        priority_id, date;""" % (filterquery,)
     
     today = datetime.datetime.now()
     current_month = today.month
