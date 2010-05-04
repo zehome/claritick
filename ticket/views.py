@@ -52,6 +52,7 @@ def filter_quersyset(qs, filters):
         'text': 'icontains',
         'contact': 'icontains',
         'keywords': 'icontains',
+        'client': None,
     }
 
     d = {}
@@ -65,9 +66,17 @@ def filter_quersyset(qs, filters):
                         lookup = "in"
                     else:
                         lookup = 'exact'
+                if lookup is None:
+                    continue
                 qs = qs.filter(**{"%s__%s"%(str(key),lookup): value})
         except (AttributeError, FieldError):
             pass
+   
+    client = filters.get("client", None)
+    if client:
+        # Traitement des lookup None
+        clients = Client.objects.get_childs("parent", int(client))
+        qs = qs.filter(client__in=[ c.id for c in clients ])
 
     return qs
 
