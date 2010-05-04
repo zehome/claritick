@@ -261,9 +261,11 @@ class Ticket(models.Model):
         ticket.save()
         
         # Send email
-        send_email_reasons = [ u"Nouvelle réponse%s" % (comment.internal and " (Diffusion interne seulement)" or ''), ]
-        #ticket.send_email(reasons=send_email_reasons)
-        ticket.ticketmailaction_set.create(reasons=send_email_reasons)
+        if ((not comment.internal) or 
+            (comment.internal and getattr(settings, "EMAIL_INTERNAL_COMMENTS", True))):
+            send_email_reasons = [ u"Nouvelle réponse%s" % (comment.internal and " (Diffusion interne seulement)" or ''), ]
+            #ticket.send_email(reasons=send_email_reasons)
+            ticket.ticketmailaction_set.create(reasons=send_email_reasons)
     
     @staticmethod
     def handle_ticket_presave_signal(sender, **kwargs):
