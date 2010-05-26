@@ -14,6 +14,7 @@ from django.template import RequestContext
 import claritick.ticket.urls
 import claritick.common.urls
 import claritick.clariadmin.urls
+import claritick.ws.urls
 
 # Init code
 admin.autodiscover()
@@ -64,4 +65,7 @@ urlpatterns = patterns('',
 
     ## Error testing
     (r'^error/', raise_trial_exception),
+    
+    ## Web services
+    (r'^ws/', include(claritick.ws.urls)),
 )
