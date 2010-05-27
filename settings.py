@@ -161,6 +161,7 @@ SVNDOC_CONFIG = {
     'VALIDATOR' : 26,
     'STATE'     : 1,
     'PRIORITY'  : 2,
+    'CLIENT'    : 1,
     'SVN_REPOSITORY_TO_CLARITICK_PROJECT' : {
         '/svn/MCA3' : 4,
         '/svn/MCA2' : 4,
