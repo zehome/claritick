@@ -9,7 +9,7 @@ from django.conf import settings
 
 svndoc_config = getattr(settings, "SVNDOC_CONFIG", {})
 
-from ticket.models import Ticket, State, Priority, Category, Project
+from ticket.models import Ticket, State, Priority, Category, Project, Client
 from django.contrib.auth.models import User
 
 class TicketCollection(Collection):
@@ -44,6 +44,10 @@ class TicketCollection(Collection):
             project = Project.objects.get(pk = svndoc_config.get("SVN_REPOSITORY_TO_CLARITICK_PROJECT",{}).get(data.get('svn_repo',None),None))
         except Project.DoesNotExist:
             project = None
+        try:
+            client = Client.objects.get(pk = svndoc_config.get("CLIENT", 1))
+        except Client.DoesNotExist:
+            return HttpResponseServerError("The default client for new tickets does not exist nor does the client #1")
         new_ticket_data = {
             'contact' : data.get("svn_user",''),
             'assigned_to' : assigned_to,
@@ -55,6 +59,7 @@ class TicketCollection(Collection):
             'priority' : priority,
             'project' : project,
             'validated_by' : validated_by,
+            'client' : client,
             }
         new_ticket = Ticket(**new_ticket_data)
         new_ticket.save()
