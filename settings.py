@@ -153,6 +153,20 @@ TICKET_STATE_NEW = 1 # pk de l'etat nouveau
 
 TICKET_PRIORITY_NORMAL = 2 # pk de la priorité normale
 POSTGRESQL_VERSION = 8.3
+
+SVNDOC_CONFIG = {
+    'OPENED_BY' : 26,
+    'CATEGORY'  : 16,
+    'ASSIGNED_TO' : 9,
+    'VALIDATOR' : 26,
+    'STATE'     : 1,
+    'PRIORITY'  : 2,
+    'SVN_REPOSITORY_TO_CLARITICK_PROJECT' : {
+        '/svn/MCA3' : 4,
+        '/svn/MCA2' : 4,
+        '/svn/clarilab' : 2,
+        }
+    }
 try:
     from local_settings import *
 except ImportError:

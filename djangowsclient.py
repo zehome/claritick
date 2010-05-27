@@ -7,20 +7,11 @@ import sys
 from base64 import encodestring
 from optparse import OptionParser
 
-ASSIGNED_TO = 9
-CATEGORY = 16
-STATE = 1
-PRIORITY = 2
-SVN_USERS_TO_CLARITICK = {
-    'gl'   : 6,
-    'sheb' : 13,
-    }
-
-SVN_REPOSITORY_TO_CLARITICK_PROJECT = {
-    '/svn/MCA3' : 4,
-    '/svn/MCA2' : 4,
-    '/svn/clarilab' : 2,
-    }
+HOST="192.168.1.154"
+PORT=9080
+BASE_URL="ws"
+USERNAME="admin"
+PASS="admin"
 
 class DjangoWSException(Exception):
     pass
@@ -64,7 +55,7 @@ class DjangoWSClient(object):
 
 class PyRest(object):
     
-    _client = DjangoWSClient("192.168.1.154", 9080, "ws", username = "admin", password = "admin")
+    _client = DjangoWSClient(HOST, PORT, BASE_URL, username = USERNAME, password = PASS)
     _resource = 'ticket/'
     
     def __init__(self, pk=None, **kwargs):
@@ -83,11 +74,13 @@ class PyRest(object):
         if self.pk:
             # update it
             s,h,d = self._client.request_put('%s%s' % (self._resource, self.pk,), urllib.urlencode(self.dict).encode('utf-8'))
+            if s != 200:
+                raise DjangoWSException("%s %s %s" % (s,h,d,))
         else:
             # create it
             s,h,d = self._client.request_post(self._resource, urllib.urlencode(self.dict).encode('utf-8'))
-        if s != 200:
-            raise DjangoWSException("%s %s %s" % (s,h,d,))
+            if s not in (201, 200):
+                raise DjangoWSException("%s %s %s" % (s,h,d,))
         return d
 
 if __name__ == "__main__":
@@ -95,39 +88,21 @@ if __name__ == "__main__":
     parser.add_option('-t', '--title', dest='title', help='Ticket title')
     parser.add_option('-u', '--user', dest='svn_user', help='Subversion user')
     parser.add_option('-r', '--repository', dest='svn_repo', help='Subversion repository')
-    #~ dwc = DjangoWSClient("192.168.1.9",8888,"ws", username = "admin", password = "admin")
-    #~ print dwc.request_get("test/562")
-    #~ s, h, d = dwc.request_post("test/",urllib.urlencode({'truc':'piou2'}))
-    #~ print s
-    #~ print h
-    #~ print d
     (options, args) = parser.parse_args()
     svn_user = options.svn_user
     svn_repo = options.svn_repo
     title    = options.title
     if not title:
         title = 'Documentation à faire'
-    if not svn_user in SVN_USERS_TO_CLARITICK:
-        raise DjangoWSException("This user is not mapped to a claritick user : %s" % (svn_user,))
-    if not svn_repo in SVN_REPOSITORY_TO_CLARITICK_PROJECT:
-        raise DjangoWSException("This repository is not mapped to a claritick project : %s" % (svn_repo,))
     
     texte = sys.stdin.read()
     if not texte:
         texte = 'Texte'
-    pr = PyRest(3613)
-    print pr.retrieve()
     dict = {
         'contact' : svn_user,
-        'assigned_to' : ASSIGNED_TO,
-        'opened_by' : SVN_USERS_TO_CLARITICK[svn_user],
-        'title' : title.decode().encode('LATIN9'),
+        'title' : title,
         'text' : texte,
-        'category' : CATEGORY,
-        'state': STATE,
-        'priority' : PRIORITY,
-        'project' : SVN_REPOSITORY_TO_CLARITICK_PROJECT[svn_repo],
-        'validated_by' : SVN_USERS_TO_CLARITICK[svn_user],
+        'svn_repo' : svn_repo,
         }
     pr = PyRest(**dict)
     result = pr.save()
