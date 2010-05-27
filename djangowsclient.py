@@ -7,11 +7,12 @@ import sys
 from base64 import encodestring
 from optparse import OptionParser
 
-HOST="192.168.1.154"
-PORT=9080
+HOST="hostname_or_ip"
+PORT=443
 BASE_URL="ws"
-USERNAME="admin"
-PASS="admin"
+USERNAME="subversion"
+PASS="subversion"
+HTTPS=True
 
 class DjangoWSException(Exception):
     pass
@@ -34,7 +35,10 @@ class DjangoWSClient(object):
         return self.request(resource, method = 'post', args=args, headers=headers)
         
     def request(self, resource, method="get", args=None, body=None, headers={}):
-        h = httplib.HTTPConnection(self.host, self.port)
+        if HTTPS:
+            h = httplib.HTTPSConnection(self.host, self.port)
+        else:
+            h = httplib.HTTPConnection(self.host, self.port)
         headers.update({
             "Authorization":self.auth,
             "X-Requested-With":"XMLHttpRequest",
