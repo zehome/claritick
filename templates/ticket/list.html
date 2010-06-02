@@ -202,6 +202,7 @@
 <tbody>
 {% for row in tickets.object_list %}
     {# get_comment_count for ticket.ticket row.id as comment_count #}
+    <div dojoType="dijit.Tooltip" connectId="ticket_line_{{ forloop.counter }}" position="above"><h3>{{ row.title|wordwrap:80|linebreaks }}</h3><p>{{ row.text|wordwrap:80|linebreaks }}</p></div>
     <tr class="bigrow {% cycle 'row1' 'row2' %}" id="ticket_line_{{ forloop.counter }}">
         <td><input type="checkbox" name="ticket_checked" id="ticket_select_{{ forloop.counter }}" value="{{ row.pk }}" /></td>
         <td style="width: 60px;{{ row.close_style }}{{ row.priority_back_style }}"><a style="{{ row.priority_text_style }}" href="{% url ticket_modify row.id %}">{{ row.id }}</a></td>
@@ -219,9 +220,6 @@
 </tbody>
 </table>
 </form>
-{% for row in ticket.object_list %}
-<div dojoType="dijit.Tooltip" connectId="ticket_line_{{ forloop.counter }}" position="above"><p>{{ row.title|wordwrap:80|linebreaks }}</p></div>
-{% endfor %}
 
 {% if tickets.paginator.num_pages > 1 %}
 {% diggpaginator tickets %}
