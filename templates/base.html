@@ -20,6 +20,9 @@
     {% block blockbots %}<meta name="robots" content="NONE,NOARCHIVE" />{% endblock %}
     <!-- End admin -->
     {% include "dojango/include.html" %}
+    <script type="text/javascript" charset="utf-8">
+        dojo.config['ioPublish'] = true;
+    </script>
 
     <script type="text/javascript" charset="utf-8">
         var MENU_CAN_HIDE = true;

@@ -1,5 +1,4 @@
 from ticket.models import TicketView, Ticket
-from ticket.views import filter_ticket_by_user
 import qsstats
 import datetime
 
@@ -7,14 +6,14 @@ SUMMARY_TICKETS=15
 
 def get_critical_tickets(request):
     qs = Ticket.open_tickets.all()
-    qs = filter_ticket_by_user(qs, request.user).filter(priority__gt=3).order_by('-date_open')
+    qs = qs.filter_ticket_by_user(request.user).filter(priority__gt=3).order_by('-date_open')
     return qs[:SUMMARY_TICKETS]
 
 def get_ticket_text_statistics(request):
     statList = []
     statList.append(u"Tickets sans client: %s" % (Ticket.objects.filter(client__isnull = True).count()),)
     qs = Ticket.objects.all()
-    qs = filter_ticket_by_user(qs, request.user)
+    qs = qs.filter_ticket_by_user(request.user)
     if qs:
         qss = qsstats.QuerySetStats(qs, 'date_open')
         statList.append(u"Ouverts aujourd'hui: %s" % (qss.this_day(),))

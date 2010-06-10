@@ -148,10 +148,14 @@ table#menuPrincipal{
 	font-family: monospace !important;
 }
 
-.claritick #contenu nput[type="button"], .claritick #contenu input[type="submit"] {
+.claritick #contenu input[type="button"], .claritick #contenu input[type="submit"] {
 	background: transparent;
 	border: 0;
 	padding: 0;
+}
+
+.claritick #contenu input[type="text"] {
+    height: 14px;
 }
 
 form {
@@ -411,6 +415,7 @@ div#gauche a:hover {
 #contenu table {
     margin-top: 20px;
 	font-weight: normal;
+    width: 100%;
 }
 
 #contenu table.search {
@@ -419,6 +424,16 @@ div#gauche a:hover {
 
 #contenu table tr.bigrow {
 	height: 45px;
+}
+
+#contenu table tr.smallrow_row1 {
+    height: 10px;
+    background-color: #F2F0DC;
+}
+
+#contenu table tr.smallrow_row2 {
+    height: 10px;
+    background-color: #E6E4D2;
 }
 
 #contenu table td label {
@@ -434,6 +449,7 @@ div#gauche a:hover {
 }
 
 #contenu fieldset legend {
+    white-space: normal;
 	font-weight: bold;
 	font-size: 2em;
 	color: #777;
@@ -441,6 +457,8 @@ div#gauche a:hover {
 
 #contenu fieldset table .large {
 	width: 150px;
+    vertical-align: middle;
+    font-weight: bold;
 }
 
 #contenu fieldset table .right {
@@ -562,6 +580,7 @@ div#contenu .selector select {
 
 .comment_table td {
 	vertical-align: top !important;
+    width: 48%;
 }
 
 .comment_table th {
@@ -589,6 +608,7 @@ div#contenu .selector select {
 	color: black;
 	line-height: 25px;
 	font-family: monospace !important;
+    white-space: normal;
 }
 
 .comment p.row1 {
@@ -642,8 +662,8 @@ ol#pagination-digg {
 	padding:3px 6px;
 	text-decoration:none;
 }
-#pagination-digg a:hover{
-	border:solid 1px #0e509e
+#pagination-digg a:hover {
+	border:solid 1px #0e509e;
 }
 
 #index_content {
@@ -702,6 +722,31 @@ ol#pagination-digg {
 	height: 40px;
 	z-index: 20; /* over evrything */
 	width: 100%;
+}
+
+.childs {
+    margin-top: 70px;
+}
+
+.childs fieldset {
+    background-color: #F2F0DC;
+}
+
+.childs legend {
+    font-size: 1em;
+    text-align: left;
+}
+
+.child legend img:hover {
+    cursor: pointer;
+}
+
+img.summary {
+    margin-right: 10px;
+}
+p.summary {
+    text-align: left;
+    margin: 0px;
 }
 
 /* EOF */

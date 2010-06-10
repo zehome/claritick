@@ -5,7 +5,7 @@ import datetime
 
 from django import http
 from django.conf import settings
-from django.core.exceptions import ObjectDoesNotExist, PermissionDenied, FieldError
+from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.db import models
 from django.db import connection, transaction
 from django.shortcuts import render_to_response, get_object_or_404, redirect
@@ -42,67 +42,6 @@ def set_filters(request, datas=None):
         request.session["list_filters"] = request.POST.copy()
     if datas:
         request.session["list_filters"].update(datas)
-
-def filter_quersyset(qs, filters):
-    """
-        Filtre un queryset de ticket a partir d'un dictionnaire de fields lookup.
-    """
-    search_mapping = {
-        'title': 'icontains',
-        'text': 'icontains',
-        'contact': 'icontains',
-        'keywords': 'icontains',
-        'client': None,
-    }
-
-    d = {}
-    for key, value in filters.items():
-        try:
-            if value:
-                try:
-                    lookup = search_mapping[key]
-                except KeyError:
-                    if isinstance(value, (list, models.query.QuerySet)):
-                        lookup = "in"
-                    else:
-                        lookup = 'exact'
-                if lookup is None:
-                    continue
-                qs = qs.filter(**{"%s__%s"%(str(key),lookup): value})
-        except (AttributeError, FieldError):
-            pass
-   
-    client = filters.get("client", None)
-    if client:
-        # Traitement des lookup None
-        clients = Client.objects.get_childs("parent", int(client))
-        qs = qs.filter(client__in=[ c.id for c in clients ])
-
-    return qs
-
-def filter_ticket_by_user(qs, user):
-    """
-        Filtre un queryset de ticket en fonction des clients qu'a le droit de voir l'utilisateur.
-    """
-    # Si on est root, on ne filtre pas la liste
-    if user.is_superuser:
-        return qs
-
-    try:
-        client_list = user.get_profile().get_clients()
-        qs = qs.filter(client__pk__in=[x.id for x in client_list])
-    except UserProfile.DoesNotExist:
-        raise NoProfileException(user)
-
-    return qs
-
-def add_order_by(queryset, request):
-    """
-        Rajoute le orderby au queryset en fonction du GET de la requete.
-    """
-    sort = request.GET.get('sort', 'id')
-    sort_order = int(request.GET.get("sort_order", 1))
-    return queryset.order_by("%s%s" % (sort_order and "-" or '', sort))
 
 def get_context(request):
     """
@@ -182,10 +121,12 @@ def list_view(request, view_id=None):
         return http.HttpResponseRedirect("%s?%s" % (request.META["PATH_INFO"], request.META["QUERY_STRING"]))
 
     if not data.get("state"):
-        qs = Ticket.open_tickets.all()
+        qs = Ticket.open_tickets.filter(parent__isnull=True)
+        cqs = Ticket.open_tickets.filter(parent__isnull=False)
     else:
-        qs = Ticket.tickets.all()
-    
+        qs = Ticket.tickets.filter(parent__isnull=True)
+        cqs = Ticket.tickets.filter(parent__isnull=False)
+
     # On va enregistrer les criteres actuels en tant que nouvelle liste
     if request.method == "POST" and form.is_valid():
         if view_id:
@@ -207,20 +148,22 @@ def list_view(request, view_id=None):
     # On filtre la liste a partir des datas de la vue
     filters = data.copy()
     if not request.user.has_perm("ticket.can_list_all") and data.get("text"):
-        qs = qs.filter(models.Q(title__icontains=data["text"]) | models.Q(text__icontains=data["text"]))
+        qs = qs.filter_or_child(models.Q(title__icontains=data["title"]) | models.Q(text__icontains=data["text"]))
         del filters["text"]
-    qs = filter_quersyset(qs, filters)
+    qs = qs.filter_queryset(filters)
 
     # On va filtrer la liste des tickets en fonction de la relation user => client
-    qs = filter_ticket_by_user(qs, request.user)
+    qs = qs.filter_ticket_by_user(request.user)
+    cqs = cqs.filter_ticket_by_user(request.user)
 
     # Le tri
-    qs = add_order_by(qs, request)
+    qs = qs.add_order_by(request)
+    cqs = cqs.add_order_by(request)
 
     context.update({
         "form": form,
         "action_form": action_form,
-        "tickets": get_pagination(qs, request),
+        "tickets": get_pagination(qs.get_and_child(cqs), request),
     })
 
     return render_to_response(template_name, context, context_instance=RequestContext(request))
@@ -254,27 +197,35 @@ def list_all(request, form=None, filterdict=None, template_name=None, *args, **k
             form = SearchTicketForm(get_filters(request), user=request.user)
 
     if not get_filters(request).get("state"):
-        qs = Ticket.open_tickets.all()
+        qs = Ticket.open_tickets.filter(parent__isnull=True)
+        cqs = Ticket.open_tickets.filter(parent__isnull=False)
     else:
-        qs = Ticket.tickets.all()
+        qs = Ticket.tickets.filter(parent__isnull=True)
+        cqs = Ticket.tickets.filter(parent__isnull=False)
+
 
     # Form cleaned_data ?
     if form.is_valid():
         data = form.cleaned_data.copy()
         if not request.user.has_perm("ticket.can_list_all") and form.cleaned_data["text"]:
-            qs = qs.filter(models.Q(title__icontains=form.cleaned_data["text"]) | models.Q(text__icontains=form.cleaned_data["text"]))
+            qs = qs.filter_or_child(models.Q(title__icontains=form.cleaned_data["text"]) | models.Q(text__icontains=form.cleaned_data["text"]))
             del data["text"]
-        qs = filter_quersyset(qs, data)
+        qs = qs.filter_queryset(data)
+        if data['state']:
+            cqs = cqs.filter(state=data['state'])
 
     # unassigned / nonvalide
     if filterdict:
-        qs = qs.filter(**filterdict)
+        qs = qs.filter_or_child(filterdict)
+        cqs = cqs.filter(**filterdict)
 
     # On va filtrer la liste des tickets en fonction de la relation user => client
-    qs = filter_ticket_by_user(qs, request.user)
+    qs = qs.filter_ticket_by_user(request.user)
+    cqs = cqs.filter_ticket_by_user(request.user)
 
     # Le tri
-    qs = add_order_by(qs, request)
+    qs = qs.add_order_by(request)
+    cqs = cqs.add_order_by(request)
 
     # TODO choisir le bon template en fonction des permissions
     if template_name is None:
@@ -286,7 +237,7 @@ def list_all(request, form=None, filterdict=None, template_name=None, *args, **k
     context.update({
         "form": form, 
         "action_form": action_form,
-        "tickets": get_pagination(qs, request),
+        "tickets": get_pagination(qs.get_and_child(cqs), request),
     })
     return render_to_response(template_name or "ticket/list.html", context, context_instance=RequestContext(request))
 
@@ -330,7 +281,7 @@ def modify(request, ticket_id):
     def exit_action():
         saveaction = request.POST.get("savebutton", "save")
         if saveaction == "save":
-            return redirect("ticket_modify", ticket_id=ticket_id) 
+            return redirect("ticket_modify", ticket_id=ticket_id)
         elif saveaction == "new":
             return redirect("ticket_partial_new")
         elif saveaction == "return":
@@ -344,6 +295,10 @@ def modify(request, ticket_id):
             raise PermissionDenied("Hacking attempt!")
     
     ticket = get_object_or_404(Ticket, pk=ticket_id)
+
+    # Si c'est un fils rediriger vers le pêre au bon endroit
+    if ticket.parent:
+        return http.HttpResponseRedirect("/ticket/modify/%d/#child%s" % (ticket.parent_id, ticket_id))
 
     # On verifie que l'utilisateur a les droits de modifier le ticket_id
     if not user_has_perms_on_client(request.user, ticket.client):
@@ -362,6 +317,9 @@ def modify(request, ticket_id):
     else:
         template_name = "ticket/modify_small.html"
         TicketForm = NewTicketSmallForm
+
+    child_form = [(c, ChildForm(user=request.user, instance=c, auto_id='id_child'+str(c.id)+'_%s'),\
+            django.contrib.comments.get_form()(c)) for c in ticket.child.order_by('date_open')]
 
     if request.method == "POST":
         if request.POST.get("_validate-ticket", None) and request.user.has_perm("ticket.can_validate_ticket")\
@@ -406,7 +364,8 @@ def modify(request, ticket_id):
         comment_form  = django.contrib.comments.get_form()(ticket)
     
     # Just open
-    return render_to_response(template_name, {"form": form, "ticket": ticket, "form_comment": comment_form }, context_instance=RequestContext(request))
+    return render_to_response(template_name, { "form": form, "ticket": ticket, "comment_form": comment_form, "child_form": child_form },
+        context_instance=RequestContext(request))
 
 @login_required
 def get_file(request, file_id):
@@ -420,6 +379,111 @@ def get_file(request, file_id):
     response = http.HttpResponse(str(file.data), mimetype=file.content_type)
     response["Content-Disposition"] = "attachment; filename=%s" % file.filename
     return response
+
+@permission_required("ticket.add_child")
+@login_required
+def ajax_new_child(request, ticket_id):
+    """
+    Crée un nouveau ticket fils de ticket_id
+    Renvoie un formulaire HTML
+     -> Formulaire modification fils si réussite (dans ce cas on
+        envoie un X-Claritick-Tid avec l'id du fils crée
+     -> Formulaire de création + erreur si echec avec les id de
+        <div> et <form> mis à X-Claritick-Tid (envoyé par le client ajax)
+    status = 201 si fils crée, sinon 200 (utilisé par le js de ticket/modify.html derière)
+    """
+    if not ticket_id: 
+        raise PermissionDenied
+    ticket = get_object_or_404(Ticket, pk=ticket_id)
+
+    if not user_has_perms_on_client(request.user, ticket.client):
+        raise PermissionDenied
+
+    if ticket.parent:
+        raise PermissionDenied("Ce ticket est déjà un fils")
+
+    form = ChildForm(request.POST, user=request.user, auto_id="id_child_%s")
+    if form.is_valid():
+        child = copy_model_instance(ticket)
+        child.state = form.cleaned_data['state']
+        child.assigned_to = form.cleaned_data['assigned_to']
+        child.title = form.cleaned_data['title']
+        child.text = form.cleaned_data['text']
+        child.validated_by = request.user
+        child.keywords = form.cleaned_data['keywords']
+        child.category = form.cleaned_data['category']
+        child.opened_by = request.user
+        child.date_open = datetime.datetime.now()
+        child.parent = ticket
+        child.project = form.cleaned_data['project']
+        child.save()
+        form = ChildForm(instance=child, user=request.user, auto_id="id_child"+str(child.id)+"_%s")
+        form_comment = django.contrib.comments.get_form()(child)
+        ret =  render_to_response("ticket/child.html",
+                {"child": child, "cf": form, "cfc": form_comment },
+                context_instance=RequestContext(request))
+        ret["X-Claritick-Tid"] = "child%s" % (child.id)
+        ret.status_code = 201 # created
+    else:
+        ret =  render_to_response("ticket/child.html",
+                {"ticket": ticket, "cf": form, "new_child": True, "child_id": request.META["HTTP_X_CLARITICK_TID"]},
+                context_instance=RequestContext(request))
+    return ret
+
+@permission_required("ticket.change_child")
+@login_required
+def ajax_modify_child(request, ticket_id):
+    """
+    Modifie ticket_id et renvoie le formulaire de
+    modification + éventuelles erreurs
+    """
+    if not ticket_id:
+        raise PermissionDenied
+    ticket = get_object_or_404(Ticket, pk=ticket_id)
+
+    if not user_has_perms_on_client(request.user, ticket.client) or not ticket.parent: # must be a child
+        raise PermissionDenied
+
+    form = ChildForm(request.POST, user=request.user, instance=ticket, auto_id="id_child_%s");
+    form_comment = django.contrib.comments.get_form()(ticket, data=request.POST)
+
+    if form_comment.is_valid():
+        post_comment(request)
+
+    form_comment = django.contrib.comments.get_form()(ticket)
+
+    if form.is_valid():
+        form.save()
+        ret = render_to_response("ticket/child.html", {"child": ticket, "cf": form, "cfc": form_comment },
+                context_instance=RequestContext(request))
+        ret.status_code = 201
+    else:
+        ret = render_to_response("ticket/child.html", {"child": ticket, "cf": form, "cfc": form_comment },
+                context_instance=RequestContext(request))
+    return ret
+
+@permission_required("ticket.add_child")
+@login_required
+def ajax_load_child(request, ticket_id):
+    """
+    Renvoie un formulaire HTML pour création d'un fils de ticket_id
+    l'ID du <div> et <form> est construit à partir de X-Claritick-Tid
+    """
+    if not ticket_id:
+        raise PermissionDenied
+    ticket = get_object_or_404(Ticket, pk=ticket_id)
+
+    if not user_has_perms_on_client(request.user, ticket.client):
+        raise PermissionDenied
+    if ticket.parent:
+        raise PermissionDenied("Ce ticket est déjà un fils")
+
+    form = ChildForm(user=request.user,
+            initial={'state': ticket.state_id, 'category': ticket.category_id, 'project': ticket.project_id},
+            auto_id="id_child_%s")
+    return render_to_response('ticket/child.html',
+            {"ticket": ticket, "cf": form, "new_child": True, "child_id": request.META["HTTP_X_CLARITICK_TID"] },
+            context_instance=RequestContext(request))
 
 @login_required
 @json_response
@@ -462,7 +526,7 @@ def ajax_load_telephone(request):
     
     # Récupère la liste des derniers tickets
     tickets = Ticket.tickets.filter(client__in=client_and_childs).exclude(telephone__isnull=True).exclude(telephone='')
-    tickets = filter_ticket_by_user(tickets, request.user).order_by("-id")[:5]
+    tickets = tickets.filter_ticket_by_user(request.user).order_by("-id")[:5]
     for ticket in tickets:
         telephones.append((str(ticket.telephone), "%s (Ticket %s de %s)" % (ticket.telephone, ticket.id, ticket.client)))
     
@@ -479,7 +543,7 @@ def ajax_graph_permonth(request):
     
     today = datetime.datetime.now()
     qs = Ticket.objects.all()
-    qs = filter_ticket_by_user(qs, request.user)
+    qs = qs.filter_ticket_by_user(request.user)
     if not qs:
         return ret
     
@@ -503,6 +567,8 @@ def ajax_graph_permonth(request):
     ## Critical tickets chart
     chart = {}
     qs = qs.filter(priority__gt=3)
+    if not qs:
+        return {}
     qss = qsstats.QuerySetStats(qs, 'date_open')
     tss = qss.time_series(today-datetime.timedelta(days=360), today, interval='months')
     ret["charts"].append(get_chart(tss, series_properties = {'legend': 'Tickets critiques', 'stroke': 'red'}))

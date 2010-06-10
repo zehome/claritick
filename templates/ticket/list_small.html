@@ -141,6 +141,18 @@
         <td>{{ row.contact }}</td>
         <td style="width: 150px;">{{ row.last_modification|date:'d/m/y H\hi' }}</td>
     </tr>
+    {% for child in row.enfants %}
+        <tr class="smallrow_{% cycle 'row1' 'row2' %}">
+            <td><input type="checkbox" name="ticket_checked" id="ticket_{{ forloop.parentloop.counter }}_select_{{ forloop.counter }}" value="{{ child.pk }}" /></td>
+            <td style="width: 60px;{{ child.close_style }}{{ child.priority_back_style }}"><a style="{{ child.priority_text_style }}" href="{% url ticket_modify child.id %}">{{ child.id }}</a></td>
+            <td style="width: 200px;"></td>
+            <td style="width: 100px;">{{ child.category }}</td>
+            <td style="min-width: 250px;{{ child.close_style }}"><a styl="{{ child.priority_text_style }}" href="{% url ticket_modify child.id %}">{{ child.title }}</a></td>
+            <td>({{ child.nb_comments }})</td>
+            <td>{{ child.contact }}</td>
+            <td style="width: 150px;">{{ child.last_modification|date:'d/m/y H\hi' }}</td>
+        </tr>
+    {% endfor %}
 {% endfor %}
 </tbody>
 </table>

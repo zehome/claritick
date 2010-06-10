@@ -8,6 +8,8 @@ from django.contrib.auth.models import User
 from django.contrib.comments.moderation import CommentModerator, moderator
 import django.contrib.comments
 from django.contrib.comments.signals import comment_was_posted, comment_will_be_posted
+from django.core.exceptions import ValidationError, FieldError
+from django.utils.datastructures import SortedDict
 
 # for email
 from django.core.mail import EmailMessage
@@ -15,7 +17,8 @@ from django.template.loader import get_template
 from django.template import Context, Template
 
 # Clarisys fields
-from common.models import ColorField, Client, ClientField, JsonField, ByteaField, PickleField
+from common.models import ColorField, Client, ClientField, JsonField, ByteaField, PickleField, UserProfile
+from common.exceptions import NoProfileException
 from django.db.models import AutoField
 
 def copy_model_instance(obj):
@@ -114,11 +117,15 @@ class Procedure(models.Model):
     def __unicode__(self):
         return u"%s" % (self.label,)
 
-class BaseTicketManager(models.Manager):
+class QuerySetManager(models.Manager):
+    def get_query_set(self):
+        return self.model.QuerySet(self.model)
+
+class BaseTicketManager(QuerySetManager):
     def get_query_set(self):
         qs = super(BaseTicketManager, self).get_query_set().\
             select_related("opened_by", "assigned_to", 
-            "priority", "state", "validated_by", "category", "project", 
+            "priority", "state", "validated_by", "category", "project", "parent",
             "client", "client__coordinates", "client__parent", "client__parent__coordinates", "client__parent__parent")
         return qs
 
@@ -145,8 +152,105 @@ class Ticket(models.Model):
             ("can_resolve", u"Peut resoudre des tickets"),
             ("can_list_all", u"Peut voir la liste détaillée"),
             ("can_validate_ticket", u"Peut valider un ticket"),
+            ("add_child", u"Peut créer un ticket fils"),
+            ("change_child", u"Peut modifier un ticket fils"),
         )
-    
+
+    class QuerySet(models.query.QuerySet):
+        def add_order_by(self, request):
+            sort = request.GET.get('sort', 'id')
+            sort_order = int(request.GET.get('sort_order', 1))
+            return self.order_by('%s%s' % (sort_order and '-' or '', sort))
+
+        def filter_ticket_by_user(self, user):
+            """
+                Filtre un queryset de ticket en fonction des clients qu'a le droit de voir l'utilisateur.
+            """
+            # Si on est root, on ne filtre pas la liste
+            if user.is_superuser:
+                return self
+            qs = Ticket.objects.none()
+            try:
+                client_list = user.get_profile().get_clients()
+                qs = self.filter(client__pk__in=[x.id for x in client_list])
+            except UserProfile.DoesNotExist:
+                raise NoProfileException(user)
+            return qs
+
+        def filter_queryset(self, filters):
+            """ Filtre un queryset de ticket a partir d'un dictionnaire de fields lookup. """
+            search_mapping = {
+                'title': 'icontains',
+                'text': 'icontains',
+                'contact': 'icontains',
+                'keywords': 'icontains',
+                'client': None,
+            }
+
+            qs = self.all()
+            d = {}
+            for key, value in filters.items():
+                try:
+                    if value:
+                        try:
+                            lookup = search_mapping[key]
+                        except KeyError:
+                            if isinstance(value, (list, models.query.QuerySet)):
+                                lookup = "in"
+                            else:
+                                lookup = 'exact'
+                        if lookup is None:
+                            continue
+                        qs = qs.filter_or_child({"%s__%s"%(str(key), lookup): value})
+                except (AttributeError, FieldError):
+                    pass
+
+            client = filters.get("client", None)
+
+            if client:
+                # Traitement des lookup None
+                clients = Client.objects.get_childs("parent", int(client))
+                qs = qs.filter(client__in=[ c.id for c in clients ])
+
+            return qs
+
+        def filter_or_child(self, filter):
+            """ Filtre suivant filterdict avec un OR sur les fils
+            ne renvoie que le pêre si un fils matche filterdict """
+            qs = self.all()
+            if isinstance(filter, models.query_utils.Q):
+                query = models.Q()
+                for k,v in filter.children:
+                    query |= models.Q(**{'child__%s'%k: v})
+                qs = qs.filter(filter | \
+                        (models.Q(child__isnull=False) & query))
+            else:
+                for k,v in filter.items():
+                    qs = qs.filter(models.Q(**{k: v}) | \
+                            (models.Q(child__isnull=False) & \
+                            models.Q(**{"child__%s"%k: v})))
+            return qs.distinct()
+
+        def get_and_child(self, cqs):
+            """ Retourne les valeurs d'un SortedDict avec parents et enfants
+            accessibles par l'attribut enfants. Il faut fournir un QuerySet
+            des enfants en paramêtre """
+
+            ret = SortedDict()
+
+            for p in self:
+                p.enfants = []
+                ret[p.pk] = p
+
+            cqs = cqs.filter(parent__pk__in=ret)
+
+            for e in cqs:
+                ret[e.parent.pk].enfants.append(e)
+
+            return ret.values()
+
+
+
     objects = BaseTicketManager()
     tickets = TicketManager()
     open_tickets = OpenTicketManager()
@@ -155,7 +259,7 @@ class Ticket(models.Model):
     client = ClientField(Client, verbose_name="Client", blank=True, null=True)
     contact = models.CharField("Contact", max_length=128, blank=True)
     telephone = models.CharField("Téléphone", max_length=20, blank=True)
-    
+
     date_open = models.DateTimeField("Date d'ouverture", auto_now_add=True)
     last_modification = models.DateTimeField("Dernière modification", auto_now_add=True,auto_now=True)
     date_close = models.DateTimeField("Date de fermeture", blank=True, null=True)
@@ -185,12 +289,17 @@ class Ticket(models.Model):
     
     template = models.BooleanField(u"Modèle", default=False)
 
+    # parent ticket
+    parent = models.ForeignKey('Ticket', related_name="child", verbose_name="Ticket parent", blank=True, null=True)
+    # diffusion (seulement les tickets pères)
+    diffusion = models.BooleanField(default=True)
+
     # TODO nombre de comments
     nb_comments = models.IntegerField(default=0, editable=False)
 
     # Par defaut à false
     update_google = False
-    
+
     # Used for "reporting" tool
     @property
     def reporting_state_open(self):
@@ -286,31 +395,42 @@ class Ticket(models.Model):
                 if e:
                     observer.delete(Ticket, old_ticket)
 
+    def clean(self):
+        if self.state_id == settings.TICKET_STATE_CLOSED and self.child.exclude(state=self.state).exists():
+            raise ValidationError("Impossible de fermer le ticket si tous les tickets fils ne sont pas fermés")
+
     def save(self):
         """ Overwrite save in order to do checks if email should be sent, then send email """
         send_email_reason=None
-        
+
         try:
             old_ticket = Ticket.objects.get(id=self.id)
         except Ticket.DoesNotExist:
             old_ticket = None
-        
+
+        # diffusion = False pour tous les nouveau fils
+        if not old_ticket and self.parent:
+            self.diffusion = False
+
         # Override date_close
         if old_ticket:
             if not old_ticket.is_closed and self.is_closed:
                 self.date_close = datetime.datetime.now()
-            if old_ticket.is_closed and not self.is_closed:
+            # PP: On ne peux pas changer date_closed
+            # if old_ticket.is_closed and not self.is_closed
+            if old_ticket.is_closed and self.state_id != settings.TICKET_STATE_CLOSED:
                 self.date_close = None
-        
+
         r = super(Ticket, self).save()
         send_fax_reasons = []
         send_email_reasons = []
+
         if self.is_valid():
-            if old_ticket is None:
+            if self.diffusion and (old_ticket is None):
                 r = u"Création du ticket"
                 send_email_reasons = [ r, ]
                 send_fax_reasons = [ r, ]
-            else:
+            elif self.diffusion:
                 if old_ticket.state and old_ticket.state != self.state:
                     r = u"Status modifié: %s => %s" % (old_ticket.state, self.state)
                     send_email_reasons.append(r)
@@ -326,16 +446,33 @@ class Ticket(models.Model):
                         send_email_reasons.append(u"Ticket re-affecté à %s" % (self.assigned_to,))
                 elif (not old_ticket.assigned_to and self.assigned_to):
                     send_email_reasons.append(u"Ticket affecté à %s" % (self.assigned_to,))
-        
-        if send_email_reasons:
+
+            # Copie des paramêtres du père à reporter sur les fils
+            # (Temporaire ?)
+            if old_ticket and self.child:
+                if old_ticket.priority != self.priority:
+                    self.child.exclude(priority=self.priority).update(priority=self.priority)
+                if old_ticket.client != self.client:
+                    self.child.exclude(client=self.client).update(client=self.client)
+                if old_ticket.contact != self.contact:
+                    self.child.exclude(contact=self.contact).update(contact=self.contact)
+                if old_ticket.telephone != self.telephone:
+                    self.child.exclude(telephone=self.telephone).update(telephone=self.telephone)
+                # PP: TODO Optimiser...
+                for c in self.child.all():
+                    c.save()
+
+        if self.diffusion and send_email_reasons:
             # LC: Do not send the email right now, wait some time before for grouping actions.
             #self.send_email(send_email_reasons)
             self.ticketmailaction_set.create(reasons=send_email_reasons)
-        
-        if send_fax_reasons:
+
+        if self.diffusion and send_fax_reasons:
             self.send_fax(send_fax_reasons)
-        
+
+
         return r
+
     
     def send_fax(self, reasons=[u'Demande spécifique']):
         """ Send a fax for this particuliar ticket """

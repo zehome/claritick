@@ -50,6 +50,30 @@ class NewTicketSmallForm(NewTicketForm):
         model = Ticket
         exclude = ("opened_by", "category", "project", "keywords", "state", "priority", "assigned_to", "validated_by")
 
+class ChildForm(forms.ModelForm):
+    title = df.CharField(widget=forms.TextInput(attrs={'size': '80'}))
+    text = df.CharField(widget=forms.Textarea(attrs={'cols':'90', 'rows': '15'}))
+    keywords = df.CharField(widget=forms.TextInput(attrs={'size': '80'}), required=False)
+    state       = forms.ModelChoiceField(queryset = State.objects.all())
+    category    = forms.ModelChoiceField(queryset = Category.objects.all(), empty_label='', required=False)
+    assigned_to = forms.ModelChoiceField(queryset=ClaritickUser.objects.all(), required=False)
+    project = forms.ModelChoiceField(queryset=Project.objects.all(), required=False)
+
+    class Meta:
+        model = Ticket
+        fields = ("state", "title", "text", "keywords", "assigned_to", "category", "project")
+
+    def __init__(self, *args, **kwargs):
+        if "user" in kwargs:
+            filter_form_for_user(self, kwargs["user"])
+            user = kwargs['user']
+            del kwargs["user"]
+            super(ChildForm, self).__init__(*args, **kwargs)
+            # Read-only si on ne peut pas changer
+            if not user.has_perm("ticket.change_child"):
+                for field in self.fields:
+                    self.fields[field].widget.attrs['disabled'] = True
+
 class SearchTicketForm(df.Form, ModelFormTableMixin):
     title       = df.CharField(widget=df.TextInput(attrs={'size':'64'}), required=False)
     client      = df.ChoiceField(choices=[(x.pk, x) for x in sort_queryset(Client.objects.all())],
@@ -224,3 +248,4 @@ class TicketActionsSmallForm(TicketActionsForm):
             if self.cleaned_data["actions"] not in ("action_close_tickets"):
                 return False
             return super(TicketActionsSmallForm, self).process_actions()
+

@@ -7,7 +7,7 @@ DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
-    ('Laurent Coustet', 'ed@zehome.com'),
+    ('Philippe Pepiot', 'philippe.pepiot@clarisys.fr')
 )
 
 MANAGERS = ADMINS
@@ -19,10 +19,10 @@ MANAGERS = ADMINS
 #~ DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
 #~ DATABASE_PORT = ''             # Set to empty string for default. Not used with sqlite3.
 DATABASE_ENGINE = 'postgresql_psycopg2' # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-DATABASE_NAME = 'claritick'    # Or path to database file if using sqlite3.
-DATABASE_USER = 'claritick'    # Not used with sqlite3.
+DATABASE_NAME = 'claritick_phil'    # Or path to database file if using sqlite3.
+DATABASE_USER = 'phil'    # Not used with sqlite3.
 DATABASE_PASSWORD = ''         # Not used with sqlite3.
-DATABASE_HOST = 'database.local.zehome.com'  # Set to empty string for localhost. Not used with sqlite3.
+DATABASE_HOST = '192.168.1.15'  # Set to empty string for localhost. Not used with sqlite3.
 DATABASE_PORT = '5432'         # Set to empty string for default. Not used with sqlite3.
 
 DEFAULT_FROM_EMAIL = 'claritick@clarisys.fr'
@@ -76,6 +76,7 @@ MIDDLEWARE_CLASSES = (
     'common.exceptionmiddleware.UserBasedExceptionMiddleware',
     'backlinks.middleware.BacklinksMiddleware',
     'django.middleware.gzip.GZipMiddleware',
+    #'debug_toolbar.middleware.DebugToolbarMiddleware',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = ("django.core.context_processors.auth",
@@ -112,7 +113,11 @@ INSTALLED_APPS = (
     'importv1',
     'qsstats',                 # Fun with aggregates ;)
     'backlinks',               # Return to page saved in sessions
+    #'debug_toolbar',
+    'django_extensions',
 )
+
+INTERNAL_IPS='127.0.0.1'
 
 COMMENTS_APP = 'ticket_comments'
 
@@ -131,8 +136,7 @@ TIME_FORMAT = "H\hi"
 # Dojango config
 #DOJANGO_DOJO_PROFILE = "google"
 DOJANGO_DOJO_PROFILE = "local_release"
-DOJANGO_DOJO_VERSION = "1.4.0-dojango-optimized-with-dojo"
-#DOJANGO_DOJO_VERSION = "custom_build_141"
+DOJANGO_DOJO_VERSION = "custom_build_141"
 DOJO_BUILD_JAVA_EXEC = "/usr/bin/java"
 DOJANGO_BASE_MEDIA_ROOT = os.path.join(basepath, 'dojango', 'dojo-media')
 DOJANGO_BASE_MEDIA_URL = "/dojango/dojo-media"
@@ -172,3 +176,5 @@ try:
     from local_settings import *
 except ImportError:
     pass
+
+

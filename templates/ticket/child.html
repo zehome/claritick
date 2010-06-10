@@ -1,0 +1,101 @@
+{% if new_child %}<div id="{{ child_id }}" class="child">
+    <form method="post" action="{% url ajax_new_child ticket.id %}">
+{% else %}<div id="child{{ child.id }}" class="child">
+    <form id="form_child{{ child.id }}" method="post" action="{% url ajax_modify_child child.id %}">
+{% endif %}
+{% csrf_token %}
+        <fieldset class="block form">
+        {% if new_child %}
+            <legend>Nouveau Ticket fils</legend>
+        {% else %}
+            <legend><img id="form_summary_child{{ child.id }}" src="/media/images/{% if child.state_id == 4 %}plus.png{% else %}minus.png{% endif %}" alt="plus" class="summary" onClick="togglePlusMinus('{{ child.id }}');"/>Ticket {{ child.id }}: {{ child.title }}, ouvert par {{ child.opened_by }} le {{ child.date_open|date:"d/m/Y à H:i" }}</legend>
+            <div id="content_child{{ child.id }}" style="display: {% if child.state_id == 4 %}none{% else %}block{% endif %}">
+        {% endif %}
+            <table>
+                <tr>
+                    <th class="large">Catégorie</th>
+                    <td class="large right">{{ cf.category }}</td>
+                    <th class="large">Projet</th>
+                    <td class="large right">{{ cf.project }}</td>
+                    <th class="large">État</th>
+                    <td class="large right">{{ cf.state }}</td>
+                    <th class="large">Assigné à</th>
+                    <td class="large right">{{ cf.assigned_to }}</td>
+                </tr>
+            </table>
+            <hr />
+            <table>
+                <tr>
+                    <th class="large">{{ cf.title.label_tag }}</th>
+                    <td class="large right">{{ cf.title }}</td>
+                    <td class="large right">{{ cf.title.errors }}</td>
+                </tr>
+                <tr>
+                    <th></th>
+                    <td class="right">{{ cf.text }}</td>
+                    <td class="right">{{ cf.text.errors }}</td>
+                </tr>
+                <tr>
+                    <th class="large">{{ cf.keywords.label_tag }}</th>
+                    <td class="right">{{ cf.keywords }}</td>
+                </tr>
+            </table>
+        {% if not new_child %}
+        <hr />
+        {% load comments %}
+        {% get_comment_list for child as comment_list %}
+        {% if comment_list %}
+        <table class="comment_table">
+          <thead>
+            <tr>
+                <th style="width:48%">Interne</th>
+                <th style="width:48%">Diffusé au client</th>
+            </tr>
+          </thead>
+          <tbody>
+              <tr>
+                <td>
+                    {% for comment in comment_list %}{% if comment.internal %}<div class="comment">
+                        <h3><b>{{ comment.user.first_name }} {{ comment.user.last_name }}</b> ({{ comment.user_name }})&nbsp;<i>Le {{ comment.submit_date|date:'d/m/Y à H\hi' }}</i></h3>
+                        <pre class="{% cycle 'row1' 'row2' %}">{{ comment.comment|wordwrap:80 }}</pre>
+                    </div>{% endif %}{% endfor %}
+                </td>
+                <td>
+                    {% for comment in comment_list %}{% if not comment.internal %}<div class="comment">
+                        <h3><b>{{ comment.user.first_name }} {{ comment.user.last_name }}</b> ({{ comment.user_name }})&nbsp;<i>Le {{ comment.submit_date|date:'d/m/Y à H\hi' }}</i></h3>
+                        <pre class="{% cycle 'row1' 'row2' %}">{{ comment.comment|wordwrap:80 }}</pre>
+                    </div>{% endif %}{% endfor %}
+                </td>
+              </tr>
+            </tbody>
+        </table>
+        {% else %}
+        <p>Aucune réponse.</p>
+        {% endif %}
+        {% if perms.ticket.change_child %}
+        {% block comment_form %}
+            {{ cfc.errors }}
+            <div style="display: none">
+            {{ cfc.timestamp }}
+            {{ cfc.object_pk }}
+            {{ cfc.security_hash }}
+            {{ cfc.content_type }}
+            <input type="hidden" name="email" value="{% if request.user.email %}{{ request.user.email }}{% else %}noreply@invalid.com{% endif %}" />
+            <input type="hidden" name="name" value="{% if request.user.username %}{{ request.user.username }}{% else %}anonyme{% endif %}" />
+            </div>
+            <table>
+                <tr>
+                    <td>{{ cfc.non_field_errors }}</td>
+                </tr>
+                <tr>
+                    <td>Nouvelle réponse: {{ cfc.comment }}</td>
+                </tr>
+            </table>
+            <p>{{ cfc.internal }} Commentaire <b>interne</b> (Si cette case est cochée, cette réponse ne sera pas transmise au client final)</p>
+        {% endblock %}
+        {% endif %}
+        {% endif %}
+        {% if not new_child %}</div><!-- content_child{{ child.id }} -->{% endif %}
+        </fieldset>
+    </form>
+</div>
