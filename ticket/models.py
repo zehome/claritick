@@ -363,15 +363,17 @@ class Ticket(models.Model):
         comment = kwargs["comment"]
         if comment.content_type.model != "ticket":
             return
-        
+
+        # PP: TODO Ici nb_comment n'est updaté qu'avec
+        # un parent, pourquoi ?
         ticket = comment.content_object
         ticket.last_modification=datetime.datetime.now()
         ticket.nb_comments = django.contrib.comments.get_model().objects.filter(content_type__model="ticket", object_pk=ticket.pk).count()
         ticket.save()
         
         # Send email
-        if ((not comment.internal) or 
-            (comment.internal and getattr(settings, "EMAIL_INTERNAL_COMMENTS", True))):
+        if ticket.diffusion and (((not comment.internal) or 
+            (comment.internal and getattr(settings, "EMAIL_INTERNAL_COMMENTS", True)))):
             send_email_reasons = [ u"Nouvelle réponse%s" % (comment.internal and " (Diffusion interne seulement)" or ''), ]
             #ticket.send_email(reasons=send_email_reasons)
             ticket.ticketmailaction_set.create(reasons=send_email_reasons)
