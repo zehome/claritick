@@ -1,3 +1,18 @@
+Bugs:
+=====
+* Style css "ajout de fils" "Cat�gogie Projet Etat Assign� a" pas align� correctement
+* Bug style css �cran login (pas de middle!)
+* Ajout d'un ticket fils, puis validation du ticket parent = perte du fils
+* Non reprise du "assigned to" lors de la cr�ation du ticket fils
+* Mauvaise mise � jour "Projet", "Etat", "Cat�gorie" lors de modification du ticket parent
+* Enregistrement fils impossible "assigned to" non transmi
+* Fils perdu si enregistrement du parent
+* Pr�sentation ticket fils a revoir: 1 seule case, visiblit� de l'arbre
+* Pr�sentation ticket fils: pas de title au milieu
+* Mauvais comptage du nombre de commentaire des ticket fils
+* Num�ros de ticket incorrects pour les ticket fils (num�ro de s�quence pas bon!) 
+* Affichage du titre du ticket dans l'interface de modification: mentionner l'�tat ! (Icone pr�f�rable)
+
 Liste des tickets / Droits utilisateurs
 =======================================
 
@@ -23,83 +38,3 @@ Tickets / Vues
 ==============
 
 * Ajouter nom court / description
-
-COMPTE RENDU DES TESTS PAR GHISLAIN
-===================================
-
-Bug
----
-
-J'ai créé un ticket (le 54) assigné à sebastient (Lorient) et au projet Claritick. On ne trouve jamais ce ticket en recherche (peut être parce que le projet claritick est associé au client Clarisys...)
-
-Dans clariadmin, on ne peut pas afficher le menu
-
-Quand on est en création de nouvelle vue, la liste des projets ne se met à jour que si on relance le serveur
-
-Quand dans admin on va voir un "ticketmailtrace", dans le champ "email", on voit "<django.core.mail.message.EmailMessage object at 0x8bc026c>" au lieu du mail
-
-utilisateur gl : j'ai le bouton "reporting" mais quand je clique dessus il me demande mon login alors que j'ai bien la permission "ticket | Ticket | Consulter les rapports"
-
-L'utilisateur gl à le choix "création machine" dans le menu alors qu'il n'a pas le droit de créer de machine... (il a "accès clariadmin", c'est peut etre pour ça)
-
-Questionnement, bug possible
-----------------------------
-
-On peut associer le même compte google à deux utilisateurs, est-ce que ça risque de poser problème ?
-=> LC: Oui, TODO Confirm�
-
-je vois que les nouveaux tickets qu'on crée ont des numéros "petits" (38 par exemple) alors que les tickets importés ont des gros numéros, il risque pas d'y avoir un conflit à un moment ?
-    * -> faut réinitialiser la séquence des numéros de ticket
-
-j'ai configuré mon google account et quand je vais sur agenda, il me demande mon email/mot de passe.... est-ce que c'est parce que j'étais déjà identifié sur google avec un autre compte ?
-=> LC: OUI, c'est pas possible
-
-A quoi sert la couleur d'un projet ?
-=> LC: A rien
-
-Fonctionnel
------------
-
-un utilisateur non admin ne peut pas changer son mot de passe
-=> LC: TODO
-
-Dans création de google account ça serait bien que le mot de passe soit masqué
-=> LC: Bof
-
-Si je crée une vue avec un nom à rallonge par exemple : "Améliorations Claritick en cours (assignées à seb)", ben dans le menu c'est vraiment moche et du coup si j'en crée une autre, les noms se chevauchent
-
-Dans l'admin, on n'a plus le breadcrumb, c'est chiant pour naviguer
-=> LC: TODO
-
-On ne peut pas modifier un ticket et poster un commentaire en même temps. C'est embêtant parce que je peux décider par exemple de modifier l'affectation et de taper un commentaire et si jamais je fais valider sur le commentaire, je perd mon affectation (encore c'est pas trop grave) mais si par malheur j'enregistre le ticket, je perd tout ce que j'avais saisi dans le commentaire
-
-Dans certaines pages de l'admin, on n'a pas un dojango filtering select pour le choix du client : 
-    * clariadmin/host
-    * common/claritickuser
-    * common/client
-
-Dans clariadmin, le filtering select de "site" ne permet pas de faire un "contains", seulement un "startswith"
-
-L'utilisateur gl à accès à clariadmin, il peut recherche des machines... mais quand il clique sur une machine, il ne peut pas l'éditer (normal puisqu'il n'a pas les droits). Alors il faudrait que le lien n'y soit pas et aussi peut être afficher plus d'infos sur la liste... Je pense par exemple à un utilisateur comme Marie qui n'a pas de droits sur clariadmin mais à qui ça peut servir de trouver l'ip d'un serveur MCA par exemple pour s'y connecter et faire des screenshots... Bon l'IP, elle apparaît elle donc c'est un mauvais exemple mais tu vois l'idée... (Voir ce qu'on doit afficher pour un utilisateur qui n'a accès qu'à ça).
-
-Quand on a commencé à remplir le formulaire de recherche de ticket et qu'on passe sur création d'une nouvelle vue, ça serait cool de reprendre ce qui a été saisi
-
-dans la config de l'état d'un ticket, on peut lui assigner un poids. Est-ce que ça serait intéressant de faire pareil pour d'autres "constantes" du même genre (priorités en particulier) ? et de lui associer une couleur ?
-
-Esthétique
-----------
-
-Dans admin si on s'en sert pas, faut virer l'appli "sites" de django
-
-dans "mes infos", on a l'impression qu'il faut renseigner les infos de l'utilisateur alors que c'est celle du client associé, voir comment trouver un terme plus clair
-
-si accès direct à un ticket inexistant, on a une 404, faudrait une zolie page gentille
-
-Faudrait que dans le formulaire de création de ticket on sache si on est en mode réduit ou non... A discuter
-
-Dans reporting, on peut trier par état mais faudrait que le tri ne soit pas alphabétique mais "numérique", on fonction de l'état (les nouveaux puis les actifs puis les en attente et enfin les fermés)
-
-Dans admin/common, y'a deux s à Coordonnéess
-
-Dans le reporting, quand on choisit un group by, ça rajoute un champ dans le get de l'url qui s'appelle 'gruop_by' :-))
-
