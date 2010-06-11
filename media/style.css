@@ -732,7 +732,7 @@ ol#pagination-digg {
     background-color: #F2F0DC;
 }
 
-.childs legend {
+#contenu .child legend {
     font-size: 1em;
     text-align: left;
 }

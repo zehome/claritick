@@ -155,12 +155,35 @@
             <td>{{ comment_form.non_field_errors }}</td>
         </tr>
         <tr>
-            <td>Nouvelle réponse: {{ comment_form.comment }}</td>
+            <td>Nouvelle réponse: <textarea id="parent_comment" rows="10" cols="40" name="comment"></textarea></td>
         </tr>
     </table>
-    <p>{{ comment_form.internal }} Commentaire <b>interne</b> (Si cette case est cochée, cette réponse ne sera pas transmise au client final)</p>
+    <div dojoType="dijit.Tooltip" connectId="parent_comment" position="after" id="dijit_parent_comment">
+        <div style="display: none;">
+            <img src="/media/images/oxygen/comment_public.png" alt="commentaire_public" />
+            <p>Attention, la réponse sera transmise au client final</p>
+        </div>
+        <div>
+            <img src="/media/images/oxygen/comment_internal.png" alt="commentaire_interne" />
+            <p>La réponse sera conservée en interne</p>
+        </div>
+    </div>
+    <p><input type="checkbox" checked="checked" name="internal" onChange="toggleComment(this, 'dijit_parent_comment');" /> Commentaire <b>interne</b> (Si cette case est cochée, cette réponse ne sera pas transmise au client final)</p>
 {% endblock %}
 </fieldset>
+
+<script type="text/javascript">
+    function toggleComment(id, did) {
+        if (id.checked) {
+            dojo.byId(did).children[0].style.display = 'none';
+            dojo.byId(did).children[1].style.display = 'block';
+        }
+        else {
+            dojo.byId(did).children[0].style.display = 'block';
+            dojo.byId(did).children[1].style.display = 'none';
+        }
+    }
+</script>
 
 <fieldset class="block form">
   <legend>Planification</legend>
@@ -257,11 +280,15 @@
             dojo.xhrPost({form: f,
                     headers: {"X-Claritick-Tid": last_focused.id},
                     load: function (d, r) {
+                    var dijit_id;
                     if (!(ticket_id = r.xhr.getResponseHeader("X-Claritick-Tid")))
                         ticket_id = last_focused.id;
                     dojo.place(d, last_focused, 'replace');
                     last_focused = dojo.byId(ticket_id);
                     addTofl(last_focused.id);
+                    if ((dijit_id = dijit.byId('dijit_'+last_focused.id+'_comment')))
+                        dijit_id.destroyRecursive();
+                    dojo.parser.parse(last_focused);
                     }});
         }
     }

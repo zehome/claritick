@@ -86,7 +86,7 @@
           <span id="status">[ IDLE ]</span>
           {% if user.is_authenticated %}
           <p style="padding: 0; margin: 0;">Utilisateur: {{ user.username }}<br />
-            <a class="bouton" href="/accounts/logout"><img src="/media/images/oxygen/disconnect.png" />Déconnexion</a>
+            <a class="bouton" href="/accounts/logout"><img src="/media/images/oxygen/disconnect.png" alt="disconnect" />Déconnexion</a>
           </p>
           {% endif %}
           Aller au ticket # <input type="text" id="id_num_ticket" size="5" /> <button dojoType="dijit.form.Button" id="id_go_ticket">Go</button>

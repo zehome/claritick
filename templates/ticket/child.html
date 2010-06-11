@@ -88,10 +88,20 @@
                     <td>{{ cfc.non_field_errors }}</td>
                 </tr>
                 <tr>
-                    <td>Nouvelle réponse: {{ cfc.comment }}</td>
+                    <td>Nouvelle réponse: <textarea id="child{{ child.id }}_comment" rows="10" cols="40" name="comment"></textarea></td>
                 </tr>
             </table>
-            <p>{{ cfc.internal }} Commentaire <b>interne</b> (Si cette case est cochée, cette réponse ne sera pas transmise au client final)</p>
+            <div dojoType="dijit.Tooltip" connectId="child{{ child.id }}_comment" position="after" id="dijit_child{{ child.id }}_comment">
+                <div style="display: none;">
+                    <img src="/media/images/oxygen/comment_public.png" alt="commentaire_public" />
+                    <p>Attention, la réponse sera transmise au client final</p>
+                </div>
+                <div>
+                    <img src="/media/images/oxygen/comment_internal.png" alt="commentaire_interne" />
+                    <p>La réponse sera conservée en interne</p>
+                </div>
+            </div>
+            <p><input type="checkbox" checked="checked" name="internal" onChange="toggleComment(this, 'dijit_child{{ child.id }}_comment');" /> Commentaire <b>interne</b> (Si cette case est cochée, cette réponse ne sera pas transmise au client final)</p>
         {% endblock %}
         {% endif %}
         {% endif %}
