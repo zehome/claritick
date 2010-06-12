@@ -162,7 +162,7 @@ class Ticket(models.Model):
             sort_order = int(request.GET.get('sort_order', 1))
             return self.order_by('%s%s' % (sort_order and '-' or '', sort))
 
-        def filter_ticket_by_user(self, user):
+        def filter_ticket_by_user(self, user, all = False):
             """
                 Filtre un queryset de ticket en fonction des clients qu'a le droit de voir l'utilisateur.
             """
@@ -222,7 +222,7 @@ class Ticket(models.Model):
                 query = models.Q()
                 for k,v in filter.children:
                     query |= models.Q(**{'child__%s'%k: v})
-                qs = qs.filter(filter | \
+                    qs = qs.filter(filter | \
                         (models.Q(child__isnull=False) & query))
             else:
                 for k,v in filter.items():
@@ -428,11 +428,11 @@ class Ticket(models.Model):
         send_email_reasons = []
 
         if self.is_valid():
-            if self.diffusion and (old_ticket is None):
+            if old_ticket is None:
                 r = u"Création du ticket"
                 send_email_reasons = [ r, ]
                 send_fax_reasons = [ r, ]
-            elif self.diffusion:
+            else:
                 if old_ticket.state and old_ticket.state != self.state:
                     r = u"Status modifié: %s => %s" % (old_ticket.state, self.state)
                     send_email_reasons.append(r)
@@ -464,18 +464,22 @@ class Ticket(models.Model):
                 for c in self.child.all():
                     c.save()
 
-        if self.diffusion and send_email_reasons:
-            # LC: Do not send the email right now, wait some time before for grouping actions.
-            #self.send_email(send_email_reasons)
-            self.ticketmailaction_set.create(reasons=send_email_reasons)
+            # Si on change le paramètre diffusion de "True" vers "False",
+            # On ne veut pas envoyer les emails en file d'attente!
+            if old_ticket.diffusion and not self.diffusion:
+                self.ticketmailtrace_set.delete()
 
-        if self.diffusion and send_fax_reasons:
-            self.send_fax(send_fax_reasons)
-
+        if self.diffusion:
+            if send_email_reasons:
+                # LC: Do not send the email right now, wait some time before for grouping actions.
+                #self.send_email(send_email_reasons)
+                self.ticketmailaction_set.create(reasons=send_email_reasons)
+            if send_fax_reasons:
+                self.send_fax(send_fax_reasons)
 
         return r
 
-    
+
     def send_fax(self, reasons=[u'Demande spécifique']):
         """ Send a fax for this particuliar ticket """
         if self.client is not None:
