@@ -405,17 +405,14 @@ def ajax_new_child(request, ticket_id):
     form = ChildForm(request.POST, user=request.user, auto_id="id_child_%s")
     if form.is_valid():
         child = copy_model_instance(ticket)
-        child.state = form.cleaned_data['state']
-        child.assigned_to = form.cleaned_data['assigned_to']
-        child.title = form.cleaned_data['title']
-        child.text = form.cleaned_data['text']
-        child.validated_by = request.user
-        child.keywords = form.cleaned_data['keywords']
-        child.category = form.cleaned_data['category']
+        
+        # Set values given from the form
+        for f in ('state', 'assigned_to', 'title', 
+                  'text', 'keywords', 'category', 'project'):
+            setattr(child, f, f.cleaned_data.get(f))
         child.opened_by = request.user
         child.date_open = datetime.datetime.now()
         child.parent = ticket
-        child.project = form.cleaned_data['project']
         child.save()
         form = ChildForm(instance=child, user=request.user, auto_id="id_child"+str(child.id)+"_%s")
         form_comment = django.contrib.comments.get_form()(child)
@@ -423,6 +420,8 @@ def ajax_new_child(request, ticket_id):
                 {"child": child, "cf": form, "cfc": form_comment },
                 context_instance=RequestContext(request))
         ret["X-Claritick-Tid"] = "child%s" % (child.id)
+        # LC: WTF ?
+        # Use constants and verify the meaning of 201 in the HTTP/1.1 RFC
         ret.status_code = 201 # created
     else:
         ret =  render_to_response("ticket/child.html",
@@ -456,6 +455,8 @@ def ajax_modify_child(request, ticket_id):
         form.save()
         ret = render_to_response("ticket/child.html", {"child": ticket, "cf": form, "cfc": form_comment },
                 context_instance=RequestContext(request))
+        # LC: WTF ?
+        # Use constants and verify the meaning of 201 in the HTTP/1.1 RFC
         ret.status_code = 201
     else:
         ret = render_to_response("ticket/child.html", {"child": ticket, "cf": form, "cfc": form_comment },
@@ -516,7 +517,7 @@ def ajax_load_telephone(request):
         if coord and coord.telephone:
             coord_supp = ''
             if coord.postalcode or coord.city:
-                coord_supp += ' (Labo '
+                coord_supp += ' (Client '
                 if coord.postalcode:
                     coord_supp += str(coord.postalcode)
                 if coord.city:
@@ -549,8 +550,7 @@ def ajax_graph_permonth(request):
     ret = {}
     
     today = datetime.datetime.now()
-    qs = Ticket.objects.all()
-    qs = qs.filter_ticket_by_user(request.user)
+    qs = Ticket.objects.all().filter_ticket_by_user(request.user)
     if not qs:
         return ret
     
