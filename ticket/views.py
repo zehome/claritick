@@ -409,7 +409,7 @@ def ajax_new_child(request, ticket_id):
         # Set values given from the form
         for f in ('state', 'assigned_to', 'title', 
                   'text', 'keywords', 'category', 'project'):
-            setattr(child, f, f.cleaned_data.get(f))
+            setattr(child, f, form.cleaned_data.get(f))
         child.opened_by = request.user
         child.date_open = datetime.datetime.now()
         child.parent = ticket
@@ -446,13 +446,12 @@ def ajax_modify_child(request, ticket_id):
     form = ChildForm(request.POST, user=request.user, instance=ticket, auto_id="id_child_%s");
     form_comment = django.contrib.comments.get_form()(ticket, data=request.POST)
 
-    if form_comment.is_valid():
-        post_comment(request)
-
-    form_comment = django.contrib.comments.get_form()(ticket)
-
     if form.is_valid():
         form.save()
+
+        if form_comment.is_valid():
+            post_comment(request)
+
         ret = render_to_response("ticket/child.html", {"child": ticket, "cf": form, "cfc": form_comment },
                 context_instance=RequestContext(request))
         # LC: WTF ?

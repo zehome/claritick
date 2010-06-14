@@ -9,7 +9,6 @@ Bugs:
 * Fils perdu si enregistrement du parent
 * Présentation ticket fils a revoir: 1 seule case, visiblité de l'arbre
 * Présentation ticket fils: pas de title au milieu
-* Mauvais comptage du nombre de commentaire des ticket fils
 * Numéros de ticket incorrects pour les ticket fils (numéro de séquence pas bon!) 
 * Affichage du titre du ticket dans l'interface de modification: mentionner l'état ! (Icone préférable)
 

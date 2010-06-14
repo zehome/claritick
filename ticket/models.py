@@ -162,7 +162,7 @@ class Ticket(models.Model):
             sort_order = int(request.GET.get('sort_order', 1))
             return self.order_by('%s%s' % (sort_order and '-' or '', sort))
 
-        def filter_ticket_by_user(self, user, all = False):
+        def filter_ticket_by_user(self, user):
             """
                 Filtre un queryset de ticket en fonction des clients qu'a le droit de voir l'utilisateur.
             """
@@ -222,8 +222,8 @@ class Ticket(models.Model):
                 query = models.Q()
                 for k,v in filter.children:
                     query |= models.Q(**{'child__%s'%k: v})
-                    qs = qs.filter(filter | \
-                        (models.Q(child__isnull=False) & query))
+                qs = qs.filter(filter | \
+                    (models.Q(child__isnull=False) & query))
             else:
                 for k,v in filter.items():
                     qs = qs.filter(models.Q(**{k: v}) | \
@@ -364,8 +364,6 @@ class Ticket(models.Model):
         if comment.content_type.model != "ticket":
             return
 
-        # PP: TODO Ici nb_comment n'est updaté qu'avec
-        # un parent, pourquoi ?
         ticket = comment.content_object
         ticket.last_modification=datetime.datetime.now()
         ticket.nb_comments = django.contrib.comments.get_model().objects.filter(content_type__model="ticket", object_pk=ticket.pk).count()
@@ -466,7 +464,7 @@ class Ticket(models.Model):
 
             # Si on change le paramètre diffusion de "True" vers "False",
             # On ne veut pas envoyer les emails en file d'attente!
-            if old_ticket.diffusion and not self.diffusion:
+            if old_ticket and old_ticket.diffusion and not self.diffusion:
                 self.ticketmailtrace_set.delete()
 
         if self.diffusion:
