@@ -14,6 +14,7 @@ from django.template import RequestContext
 import claritick.ticket.urls
 import claritick.common.urls
 import claritick.clariadmin.urls
+import claritick.developpements.urls
 import claritick.ws.urls
 
 # Init code
@@ -50,6 +51,7 @@ urlpatterns = patterns('',
     (r'^ticket/', include(claritick.ticket.urls)),
     (r'^common/', include(claritick.common.urls)),
     (r'^clariadmin/', include(claritick.clariadmin.urls)),
+    (r'^developpements/', include(claritick.developpements.urls)),
     (r'^agenda/$', agenda),
     (r'^dojango/', include('dojango.urls')), # Dojango requires
     

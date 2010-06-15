@@ -109,6 +109,7 @@ INSTALLED_APPS = (
     'ticket',
     'ticket_comments',
     'clariadmin',              # Clariadmin
+    'developpements',          # Suivi developpements MCA3
     'importv1',
     'qsstats',                 # Fun with aggregates ;)
     'backlinks',               # Return to page saved in sessions

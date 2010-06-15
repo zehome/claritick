@@ -1,0 +1,57 @@
+<script type="text/javascript" lang="javascript">
+    dojo.require("dijit.MenuBar");
+    dojo.require("dijit.PopupMenuBarItem");
+    dojo.require("dijit.Menu");
+    dojo.require("dijit.MenuItem");
+    dojo.require("dijit.PopupMenuItem");
+</script>
+<div dojoType="dijit.MenuBar" id="menuPrincipal">
+    <div dojoType="dijit.PopupMenuBarItem">
+        <span>
+            SuiviDev
+        </span>
+        <div dojoType="dijit.Menu" id="suividevMenu">
+            <div dojoType="dijit.MenuItem" onClick="window.location = '{% url developpements.views.home %}';">
+                Accueil SuiviDev
+            </div>
+            <div dojoType="dijit.MenuItem" onClick="window.location = '/';">
+                Accueil Racine
+            </div>
+            <div dojoType="dijit.MenuItem" onClick="window.location = '{% url django.contrib.auth.views.logout %}';">
+                Logout
+            </div>
+        </div>
+    </div>
+    <div dojoType="dijit.PopupMenuBarItem">
+        <span>
+            Consultation
+        </span>
+        <div dojoType="dijit.Menu" id="fileMenu">
+            <div dojoType="dijit.MenuItem" onClick="window.location = '{% url developpements.views.liste %}';">
+                Liste des développements
+            </div>
+            <div dojoType="dijit.MenuItem" onClick="window.location = '{% url developpements.views.versions %}';">
+                Versions
+            </div>
+        </div>
+    </div>
+    <div dojoType="dijit.PopupMenuBarItem">
+        <span>
+            Modification
+        </span>
+        <div dojoType="dijit.Menu" id="editMenu">
+            <div dojoType="dijit.MenuItem" onClick="window.location = '{% url admin:index %}';">
+                Admin
+            </div>
+            <div dojoType="dijit.MenuItem" onClick="window.location = '{% url admin:developpements_developpement_add %}';">
+                Ajouter un développement
+            </div>
+            <div dojoType="dijit.MenuItem" onClick="window.location = '{% url admin:developpements_version_add %}';">
+                Ajouter une version
+            </div>
+            <div dojoType="dijit.MenuItem" onClick="window.location = '{% url admin:developpements_groupedev_add %}';">
+                Ajouter un groupe de développement
+            </div>
+        </div>
+    </div>
+</div>

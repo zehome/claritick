@@ -1,0 +1,59 @@
+body
+	{
+	margin: 0px;
+	font-size: 12px;
+	}
+
+.done
+	{
+	border-color: green;
+	}
+
+table
+	{
+	width: 100%;
+	border-collapse: collapse;
+	}
+
+table td
+	{
+	border: 1px solid black;
+	}
+
+table th
+	{
+	border: 1px solid black;
+	}
+
+.align-center
+	{
+	text-align: center;
+	}
+	
+.align-right
+	{
+	text-align: right;
+	}
+
+div.information
+	{
+	margin: 30px;
+	padding: 30px;
+	background-color: lightcyan;
+	font-size: 1.3em;
+	}
+
+tr:hover
+	{
+	background-color: Beige;
+	}
+
+th
+    {
+    text-align: center;
+    }
+
+td
+    {
+    padding: 1px;
+    }

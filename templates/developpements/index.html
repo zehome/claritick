@@ -1,0 +1,21 @@
+{% extends "developpements/base.html" %}
+
+{% block content %}
+    <div class="information">
+        <h1>Utilisez le menu pour naviguer</h1>
+        <h2>Consultation</h2>
+        <p>Les entêtes de colonnes abbrégés sont documentés par un tooltip.</p>
+        <h3>Liste des développements</h3>
+        <p>Depuis la consultation des développements, un clic-droit sur un développement permet de le modifier directement, le même raccourci est disponible pour les groupes de développements.</p>
+        <p>La description complète d'un développement est accessible en tooltip. Idem pour un groupe de développement</p>
+        <p>Une date de sortie prévisible est calculée pour chaque développement en fonction des développements "plus importants", situés au dessus de celui-ci.</p>
+        <p>Une icône d'alerte apparaît si la date de sortie prévisible dépasse une date d'engagement ou une date de sortie de version pour laquelle ce développement est requis.</p>
+        <h3>Liste des versions</h3>
+        <p>Dans la consultation des versions, pour chaque version est calculée une date de sortie "retardée" permettant d'inclure toutes les fonctionnalités requises dans cette version.</p>
+        <p>Si une version est déjà sortie, un clic sur l'icône correspondant permet d'avoir la liste des fonctionnalités incluse dans cette version.</p>
+        <p>Dans le cas contraire, un clic sur le numéro de version affiche les développements qui ont été explicitements notés comme étant requis pour cette version.
+        Un clic sur la Date de Sortie Prévue affiche la liste des fonctionnalités qui seront réellement incluses dans la version si on la sort à cette date là.
+        Et enfin, un clic sur la Date de Sortie Calculée (ou Complète) affiche la liste des fonctionnalités supplémentaires incluses si la date de sortie est retardée.</p>
+        <h2>Modification : accès à l'administration et à la création de nouveaux éléments</h2>
+    </div>
+{% endblock %}
