@@ -62,10 +62,11 @@ def liste(request):
             dispo_version = dispo_version[0]
             dev.deja_dispo = "%s" % (dispo_version,)
             dev.date_sortie = dispo_version.date_sortie
-        if dev.date_sortie and dev.engagement and dev.date_sortie > dev.engagement:
-            dev.alerte = u"Date de sortie prévue dépasse la date d'engagement"
-        if dev.version_requise and dev.version_requise.date_sortie and dev.date_sortie > dev.version_requise.date_sortie:
-            dev.alerte = u"Date de sortie prévue dépasse la date de sortie de la version"
+        if not dev.done:
+            if dev.date_sortie and dev.engagement and dev.date_sortie > dev.engagement:
+                dev.alerte = u"Date de sortie prévue dépasse la date d'engagement"
+            if dev.version_requise and dev.version_requise.date_sortie and dev.date_sortie > dev.version_requise.date_sortie:
+                dev.alerte = u"Date de sortie prévue dépasse la date de sortie de la version"
     
     request.session["developpements"] = developpements
         
