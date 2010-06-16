@@ -6,9 +6,7 @@
 {% block image %}<img src="/media/images/oxygen/folder-open.png" />{% endblock %}
 
 {% block content %}
-
 {{ form.non_field_errors }}
-
 <form enctype="multipart/form-data" action="{% url ticket_modify ticket.id %}" method="post">
 <div id="parent">
 {% csrf_token %}
@@ -155,8 +153,8 @@
 </fieldset>
 <hr />
 
-</div><!-- parent -->
 {% endblock content_ticket %}
+</div><!-- parent -->
 
 <script type="text/javascript">
     var last_focused = dojo.byId("parent");

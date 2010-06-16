@@ -376,7 +376,7 @@ def modify(request, ticket_id):
 
         post_comment_child(request, queryset=child)
 
-        if form.is_valid():
+        if form.is_valid() and child_formset.is_valid():
             # Si l'utilisateur peut assigner ce ticket à l'utilisateur passé en POST
             if not request.user.is_superuser and form.cleaned_data["assigned_to"] and form.cleaned_data["assigned_to"]\
                     not in ClaritickUser.objects.get(pk=request.user.pk).get_child_users():
