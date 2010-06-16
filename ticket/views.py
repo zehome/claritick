@@ -349,32 +349,40 @@ def modify(request, ticket_id):
             ticket.validated_by = request.user
             ticket.save()
 
-        child_formset = ChildFormSet(request.POST, queryset=child)
         form = TicketForm(request.POST, request.FILES, instance=ticket, user=request.user)
-        # TODO comments
         comment_form = django.contrib.comments.get_form()(ticket) # Initialization vide
 
-        if form.is_valid() and child_formset.is_valid():
+        # Il faut valider les fils en premier pour ne pas se faire jetter si on ferme tout
+        child_formset = ChildFormSet(request.POST, queryset=child)
+
+        # Save existing childs
+        if request.user.has_perm('ticket.change_child'):
+            for f in child_formset.initial_forms:
+                if f.is_valid():
+                    f.save()
+
+        # Add new childs
+        if request.user.has_perm('ticket.add_child'):
+            for f in child_formset.extra_forms:
+                if f.is_valid():
+                    new_child = copy_model_instance(ticket)
+                    for a in ('state', 'assigned_to', 'title',
+                            'text', 'keywords', 'category', 'project'):
+                        setattr(new_child, a, f.cleaned_data.get(a))
+                    new_child.opened_by = request.user
+                    new_child.date_open = datetime.datetime.now()
+                    new_child.parent = ticket
+                    new_child.save()
+
+        post_comment_child(request, queryset=child)
+
+        if form.is_valid():
             # Si l'utilisateur peut assigner ce ticket à l'utilisateur passé en POST
             if not request.user.is_superuser and form.cleaned_data["assigned_to"] and form.cleaned_data["assigned_to"]\
                     not in ClaritickUser.objects.get(pk=request.user.pk).get_child_users():
                 raise PermissionDenied()
             form.save()
 
-            # save existing childs
-            child_formset.save_existing_objects()
-            # create new childs
-            for cf in child_formset.extra_forms:
-                ch = copy_model_instance(ticket)
-                for a in ('state', 'assigned_to', 'title',
-                        'text', 'keywords', 'category', 'project'):
-                    setattr(ch, a, cf.cleaned_data.get(a))
-                ch.opened_by = request.user
-                ch.date_open = datetime.datetime.now()
-                ch.parent = ticket
-                ch.save()
-
-            post_comment_child(request, queryset=child)
 
             file = form.cleaned_data["file"]
             if file:
