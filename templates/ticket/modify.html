@@ -9,8 +9,8 @@
 
 {{ form.non_field_errors }}
 
+<form enctype="multipart/form-data" action="{% url ticket_modify ticket.id %}" method="post">
 <div id="parent">
-<form enctype="multipart/form-data" action="{% url ticket_modify ticket.id %}" method="post" id="form_ticket_modify">
 {% csrf_token %}
 {% block content_ticket %}
 <fieldset class="inline form">
@@ -106,71 +106,12 @@
   </table>
 </fieldset>
 
+{% with ticket as ticket_to_comment %}{% with comment_form as form_to_comment %}
 <fieldset class="block form" style="padding: 0;">
   <legend>Réponses</legend>
-{% load comments %}
-{% get_comment_list for ticket as comment_list %}
-
-{% if comment_list %}
-<table class="comment_table">
-  <thead>
-    <tr>
-        <th style="width:48%">Interne</th>
-        <th style="width:48%">Diffusé au client</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td>
-            {% for comment in comment_list %}{% if comment.internal %}<div class="comment">
-                <h3><b>{{ comment.user.first_name }} {{ comment.user.last_name }}</b> ({{ comment.user_name }})&nbsp;<i>Le {{ comment.submit_date|date:'d/m/Y à H\hi' }}</i></h3>
-                <pre class="{% cycle 'row1' 'row2' %}">{{ comment.comment|wordwrap:80 }}</pre>
-            </div>{% endif %}{% endfor %}
-        </td>
-        <td>
-            {% for comment in comment_list %}{% if not comment.internal %}<div class="comment">
-                <h3><b>{{ comment.user.first_name }} {{ comment.user.last_name }}</b> ({{ comment.user_name }})&nbsp;<i>Le {{ comment.submit_date|date:'d/m/Y à H\hi' }}</i></h3>
-                <pre class="{% cycle 'row1' 'row2' %}">{{ comment.comment|wordwrap:80 }}</pre>
-            </div>{% endif %}{% endfor %}
-        </td>
-      </tr>
-    </tbody>
-</table>
-{% else %}
-<p>Aucune réponse.</p>
-{% endif %}
-
-{% block comment_form %}
-    {{ comment_form.errors }}
-    <div style="display: none">
-    {{ comment_form.timestamp }}
-    {{ comment_form.object_pk }}
-    {{ comment_form.security_hash }}
-    {{ comment_form.content_type }}
-    <input type="hidden" name="email" value="{% if request.user.email %}{{ request.user.email }}{% else %}noreply@invalid.com{% endif %}" />
-    <input type="hidden" name="name" value="{% if request.user.username %}{{ request.user.username }}{% else %}anonyme{% endif %}" />
-    </div>
-    <table>
-        <tr>
-            <td>{{ comment_form.non_field_errors }}</td>
-        </tr>
-        <tr>
-            <td>Nouvelle réponse: <textarea id="parent_comment" rows="10" cols="40" name="comment"></textarea></td>
-        </tr>
-    </table>
-    <div dojoType="dijit.Tooltip" connectId="parent_comment" position="after" id="dijit_parent_comment">
-        <div style="display: none;">
-            <img src="/media/images/oxygen/comment_public.png" alt="commentaire_public" />
-            <p>Attention, la réponse sera transmise au client final</p>
-        </div>
-        <div>
-            <img src="/media/images/oxygen/comment_internal.png" alt="commentaire_interne" />
-            <p>La réponse sera conservée en interne</p>
-        </div>
-    </div>
-    <p><input type="checkbox" checked="checked" name="internal" onChange="toggleComment(this, 'dijit_parent_comment');" /> Commentaire <b>interne</b> (Si cette case est cochée, cette réponse ne sera pas transmise au client final)</p>
-{% endblock %}
+{% include "ticket/comment.html" %}
 </fieldset>
+{% endwith %}{% endwith %}
 
 <script type="text/javascript">
     function toggleComment(id, did) {
@@ -223,19 +164,16 @@
   <button dojoType="dijit.form.Button" iconClass="dijitEditorIcon dijitEditorIconSave" class="default" type="submit" name="savebutton" value="return">Enregistrer et retourner à la liste</button>
 </div>
 {% endif %}
-
-</form>
 </div><!-- parent -->
 {% endblock %}
 
+{% if perms.ticket.add_child %}
 <script type="text/javascript">
-{% if perms.ticket.change_child %}
     var last_focused = dojo.byId("parent");
-    var child_count = 0;
     var fl = null; /* focus list */
 
     dojo.addOnLoad(function () {
-            fl = dojo.query("div[id^=child]");
+            fl = dojo.query("div.child");
             fl.style("opacity", "0.5");
             fl.push(dojo.byId("parent"));
             fl.onclick(get_focus);
@@ -251,99 +189,51 @@
         last_focused = this;
     }
 
-    function addTofl(id) {
-        fl.style("opacity", "0.5");
-        fl.push(dojo.byId(id));
-        dojo.connect(dojo.byId(id), 'onclick', get_focus);
-        dojo.style(id, "opacity", "1");
-        dojo.doc.location = '#'+id;
-    }
-
     function loadChild () {
-        dojo.xhrGet({url: '{% url ajax_load_child ticket.id %}',
-                headers: {"X-Claritick-Tid": "child0"+child_count},
-                load: function (d) {
-                dojo.place(d, 'div_childs', 'last');
-                last_focused = dojo.byId("child0"+child_count);
-                addTofl(last_focused.id);
-                child_count++;
+        var count = dojo.byId('id_form-TOTAL_FORMS');
+        dojo.xhrGet({url: '{% url ajax_load_child ticket.id %}?count='+count.value,
+                load: function (data) {
+                var childs;
+                dojo.place(data, 'div_childs', 'last');
+                childs = dojo.query('div.child');
+                last_focused = childs[childs.length-1];
+                fl.style('opacity', '0.5');
+                fl.push(last_focused);
+                dojo.connect(last_focused, 'onclick', get_focus);
+                count.value = parseInt(count.value)+1;
                 }});
     }
 
-    function submitTicket() {
-        var f = last_focused.children[0];
-        var ticket_id;
-
-        if (last_focused == dojo.byId("parent"))
-            f.submit();
-        else {
-            dojo.xhrPost({form: f,
-                    headers: {"X-Claritick-Tid": last_focused.id},
-                    load: function (d, r) {
-                    var dijit_id;
-                    if (!(ticket_id = r.xhr.getResponseHeader("X-Claritick-Tid")))
-                        ticket_id = last_focused.id;
-                    dojo.place(d, last_focused, 'replace');
-                    last_focused = dojo.byId(ticket_id);
-                    addTofl(last_focused.id);
-                    if ((dijit_id = dijit.byId('dijit_'+last_focused.id+'_comment')))
-                        dijit_id.destroyRecursive();
-                    dojo.parser.parse(last_focused);
-                    }});
-        }
-    }
-    function submitAll(saveaction) {
-        var ticket_id;
-        var error = 0;
-        dojo.query("div[id^=child]").query("form").forEach(function (f) {
-                dojo.xhrPost({form: f,
-                    headers: {"X-Claritick-Tid": f.parentNode.id },
-                    sync: true,
-                    load: function (d, r) {
-                    if (r.xhr.status != 201) {
-                        error = 1;
-                        if (!(ticket_id = r.xhr.getResponseHeader("X-Claritick-Tid")))
-                            ticket_id = f.parentNode.id;
-                        dojo.place(d, f.parentNode.id, 'replace');
-                        last_focused = dojo.byId(ticket_id);
-                        addTofl(last_focused.id);
-                        }},
-                    });});
-        if (error == 0) {
-            dojo.byId("savebutton").value = saveaction;
-            dojo.byId("parent").children[0].submit();
-        }
-        else
-            dojo.doc.location.hash = '#'+ticket_id;
-    }
-{% endif %}
-    function togglePlusMinus(id) {
-        if (dojo.style("content_child"+id, "display") == "block") {
-            dojo.style("content_child"+id, "display", "none");
-            dojo.byId("form_summary_child"+id).src = "/media/images/plus.png";
+    function togglePlusMinus(img) {
+        var content = img.parentNode.parentNode.children[1];
+        if (dojo.style(content, "display") == "block") {
+            dojo.style(content, "display", "none");
+            img.src = "/media/images/plus.png";
         }
         else {
-            dojo.style("content_child"+id, "display", "block");
-            dojo.byId("form_summary_child"+id).src = "/media/images/minus.png";
+            dojo.style(content, "display", "block");
+            img.src = "/media/images/minus.png";
         }
     }
 </script>
+{% endif %}
 
 <div id="div_childs" class="childs">
+{{ child_formset.management_form }}
 {% for child,cf,cfc in child_form %}
 {% include "ticket/child.html" %}
 {% endfor %}
 </div>
 
-{% if perms.ticket.change_child %}
 <div id="save_buttons">
-  <button dojoType="dijit.form.Button" onClick="submitTicket();" iconClass="dijitEditorIcon dijitEditorIconSave">Enregistrer</button>
-  <button dojoType="dijit.form.Button" onClick="submitAll('save');" iconClass="dijitEditorIcon dijitEditorIconSave">Enregistrer tout</button>
-  <button dojoType="dijit.form.Button" onClick="submitAll('new');" iconClass="dijitEditorIcon dijitEditorIconSave">Enregistrer tout et ajouter un nouveau</button>
-  <button dojoType="dijit.form.Button" onClick="submitAll('return');" iconClass="dijitEditorIcon dijitEditorIconSave" class="default">Enregistrer tout et retourner à la liste</button>
+  <button dojoType="dijit.form.Button" iconClass="dijitEditorIcon dijitEditorIconSave" type="submit" name="savebutton" value="save">Enregistrer</button>
+  <button dojoType="dijit.form.Button" iconClass="dijitEditorIcon dijitEditorIconSave" type="submit" name="savebutton" value="new">Enregistrer et ajouter un nouveau</button>
+  <button dojoType="dijit.form.Button" iconClass="dijitEditorIcon dijitEditorIconSave" type="submit" name="savebutton" value="return" class="default">Enregistrer et retourner à la liste</button>
 {% if perms.ticket.add_child %}<div dojoType="dijit.form.Button" onClick="loadChild();" id="button_add_child">Ajouter un fils</div>{% endif %}
 </div>
-{% endif %}
+
+</form>
+
 
 
 {% endblock %}

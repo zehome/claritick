@@ -20,15 +20,33 @@ from dojango.decorators import json_response
 
 from ticket.models import Ticket, TicketView, TicketFile
 from ticket.forms import *
+from django.forms.models import modelformset_factory
 
 from common.diggpaginator import DiggPaginator
 from common.models import Client, UserProfile, ClaritickUser
 from common.exceptions import NoProfileException
-from common.utils import user_has_perms_on_client
+from common.utils import user_has_perms_on_client, filter_form_for_user
 
 from backlinks.decorators import backlink_setter
+from copy import copy
 
 INVALID_TITLE = "Invalid title"
+
+# django.contrib.comments ne permet pas de spécifier un prefix
+# dans le cas de plusieurs commentaires sur le même formulaire
+# (cf le code de post_comment)
+# on lui donne une copie de request avec le POST modifié
+def post_comment_child(request, queryset):
+    req = copy(request)
+    req.POST = request.POST.copy()
+    for child in queryset:
+        for k in ("timestamp", "object_pk", "security_hash",
+                "content_type", "email", "name", "comment"):
+            req.POST[k] = request.POST.get('child%d_comment-%s'%(child.pk, k))
+        req.POST['internal'] = request.POST.get('child%d_comment-internal'%(child.pk), '')
+        form = django.contrib.comments.get_form()(child, data=req.POST)
+        if form.is_valid():
+            post_comment(req)
 
 def get_filters(request):
     if "list_filters" in request.session:
@@ -318,53 +336,75 @@ def modify(request, ticket_id):
         template_name = "ticket/modify_small.html"
         TicketForm = NewTicketSmallForm
 
-    child_form = [(c, ChildForm(user=request.user, instance=c, auto_id='id_child'+str(c.id)+'_%s'),\
-            django.contrib.comments.get_form()(c)) for c in ticket.child.order_by('date_open')]
+    if request.user.has_perm('ticket.change_child'):
+        ChildFormSet = modelformset_factory(Ticket, form=ChildForm, extra=0)
+    else:
+        ChildFormSet = modelformset_factory(Ticket, form=ChildFormRO, extra=0)
+
+    child = ticket.child.order_by('date_open')
 
     if request.method == "POST":
         if request.POST.get("_validate-ticket", None) and request.user.has_perm("ticket.can_validate_ticket")\
             and ticket.validated_by is None:
             ticket.validated_by = request.user
             ticket.save()
+
+        child_formset = ChildFormSet(request.POST, queryset=child)
         form = TicketForm(request.POST, request.FILES, instance=ticket, user=request.user)
+        # TODO comments
         comment_form = django.contrib.comments.get_form()(ticket) # Initialization vide
-        if not request.POST.get("submit-comment", None): # Post du commentaire uniquement ?
-            if form.is_valid():
-                # Si l'utilisateur peut assigner ce ticket à l'utilisateur passé en POST
-                if not request.user.is_superuser and form.cleaned_data["assigned_to"] and form.cleaned_data["assigned_to"]\
-                        not in ClaritickUser.objects.get(pk=request.user.pk).get_child_users():
-                    raise PermissionDenied()
-                form.save()
-                file = form.cleaned_data["file"]
-                if file:
-                    ticket_file = TicketFile(ticket=ticket, filename=file.name, content_type=file.content_type)
-                    if file.multiple_chunks():
-                        data = None
-                        for chunk in file.chunks():
-                            data += chunk
-                    else:
-                        data = file.read()
-                    ticket_file.data = data
-                    ticket_file.save()
-                
-                # Peut être qu'il ya en meme temps un commentaire
-                comment_form = django.contrib.comments.get_form()(ticket, data=request.POST)
-                if comment_form.is_valid():
-                    post_comment(request)
-                
-                comment_form = django.contrib.comments.get_form()(ticket) # Initialization vide
-                return exit_action()
-        else:
+
+        if form.is_valid() and child_formset.is_valid():
+            # Si l'utilisateur peut assigner ce ticket à l'utilisateur passé en POST
+            if not request.user.is_superuser and form.cleaned_data["assigned_to"] and form.cleaned_data["assigned_to"]\
+                    not in ClaritickUser.objects.get(pk=request.user.pk).get_child_users():
+                raise PermissionDenied()
+            form.save()
+
+            # save existing childs
+            child_formset.save_existing_objects()
+            # create new childs
+            for cf in child_formset.extra_forms:
+                ch = copy_model_instance(ticket)
+                for a in ('state', 'assigned_to', 'title',
+                        'text', 'keywords', 'category', 'project'):
+                    setattr(ch, a, cf.cleaned_data.get(a))
+                ch.opened_by = request.user
+                ch.date_open = datetime.datetime.now()
+                ch.parent = ticket
+                ch.save()
+
+            post_comment_child(request, queryset=child)
+
+            file = form.cleaned_data["file"]
+            if file:
+                ticket_file = TicketFile(ticket=ticket, filename=file.name, content_type=file.content_type)
+                if file.multiple_chunks():
+                    data = None
+                    for chunk in file.chunks():
+                        data += chunk
+                else:
+                    data = file.read()
+                ticket_file.data = data
+                ticket_file.save()
+
             comment_form = django.contrib.comments.get_form()(ticket, data=request.POST)
             if comment_form.is_valid():
                 post_comment(request)
-                return exit_action()
+
+            comment_form = django.contrib.comments.get_form()(ticket) # Initialization vide
+            return exit_action()
     else:
         form = TicketForm(instance=ticket, user=request.user)
         comment_form  = django.contrib.comments.get_form()(ticket)
-    
+        child_formset = ChildFormSet(queryset=child)
+        for f in child_formset.forms:
+            filter_form_for_user(f, request.user)
+
+    child_form = [(c, f, django.contrib.comments.get_form()(c, auto_id='%s', prefix='child%d_comment'% (c.pk)) if c else None) for c,f in map(None, child, child_formset.forms)]
     # Just open
-    return render_to_response(template_name, { "form": form, "ticket": ticket, "comment_form": comment_form, "child_form": child_form },
+    return render_to_response(template_name,
+            { "form": form, "ticket": ticket, "comment_form": comment_form, "child_form": child_form, "child_formset": child_formset },
         context_instance=RequestContext(request))
 
 @login_required
@@ -382,107 +422,26 @@ def get_file(request, file_id):
 
 @permission_required("ticket.add_child")
 @login_required
-def ajax_new_child(request, ticket_id):
-    """
-    Crée un nouveau ticket fils de ticket_id
-    Renvoie un formulaire HTML
-     -> Formulaire modification fils si réussite (dans ce cas on
-        envoie un X-Claritick-Tid avec l'id du fils crée
-     -> Formulaire de création + erreur si echec avec les id de
-        <div> et <form> mis à X-Claritick-Tid (envoyé par le client ajax)
-    status = 201 si fils crée, sinon 200 (utilisé par le js de ticket/modify.html derière)
-    """
-    if not ticket_id: 
-        raise PermissionDenied
-    ticket = get_object_or_404(Ticket, pk=ticket_id)
-
-    if not user_has_perms_on_client(request.user, ticket.client):
-        raise PermissionDenied
-
-    if ticket.parent:
-        raise PermissionDenied("Ce ticket est déjà un fils")
-
-    form = ChildForm(request.POST, user=request.user, auto_id="id_child_%s")
-    if form.is_valid():
-        child = copy_model_instance(ticket)
-        
-        # Set values given from the form
-        for f in ('state', 'assigned_to', 'title', 
-                  'text', 'keywords', 'category', 'project'):
-            setattr(child, f, form.cleaned_data.get(f))
-        child.opened_by = request.user
-        child.date_open = datetime.datetime.now()
-        child.parent = ticket
-        child.save()
-        form = ChildForm(instance=child, user=request.user, auto_id="id_child"+str(child.id)+"_%s")
-        form_comment = django.contrib.comments.get_form()(child)
-        ret =  render_to_response("ticket/child.html",
-                {"child": child, "cf": form, "cfc": form_comment },
-                context_instance=RequestContext(request))
-        ret["X-Claritick-Tid"] = "child%s" % (child.id)
-        # LC: WTF ?
-        # Use constants and verify the meaning of 201 in the HTTP/1.1 RFC
-        ret.status_code = 201 # created
-    else:
-        ret =  render_to_response("ticket/child.html",
-                {"ticket": ticket, "cf": form, "new_child": True, "child_id": request.META["HTTP_X_CLARITICK_TID"]},
-                context_instance=RequestContext(request))
-    return ret
-
-@permission_required("ticket.change_child")
-@login_required
-def ajax_modify_child(request, ticket_id):
-    """
-    Modifie ticket_id et renvoie le formulaire de
-    modification + éventuelles erreurs
-    """
-    if not ticket_id:
-        raise PermissionDenied
-    ticket = get_object_or_404(Ticket, pk=ticket_id)
-
-    if not user_has_perms_on_client(request.user, ticket.client) or not ticket.parent: # must be a child
-        raise PermissionDenied
-
-    form = ChildForm(request.POST, user=request.user, instance=ticket, auto_id="id_child_%s");
-    form_comment = django.contrib.comments.get_form()(ticket, data=request.POST)
-
-    if form.is_valid():
-        form.save()
-
-        if form_comment.is_valid():
-            post_comment(request)
-
-        ret = render_to_response("ticket/child.html", {"child": ticket, "cf": form, "cfc": form_comment },
-                context_instance=RequestContext(request))
-        # LC: WTF ?
-        # Use constants and verify the meaning of 201 in the HTTP/1.1 RFC
-        ret.status_code = 201
-    else:
-        ret = render_to_response("ticket/child.html", {"child": ticket, "cf": form, "cfc": form_comment },
-                context_instance=RequestContext(request))
-    return ret
-
-@permission_required("ticket.add_child")
-@login_required
 def ajax_load_child(request, ticket_id):
     """
     Renvoie un formulaire HTML pour création d'un fils de ticket_id
-    l'ID du <div> et <form> est construit à partir de X-Claritick-Tid
     """
     if not ticket_id:
         raise PermissionDenied
     ticket = get_object_or_404(Ticket, pk=ticket_id)
+
+    prefix = 'form-%d' % (int(request.GET.get('count', 0)))
 
     if not user_has_perms_on_client(request.user, ticket.client):
         raise PermissionDenied
     if ticket.parent:
         raise PermissionDenied("Ce ticket est déjà un fils")
 
-    form = ChildForm(user=request.user,
-            initial={'state': ticket.state_id, 'category': ticket.category_id, 'project': ticket.project_id},
-            auto_id="id_child_%s")
+    form = NewChildForm(user=request.user, prefix=prefix,
+            initial={'state': ticket.state_id, 'category': ticket.category_id, 'project': ticket.project_id, 'assigned_to': ticket.assigned_to_id},
+            auto_id=False)
     return render_to_response('ticket/child.html',
-            {"ticket": ticket, "cf": form, "new_child": True, "child_id": request.META["HTTP_X_CLARITICK_TID"] },
+            {"cf": form},
             context_instance=RequestContext(request))
 
 @login_required

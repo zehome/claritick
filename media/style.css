@@ -415,7 +415,6 @@ div#gauche a:hover {
 #contenu table {
     margin-top: 20px;
 	font-weight: normal;
-    width: 100%;
 }
 
 #contenu table.search {
@@ -576,6 +575,10 @@ div#contenu .selector-available, div#contenu .selector-chosen {
 }
 div#contenu .selector select {
 	width: 500px;
+}
+
+.comment_table {
+    width: 100%;
 }
 
 .comment_table td {
