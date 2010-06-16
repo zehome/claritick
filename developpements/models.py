@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from django.db import models
 
 # Create your models here.
@@ -16,6 +18,10 @@ class Version(models.Model):
     
     def __unicode__(self):
         return "%i.%i" % (self.majeur, self.mineur,)
+    class Meta:
+        permissions = (
+            ("can_view_versions", u"Voir versions"),
+        )
 
 class GroupeDev(models.Model):
     nom = models.TextField()
@@ -52,3 +58,8 @@ class Developpement(models.Model):
 
     def __unicode__(self):
         return self.nom
+    class Meta:
+        permissions = (
+            ("can_view_liste", u"Voir roadmap"),
+            ("can_access_suividev", u"Accès suividev"),
+        )

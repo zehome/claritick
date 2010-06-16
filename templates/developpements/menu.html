@@ -27,12 +27,16 @@
             Consultation
         </span>
         <div dojoType="dijit.Menu" id="fileMenu">
-            <div dojoType="dijit.MenuItem" onClick="window.location = '{% url developpements.views.liste %}';">
-                Liste des développements
-            </div>
-            <div dojoType="dijit.MenuItem" onClick="window.location = '{% url developpements.views.versions %}';">
-                Versions
-            </div>
+            {% if perms.developpements.can_view_liste %}
+                <div dojoType="dijit.MenuItem" onClick="window.location = '{% url developpements.views.liste %}';">
+                    Liste des développements
+                </div>
+            {% endif %}
+            {% if perms.developpements.can_view_versions %}
+                <div dojoType="dijit.MenuItem" onClick="window.location = '{% url developpements.views.versions %}';">
+                    Versions
+                </div>
+            {% endif %}
         </div>
     </div>
     <div dojoType="dijit.PopupMenuBarItem">
@@ -40,18 +44,26 @@
             Modification
         </span>
         <div dojoType="dijit.Menu" id="editMenu">
-            <div dojoType="dijit.MenuItem" onClick="window.location = '{% url admin:index %}';">
-                Admin
-            </div>
-            <div dojoType="dijit.MenuItem" onClick="window.location = '{% url admin:developpements_developpement_add %}';">
-                Ajouter un développement
-            </div>
-            <div dojoType="dijit.MenuItem" onClick="window.location = '{% url admin:developpements_version_add %}';">
-                Ajouter une version
-            </div>
-            <div dojoType="dijit.MenuItem" onClick="window.location = '{% url admin:developpements_groupedev_add %}';">
-                Ajouter un groupe de développement
-            </div>
+            {% if user.is_staff %}
+                <div dojoType="dijit.MenuItem" onClick="window.location = '{% url admin:index %}';">
+                    Admin
+                </div>
+            {% endif %}
+            {% if perms.developpements.add_developpement %}
+                <div dojoType="dijit.MenuItem" onClick="window.location = '{% url admin:developpements_developpement_add %}';">
+                    Ajouter un développement
+                </div>
+            {% endif %}
+            {% if perms.developpements.add_version %}
+                <div dojoType="dijit.MenuItem" onClick="window.location = '{% url admin:developpements_version_add %}';">
+                    Ajouter une version
+                </div>
+            {% endif %}
+            {% if perms.developpements.add_groupedev %}
+                <div dojoType="dijit.MenuItem" onClick="window.location = '{% url admin:developpements_groupedev_add %}';">
+                    Ajouter un groupe de développement
+                </div>
+            {% endif %}
         </div>
     </div>
 </div>

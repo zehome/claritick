@@ -1,0 +1,6160 @@
+[
+    {
+        "pk": 1, 
+        "model": "developpements.client", 
+        "fields": {
+            "nom": "Clermont"
+        }
+    }, 
+    {
+        "pk": 2, 
+        "model": "developpements.client", 
+        "fields": {
+            "nom": "Lorient"
+        }
+    }, 
+    {
+        "pk": 3, 
+        "model": "developpements.client", 
+        "fields": {
+            "nom": "Evolab"
+        }
+    }, 
+    {
+        "pk": 4, 
+        "model": "developpements.client", 
+        "fields": {
+            "nom": "HEH"
+        }
+    }, 
+    {
+        "pk": 5, 
+        "model": "developpements.client", 
+        "fields": {
+            "nom": "5"
+        }
+    }, 
+    {
+        "pk": 6, 
+        "model": "developpements.client", 
+        "fields": {
+            "nom": "6"
+        }
+    }, 
+    {
+        "pk": 7, 
+        "model": "developpements.client", 
+        "fields": {
+            "nom": "7"
+        }
+    }, 
+    {
+        "pk": 8, 
+        "model": "developpements.client", 
+        "fields": {
+            "nom": "8"
+        }
+    }, 
+    {
+        "pk": 9, 
+        "model": "developpements.client", 
+        "fields": {
+            "nom": "9"
+        }
+    }, 
+    {
+        "pk": 10, 
+        "model": "developpements.client", 
+        "fields": {
+            "nom": "10"
+        }
+    }, 
+    {
+        "pk": 11, 
+        "model": "developpements.client", 
+        "fields": {
+            "nom": "11"
+        }
+    }, 
+    {
+        "pk": 12, 
+        "model": "developpements.client", 
+        "fields": {
+            "nom": "12"
+        }
+    }, 
+    {
+        "pk": 13, 
+        "model": "developpements.client", 
+        "fields": {
+            "nom": "13"
+        }
+    }, 
+    {
+        "pk": 14, 
+        "model": "developpements.client", 
+        "fields": {
+            "nom": "14"
+        }
+    }, 
+    {
+        "pk": 15, 
+        "model": "developpements.client", 
+        "fields": {
+            "nom": "15"
+        }
+    }, 
+    {
+        "pk": 16, 
+        "model": "developpements.client", 
+        "fields": {
+            "nom": "16"
+        }
+    }, 
+    {
+        "pk": 17, 
+        "model": "developpements.client", 
+        "fields": {
+            "nom": "17"
+        }
+    }, 
+    {
+        "pk": 18, 
+        "model": "developpements.client", 
+        "fields": {
+            "nom": "18"
+        }
+    }, 
+    {
+        "pk": 19, 
+        "model": "developpements.client", 
+        "fields": {
+            "nom": "19"
+        }
+    }, 
+    {
+        "pk": 20, 
+        "model": "developpements.client", 
+        "fields": {
+            "nom": "20"
+        }
+    }, 
+    {
+        "pk": 21, 
+        "model": "developpements.client", 
+        "fields": {
+            "nom": "21"
+        }
+    }, 
+    {
+        "pk": 22, 
+        "model": "developpements.client", 
+        "fields": {
+            "nom": "22"
+        }
+    }, 
+    {
+        "pk": 23, 
+        "model": "developpements.client", 
+        "fields": {
+            "nom": "23"
+        }
+    }, 
+    {
+        "pk": 24, 
+        "model": "developpements.client", 
+        "fields": {
+            "nom": "24"
+        }
+    }, 
+    {
+        "pk": 25, 
+        "model": "developpements.client", 
+        "fields": {
+            "nom": "25"
+        }
+    }, 
+    {
+        "pk": 26, 
+        "model": "developpements.client", 
+        "fields": {
+            "nom": "26"
+        }
+    }, 
+    {
+        "pk": 27, 
+        "model": "developpements.client", 
+        "fields": {
+            "nom": "27"
+        }
+    }, 
+    {
+        "pk": 28, 
+        "model": "developpements.client", 
+        "fields": {
+            "nom": "28"
+        }
+    }, 
+    {
+        "pk": 29, 
+        "model": "developpements.client", 
+        "fields": {
+            "nom": "29"
+        }
+    }, 
+    {
+        "pk": 30, 
+        "model": "developpements.client", 
+        "fields": {
+            "nom": "30"
+        }
+    }, 
+    {
+        "pk": 1, 
+        "model": "developpements.version", 
+        "fields": {
+            "contenu": [], 
+            "majeur": 3, 
+            "date_sortie": "2010-06-21", 
+            "mineur": 1
+        }
+    }, 
+    {
+        "pk": 2, 
+        "model": "developpements.version", 
+        "fields": {
+            "contenu": [], 
+            "majeur": 3, 
+            "date_sortie": "2010-09-01", 
+            "mineur": 2
+        }
+    }, 
+    {
+        "pk": 3, 
+        "model": "developpements.version", 
+        "fields": {
+            "contenu": [], 
+            "majeur": 3, 
+            "date_sortie": null, 
+            "mineur": 5
+        }
+    }, 
+    {
+        "pk": 4, 
+        "model": "developpements.version", 
+        "fields": {
+            "contenu": [
+                2, 
+                6, 
+                7, 
+                8, 
+                10, 
+                13, 
+                14, 
+                15, 
+                18
+            ], 
+            "majeur": 3, 
+            "date_sortie": "2010-04-26", 
+            "mineur": 0
+        }
+    }, 
+    {
+        "pk": 1, 
+        "model": "developpements.groupedev", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Base", 
+            "lien": "", 
+            "description": "Fonctionnalit\u00e9s de base de middleware", 
+            "poids": 200
+        }
+    }, 
+    {
+        "pk": 2, 
+        "model": "developpements.groupedev", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Validation", 
+            "lien": "", 
+            "description": "Ecran de validation", 
+            "poids": 150
+        }
+    }, 
+    {
+        "pk": 3, 
+        "model": "developpements.groupedev", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Drivers", 
+            "lien": "", 
+            "description": "Modification des drivers", 
+            "poids": 100
+        }
+    }, 
+    {
+        "pk": 4, 
+        "model": "developpements.groupedev", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Interface", 
+            "lien": "", 
+            "description": "", 
+            "poids": 100
+        }
+    }, 
+    {
+        "pk": 5, 
+        "model": "developpements.groupedev", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Liste de travail", 
+            "lien": "", 
+            "description": "", 
+            "poids": 20
+        }
+    }, 
+    {
+        "pk": 6, 
+        "model": "developpements.groupedev", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "H\u00e9matologie", 
+            "lien": "", 
+            "description": "", 
+            "poids": 20
+        }
+    }, 
+    {
+        "pk": 7, 
+        "model": "developpements.groupedev", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Projet", 
+            "lien": "", 
+            "description": "Gestion du projet de d\u00e9veloppement", 
+            "poids": 250
+        }
+    }, 
+    {
+        "pk": 8, 
+        "model": "developpements.groupedev", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Framework", 
+            "lien": "", 
+            "description": "Infrastructure n\u00e9cessaire au d\u00e9veloppement", 
+            "poids": 200
+        }
+    }, 
+    {
+        "pk": 9, 
+        "model": "developpements.groupedev", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Compteurs", 
+            "lien": "", 
+            "description": "", 
+            "poids": 150
+        }
+    }, 
+    {
+        "pk": 10, 
+        "model": "developpements.groupedev", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Import", 
+            "lien": "", 
+            "description": "Import de configuration/param\u00e9trage", 
+            "poids": 100
+        }
+    }, 
+    {
+        "pk": 11, 
+        "model": "developpements.groupedev", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Lots", 
+            "lien": "", 
+            "description": "Gestion des lots r\u00e9actifs/QC/calib", 
+            "poids": 150
+        }
+    }, 
+    {
+        "pk": 12, 
+        "model": "developpements.groupedev", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "TAT", 
+            "lien": "", 
+            "description": "", 
+            "poids": 200
+        }
+    }, 
+    {
+        "pk": 13, 
+        "model": "developpements.groupedev", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "OneCPR", 
+            "lien": "", 
+            "description": "", 
+            "poids": 50
+        }
+    }, 
+    {
+        "pk": 14, 
+        "model": "developpements.groupedev", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Documentation", 
+            "lien": "", 
+            "description": "", 
+            "poids": 100
+        }
+    }, 
+    {
+        "pk": 15, 
+        "model": "developpements.groupedev", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "S\u00e9roth\u00e8que", 
+            "lien": "", 
+            "description": "", 
+            "poids": 100
+        }
+    }, 
+    {
+        "pk": 16, 
+        "model": "developpements.groupedev", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "QC", 
+            "lien": "", 
+            "description": "Contr\u00f4le Qualit\u00e9", 
+            "poids": 30
+        }
+    }, 
+    {
+        "pk": 17, 
+        "model": "developpements.groupedev", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "T\u00e9l\u00e9phon\u00e9s", 
+            "lien": "", 
+            "description": "Gestion des demandes \u00e0 t\u00e9l\u00e9phoner", 
+            "poids": 10
+        }
+    }, 
+    {
+        "pk": 18, 
+        "model": "developpements.groupedev", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Param\u00e9trage", 
+            "lien": "", 
+            "description": "", 
+            "poids": 120
+        }
+    }, 
+    {
+        "pk": 19, 
+        "model": "developpements.groupedev", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Marketing", 
+            "lien": "", 
+            "description": "", 
+            "poids": 90
+        }
+    }, 
+    {
+        "pk": 20, 
+        "model": "developpements.groupedev", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "R\u00e9\u00e9criture", 
+            "lien": "", 
+            "description": "", 
+            "poids": 99
+        }
+    }, 
+    {
+        "pk": 21, 
+        "model": "developpements.groupedev", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "M\u00e9tier", 
+            "lien": "", 
+            "description": "", 
+            "poids": 90
+        }
+    }, 
+    {
+        "pk": 22, 
+        "model": "developpements.groupedev", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Messagerie", 
+            "lien": "", 
+            "description": "", 
+            "poids": 90
+        }
+    }, 
+    {
+        "pk": 23, 
+        "model": "developpements.groupedev", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Contenants", 
+            "lien": "", 
+            "description": "Gestion des contenants (colisage/s\u00e9roth\u00e8que)", 
+            "poids": 90
+        }
+    }, 
+    {
+        "pk": 24, 
+        "model": "developpements.groupedev", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Tri des tubes", 
+            "lien": "", 
+            "description": "", 
+            "poids": 80
+        }
+    }, 
+    {
+        "pk": 25, 
+        "model": "developpements.groupedev", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Colisage", 
+            "lien": "", 
+            "description": "", 
+            "poids": 90
+        }
+    }, 
+    {
+        "pk": 26, 
+        "model": "developpements.groupedev", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Patient", 
+            "lien": "", 
+            "description": "", 
+            "poids": 40
+        }
+    }, 
+    {
+        "pk": 27, 
+        "model": "developpements.groupedev", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Backup SIL", 
+            "lien": "", 
+            "description": "", 
+            "poids": 50
+        }
+    }, 
+    {
+        "pk": 28, 
+        "model": "developpements.groupedev", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Droits", 
+            "lien": "", 
+            "description": "Gestion des droits", 
+            "poids": 100
+        }
+    }, 
+    {
+        "pk": 29, 
+        "model": "developpements.groupedev", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "R\u00e8gles", 
+            "lien": "", 
+            "description": "R\u00e8gles d'expertise", 
+            "poids": 100
+        }
+    }, 
+    {
+        "pk": 30, 
+        "model": "developpements.groupedev", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Tra\u00e7abilit\u00e9", 
+            "lien": "", 
+            "description": "", 
+            "poids": 100
+        }
+    }, 
+    {
+        "pk": 31, 
+        "model": "developpements.groupedev", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Support", 
+            "lien": "", 
+            "description": "Outils d'aide au support", 
+            "poids": 100
+        }
+    }, 
+    {
+        "pk": 32, 
+        "model": "developpements.groupedev", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Gestion Op", 
+            "lien": "", 
+            "description": "Gestion op\u00e9rationnelle", 
+            "poids": 100
+        }
+    }, 
+    {
+        "pk": 1, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Rerun d\u00e9clench\u00e9", 
+            "temps_prevu": 21, 
+            "poids_manuel": 10, 
+            "description": "Faire fonctionner le rerun d\u00e9clench\u00e9 (par un delta check d\u00e9pass\u00e9 par exemple)\r\n", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": "7FFF00", 
+            "engagement": "2010-06-01", 
+            "lien": "", 
+            "done": true, 
+            "groupe": 1, 
+            "bug": true, 
+            "poids": 9
+        }
+    }, 
+    {
+        "pk": 2, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Aspect visuel bandeau patient", 
+            "temps_prevu": 5, 
+            "poids_manuel": 10, 
+            "description": "Am\u00e9liorer l'aspect visuel du bandeau patient statique et faire en sorte qu'il ne puisse pas masquer le d\u00e9but du dossier. (5)\r\n", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": "7FFF00", 
+            "engagement": null, 
+            "lien": "", 
+            "done": true, 
+            "groupe": 2, 
+            "bug": true, 
+            "poids": 9
+        }
+    }, 
+    {
+        "pk": 3, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Validation h\u00e9mato en un clic", 
+            "temps_prevu": 7, 
+            "poids_manuel": 10, 
+            "description": "H\u00e9matologie : Pouvoir valider un dossier complet en un clic (7)\r\n", 
+            "client_demandeur": [
+                3, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10
+            ], 
+            "couleur": "7FFF00", 
+            "engagement": null, 
+            "lien": "", 
+            "done": true, 
+            "groupe": 1, 
+            "bug": true, 
+            "poids": 9
+        }
+    }, 
+    {
+        "pk": 4, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "calculs interd\u00e9pendants", 
+            "temps_prevu": 50, 
+            "poids_manuel": 10, 
+            "description": "Faire marcher les calculs interd\u00e9pendants(50)\r\n", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": "7FFF00", 
+            "engagement": "2010-05-14", 
+            "lien": "", 
+            "done": true, 
+            "groupe": 1, 
+            "bug": true, 
+            "poids": 1
+        }
+    }, 
+    {
+        "pk": 5, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "demandes sans IPP", 
+            "temps_prevu": null, 
+            "poids_manuel": 10, 
+            "description": "Gestion des demandes arrivant sans IPP. Solution\u00a0: on prend le champ 9.3.2 num\u00e9ro d'acc\u00e8s complet transmis par Synergie \u00e0 la place du 8.3 (IPP) si ce dernier est vide\r\n", 
+            "client_demandeur": [
+                1, 
+                5, 
+                6
+            ], 
+            "couleur": "7FFF00", 
+            "engagement": null, 
+            "lien": "", 
+            "done": true, 
+            "groupe": 3, 
+            "bug": true, 
+            "poids": 9
+        }
+    }, 
+    {
+        "pk": 6, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Ordre automates clarimonitor", 
+            "temps_prevu": 2, 
+            "poids_manuel": 10, 
+            "description": "Fixer l'ordre des automates de clarimonitor en page d'accueil (2)\r\n", 
+            "client_demandeur": [
+                5, 
+                6
+            ], 
+            "couleur": "7FFF00", 
+            "engagement": null, 
+            "lien": "", 
+            "done": true, 
+            "groupe": 4, 
+            "bug": true, 
+            "poids": 9
+        }
+    }, 
+    {
+        "pk": 7, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "tri de la liste de travail", 
+            "temps_prevu": 21, 
+            "poids_manuel": 10, 
+            "description": "Corriger les probl\u00e8mes de tri de la liste de travail et leurs incidences sur \u00ab\u00a0pr\u00e9c\u00e9dent\u00a0\u00bb et \u00ab\u00a0suivant\u00a0\u00bb en validation. Corriger \u00e9galement le fait que quand on a tri\u00e9 la liste, on ne peut plus agir sur les demandes (rechargement par exemple) (21)\r\n", 
+            "client_demandeur": [
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": "7FFF00", 
+            "engagement": null, 
+            "lien": "", 
+            "done": true, 
+            "groupe": 5, 
+            "bug": true, 
+            "poids": 9
+        }
+    }, 
+    {
+        "pk": 8, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "LEDs de clarimonitor", 
+            "temps_prevu": 5, 
+            "poids_manuel": 10, 
+            "description": "Corriger le fonctionnement des LEDs de clarimonitor (5)\r\n", 
+            "client_demandeur": [
+                5, 
+                6
+            ], 
+            "couleur": "7FFF00", 
+            "engagement": null, 
+            "lien": "", 
+            "done": true, 
+            "groupe": 4, 
+            "bug": true, 
+            "poids": 9
+        }
+    }, 
+    {
+        "pk": 9, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "graphes d'h\u00e9mato", 
+            "temps_prevu": 28, 
+            "poids_manuel": 10, 
+            "description": "Reprendre le script des graphes d'h\u00e9mato(28)\r\n", 
+            "client_demandeur": [
+                3, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10
+            ], 
+            "couleur": "7FFF00", 
+            "engagement": null, 
+            "lien": "", 
+            "done": true, 
+            "groupe": 6, 
+            "bug": true, 
+            "poids": 9
+        }
+    }, 
+    {
+        "pk": 10, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Reports clermont", 
+            "temps_prevu": 70, 
+            "poids_manuel": 10, 
+            "description": "Report clermont/lorient \u2192 2.5, sortie 2.5 avec docs et changelogs(70)\r\n", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": "7FFF00", 
+            "engagement": "2010-06-14", 
+            "lien": "", 
+            "done": true, 
+            "groupe": 7, 
+            "bug": false, 
+            "poids": 9
+        }
+    }, 
+    {
+        "pk": 11, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "\u00e2ge de l'ant\u00e9riorit\u00e9", 
+            "temps_prevu": null, 
+            "poids_manuel": 10, 
+            "description": "Prise en compte de l'\u00e2ge de l'ant\u00e9riorit\u00e9\r\n", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": "7FFF00", 
+            "engagement": "2010-06-01", 
+            "lien": "", 
+            "done": true, 
+            "groupe": 1, 
+            "bug": false, 
+            "poids": 9
+        }
+    }, 
+    {
+        "pk": 12, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Dojo", 
+            "temps_prevu": 21, 
+            "poids_manuel": 10, 
+            "description": "Int\u00e9grer Dojo dans MCA2 (21)\r\n", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": "7FFF00", 
+            "engagement": null, 
+            "lien": "", 
+            "done": true, 
+            "groupe": 8, 
+            "bug": false, 
+            "poids": 9
+        }
+    }, 
+    {
+        "pk": 13, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Afficher traduction des alarmes", 
+            "temps_prevu": null, 
+            "poids_manuel": 10, 
+            "description": "Dans la colonne alarme afficher les alarmes traduites, quitte \u00e0 limiter la longueur de la traduction si besoin. En tooltip sur l'alarme, le code. Afficher toutes les alarmes (limiter \u00e0 2 ou 3 alarmes) avec une ic\u00f4ne permettant de savoir qu'il y a plus d'alarmes et de les afficher.\r\n", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": "7FFF00", 
+            "engagement": "2010-05-03", 
+            "lien": "", 
+            "done": true, 
+            "groupe": 2, 
+            "bug": false, 
+            "poids": 9
+        }
+    }, 
+    {
+        "pk": 14, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Compteur retards", 
+            "temps_prevu": null, 
+            "poids_manuel": 10, 
+            "description": "Compteur de tubes en retard", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": "7FFF00", 
+            "engagement": "2010-05-03", 
+            "lien": "", 
+            "done": true, 
+            "groupe": 9, 
+            "bug": false, 
+            "poids": 9
+        }
+    }, 
+    {
+        "pk": 15, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Affichage valeurs de r\u00e9f", 
+            "temps_prevu": null, 
+            "poids_manuel": 10, 
+            "description": "Affichage des valeurs de r\u00e9f\u00a0: si min et max, les s\u00e9parer par un tiret, sinon afficher la borne avec son symbole (< ou >). Mettre le DC dans une colonne d\u00e9di\u00e9e. Garder une police r\u00e9duite  OK en r126\r\n", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": "7FFF00", 
+            "engagement": null, 
+            "lien": "", 
+            "done": true, 
+            "groupe": 2, 
+            "bug": false, 
+            "poids": 8
+        }
+    }, 
+    {
+        "pk": 16, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Ajout de test depuis la validation", 
+            "temps_prevu": 7, 
+            "poids_manuel": 10, 
+            "description": "Pouvoir ajouter un test depuis la validation (lien vers backup SIL mais pouvoir revenir sur la validation de ce dossier ensuite)  \u2190 Besoin mal exprim\u00e9\u00a0: ce que veux le client c'est un truc simple. Par exemple, un popup depuis la validation o\u00f9 on saisit juste le code du test   -> Dans un premier temps, on fait une interface simple qui permet juste de rajouter un test de la paillasse dans un popup simple (7)\r\n", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": "7FFF00", 
+            "engagement": "2010-06-14", 
+            "lien": "", 
+            "done": true, 
+            "groupe": 2, 
+            "bug": false, 
+            "poids": 5
+        }
+    }, 
+    {
+        "pk": 17, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Param\u00e8tres \u00e0 pouvoir importer", 
+            "temps_prevu": null, 
+            "poids_manuel": 10, 
+            "description": "Voir pascal pour param\u00e8tres \u00e0 pouvoir importer urgemment   -> uniquement le temps_reali sur testbio\r\n", 
+            "client_demandeur": [
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": "7FFF00", 
+            "engagement": null, 
+            "lien": "", 
+            "done": true, 
+            "groupe": 10, 
+            "bug": false, 
+            "poids": 9
+        }
+    }, 
+    {
+        "pk": 18, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "bandeau patient statique", 
+            "temps_prevu": null, 
+            "poids_manuel": 10, 
+            "description": "Rendre le bandeau patient statique quand on scrolle\r\n", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": "7FFF00", 
+            "engagement": "2010-06-14", 
+            "lien": "", 
+            "done": true, 
+            "groupe": 2, 
+            "bug": false, 
+            "poids": 4
+        }
+    }, 
+    {
+        "pk": 19, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Modif compteur \u00e0 valider", 
+            "temps_prevu": null, 
+            "poids_manuel": 10, 
+            "description": "A valider = y'a plus de manquants\u00a0: tout est soit \u00e0 valider soit valid\u00e9 soit renvoy\u00e9\r\n", 
+            "client_demandeur": [
+                1, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9
+            ], 
+            "couleur": "7FFF00", 
+            "engagement": "2010-06-14", 
+            "lien": "", 
+            "done": true, 
+            "groupe": 9, 
+            "bug": false, 
+            "poids": 5
+        }
+    }, 
+    {
+        "pk": 20, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Affichage compteurs vides", 
+            "temps_prevu": null, 
+            "poids_manuel": 10, 
+            "description": "Remplacer \u00ab\u00a0aucune\u00a0\u00bb par un tiret ou une ic\u00f4ne sympa  OK en r127\r\n", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": "7FFF00", 
+            "engagement": null, 
+            "lien": "", 
+            "done": true, 
+            "groupe": 9, 
+            "bug": false, 
+            "poids": 2
+        }
+    }, 
+    {
+        "pk": 21, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Commentaires du vista", 
+            "temps_prevu": null, 
+            "poids_manuel": 10, 
+            "description": "Int\u00e9grer les commentaires transmis par le Vista\r\n", 
+            "client_demandeur": [
+                1, 
+                5, 
+                6
+            ], 
+            "couleur": "7FFF00", 
+            "engagement": "2010-05-03", 
+            "lien": "", 
+            "done": true, 
+            "groupe": 3, 
+            "bug": false, 
+            "poids": 7
+        }
+    }, 
+    {
+        "pk": 22, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Service d'application des controle_test", 
+            "temps_prevu": 21, 
+            "poids_manuel": 8, 
+            "description": "Permettre de sp\u00e9cifier un ou plusieurs services d'application des bornes et delta check\r\n", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": "FFFF66", 
+            "engagement": "2010-06-14", 
+            "lien": "", 
+            "done": false, 
+            "groupe": 1, 
+            "bug": false, 
+            "poids": 8
+        }
+    }, 
+    {
+        "pk": 23, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Mise \u00e0 jour rapide des compteurs", 
+            "temps_prevu": 21, 
+            "poids_manuel": 8, 
+            "description": "mise \u00e0 jour plus rapide. Le d\u00e9lai de rafra\u00eechissement doit \u00eatre inf\u00e9rieur \u00e0 15s Solution propos\u00e9e par Laurent \u00e0 base de trigger pour r\u00e9soudre d\u00e9finitivement le pb.\r\n", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": "FFFF66", 
+            "engagement": "2010-06-14", 
+            "lien": "", 
+            "done": false, 
+            "groupe": 9, 
+            "bug": false, 
+            "poids": 9
+        }
+    }, 
+    {
+        "pk": 24, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Lien cpt accueil -> liste travail", 
+            "temps_prevu": 4, 
+            "poids_manuel": 8, 
+            "description": "Lier tous les compteurs de page d'accueil vers liste de travail\r\n", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": "FFFF66", 
+            "engagement": "2010-06-14", 
+            "lien": "", 
+            "done": false, 
+            "groupe": 9, 
+            "bug": false, 
+            "poids": 8
+        }
+    }, 
+    {
+        "pk": 25, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Lien cpt haut page -> liste travail", 
+            "temps_prevu": 5, 
+            "poids_manuel": 8, 
+            "description": "Lier les compteurs du haut de page sauf \u00e0 valider vers liste de travail correspondant\r\n", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": "FFFF66", 
+            "engagement": "2010-06-14", 
+            "lien": "", 
+            "done": false, 
+            "groupe": 9, 
+            "bug": false, 
+            "poids": 8
+        }
+    }, 
+    {
+        "pk": 26, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Affichage urgents sur compteurs", 
+            "temps_prevu": 7, 
+            "poids_manuel": 8, 
+            "description": "Afficher les urgents entre parenth\u00e8ses (y compris sur les compteurs haut de page)\r\n", 
+            "client_demandeur": [
+                1, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12
+            ], 
+            "couleur": "FFFF66", 
+            "engagement": "2010-06-14", 
+            "lien": "", 
+            "done": false, 
+            "groupe": 9, 
+            "bug": false, 
+            "poids": 8
+        }
+    }, 
+    {
+        "pk": 27, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Diff\u00e9rencier demand\u00e9e et en cours", 
+            "temps_prevu": 5, 
+            "poids_manuel": 8, 
+            "description": "Diff\u00e9rencier demand\u00e9e et en cours (en cours = date_plateau)\r\n", 
+            "client_demandeur": [
+                1, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9
+            ], 
+            "couleur": "FFFF66", 
+            "engagement": "2010-06-14", 
+            "lien": "", 
+            "done": false, 
+            "groupe": 9, 
+            "bug": false, 
+            "poids": 5
+        }
+    }, 
+    {
+        "pk": 28, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": 1, 
+            "nom": "Recherche de lots sur une date unique", 
+            "temps_prevu": 3, 
+            "poids_manuel": 5, 
+            "description": "Dans le formulaire de recherche, pouvoir chercher entre aujourd'hui et aujourd'hui (voir todolist)\r\n", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 11, 
+            "bug": true, 
+            "poids": 6
+        }
+    }, 
+    {
+        "pk": 29, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": 1, 
+            "nom": "Triggers pour lots", 
+            "temps_prevu": 21, 
+            "poids_manuel": 5, 
+            "description": "Finaliser l'\u00e9criture des triggers\r\n", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": "", 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 11, 
+            "bug": false, 
+            "poids": 9
+        }
+    }, 
+    {
+        "pk": 30, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": 1, 
+            "nom": "Renseigner les infos lot depuis les drivers", 
+            "temps_prevu": 35, 
+            "poids_manuel": 5, 
+            "description": "R\u00e9cup\u00e9rer infos lots dans la trame et les stocker dans tables gestion des lots si l'automate envoie les infos et qu'on a MCA3\r\n", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": "", 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 3, 
+            "bug": false, 
+            "poids": 8
+        }
+    }, 
+    {
+        "pk": 31, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": 1, 
+            "nom": "Pouvoir associer manuellement un r\u00e9sultat \u00e0 un lot\r\n", 
+            "temps_prevu": 4, 
+            "poids_manuel": 5, 
+            "description": "Pouvoir associer manuellement un r\u00e9sultat \u00e0 un lot\r\n", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": "NaN", 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 11, 
+            "bug": false, 
+            "poids": 4
+        }
+    }, 
+    {
+        "pk": 32, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": 1, 
+            "nom": "Int\u00e9gration trames lots des drivers (Vista)", 
+            "temps_prevu": 70, 
+            "poids_manuel": 5, 
+            "description": "Le vista (et d'autres automates) envoi des trames de lui-m\u00eame sans qu'on lui ait rien demand\u00e9 avec des infos sur la calib, le qc, .... int\u00e9grer ces infos\r\n", 
+            "client_demandeur": [
+                5, 
+                6, 
+                7
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 3, 
+            "bug": false, 
+            "poids": 9
+        }
+    }, 
+    {
+        "pk": 33, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": 2, 
+            "nom": "Requ\u00eates libres", 
+            "temps_prevu": 50, 
+            "poids_manuel": 4, 
+            "description": "Pouvoir requ\u00eater des \u00e9v\u00e8nements m\u00eame si aucun indicateur de d\u00e9lai n'a \u00e9t\u00e9 d\u00e9fini dessus\r\n", 
+            "client_demandeur": [
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": "NaN", 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 12, 
+            "bug": false, 
+            "poids": 9
+        }
+    }, 
+    {
+        "pk": 34, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": 2, 
+            "nom": "LED du QC en Validation", 
+            "temps_prevu": 14, 
+            "poids_manuel": 4, 
+            "description": "En validation, avoir la LED du QC qui fait le bilan de l'ensemble des analyseurs ayant particip\u00e9 \u00e0 l'analyse (tous les runs) avec en tooltip dessus le d\u00e9tail avec la LED de chaque automate et le lien vers son QC\r\n", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 4, 
+            "bug": false, 
+            "poids": 9
+        }
+    }, 
+    {
+        "pk": 35, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": 2, 
+            "nom": "Donn\u00e9es suppl\u00e9mentaires pour le TAT", 
+            "temps_prevu": 5, 
+            "poids_manuel": 4, 
+            "description": "Champ data libre sur les \u00e9v\u00e8nements tubes qui sera utilis\u00e9 par les modules, pas les utilisateurs\r\n", 
+            "client_demandeur": [
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 12, 
+            "bug": false, 
+            "poids": 3
+        }
+    }, 
+    {
+        "pk": 36, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": 2, 
+            "nom": "Suivi des modifications de volume (s\u00e9roth\u00e8que)\r\n", 
+            "temps_prevu": 7, 
+            "poids_manuel": 4, 
+            "description": "Suivi des modifications de volume (s\u00e9roth\u00e8que)\r\n", 
+            "client_demandeur": [
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 12, 
+            "bug": false, 
+            "poids": 3
+        }
+    }, 
+    {
+        "pk": 37, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": 2, 
+            "nom": "Avoir l'envoi par mail", 
+            "temps_prevu": 14, 
+            "poids_manuel": 4, 
+            "description": "Avoir l'envoi par mail\r\n", 
+            "client_demandeur": [
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 13, 
+            "bug": false, 
+            "poids": 9
+        }
+    }, 
+    {
+        "pk": 38, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": 2, 
+            "nom": "Modifier le format d'export\r\n", 
+            "temps_prevu": 14, 
+            "poids_manuel": 4, 
+            "description": "Utiliser le nouveau format de fichier d'export d\u00e9fini par le service OneCPR Siemens\r\n", 
+            "client_demandeur": [
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 13, 
+            "bug": false, 
+            "poids": 9
+        }
+    }, 
+    {
+        "pk": 39, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": 2, 
+            "nom": "Int\u00e9grer donn\u00e9es Siemens", 
+            "temps_prevu": 7, 
+            "poids_manuel": 4, 
+            "description": "Int\u00e9grer une liste d'IdCPR fournie par Siemens et une liste de Familles Automate\r\n", 
+            "client_demandeur": [
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 13, 
+            "bug": false, 
+            "poids": 8
+        }
+    }, 
+    {
+        "pk": 40, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": 2, 
+            "nom": "Resp\u00e9cifier et terminer le module\r\n", 
+            "temps_prevu": 140, 
+            "poids_manuel": 4, 
+            "description": "Revoir les specs et finaliser\r\n", 
+            "client_demandeur": [], 
+            "couleur": "CCCCCC", 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 12, 
+            "bug": false, 
+            "poids": 1
+        }
+    }, 
+    {
+        "pk": 41, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": 2, 
+            "nom": "Super Driver Centaur\r\n", 
+            "temps_prevu": 140, 
+            "poids_manuel": 4, 
+            "description": "Super Driver Centaur\r\n", 
+            "client_demandeur": [], 
+            "couleur": "CCCCCC", 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 3, 
+            "bug": false, 
+            "poids": 1
+        }
+    }, 
+    {
+        "pk": 42, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": 2, 
+            "nom": "Super Driver Advia\r\n", 
+            "temps_prevu": 140, 
+            "poids_manuel": 4, 
+            "description": "Super Driver Advia\r\n", 
+            "client_demandeur": [], 
+            "couleur": "CCCCCC", 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 3, 
+            "bug": false, 
+            "poids": 1
+        }
+    }, 
+    {
+        "pk": 43, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": 2, 
+            "nom": "Super Driver Dimensions\r\n", 
+            "temps_prevu": 140, 
+            "poids_manuel": 4, 
+            "description": "Super Driver Dimensions\r\n", 
+            "client_demandeur": [], 
+            "couleur": "CCCCCC", 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 3, 
+            "bug": false, 
+            "poids": 1
+        }
+    }, 
+    {
+        "pk": 44, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Streamlab", 
+            "temps_prevu": 70, 
+            "poids_manuel": 1, 
+            "description": "Streamlab  \u2190 N\u00e9cessitera, pour \u00eatre livr\u00e9 une semaine de tests sur une streamlab\r\n", 
+            "client_demandeur": [
+                5
+            ], 
+            "couleur": "83CAFF", 
+            "engagement": "2010-06-28", 
+            "lien": "", 
+            "done": false, 
+            "groupe": 7, 
+            "bug": false, 
+            "poids": 9
+        }
+    }, 
+    {
+        "pk": 45, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Template validation clermont", 
+            "temps_prevu": 7, 
+            "poids_manuel": 1, 
+            "description": "Faire un template validation sp\u00e9cifique \u00e0 clermont avec le run et l'ant\u00e9riorit\u00e9 \u00e0 proximit\u00e9 du r\u00e9sultat\r\n", 
+            "client_demandeur": [
+                1
+            ], 
+            "couleur": "FF0000", 
+            "engagement": "2010-06-14", 
+            "lien": "", 
+            "done": false, 
+            "groupe": 2, 
+            "bug": false, 
+            "poids": 1
+        }
+    }, 
+    {
+        "pk": 46, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Seuil d'application deltacheck absolu/relatif", 
+            "temps_prevu": 21, 
+            "poids_manuel": 0.90000000000000002, 
+            "description": "Ajout d'un param\u00e8tre d\u00e9finissant le seuil d'application d'un delta check en fonction du r\u00e9sultat re\u00e7u. Par exemple\u00a0: delta check absolu appliqu\u00e9 uniquement si r\u00e9sultat inf\u00e9rieur \u00e0 100 et delta check relatif appliqu\u00e9 uniquement si r\u00e9sultat sup\u00e9rieur \u00e0 100\r\n", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": "", 
+            "engagement": "2010-08-30", 
+            "lien": "", 
+            "done": false, 
+            "groupe": 1, 
+            "bug": false, 
+            "poids": 8
+        }
+    }, 
+    {
+        "pk": 47, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Commentaires texte cod\u00e9", 
+            "temps_prevu": 7, 
+            "poids_manuel": 0.90000000000000002, 
+            "description": "Pouvoir avoir des commentaires texte cod\u00e9 (on param\u00e8tre sur la classe de texte cod\u00e9 si elle est pour du r\u00e9sultat et/ou du commentaire)\r\n", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": "", 
+            "engagement": "2010-08-30", 
+            "lien": "", 
+            "done": false, 
+            "groupe": 2, 
+            "bug": false, 
+            "poids": 9
+        }
+    }, 
+    {
+        "pk": 48, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Mise \u00e0 jour \u00e9cran validation apr\u00e8s rerun", 
+            "temps_prevu": 14, 
+            "poids_manuel": 0.80000000000000004, 
+            "description": "Bug\u00a0: le fait de d\u00e9clencher un rerun ne met pas toujours correctement \u00e0 jour l'\u00e9cran.  \u2192 Peut \u00eatre li\u00e9 au fait qu'apache utilise plusieurs connexions postgresql\r\n", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": "83CAFF", 
+            "engagement": "2010-05-03", 
+            "lien": "", 
+            "done": false, 
+            "groupe": 2, 
+            "bug": true, 
+            "poids": 9
+        }
+    }, 
+    {
+        "pk": 49, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "MAJ Alarme apr\u00e8s choix d'un run", 
+            "temps_prevu": 5, 
+            "poids_manuel": 0, 
+            "description": "Quand choix d'un run, mettre \u00e0 jour la colonne alarme aussi\r\n", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 2, 
+            "bug": true, 
+            "poids": 9
+        }
+    }, 
+    {
+        "pk": 50, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Bug sur les bornes de validation/de r\u00e9f\u00e9rence", 
+            "temps_prevu": 3, 
+            "poids_manuel": 0, 
+            "description": "Si on a param\u00e9tr\u00e9 des bornes de ref et des bornes \u00ab\u00a0\u00e0 valider\u00a0\u00bb et qu'on a un r\u00e9sultat hors bornes de ref mais dans les bornes \u00ab\u00a0a valider\u00a0\u00bb, la case \u00ab\u00a0valider\u00a0\u00bb ne se coche pas alors qu'elle dervrait\r\n", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 2, 
+            "bug": true, 
+            "poids": 9
+        }
+    }, 
+    {
+        "pk": 51, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Fonctionnement des commentaires", 
+            "temps_prevu": 7, 
+            "poids_manuel": 0, 
+            "description": "V\u00e9rifier globalement le fonctionnement des commentaires (quid du commentaire du resu_auto, du resultat\u00a0? Quand multiples runs... multiples saisies... lequel est renvoy\u00e9 au SIL...). Documenter \u00e7a qu'on puisse d\u00e9cider de ce qu'on veut. A priori il para\u00eet pertinent d'avoir un commentaire sur le dem_auto_test qui serait global sur l'ensemble de l'analyse (tous les runs)  \u2190 Aujourd'hui les commentaires \u00ab\u00a0r\u00e9sultats\u00a0\u00bb ne sont pas transmis au SIL. Pour le commentaire \u00ab\u00a0dem_auto\u00a0\u00bb, \u00e0 v\u00e9rifier.\r\n", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": "83CAFF", 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 2, 
+            "bug": true, 
+            "poids": 8
+        }
+    }, 
+    {
+        "pk": 52, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Actions quand soucis QC", 
+            "temps_prevu": 7, 
+            "poids_manuel": 0, 
+            "description": "V\u00e9rifier la prise en compte des cq_regles_actions par les drivers\r\n", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 3, 
+            "bug": true, 
+            "poids": 9
+        }
+    }, 
+    {
+        "pk": 53, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Fonctionnement Calculs", 
+            "temps_prevu": 14, 
+            "poids_manuel": 0, 
+            "description": "Documenter le fonctionnement actuel des calculs (est-ce que les calculs se font si annul\u00e9, si rerun si ....., validation automatique, manuelle, .........................)\r\n", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 14, 
+            "bug": true, 
+            "poids": 9
+        }
+    }, 
+    {
+        "pk": 54, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Meilleure gestion du timeout", 
+            "temps_prevu": 21, 
+            "poids_manuel": 0, 
+            "description": "Quand logout, rediriger vers une page de login (daemon javascript qui interroge le serveur pour savoir si utilisateur d\u00e9connect\u00e9)", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 4, 
+            "bug": true, 
+            "poids": 9
+        }
+    }, 
+    {
+        "pk": 55, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Bug s\u00e9roth\u00e8que", 
+            "temps_prevu": 5, 
+            "poids_manuel": 0, 
+            "description": "Bug : choix d'un frigo et d'une \u00e9tag\u00e8re et on arrive quand m\u00eame sur l'\u00e9cran de saisie\r\n", 
+            "client_demandeur": [
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 15, 
+            "bug": true, 
+            "poids": 9
+        }
+    }, 
+    {
+        "pk": 56, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Meilleure gestion de la saisie de position de tube", 
+            "temps_prevu": 5, 
+            "poids_manuel": 0, 
+            "description": "Dans modif position du tube, matcher l'evenement appui sur entr\u00e9e pour envoyer la requete et pas valider le formulaire\r\n", 
+            "client_demandeur": [
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 15, 
+            "bug": true, 
+            "poids": 8
+        }
+    }, 
+    {
+        "pk": 57, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Param\u00e9trage des contenants", 
+            "temps_prevu": 2, 
+            "poids_manuel": 0, 
+            "description": "param\u00e9trage    * ne pas pouvoir choisir un \"contenant principal\" sur une s\u00e9roth\u00e8que si il est d\u00e9j\u00e0 \"contenant principal\" d'une autre s\u00e9roth\u00e8que\r\n", 
+            "client_demandeur": [
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 15, 
+            "bug": true, 
+            "poids": 8
+        }
+    }, 
+    {
+        "pk": 58, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Am\u00e9liorer le choix du contenant\r\n", 
+            "temps_prevu": 7, 
+            "poids_manuel": 0, 
+            "description": "Filtrer les \u00e9tag\u00e8res pour n'afficher que celles du frigo s\u00e9lectionn\u00e9", 
+            "client_demandeur": [
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 15, 
+            "bug": true, 
+            "poids": 7
+        }
+    }, 
+    {
+        "pk": 59, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Am\u00e9liorer la gestion des actions de QC", 
+            "temps_prevu": 35, 
+            "poids_manuel": 0, 
+            "description": "Si cq_regle_action est \u00e0 BVMA bloquer aussi la validation auto. Si BVAT ou BVMA afficher l'alerte en page d'accueil. Si GRPH, mettre en valeur les points sur les graphes de LJ et Roue\r\n", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 16, 
+            "bug": true, 
+            "poids": 9
+        }
+    }, 
+    {
+        "pk": 60, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Am\u00e9lioration recherche tube", 
+            "temps_prevu": 7, 
+            "poids_manuel": 0, 
+            "description": "Faire en sorte que quand on cherche par num\u00e9ro, on le trouve\u00a0(num\u00e9ro de tube, de dossier...)\u00a0!\r\n", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 5, 
+            "bug": true, 
+            "poids": 7
+        }
+    }, 
+    {
+        "pk": 61, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Renvoi du \u00e0 t\u00e9l\u00e9phoner", 
+            "temps_prevu": 5, 
+            "poids_manuel": 0, 
+            "description": "v\u00e9rifier si OL2 renvoie \u00ab\u00a0\u00e0 t\u00e9l\u00e9phoner\u00a0\u00bb au SIL dans HPRIM quand la demande est \u00ab\u00a0d\u00e9j\u00e0 t\u00e9l\u00e9phon\u00e9e\u00a0\u00bb  \u2190 C'est transmis mais ce n'est pas dans la norme donc l'impl\u00e9mentation peut ne pas fonctionner avec tous les SIL\r\n", 
+            "client_demandeur": [
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11
+            ], 
+            "couleur": "83CAFF", 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 17, 
+            "bug": true, 
+            "poids": 7
+        }
+    }, 
+    {
+        "pk": 62, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Gestion des delta check absolu\r\n", 
+            "temps_prevu": 21, 
+            "poids_manuel": 0, 
+            "description": "Gestion des delta check absolu\r\n", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 1, 
+            "bug": false, 
+            "poids": 9
+        }
+    }, 
+    {
+        "pk": 63, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Rerun avec dilution depuis controle_test", 
+            "temps_prevu": 14, 
+            "poids_manuel": 0, 
+            "description": "Pouvoir d\u00e9clencher un rerun avec pr\u00e9cision de la dilution \u00e0 effectuer depuis un controle_test\r\n", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 1, 
+            "bug": false, 
+            "poids": 9
+        }
+    }, 
+    {
+        "pk": 64, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Gestion Dilution dans Drivers", 
+            "temps_prevu": 14, 
+            "poids_manuel": 0, 
+            "description": "", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 1, 
+            "bug": false, 
+            "poids": 9
+        }
+    }, 
+    {
+        "pk": 65, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Rerun avec dilution manuel", 
+            "temps_prevu": 35, 
+            "poids_manuel": 0, 
+            "description": "Pouvoir d\u00e9clencher un rerun avec pr\u00e9cision de la dilution \u00e0 effectuer depuis la validation ou la liste de travail (manuel)\r\n", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 1, 
+            "bug": false, 
+            "poids": 9
+        }
+    }, 
+    {
+        "pk": 66, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Gestion controle_test aberrants", 
+            "temps_prevu": 21, 
+            "poids_manuel": 0, 
+            "description": "Pouvoir sp\u00e9cifier que des controle_test sont ABERRANTS et doivent bloquer compl\u00e8tement la validation de ce r\u00e9sultat (avec affichage d'un message) et bloquer les calculs bas\u00e9s sur ce r\u00e9sultat !!!\r\n", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 1, 
+            "bug": false, 
+            "poids": 7
+        }
+    }, 
+    {
+        "pk": 67, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Fix colonnes rerun", 
+            "temps_prevu": 2, 
+            "poids_manuel": 0, 
+            "description": "Largeur des colonnes rerun varie selon le contenu, \u00e0 fixer.\r\n", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 2, 
+            "bug": false, 
+            "poids": 9
+        }
+    }, 
+    {
+        "pk": 68, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Commentaires multiples", 
+            "temps_prevu": 35, 
+            "poids_manuel": 0, 
+            "description": "Avoir un commentaire patient, un commentaire \u00e9chantillon et un commentaire test. Le commentaire patient doit \u00eatre r\u00e9cup\u00e9r\u00e9 du SIL mais non modifiable.  \u2190 Le commentaire patient est d\u00e9j\u00e0 r\u00e9cup\u00e9r\u00e9 du SIL et affich\u00e9 en validation ainsi qu'un commentaire \u00e9chantillon non modifiable.\r\n", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": "83CAFF", 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 2, 
+            "bug": false, 
+            "poids": 9
+        }
+    }, 
+    {
+        "pk": 69, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "G\u00e9rer les calibrations", 
+            "temps_prevu": 35, 
+            "poids_manuel": 0, 
+            "description": "G\u00e9rer les calibrations (date de calib)\r\n", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": "", 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 11, 
+            "bug": false, 
+            "poids": 8
+        }
+    }, 
+    {
+        "pk": 70, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Commentaire de repasse", 
+            "temps_prevu": 14, 
+            "poids_manuel": 0, 
+            "description": "Avoir la possibilit\u00e9 de param\u00e9trer par paillasse un commentaire \u00e0 rajouter sur le r\u00e9sultat quand on fait une repasse.\r\n", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": "", 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 18, 
+            "bug": false, 
+            "poids": 9
+        }
+    }, 
+    {
+        "pk": 71, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Rerun sur dossier valid\u00e9", 
+            "temps_prevu": 7, 
+            "poids_manuel": 0, 
+            "description": "Pouvoir faire une repasse sur un dossier valid\u00e9\r\n", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 2, 
+            "bug": false, 
+            "poids": 7
+        }
+    }, 
+    {
+        "pk": 72, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Erreurs dico validation", 
+            "temps_prevu": 7, 
+            "poids_manuel": 0, 
+            "description": "Afficher les erreurs du dico erreur en validation\r\n", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 2, 
+            "bug": false, 
+            "poids": 7
+        }
+    }, 
+    {
+        "pk": 73, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Acc\u00e8s dossier patient depuis validation", 
+            "temps_prevu": 1, 
+            "poids_manuel": 0, 
+            "description": "Acc\u00e9der au dossier patient depuis un clic sur le nom du patient\r\n", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 2, 
+            "bug": false, 
+            "poids": 7
+        }
+    }, 
+    {
+        "pk": 74, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Sysmex", 
+            "temps_prevu": 210, 
+            "poids_manuel": 0.0138, 
+            "description": "", 
+            "client_demandeur": [
+                5
+            ], 
+            "couleur": "", 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 3, 
+            "bug": false, 
+            "poids": 9
+        }
+    }, 
+    {
+        "pk": 75, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Mise en valeur r\u00e9sultat hors bornes", 
+            "temps_prevu": 7, 
+            "poids_manuel": 0, 
+            "description": "Pr\u00e9voir un syst\u00e8me de mise en valeur d'un r\u00e9sultat ayant d\u00e9pass\u00e9 les bornes de panique (ligne en rouge par exemple)", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 1, 
+            "bug": false, 
+            "poids": 5
+        }
+    }, 
+    {
+        "pk": 76, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Base de d\u00e9mo/tests", 
+            "temps_prevu": 140, 
+            "poids_manuel": 0, 
+            "description": "Base de d\u00e9mo/tests + outils de test (g\u00e9n\u00e9rateur de demande, de r\u00e9sultats...)\r\n", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14, 
+                15, 
+                16, 
+                17, 
+                18, 
+                19, 
+                20, 
+                21, 
+                22, 
+                23, 
+                24, 
+                25, 
+                26, 
+                27, 
+                28, 
+                29, 
+                30
+            ], 
+            "couleur": "", 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 19, 
+            "bug": false, 
+            "poids": 5
+        }
+    }, 
+    {
+        "pk": 77, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Revoir param\u00e9trage controle_test", 
+            "temps_prevu": 21, 
+            "poids_manuel": 0, 
+            "description": "Pouvoir d\u00e9finir en une seule fois pour une tranche d'\u00e2ge donn\u00e9e, un sexe donn\u00e9, un service ....... les minima, maxima, delta check absolu, seuil de DC (et sens d'application) et DC relatif\r\n", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 18, 
+            "bug": false, 
+            "poids": 8
+        }
+    }, 
+    {
+        "pk": 78, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Doc compteurs", 
+            "temps_prevu": 7, 
+            "poids_manuel": 0, 
+            "description": "Documenter les compteurs une fois qu'ils ont \u00e9t\u00e9 r\u00e9-\u00e9crits", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 14, 
+            "bug": false, 
+            "poids": 9
+        }
+    }, 
+    {
+        "pk": 79, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Versionning drivers", 
+            "temps_prevu": 35, 
+            "poids_manuel": 0, 
+            "description": "Num\u00e9ro de version des drivers automate depuis le tooltip permettant d'activer/d\u00e9sactiver la connexion", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 4, 
+            "bug": false, 
+            "poids": 9
+        }
+    }, 
+    {
+        "pk": 80, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "RW Liste de travail", 
+            "temps_prevu": 35, 
+            "poids_manuel": 0, 
+            "description": "R\u00e9-\u00e9crire compl\u00e8tement la liste de travail", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": "FF9966", 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 20, 
+            "bug": false, 
+            "poids": 9
+        }
+    }, 
+    {
+        "pk": 81, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Rerun avec dilution depuis alarme automate", 
+            "temps_prevu": 14, 
+            "poids_manuel": 0, 
+            "description": "Pouvoir d\u00e9clencher un rerun avec pr\u00e9cision de la dilution \u00e0 effectuer depuis une alarme automate\r\n", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 21, 
+            "bug": false, 
+            "poids": 9
+        }
+    }, 
+    {
+        "pk": 82, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Module Messagerie", 
+            "temps_prevu": 105, 
+            "poids_manuel": 0, 
+            "description": "Cr\u00e9er le module de messagerie", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 22, 
+            "bug": false, 
+            "poids": 9
+        }
+    }, 
+    {
+        "pk": 83, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Tooltip r\u00e9sultats", 
+            "temps_prevu": 7, 
+            "poids_manuel": 0, 
+            "description": "Tooltip sur TOUS les r\u00e9sultats (R1 compris et RUNS compris et ant\u00e9riorit\u00e9)\u00a0: date et heure, analyseur, LED QC, taux de dilution, alarmes et traductions. Sp\u00e9cifique aux ant\u00e9riorit\u00e9s\u00a0: le commentaire\r\n", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 4, 
+            "bug": false, 
+            "poids": 8
+        }
+    }, 
+    {
+        "pk": 84, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "RW Validation", 
+            "temps_prevu": 280, 
+            "poids_manuel": 0, 
+            "description": "R\u00e9-\u00e9crire compl\u00e8tement la validation", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": "FF9966", 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 20, 
+            "bug": false, 
+            "poids": 8
+        }
+    }, 
+    {
+        "pk": 85, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Param\u00e9trage tube unique", 
+            "temps_prevu": 14, 
+            "poids_manuel": 0, 
+            "description": "Param\u00e9trer par SIL si on est en tube \u00ab\u00a0unique\u00a0\u00bb ou non pour le colisage/s\u00e9roth\u00e8que", 
+            "client_demandeur": [
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 18, 
+            "bug": false, 
+            "poids": 9
+        }
+    }, 
+    {
+        "pk": 86, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Compteurs \"tous\"", 
+            "temps_prevu": 5, 
+            "poids_manuel": 0, 
+            "description": "Rajouter une ligne \u00ab\u00a0tous\u00a0\u00bb sur les compteurs \u00e0 valider vers validation multi paillasse", 
+            "client_demandeur": [
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 9, 
+            "bug": false, 
+            "poids": 7
+        }
+    }, 
+    {
+        "pk": 87, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Compteurs \"tous\" bis", 
+            "temps_prevu": 5, 
+            "poids_manuel": 0, 
+            "description": "Rajouter une ligne \u00ab\u00a0tous\u00a0\u00bb sur les compteurs avec lien vers liste de travail sauf \u00e0 valider", 
+            "client_demandeur": [
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 9, 
+            "bug": false, 
+            "poids": 7
+        }
+    }, 
+    {
+        "pk": 88, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Ic\u00f4nes cpt haut de page", 
+            "temps_prevu": 5, 
+            "poids_manuel": 0, 
+            "description": "R\u00e9duire la talle du compteur haut de page en utilisant des ic\u00f4nes", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 9, 
+            "bug": false, 
+            "poids": 5
+        }
+    }, 
+    {
+        "pk": 89, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Lien cpt haut page validation", 
+            "temps_prevu": 5, 
+            "poids_manuel": 0, 
+            "description": "Lier le compteur de haut de page \u00e0 valider vers validation en multi paillasse", 
+            "client_demandeur": [
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 9, 
+            "bug": false, 
+            "poids": 7
+        }
+    }, 
+    {
+        "pk": 90, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Revoir bandeau patient", 
+            "temps_prevu": 7, 
+            "poids_manuel": 0, 
+            "description": "Revoir la disposition des informations du bandeau patient", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 2, 
+            "bug": false, 
+            "poids": 5
+        }
+    }, 
+    {
+        "pk": 91, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Rerun avec dilution depuis txt cod\u00e9", 
+            "temps_prevu": 14, 
+            "poids_manuel": 0, 
+            "description": "Pouvoir d\u00e9clencher un rerun avec pr\u00e9cision de la dilution \u00e0 effectuer depuis texte cod\u00e9\r\n", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 21, 
+            "bug": false, 
+            "poids": 8
+        }
+    }, 
+    {
+        "pk": 92, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Revoir alarmes QC \u00e0 l'accueil", 
+            "temps_prevu": 14, 
+            "poids_manuel": 0, 
+            "description": "Remplacer le tableau alarme qc par une LED dans la liste des demandes avec explications en tooltip. Forcer l'affichage de la ligne si le QC est rouge\r\n", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 4, 
+            "bug": false, 
+            "poids": 7
+        }
+    }, 
+    {
+        "pk": 93, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "RW Param\u00e9trage", 
+            "temps_prevu": 105, 
+            "poids_manuel": 0, 
+            "description": "R\u00e9-\u00e9crire compl\u00e8tement le param\u00e9trage", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": "FF9966", 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 20, 
+            "bug": false, 
+            "poids": 7
+        }
+    }, 
+    {
+        "pk": 94, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Infos automatismes validation", 
+            "temps_prevu": 35, 
+            "poids_manuel": 0, 
+            "description": "rajouter une ic\u00f4ne en validation permettant d'expliquer par exemple pourquoi il n'est pas coch\u00e9 valid\u00e9 (controle_test d\u00e9pass\u00e9), pourquoi il est parti en rerun (alarme automate, controle_test, texte cod\u00e9...)", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 19, 
+            "bug": false, 
+            "poids": 7
+        }
+    }, 
+    {
+        "pk": 95, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "RW Saisie demande", 
+            "temps_prevu": 70, 
+            "poids_manuel": 0, 
+            "description": "R\u00e9-\u00e9crire compl\u00e8tement la saisie de dossier\r\n", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": "FF9966", 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 20, 
+            "bug": false, 
+            "poids": 6
+        }
+    }, 
+    {
+        "pk": 96, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Portoirs g\u00e9n\u00e9riques", 
+            "temps_prevu": 70, 
+            "poids_manuel": 0, 
+            "description": "Pouvoir d\u00e9finir des portoirs g\u00e9n\u00e9riques. Peut \u00eatre en d\u00e9finissant des hi\u00e9rarchies sans contenant de dernier niveau et pouvoir choisir les contenants de tubes manuellement.", 
+            "client_demandeur": [
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 23, 
+            "bug": false, 
+            "poids": 9
+        }
+    }, 
+    {
+        "pk": 97, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Param dilutions connues", 
+            "temps_prevu": 14, 
+            "poids_manuel": 0, 
+            "description": "Pour certains automates, il faut pouvoir param\u00e9trer des dilutions \u00ab\u00a0connues\u00a0\u00bb que l'automate pourra faire et emp\u00eacher l'utilisateur de saisir autre chose\r\n", 
+            "client_demandeur": [
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 18, 
+            "bug": false, 
+            "poids": 9
+        }
+    }, 
+    {
+        "pk": 98, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Param\u00e9trage dilution", 
+            "temps_prevu": 14, 
+            "poids_manuel": 0, 
+            "description": "Pouvoir param\u00e9trer ce qu'il faut envoyer \u00e0 l'automate en cas de dilution (genre transcodage ou calcul en fonction de l'automate)\r\n", 
+            "client_demandeur": [
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 18, 
+            "bug": false, 
+            "poids": 9
+        }
+    }, 
+    {
+        "pk": 99, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Param\u00e9trage direct compteurs", 
+            "temps_prevu": 10, 
+            "poids_manuel": 0, 
+            "description": "Rajouter tooltip sur compteur haut de page permettant de pr\u00e9ciser l'automate ou tous et lien vers liste de travail ou validation en fonction du choix. La pr\u00e9sentation sera\u00a0: ic\u00f4ne, compteur, fl\u00e8che permettant d'afficher le tooltip, compteur urgents, fl\u00e8che pour choix des urgents\r\n", 
+            "client_demandeur": [
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 9, 
+            "bug": false, 
+            "poids": 7
+        }
+    }, 
+    {
+        "pk": 100, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Choix automate compteurs r\u00e9duits", 
+            "temps_prevu": 10, 
+            "poids_manuel": 0, 
+            "description": "Pour les compteurs r\u00e9duits\u00a0: que l'utilisateur puisse modifier \u00e0 quel(s) automate(s) le compteur fait r\u00e9f\u00e9rence (type petit tooltip de param\u00e9trage avec association au profil de l'utilisateur)\r\n", 
+            "client_demandeur": [
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 9, 
+            "bug": false, 
+            "poids": 7
+        }
+    }, 
+    {
+        "pk": 101, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Affichage rack/position", 
+            "temps_prevu": 5, 
+            "poids_manuel": 0, 
+            "description": "\u00eatre plus clair sur l'affichage du rack et de la position en liste de travail et validation\r\n", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 4, 
+            "bug": false, 
+            "poids": 5
+        }
+    }, 
+    {
+        "pk": 102, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Pouvoir d\u00e9sactiver des lignes d'import", 
+            "temps_prevu": 7, 
+            "poids_manuel": 0, 
+            "description": "", 
+            "client_demandeur": [
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 10, 
+            "bug": false, 
+            "poids": 7
+        }
+    }, 
+    {
+        "pk": 103, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Acc\u00e8s QC comparatif depuis validation", 
+            "temps_prevu": 35, 
+            "poids_manuel": 0, 
+            "description": "Depuis la validation avoir acc\u00e8s au QC \u00ab\u00a0comparatif\u00a0\u00bb levey jennings des analyseurs ayant particip\u00e9 \u00e0 l'analyse\r\n", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 4, 
+            "bug": false, 
+            "poids": 5
+        }
+    }, 
+    {
+        "pk": 104, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Combo analyseur au lieu de n\u00b0 automate", 
+            "temps_prevu": 5, 
+            "poids_manuel": 0, 
+            "description": "En page accueil et liste de travail, remplacer \u00ab\u00a0n\u00b0 automate\u00a0\u00bb par un combo analyseur\r\n", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 4, 
+            "bug": false, 
+            "poids": 5
+        }
+    }, 
+    {
+        "pk": 105, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Alertes dossiers hors bornes panique sur l'accueil", 
+            "temps_prevu": 14, 
+            "poids_manuel": 0, 
+            "description": "Pr\u00e9voir en page d'accueil une liste des dossiers ayant d\u00e9pass\u00e9 des bornes de panique avec affichage du patient et du prescripteur et du service et origine et afficher les num\u00e9ro de t\u00e9l\u00e9phones que l'on a", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 4, 
+            "bug": false, 
+            "poids": 5
+        }
+    }, 
+    {
+        "pk": 106, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Dico erreurs", 
+            "temps_prevu": 21, 
+            "poids_manuel": 0, 
+            "description": "Pouvoir param\u00e9trer un dictionnaire d'erreurs sur lesquelles ont peut d\u00e9cider que tel ou tel champ va \u00eatre mit en valeur avec des couleurs, qu'on rajoute une ic\u00f4ne dans la colonne \u00ab\u00a0icone\u00a0\u00bb.... + statut qui va d\u00e9clencher des actions ou des affichages diff\u00e9rents  (validation, panique, aberrant, r\u00e9f\u00e9rence, \u00e0 t\u00e9l\u00e9phoner)\r\n", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 18, 
+            "bug": false, 
+            "poids": 4
+        }
+    }, 
+    {
+        "pk": 107, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Erreurdico sur controle_test", 
+            "temps_prevu": 4, 
+            "poids_manuel": 0, 
+            "description": "Pouvoir associer une erreur du dico erreur \u00e0 un contr\u00f4le test\r\n", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 18, 
+            "bug": false, 
+            "poids": 4
+        }
+    }, 
+    {
+        "pk": 108, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Erreurdico sur alarme automate", 
+            "temps_prevu": 4, 
+            "poids_manuel": 0, 
+            "description": "Pouvoir associer une erreur du dico erreur \u00e0 une alarme automate\r\n", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 18, 
+            "bug": false, 
+            "poids": 4
+        }
+    }, 
+    {
+        "pk": 109, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "R\u00e9cup\u00e9rer param tube unique sur le tube", 
+            "temps_prevu": 7, 
+            "poids_manuel": 0, 
+            "description": "Regarder le param\u00e8tre tube unique dans le SIL du tube scann\u00e9", 
+            "client_demandeur": [
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 15, 
+            "bug": false, 
+            "poids": 9
+        }
+    }, 
+    {
+        "pk": 110, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Validation multi-tests", 
+            "temps_prevu": 35, 
+            "poids_manuel": 0, 
+            "description": "Permettre de valider une s\u00e9lection de param\u00e8tres (d'une ou plusieurs paillasses)", 
+            "client_demandeur": [
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 2, 
+            "bug": false, 
+            "poids": 6
+        }
+    }, 
+    {
+        "pk": 111, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Date d\u00e9marrage s\u00e9roth\u00e8que", 
+            "temps_prevu": 3, 
+            "poids_manuel": 0, 
+            "description": "Param\u00e9trage\u00a0: pouvoir cr\u00e9er une date de d\u00e9marrage avant laquelle les tubes sont ingor\u00e9s", 
+            "client_demandeur": [
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 15, 
+            "bug": false, 
+            "poids": 9
+        }
+    }, 
+    {
+        "pk": 112, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Cat\u00e9gories de bornes", 
+            "temps_prevu": 21, 
+            "poids_manuel": 0, 
+            "description": "Param\u00e9trer les cat\u00e9gories de bornes (rerun, dilution)", 
+            "client_demandeur": [
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 18, 
+            "bug": false, 
+            "poids": 5
+        }
+    }, 
+    {
+        "pk": 113, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Am\u00e9lioration param\u00e9trage dimensions", 
+            "temps_prevu": 7, 
+            "poids_manuel": 0, 
+            "description": "Pouvoir param\u00e9trer les dimensions avec deux champs au lieu d'un champ avec un format sp\u00e9cifique", 
+            "client_demandeur": [
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 18, 
+            "bug": false, 
+            "poids": 5
+        }
+    }, 
+    {
+        "pk": 114, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "RW Stats", 
+            "temps_prevu": 70, 
+            "poids_manuel": 0, 
+            "description": "R\u00e9-\u00e9crire compl\u00e8tement les stats (demandes et automates)\r\n", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": "FF9966", 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 20, 
+            "bug": false, 
+            "poids": 4
+        }
+    }, 
+    {
+        "pk": 115, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Cpt partiels/incomplets", 
+            "temps_prevu": 5, 
+            "poids_manuel": 0, 
+            "description": "Diff\u00e9rencier \u00ab\u00a0a valider partiel\u00a0\u00bb et \u00ab\u00a0incomplet\u00a0\u00bb (c'est \u00e0 dire ceux o\u00f9 il y a des r\u00e9sultats valid\u00e9s et des r\u00e9sultats manquants). Pr\u00e9voir un param\u00e9trage g\u00e9n\u00e9ral permettant de dire si les complets sont les complets complets ou complets par nature\r\n", 
+            "client_demandeur": [
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 9, 
+            "bug": false, 
+            "poids": 5
+        }
+    }, 
+    {
+        "pk": 116, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Import/export/copie param\u00e9trage", 
+            "temps_prevu": 70, 
+            "poids_manuel": 0, 
+            "description": "Pouvoir exporter/r\u00e9importer/copier n'importe quel objet du param\u00e9trage\r\n", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 18, 
+            "bug": false, 
+            "poids": 3
+        }
+    }, 
+    {
+        "pk": 117, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Plusieurs origines pour les controle_test", 
+            "temps_prevu": 7, 
+            "poids_manuel": 0, 
+            "description": "Pour l'import des valeurs usuelles, sur la colonne \"origine\", si l'utilisateur en met plusieurs s\u00e9par\u00e9s par des virgules, g\u00e9n\u00e9rer autant d'entr\u00e9es dans la bdd", 
+            "client_demandeur": [
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 10, 
+            "bug": false, 
+            "poids": 5
+        }
+    }, 
+    {
+        "pk": 118, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Cr\u00e9ation contenant", 
+            "temps_prevu": 7, 
+            "poids_manuel": 0, 
+            "description": "param\u00e9trage    * pouvoir cr\u00e9er un \"contenant principal\"\r\n", 
+            "client_demandeur": [
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 15, 
+            "bug": false, 
+            "poids": 7
+        }
+    }, 
+    {
+        "pk": 119, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Tri des tubes", 
+            "temps_prevu": 35, 
+            "poids_manuel": 0, 
+            "description": "Revoir le fonctionnement, le documenter et voir en quoi \u00e7a peut compl\u00e9ter le colisage ou en quoi le colisage doit reprendre ces fonctionnalit\u00e9s", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 24, 
+            "bug": false, 
+            "poids": 4
+        }
+    }, 
+    {
+        "pk": 120, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Commentaire s\u00e9roth\u00e8que", 
+            "temps_prevu": 2, 
+            "poids_manuel": 0, 
+            "description": "Affichage des commentaires en consultation : le nom de l'utilisateur est remplac\u00e9 par sa PK !\r\n", 
+            "client_demandeur": [
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 15, 
+            "bug": false, 
+            "poids": 6
+        }
+    }, 
+    {
+        "pk": 121, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Cpt vides", 
+            "temps_prevu": 5, 
+            "poids_manuel": 0, 
+            "description": "Afficher la ligne de tableau de bord m\u00eame si il n'y a rien dedans (param\u00e9trable)", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 9, 
+            "bug": false, 
+            "poids": 2
+        }
+    }, 
+    {
+        "pk": 122, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Rack/position", 
+            "temps_prevu": 14, 
+            "poids_manuel": 0, 
+            "description": "S\u00e9parer l'info rack de position", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 3, 
+            "bug": false, 
+            "poids": 3
+        }
+    }, 
+    {
+        "pk": 123, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Alarme duplicat", 
+            "temps_prevu": 10, 
+            "poids_manuel": 0, 
+            "description": "pr\u00e9paration portoir    * m\u00eame \u00e0 la relecture des tubes du portoir (reprise de session), affichier l'alarme de duplicatat (et la raison si on peut)", 
+            "client_demandeur": [
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 15, 
+            "bug": false, 
+            "poids": 6
+        }
+    }, 
+    {
+        "pk": 124, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Vocabulaire", 
+            "temps_prevu": 5, 
+            "poids_manuel": 0, 
+            "description": "Un peu partout\u00a0: renommer automate en paillasse ou en analyseur l\u00e0 o\u00f9 il faut, \u00e9viter la confusion automate/paillasse/analyseur", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 4, 
+            "bug": false, 
+            "poids": 3
+        }
+    }, 
+    {
+        "pk": 125, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "tube unique sur tube scann\u00e9", 
+            "temps_prevu": 7, 
+            "poids_manuel": 0, 
+            "description": "Regarder le param\u00e8tre tube unique dans le SIL du tube scann\u00e9", 
+            "client_demandeur": [
+                5, 
+                6, 
+                7, 
+                8, 
+                9
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 25, 
+            "bug": false, 
+            "poids": 9
+        }
+    }, 
+    {
+        "pk": 126, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Valeur par d\u00e9faut", 
+            "temps_prevu": 7, 
+            "poids_manuel": 0, 
+            "description": "Sur certains champs (comme nombre de d\u00e9cimales), proposer la valeur par d\u00e9faut si rien n'est saisi\r\n", 
+            "client_demandeur": [
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 10, 
+            "bug": false, 
+            "poids": 4
+        }
+    }, 
+    {
+        "pk": 127, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Vider colonne", 
+            "temps_prevu": 14, 
+            "poids_manuel": 0, 
+            "description": "Pr\u00e9voir clic-droit sur ent\u00eate de colonne avec \"effacer toutes les valeurs\" (pourquoi pas aussi : \"mettre valeur par d\u00e9faut\")\r\n", 
+            "client_demandeur": [
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 10, 
+            "bug": false, 
+            "poids": 4
+        }
+    }, 
+    {
+        "pk": 128, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Retour \u00e0 la feuille", 
+            "temps_prevu": 5, 
+            "poids_manuel": 0, 
+            "description": "avoir un bouton qui revient \u00e0 la s\u00e9lection de la feuille", 
+            "client_demandeur": [
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 10, 
+            "bug": false, 
+            "poids": 4
+        }
+    }, 
+    {
+        "pk": 129, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Choix colonne", 
+            "temps_prevu": 7, 
+            "poids_manuel": 0, 
+            "description": "pouvoir choisir la colonne \u00e0 importer. dans ce cas, v\u00e9rifier que rien d'autre n'a chang\u00e9...\r\n", 
+            "client_demandeur": [
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 10, 
+            "bug": false, 
+            "poids": 4
+        }
+    }, 
+    {
+        "pk": 130, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Dossier patient", 
+            "temps_prevu": 35, 
+            "poids_manuel": 0, 
+            "description": "Avoir une vraie page \u00ab\u00a0dossier patient\u00a0\u00bb complet (voir synergie ou historique clarilab)", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 26, 
+            "bug": false, 
+            "poids": 7
+        }
+    }, 
+    {
+        "pk": 131, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Moyenne mobile patient", 
+            "temps_prevu": 14, 
+            "poids_manuel": 0, 
+            "description": "Moyenne mobile patient\u00a0: moyenne des r\u00e9sultats rendus pour ce param\u00e8tre sur cet automate (voir si prise en compte du lot ou pas, \u00e0 priori non mais \u00e0 v\u00e9rifier). Pouvoir choisir la p\u00e9riode ou les N derni\u00e8res valeurs. Afficher le nombre de r\u00e9sultats ayant servi \u00e0 calculer la moyenne.\r\n", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 16, 
+            "bug": false, 
+            "poids": 9
+        }
+    }, 
+    {
+        "pk": 132, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Lien tube/dem_auto", 
+            "temps_prevu": 50, 
+            "poids_manuel": 0, 
+            "description": "Lier le tube au dem_auto", 
+            "client_demandeur": [
+                5, 
+                6, 
+                7, 
+                8, 
+                9
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 25, 
+            "bug": false, 
+            "poids": 8
+        }
+    }, 
+    {
+        "pk": 133, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Ic\u00f4nes", 
+            "temps_prevu": 5, 
+            "poids_manuel": 0, 
+            "description": "rajouter des icones sympa comme dans le colisage", 
+            "client_demandeur": [
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 15, 
+            "bug": false, 
+            "poids": 5
+        }
+    }, 
+    {
+        "pk": 134, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Copier d'une instance vers les autres", 
+            "temps_prevu": 21, 
+            "poids_manuel": 0, 
+            "description": "Pouvoir copier le contenu d'un champ d'une instance sur d'autres instances. Attention, pr\u00e9venir l'utilisateur du risque de mauvaise manip surtout si il y a d\u00e9j\u00e0 des valeurs dans ces champs.", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 18, 
+            "bug": false, 
+            "poids": 2
+        }
+    }, 
+    {
+        "pk": 135, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Echelle du levey Jennings", 
+            "temps_prevu": 5, 
+            "poids_manuel": 0, 
+            "description": "Dans les levey jennings, afficher l'\u00e9chelle en fonction des valeurs de contr\u00f4le et non pas entre -4 et +4", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 16, 
+            "bug": false, 
+            "poids": 8
+        }
+    }, 
+    {
+        "pk": 136, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Tooltips sur qc non valid\u00e9", 
+            "temps_prevu": 3, 
+            "poids_manuel": 0, 
+            "description": "Afficher tooltips sur les r\u00e9sultats non valid\u00e9s avec l'info \u00ab\u00a0qc non valid\u00e9\u00a0\u00bb\r\n", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 16, 
+            "bug": false, 
+            "poids": 8
+        }
+    }, 
+    {
+        "pk": 137, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "CR depuis backup SIL", 
+            "temps_prevu": 70, 
+            "poids_manuel": 0, 
+            "description": "Pouvoir faire un compte rendu simple tr\u00e8s l\u00e9g\u00e8rement param\u00e9trable\r\n", 
+            "client_demandeur": [
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 27, 
+            "bug": false, 
+            "poids": 9
+        }
+    }, 
+    {
+        "pk": 138, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Consultation traces", 
+            "temps_prevu": 7, 
+            "poids_manuel": 0, 
+            "description": "Faire un \u00e9cran de consultation des traces d'import\r\n", 
+            "client_demandeur": [
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 10, 
+            "bug": false, 
+            "poids": 3
+        }
+    }, 
+    {
+        "pk": 139, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Pouvoir exporter dans le fichier excel d'import\r\n", 
+            "temps_prevu": 70, 
+            "poids_manuel": 0, 
+            "description": "", 
+            "client_demandeur": [
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 10, 
+            "bug": false, 
+            "poids": 3
+        }
+    }, 
+    {
+        "pk": 140, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Date sortie", 
+            "temps_prevu": 7, 
+            "poids_manuel": 0, 
+            "description": "Afficher date pr\u00e9visionnelle de sortie un peu partout (par exemple dans d\u00e9tail portoir en sortie de contenant)\r\n", 
+            "client_demandeur": [
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 15, 
+            "bug": false, 
+            "poids": 4
+        }
+    }, 
+    {
+        "pk": 141, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Ne pas pouvoir supprimer des d\u00e9lais de conservation", 
+            "temps_prevu": 2, 
+            "poids_manuel": 0, 
+            "description": "param\u00e9trage    * enlever l'action \"supprimer\" des d\u00e9lais de conservation par testbio", 
+            "client_demandeur": [
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 15, 
+            "bug": false, 
+            "poids": 4
+        }
+    }, 
+    {
+        "pk": 142, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Param sortie -> destruction", 
+            "temps_prevu": 7, 
+            "poids_manuel": 0, 
+            "description": "param\u00e9trage par raison de sortie de la destruction ou non du tube\r\n", 
+            "client_demandeur": [
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 15, 
+            "bug": false, 
+            "poids": 4
+        }
+    }, 
+    {
+        "pk": 143, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "RW QC", 
+            "temps_prevu": 35, 
+            "poids_manuel": 0, 
+            "description": "R\u00e9-\u00e9crire compl\u00e8tement le QC\r\n", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": "FF9966", 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 20, 
+            "bug": false, 
+            "poids": 2
+        }
+    }, 
+    {
+        "pk": 144, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "RW Tri tubes", 
+            "temps_prevu": 70, 
+            "poids_manuel": 0, 
+            "description": "R\u00e9-\u00e9crire compl\u00e8tement le tri de tubes\r\n", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": "FF9966", 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 20, 
+            "bug": false, 
+            "poids": 2
+        }
+    }, 
+    {
+        "pk": 145, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Prescripteurs pour controle_test", 
+            "temps_prevu": 7, 
+            "poids_manuel": 0, 
+            "description": "Permettre de sp\u00e9cifier un ou plusieurs prescripteurs d'application des bornes et delta check\r\n", 
+            "client_demandeur": [
+                5, 
+                6, 
+                7, 
+                8, 
+                9
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 21, 
+            "bug": false, 
+            "poids": 6
+        }
+    }, 
+    {
+        "pk": 146, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "D\u00e9lai logoff par groupe", 
+            "temps_prevu": 35, 
+            "poids_manuel": 0, 
+            "description": "Pouvoir param\u00e9trer le d\u00e9lai de logoff par groupe d'utilisateur\r\n", 
+            "client_demandeur": [
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 18, 
+            "bug": false, 
+            "poids": 3
+        }
+    }, 
+    {
+        "pk": 147, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Afficher le nombre de QC", 
+            "temps_prevu": 7, 
+            "poids_manuel": 0, 
+            "description": "A l'affichage (pas \u00e0 l'export)\u00a0: nombre de QC (demander au module de QC)\r\n", 
+            "client_demandeur": [
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 13, 
+            "bug": false, 
+            "poids": 7
+        }
+    }, 
+    {
+        "pk": 148, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Temps de prise en compte par paillasse", 
+            "temps_prevu": 7, 
+            "poids_manuel": 0, 
+            "description": "Remettre le fonctionnement initial permettant de d\u00e9finir par paillasse le temps de prise en compte dans le compteur. Par contre rendre \u00e7a plus lisible, avec affichage de ce d\u00e9lai sur le tableau (tooltip)", 
+            "client_demandeur": [
+                5, 
+                6
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 9, 
+            "bug": false, 
+            "poids": 8
+        }
+    }, 
+    {
+        "pk": 149, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Drag&Drop", 
+            "temps_prevu": 7, 
+            "poids_manuel": 0, 
+            "description": "Pour hi\u00e9rarchie de contenant, pouvoir faire du drag&drop pour l'ordre des contenants\r\n", 
+            "client_demandeur": [
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 18, 
+            "bug": false, 
+            "poids": 2
+        }
+    }, 
+    {
+        "pk": 150, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "D\u00e9ballage automatique", 
+            "temps_prevu": 35, 
+            "poids_manuel": 0, 
+            "description": "Pouvoir d\u00e9baller automatiquement un tube si il est acquitt\u00e9 sur une cha\u00eene ou automate\r\n", 
+            "client_demandeur": [
+                5, 
+                6, 
+                7, 
+                8, 
+                9
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 25, 
+            "bug": false, 
+            "poids": 5
+        }
+    }, 
+    {
+        "pk": 151, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Txt cod\u00e9 depuis NC du colisage", 
+            "temps_prevu": 7, 
+            "poids_manuel": 0, 
+            "description": "Sur saisie d'un \u00e9tat tube, aller d\u00e9clencher un texte cod\u00e9 sur tous les r\u00e9sultats du tube et les valider", 
+            "client_demandeur": [
+                5, 
+                6, 
+                7, 
+                8, 
+                9
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 25, 
+            "bug": false, 
+            "poids": 5
+        }
+    }, 
+    {
+        "pk": 152, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Filtrage par analyse", 
+            "temps_prevu": 7, 
+            "poids_manuel": 0, 
+            "description": "Pouvoir filtrer le dossier patient par analyses (et que depuis la validation, on acc\u00e8de \u00e0 un dossier patient pr\u00e9-filtr\u00e9 en fonction du dossier qu'on est en train de valider)\r\n", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 26, 
+            "bug": false, 
+            "poids": 4
+        }
+    }, 
+    {
+        "pk": 153, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Visuel bilan mise en s\u00e9roth\u00e8que", 
+            "temps_prevu": 3, 
+            "poids_manuel": 0, 
+            "description": "Affichage du bilan de mise en sero portoir, les noms sont loins de leurs libell\u00e9s\r\n", 
+            "client_demandeur": [
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 15, 
+            "bug": false, 
+            "poids": 3
+        }
+    }, 
+    {
+        "pk": 154, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Acc\u00e8s Fiche patient", 
+            "temps_prevu": 5, 
+            "poids_manuel": 0, 
+            "description": "Clic sur le patient -> popup avec fiche patient\r\n", 
+            "client_demandeur": [
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 15, 
+            "bug": false, 
+            "poids": 3
+        }
+    }, 
+    {
+        "pk": 155, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Validation QC plus rapide", 
+            "temps_prevu": 7, 
+            "poids_manuel": 0, 
+            "description": "Pouvoir valider en une fois tous les r\u00e9sultats d'une date\r\n", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 16, 
+            "bug": false, 
+            "poids": 5
+        }
+    }, 
+    {
+        "pk": 156, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Affichage calibrations", 
+            "temps_prevu": 7, 
+            "poids_manuel": 0, 
+            "description": "A l'affichage (pas \u00e0 l'export)\u00a0: nombre de calibrations (demander au module de lots)", 
+            "client_demandeur": [
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 13, 
+            "bug": false, 
+            "poids": 6
+        }
+    }, 
+    {
+        "pk": 157, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Acc\u00e8s fiche demande", 
+            "temps_prevu": 5, 
+            "poids_manuel": 0, 
+            "description": "Pareil, rajouter une colonne avec un \"I\" permettant d'acc\u00e9der \u00e0 la \"fiche demande\"\r\n", 
+            "client_demandeur": [
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 15, 
+            "bug": false, 
+            "poids": 3
+        }
+    }, 
+    {
+        "pk": 158, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Param hors d\u00e9lai", 
+            "temps_prevu": 5, 
+            "poids_manuel": 0, 
+            "description": "Param\u00e9trage par paillasse permettant de d\u00e9finir si on veut les en retard par date_demande ou date_plateau\r\n", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 9, 
+            "bug": false, 
+            "poids": 1
+        }
+    }, 
+    {
+        "pk": 159, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Affichage repasses manuelle/r\u00e8gle/autre", 
+            "temps_prevu": 35, 
+            "poids_manuel": 0, 
+            "description": "Pouvoir afficher le nombre de repasses en faisant la diff\u00e9rence entre repasse manuelle/r\u00e8gle/autre", 
+            "client_demandeur": [
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 13, 
+            "bug": false, 
+            "poids": 5
+        }
+    }, 
+    {
+        "pk": 160, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "G\u00e9n\u00e9ration \u00e9tiquettes tubes", 
+            "temps_prevu": 70, 
+            "poids_manuel": 0, 
+            "description": "Accueil patient\u00a0: OL2 doit pouvoir g\u00e9n\u00e9rer un num\u00e9ro de dossier en fonction d'une plage param\u00e9tr\u00e9e et ensuite en fonction des analyses saisies, g\u00e9n\u00e9rer les \u00ab\u00a0tubes\u00a0\u00bb correspondant avec le code nature (en tenant compte du format de num\u00e9ro de tube du labo) et imprimer les \u00e9tiquettes correspondantes (en fonction d'une case \u00e0 cocher).\r\n", 
+            "client_demandeur": [
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 27, 
+            "bug": false, 
+            "poids": 5
+        }
+    }, 
+    {
+        "pk": 161, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Param user_profile", 
+            "temps_prevu": 35, 
+            "poids_manuel": 0, 
+            "description": "Ecran de param\u00e9trage de user_profile accessible \u00e0 l'utilisateur\r\n", 
+            "client_demandeur": [
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 18, 
+            "bug": false, 
+            "poids": 2
+        }
+    }, 
+    {
+        "pk": 162, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Moyenne des run", 
+            "temps_prevu": 14, 
+            "poids_manuel": 0, 
+            "description": "Calculer la moyenne des 3 rerun + bouton de confirmation", 
+            "client_demandeur": [
+                5, 
+                6, 
+                7, 
+                8, 
+                9
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 2, 
+            "bug": false, 
+            "poids": 2
+        }
+    }, 
+    {
+        "pk": 163, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Visuel", 
+            "temps_prevu": 35, 
+            "poids_manuel": 0, 
+            "description": "Travailler l'aspect visuel et ergonomique\r\n", 
+            "client_demandeur": [
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 27, 
+            "bug": false, 
+            "poids": 4
+        }
+    }, 
+    {
+        "pk": 164, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Suppr consultation dossier", 
+            "temps_prevu": 1, 
+            "poids_manuel": 0, 
+            "description": "Une fois que la fiche \u00ab\u00a0patient\u00a0\u00bb et la fiche \u00ab\u00a0compte rendu\u00a0\u00bb seront termin\u00e9es, enlever l'\u00e9cran de \u00ab\u00a0consultation dossier\u00a0\u00bb\r\n", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 4, 
+            "bug": false, 
+            "poids": 1
+        }
+    }, 
+    {
+        "pk": 165, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Choix unit\u00e9 volume", 
+            "temps_prevu": 7, 
+            "poids_manuel": 0, 
+            "description": "volume : pouvoir choisir l'unit\u00e9\r\n", 
+            "client_demandeur": [
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 15, 
+            "bug": false, 
+            "poids": 2
+        }
+    }, 
+    {
+        "pk": 166, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "RW Affectation tubes", 
+            "temps_prevu": 70, 
+            "poids_manuel": 0, 
+            "description": "R\u00e9-\u00e9crire compl\u00e8tement l'affectation de tubes\r\n", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": "FF9966", 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 20, 
+            "bug": false, 
+            "poids": 1
+        }
+    }, 
+    {
+        "pk": 167, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "RW Consultation dossier", 
+            "temps_prevu": 35, 
+            "poids_manuel": 0, 
+            "description": "R\u00e9-\u00e9crire compl\u00e8tement la consultation de dossier\r\n", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": "FF9966", 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 20, 
+            "bug": false, 
+            "poids": 1
+        }
+    }, 
+    {
+        "pk": 168, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Lien vers dossier/validation", 
+            "temps_prevu": 7, 
+            "poids_manuel": 0, 
+            "description": "Sur les tubes, un lien vers la consultation dossier, ou la validation\r\n", 
+            "client_demandeur": [
+                5, 
+                6, 
+                7, 
+                8, 
+                9
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 25, 
+            "bug": false, 
+            "poids": 3
+        }
+    }, 
+    {
+        "pk": 169, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "D\u00e9clenchement tests depuis diffpad", 
+            "temps_prevu": 21, 
+            "poids_manuel": 0, 
+            "description": "Le diffpad doit d\u00e9clencher des tests si ceux-ci ne sont pas pr\u00e9sents sur la demande et que des cellules ont \u00e9t\u00e9 compt\u00e9es\r\n", 
+            "client_demandeur": [
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 6, 
+            "bug": false, 
+            "poids": 8
+        }
+    }, 
+    {
+        "pk": 170, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Graphique ant\u00e9riorit\u00e9s", 
+            "temps_prevu": 21, 
+            "poids_manuel": 0, 
+            "description": "Pouvoir cocher un ou plusieurs tests depuis ce dossier patient et afficher un graphique de l'\u00e9volution de ce test. Sur ce graphique, avoir les bornes (tenir compte de l'\u00e2ge)\r\n", 
+            "client_demandeur": [
+                1, 
+                2, 
+                3, 
+                4, 
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13, 
+                14
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 26, 
+            "bug": false, 
+            "poids": 2
+        }
+    }, 
+    {
+        "pk": 171, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Gestion lames", 
+            "temps_prevu": 70, 
+            "poids_manuel": 0, 
+            "description": "Gestion des lames (liste de travail, diffpad, compteurs) pour h\u00e9matologie (encore \u00e0 sp\u00e9cifier)\r\n", 
+            "client_demandeur": [
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 6, 
+            "bug": false, 
+            "poids": 7
+        }
+    }, 
+    {
+        "pk": 172, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Finaliser gestion droits", 
+            "temps_prevu": 70, 
+            "poids_manuel": 0, 
+            "description": "", 
+            "client_demandeur": [], 
+            "couleur": "CCCCCC", 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 28, 
+            "bug": false, 
+            "poids": 9
+        }
+    }, 
+    {
+        "pk": 173, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Commentaires libres", 
+            "temps_prevu": 35, 
+            "poids_manuel": 0, 
+            "description": "Dans le template h\u00e9mato, pr\u00e9voir commentaires libres sur morpho GB et GR et les remonter au SIL\r\n", 
+            "client_demandeur": [
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 6, 
+            "bug": false, 
+            "poids": 6
+        }
+    }, 
+    {
+        "pk": 174, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "W R\u00e8gles expertises", 
+            "temps_prevu": 140, 
+            "poids_manuel": 0, 
+            "description": "Ecrire le module", 
+            "client_demandeur": [], 
+            "couleur": "CCCCCC", 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 29, 
+            "bug": false, 
+            "poids": 8
+        }
+    }, 
+    {
+        "pk": 175, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "W Tra\u00e7abilit\u00e9", 
+            "temps_prevu": 140, 
+            "poids_manuel": 0, 
+            "description": "Ecrire le module", 
+            "client_demandeur": [], 
+            "couleur": "CCCCCC", 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 30, 
+            "bug": false, 
+            "poids": 8
+        }
+    }, 
+    {
+        "pk": 176, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "CR Complets", 
+            "temps_prevu": 140, 
+            "poids_manuel": 0, 
+            "description": "Pouvoir faire des comptes rendus complets param\u00e9trables\r\n", 
+            "client_demandeur": [
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 27, 
+            "bug": false, 
+            "poids": 2
+        }
+    }, 
+    {
+        "pk": 177, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Consultation traces", 
+            "temps_prevu": 105, 
+            "poids_manuel": 0, 
+            "description": "Outil de consultation des traces de communications automates et SIL", 
+            "client_demandeur": [], 
+            "couleur": "CCCCCC", 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 31, 
+            "bug": false, 
+            "poids": 5
+        }
+    }, 
+    {
+        "pk": 178, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "G\u00e9n\u00e9ration listes tubes", 
+            "temps_prevu": 7, 
+            "poids_manuel": 0, 
+            "description": "Pouvoir g\u00e9n\u00e9rer une liste de tubes selon certains crit\u00e8res (date d'arriv\u00e9e...) (par exemple pour saisir des non conformit\u00e9s)", 
+            "client_demandeur": [
+                5, 
+                6, 
+                7, 
+                8, 
+                9
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 25, 
+            "bug": false, 
+            "poids": 1
+        }
+    }, 
+    {
+        "pk": 179, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Choix labo", 
+            "temps_prevu": 4, 
+            "poids_manuel": 0, 
+            "description": "Masquer le labo (plateau OL2) de la liste des labos en cr\u00e9ation de demande", 
+            "client_demandeur": [
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 27, 
+            "bug": false, 
+            "poids": 1
+        }
+    }, 
+    {
+        "pk": 180, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "D\u00e9j\u00e0 t\u00e9l\u00e9phon\u00e9", 
+            "temps_prevu": 7, 
+            "poids_manuel": 0, 
+            "description": "Pouvoir noter \u00ab\u00a0d\u00e9j\u00e0 t\u00e9l\u00e9phon\u00e9\u00a0\u00bb depuis la validation", 
+            "client_demandeur": [
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 17, 
+            "bug": false, 
+            "poids": 4
+        }
+    }, 
+    {
+        "pk": 181, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Affichage t\u00e9l\u00e9phones", 
+            "temps_prevu": 4, 
+            "poids_manuel": 0, 
+            "description": "Afficher les t\u00e9l\u00e9phones des services, prescripteurs, origine... en tooltip sur la validation\r\n", 
+            "client_demandeur": [
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 17, 
+            "bug": false, 
+            "poids": 4
+        }
+    }, 
+    {
+        "pk": 182, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "G\u00e9rer les t\u00e9l\u00e9phon\u00e9s par test\r\n", 
+            "temps_prevu": 21, 
+            "poids_manuel": 0, 
+            "description": "", 
+            "client_demandeur": [
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 17, 
+            "bug": false, 
+            "poids": 3
+        }
+    }, 
+    {
+        "pk": 183, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Double saisie en aveugle", 
+            "temps_prevu": 105, 
+            "poids_manuel": 0, 
+            "description": "deux techniciens doivent saisir le r\u00e9sultat sans voir celui saisi par l'autre et alors si c'est identique, on peut valider", 
+            "client_demandeur": [
+                5
+            ], 
+            "couleur": null, 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 2, 
+            "bug": false, 
+            "poids": 1
+        }
+    }, 
+    {
+        "pk": 184, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "W Gestion Op", 
+            "temps_prevu": 140, 
+            "poids_manuel": 0, 
+            "description": "Ecrire le module", 
+            "client_demandeur": [], 
+            "couleur": "CCCCCC", 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 32, 
+            "bug": false, 
+            "poids": 1
+        }
+    }, 
+    {
+        "pk": 185, 
+        "model": "developpements.developpement", 
+        "fields": {
+            "version_requise": null, 
+            "nom": "Lisibilit\u00e9 Traces", 
+            "temps_prevu": 140, 
+            "poids_manuel": 0, 
+            "description": "Am\u00e9lioration de la lisibilit\u00e9 des traces de communication\r\n", 
+            "client_demandeur": [], 
+            "couleur": "CCCCCC", 
+            "engagement": null, 
+            "lien": "", 
+            "done": false, 
+            "groupe": 31, 
+            "bug": false, 
+            "poids": 1
+        }
+    }
+]

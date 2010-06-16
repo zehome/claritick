@@ -6,7 +6,6 @@
     <script type="text/javascript">
         dojo.require("dijit.Menu");
         dojo.require("dijit.ColorPalette");
-        
         dojo.addOnLoad(function() {
             dojo.query("td.modifiable").forEach(function(ligne)
                 {
@@ -20,67 +19,38 @@
                         window.location = dojo.attr(ligne, 'url');
                         }
                     }));
-                contextMenu.addChild(new dijit.MenuItem({
-                    label: "Noter comme étant terminé",
-                    onClick: function(event)
-                        {
-                        var defer = dojo.xhrGet({
-                            url : "{% url developpements.views.done %}",
-                            handleAs : "json",
-                            content : {
-                                dev_pk : dojo.attr(ligne, 'itempk'),
-                                },
-                            load: function (response)
-                                {
-                                if (response.error)
-                                    {
-                                    alert (response.error);
-                                    }
-                                else
-                                    {
-                                    var limage = dojo.create('img');
-                                    dojo.attr(limage, 'src', '{{ MEDIA_URL }}icones/bool-True.png');
-                                    dojo.place(limage, "nom_" + response.dev_pk, "first");
-                                    }
-                                }
-                            });
-                        console.debug(defer);
-                        }
-                    }));
-                contextMenu.addChild(new dijit.MenuItem({
-                    label: "Pas de couleur",
-                    onClick: function(event)
-                        {
-                        var defer = dojo.xhrGet({
-                            url : "{% url developpements.views.change_color %}",
-                            handleAs : "json",
-                            content : {
-                                dev_pk : dojo.attr(ligne, 'itempk'),
-                                },
-                            load: function (response)
-                                {
-                                if (response.error)
-                                    {
-                                    alert (response.error);
-                                    }
-                                else if (response.couleur)
-                                    {
-                                    console.debug(response.dev_pk, response.couleur);
-                                    dojo.style("nom_" + response.dev_pk, "background-color", '#' + response.couleur);
-                                    }
-                                else
-                                    {
-                                    dojo.style("nom_" + response.dev_pk, "background-color", 'inherit');
-                                    }
-                                }
-                            });
-                        console.debug(defer);
-                        }
-                    }));
-                {% for couleur in couleurs %}
+                if (dojo.attr(ligne, 'itempk'))
+                    {
+                    // C'est un dev, pas un groupedev
                     contextMenu.addChild(new dijit.MenuItem({
-                        label: "Couleur {{ couleur }}",
-                        style: "background-color: #{{ couleur }};",
+                        label: "Noter comme étant terminé",
+                        onClick: function(event)
+                            {
+                            var defer = dojo.xhrGet({
+                                url : "{% url developpements.views.done %}",
+                                handleAs : "json",
+                                content : {
+                                    dev_pk : dojo.attr(ligne, 'itempk'),
+                                    },
+                                load: function (response)
+                                    {
+                                    if (response.error)
+                                        {
+                                        alert (response.error);
+                                        }
+                                    else
+                                        {
+                                        var limage = dojo.create('img');
+                                        dojo.attr(limage, 'src', '{{ MEDIA_URL }}icones/bool-True.png');
+                                        dojo.place(limage, "nom_" + response.dev_pk, "first");
+                                        }
+                                    }
+                                });
+                            console.debug(defer);
+                            }
+                        }));
+                    contextMenu.addChild(new dijit.MenuItem({
+                        label: "Pas de couleur",
                         onClick: function(event)
                             {
                             var defer = dojo.xhrGet({
@@ -88,7 +58,6 @@
                                 handleAs : "json",
                                 content : {
                                     dev_pk : dojo.attr(ligne, 'itempk'),
-                                    couleur : "{{ couleur }}"
                                     },
                                 load: function (response)
                                     {
@@ -110,7 +79,41 @@
                             console.debug(defer);
                             }
                         }));
-                {% endfor %}
+                    {% for couleur in couleurs %}
+                        contextMenu.addChild(new dijit.MenuItem({
+                            label: "Couleur {{ couleur }}",
+                            style: "background-color: #{{ couleur }};",
+                            onClick: function(event)
+                                {
+                                var defer = dojo.xhrGet({
+                                    url : "{% url developpements.views.change_color %}",
+                                    handleAs : "json",
+                                    content : {
+                                        dev_pk : dojo.attr(ligne, 'itempk'),
+                                        couleur : "{{ couleur }}"
+                                        },
+                                    load: function (response)
+                                        {
+                                        if (response.error)
+                                            {
+                                            alert (response.error);
+                                            }
+                                        else if (response.couleur)
+                                            {
+                                            console.debug(response.dev_pk, response.couleur);
+                                            dojo.style("nom_" + response.dev_pk, "background-color", '#' + response.couleur);
+                                            }
+                                        else
+                                            {
+                                            dojo.style("nom_" + response.dev_pk, "background-color", 'inherit');
+                                            }
+                                        }
+                                    });
+                                console.debug(defer);
+                                }
+                            }));
+                    {% endfor %}
+                    }
                 contextMenu.startup();
                 });
             });
@@ -144,12 +147,12 @@
                     <td class="align-right">{{ item.calcul_poids }}</td>
                     <td class="align-right" title="{% for client in item.client_demandeur.all %} {{ client.nom }}{% endfor %}">{{ item.client_demandeur.count }}</td>
                     <td class="align-right">{{ item.poids }}</td>
-                    <td class="modifiable" url="{% url admin:developpements_groupedev_change item.groupe.pk %}" title="{{ item.groupe.description }}">
+                    <td class="{% if perms.developpements.change_groupedev %}modifiable{% endif %}" url="{% url admin:developpements_groupedev_change item.groupe.pk %}" title="{{ item.groupe.description }}">
                         {{ item.groupe }}
                     </td>
                     <td class="align-right">{{ item.groupe.poids }}</td>
                     <td class="align-right">{{ item.poids_manuel }}</td>
-                    <td class="modifiable{% if item.done %} done{% endif %}" url="{% url admin:developpements_developpement_change item.pk %}"
+                    <td class="{% if perms.developpements.change_developpement %}modifiable{% endif %}{% if item.done %} done{% endif %}" url="{% url admin:developpements_developpement_change item.pk %}"
                         title="{{ item.description }}"
                         itempk="{{ item.pk }}"
                         id="nom_{{ item.pk }}"

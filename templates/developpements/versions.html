@@ -18,9 +18,6 @@
                     onClick: function(event)
                         {
                         window.location = dojo.attr(ligne, 'url');
-                        console.debug("Modifier le dev " + pk);
-                        console.debug(event.target);
-                        console.debug(event.currentTarget);
                         }
                     }));
                 contextMenu.startup();
@@ -43,7 +40,7 @@
         <tbody>
             {% for item in versions %}
                 <tr>
-                    <td class="align-right">
+                    <td class="align-right{% if perms.developpements.change_version %} modifiable{% endif %}" url="{% url admin:developpements_version_change item.pk %}">
                         {% if item.developpement_set.all %}
                             <div dojoType="dijit.form.DropDownButton" class="bouton_discret">
                                 <span>{{ item.majeur }}.{{ item.mineur }}</span>

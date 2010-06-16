@@ -21,11 +21,11 @@ def week_start_date(year, week):
     delta = datetime.timedelta(days = -delta_days, weeks = delta_weeks)
     return d + delta
 
-@login_required
+@permission_required('developpements.can_access_suividev')
 def home(request):
     return render_to_response("developpements/index.html", context_instance = RequestContext(request))
 
-@login_required
+@permission_required('developpements.can_view_liste')
 def liste(request):
     developpements = list(Developpement.objects.select_related("groupedev","version","client"))
     developpements.sort(lambda a, b: cmp(b.calcul_poids(), a.calcul_poids()))
@@ -71,7 +71,7 @@ def liste(request):
         
     return render_to_response("developpements/liste.html", {'developpements' : developpements, 'couleurs': couleurs}, context_instance = RequestContext(request))
 
-@login_required
+@permission_required('developpements.can_view_versions')
 def versions(request):
     versions = list(Version.objects.order_by('majeur','mineur'))
     dev_deja_sortis = []
@@ -104,7 +104,7 @@ def versions(request):
             
     return render_to_response("developpements/versions.html", {'versions' : versions}, context_instance = RequestContext(request))
 
-@login_required
+@permission_required('developpements.change_developpement')
 def change_color(request):
     dev_pk = request.GET.get('dev_pk', None)
     couleur = request.GET.get('couleur', '')
@@ -120,7 +120,7 @@ def change_color(request):
     dev.save()
     return HttpResponse(json.dumps({'dev_pk' : dev_pk}))
 
-@login_required
+@permission_required('developpements.change_developpement')
 def done(request):
     dev_pk = request.GET.get('dev_pk', None)
     try:
