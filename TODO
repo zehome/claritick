@@ -1,6 +1,6 @@
 Bugs:
 =====
-* Style css "ajout de fils" "Catégogie Projet Etat Assigné a" pas aligné correctement -> OK (ça pourrait être mieux)
+* Style css "ajout de fils" "Catégogie Projet Etat Assigné a" pas aligné correctement -> OK (c'est bon là non ?)
 * Bug style css écran login (pas de middle!) -> OK
 * Non reprise du "assigned to" lors de la création du ticket fils -> OK
 * Mauvaise mise à jour "Projet", "Etat", "Catégorie" lors de modification du ticket parent
@@ -8,7 +8,7 @@ Bugs:
 * Présentation ticket fils: pas de title au milieu
 * Numéros de ticket incorrects pour les ticket fils (numéro de séquence pas bon!) 
 * Affichage du titre du ticket dans l'interface de modification: mentionner l'état ! (Icone préférable)
-* Gestion des droits sur ticket enfant
+* Gestion des droits sur ticket enfant -> OK
 * Integrer ticket/modify_small.html et ticket/list_small.html
 
 Liste des tickets / Droits utilisateurs

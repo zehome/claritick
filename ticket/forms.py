@@ -51,13 +51,12 @@ class NewTicketSmallForm(NewTicketForm):
         exclude = ("opened_by", "category", "project", "keywords", "state", "priority", "assigned_to", "validated_by")
 
 class ChildForm(forms.ModelForm):
-    title = df.CharField(widget=forms.TextInput(attrs={'size': '80'}))
+    title = df.CharField(label=u'Titre', widget=forms.TextInput(attrs={'size': '80'}), required=True)
     text = df.CharField(widget=forms.Textarea(attrs={'cols':'90', 'rows': '15'}))
     keywords = df.CharField(widget=forms.TextInput(attrs={'size': '80'}), required=False)
-    state       = forms.ModelChoiceField(queryset = State.objects.all())
-    category    = forms.ModelChoiceField(queryset = Category.objects.all(), required=True)
-    assigned_to = forms.ModelChoiceField(queryset=ClaritickUser.objects.all(), required=False)
-    project = forms.ModelChoiceField(queryset=Project.objects.all(), required=False)
+    state       = forms.ModelChoiceField(label=u'État', queryset = State.objects.all())
+    assigned_to = df.ModelChoiceField(widget=FilteringSelect(), label=u'Assigné à', queryset=ClaritickUser.objects.all(), required=False)
+    project = forms.ModelChoiceField(label=u'Projet', queryset=Project.objects.all(), required=False)
 
     class Meta:
         model = Ticket
@@ -71,24 +70,6 @@ class ChildForm(forms.ModelForm):
 
         super(ChildForm, self).__init__(*args, **kwargs)
 
-        # Read-only si on ne peut pas changer
-        if user and not user.has_perm("ticket.change_child"):
-            for field in self.fields:
-                self.fields[field].widget.attrs['disabled'] = True
-
-class ChildFormRO(ChildForm):
-
-    def __init__(self, *a, **kw):
-        super(ChildFormRO, self).__init__(*a, **kw)
-        for field in self.fields:
-            self.fields[field].widget.attrs['disabled'] = True
-
-class NewChildForm(ChildForm):
-    def __init__(self, *args, **kwargs):
-        user = kwargs.pop("user", None)
-        if user:
-            filter_form_for_user(self, user)
-        super(NewChildForm, self).__init__(*args, **kwargs)
 
 class SearchTicketForm(df.Form, ModelFormTableMixin):
     title       = df.CharField(widget=df.TextInput(attrs={'size':'64'}), required=False)

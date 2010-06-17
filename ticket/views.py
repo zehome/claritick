@@ -311,7 +311,7 @@ def modify(request, ticket_id):
                 return precedent[0].redirect(request)
         else:
             raise PermissionDenied("Hacking attempt!")
-    
+
     ticket = get_object_or_404(Ticket, pk=ticket_id)
 
     # Si c'est un fils rediriger vers le pêre au bon endroit
@@ -336,11 +336,7 @@ def modify(request, ticket_id):
         template_name = "ticket/modify_small.html"
         TicketForm = NewTicketSmallForm
 
-    if request.user.has_perm('ticket.change_child'):
-        ChildFormSet = modelformset_factory(Ticket, form=ChildForm, extra=0)
-    else:
-        ChildFormSet = modelformset_factory(Ticket, form=ChildFormRO, extra=0)
-
+    ChildFormSet = modelformset_factory(Ticket, form=ChildForm, extra=0)
     child = ticket.child.order_by('date_open')
 
     if request.method == "POST":
@@ -356,13 +352,12 @@ def modify(request, ticket_id):
         child_formset = ChildFormSet(request.POST, queryset=child)
 
         # Save existing childs
-        if request.user.has_perm('ticket.change_child'):
-            for f in child_formset.initial_forms:
-                if f.is_valid():
-                    f.save()
+        for f in child_formset.initial_forms:
+            if f.is_valid():
+                f.save()
 
         # Add new childs
-        if request.user.has_perm('ticket.add_child'):
+        if request.user.has_perm('ticket.can_add_child'):
             for f in child_formset.extra_forms:
                 if f.is_valid():
                     new_child = copy_model_instance(ticket)
@@ -428,7 +423,7 @@ def get_file(request, file_id):
     response["Content-Disposition"] = "attachment; filename=%s" % file.filename
     return response
 
-@permission_required("ticket.add_child")
+@permission_required("ticket.can_add_child")
 @login_required
 def ajax_load_child(request, ticket_id):
     """
@@ -445,8 +440,8 @@ def ajax_load_child(request, ticket_id):
     if ticket.parent:
         raise PermissionDenied("Ce ticket est déjà un fils")
 
-    form = NewChildForm(user=request.user, prefix=prefix,
-            initial={'state': ticket.state_id, 'category': ticket.category_id, 'project': ticket.project_id, 'assigned_to': ticket.assigned_to_id},
+    form = ChildForm(user=request.user, prefix=prefix,
+            initial={'state': ticket.state_id, 'project': ticket.project_id, 'assigned_to': ticket.assigned_to_id, 'category': ticket.category_id},
             auto_id=False)
     return render_to_response('ticket/child.html',
             {"cf": form},

@@ -727,29 +727,39 @@ ol#pagination-digg {
 	width: 100%;
 }
 
-.childs {
+#contenu .childs {
     margin-top: 70px;
 }
 
-.childs fieldset {
+#contenu .childs fieldset {
     background-color: #F2F0DC;
 }
 
 #contenu .child legend {
     font-size: 1em;
-    text-align: left;
 }
 
-.child legend img:hover {
+#contenu .child legend img {
+    text-align: left;
+    margin-right: 10px;
+}
+
+#contenu .child legend img:hover {
     cursor: pointer;
 }
 
-img.summary {
-    margin-right: 10px;
+#contenu .child legend p {
+    display: inline;
+    text-align: center;
 }
-p.summary {
-    text-align: left;
-    margin: 0px;
+
+#contenu .child span {
+    padding-right: 50px;
+}
+
+#contenu .child hr {
+    padding-bottom: 30px;
+    background-color: #F2F0DC;
 }
 
 /* EOF */

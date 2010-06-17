@@ -4,22 +4,14 @@
         <legend>Nouveau Ticket fils</legend>
         <div>
     {% else %}
-        <legend><img src="/media/images/{% if child.state_id == 4 %}plus.png{% else %}minus.png{% endif %}" alt="plus" class="summary" onClick="togglePlusMinus(this);"/>Ticket #{{ child.id }}: {{ child.title }}, ouvert par {{ child.opened_by }} le {{ child.date_open|date:"d/m/Y à H:i" }}</legend>
+    <legend><img src="/media/images/{% if child.state_id == 4 %}plus.png{% else %}minus.png{% endif %}" alt="plus" class="summary" onClick="togglePlusMinus(this);" /><p>{{ child.title }}</p></legend>
         <div style="display: {% if child.state_id == 4 %}none{% else %}block{% endif %}">
     {% endif %}
             {{ cf.id }}
-            <table>
-                <tr>
-                    <th class="large right">Catégorie</th>
-                    <td class="large">{{ cf.category }}</td>
-                    <th class="large right">Projet</th>
-                    <td class="large">{{ cf.project }}</td>
-                    <th class="large right">État</th>
-                    <td class="large">{{ cf.state }}</td>
-                    <th class="large right">Assigné à</th>
-                    <td class="large">{{ cf.assigned_to }}</td>
-                </tr>
-            </table>
+            <span class="large">{{ cf.category.label_tag }} {{ cf.category }}</span>
+            <span class="large">{{ cf.project.label_tag }} {{ cf.project }}</span>
+            <span class="large">{{ cf.state.label_tag }} {{ cf.state }}</span>
+            <span class="large">{{ cf.assigned_to.label_tag }} {{ cf.assigned_to }}</span>
             <hr />
             <table>
                 <tr>
@@ -35,13 +27,15 @@
                 <tr>
                     <th class="large">{{ cf.keywords.label_tag }}</th>
                     <td class="right">{{ cf.keywords }}</td>
+                    <td></td>
                 </tr>
             </table>
-            {% if child %}{% if perms.ticket.change_child %}
+            <hr />
+            {% if child %}
             {% with child as ticket_to_comment %}{% with cfc as form_to_comment %}
             {% include "ticket/comment.html" %}
             {% endwith %}{% endwith %}
-            {% endif %}{% endif %}
+            {% endif %}
         </div>
     </fieldset>
 </div>

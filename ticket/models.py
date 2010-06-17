@@ -152,8 +152,7 @@ class Ticket(models.Model):
             ("can_resolve", u"Peut resoudre des tickets"),
             ("can_list_all", u"Peut voir la liste détaillée"),
             ("can_validate_ticket", u"Peut valider un ticket"),
-            ("add_child", u"Peut créer un ticket fils"),
-            ("change_child", u"Peut modifier un ticket fils"),
+            ("can_add_child", u"Peut créer un ticket fils"),
         )
 
     class QuerySet(models.query.QuerySet):
