@@ -8,10 +8,10 @@
         <div style="display: {% if child.state_id == 4 %}none{% else %}block{% endif %}">
     {% endif %}
             {{ cf.id }}
-            <span class="large">{{ cf.category.label_tag }} {{ cf.category }}</span>
-            <span class="large">{{ cf.project.label_tag }} {{ cf.project }}</span>
-            <span class="large">{{ cf.state.label_tag }} {{ cf.state }}</span>
-            <span class="large">{{ cf.assigned_to.label_tag }} {{ cf.assigned_to }}</span>
+            <span>{{ cf.category.label_tag }} {{ cf.category }}</span>
+            <span>{{ cf.project.label_tag }} {{ cf.project }}</span>
+            <span>{{ cf.state.label_tag }} {{ cf.state }}</span>
+            <span>{{ cf.assigned_to.label_tag }} {{ cf.assigned_to }}</span>
             <hr />
             <table>
                 <tr>
