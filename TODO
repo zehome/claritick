@@ -4,7 +4,8 @@ Bugs:
 * Numéros de ticket incorrects pour les ticket fils (numéro de séquence pas bon!) 
 * Affichage du titre du ticket dans l'interface de modification: mentionner l'état ! (Icone préférable)
 * Pouvoir supprimer ticket enfants vides (ou vidés)
-* Lister tous les ticket enfants (même fermés)
+* Lister tous les ticket enfants (même fermés) -> OK
+        ---> Pouvoir voir quel fils matche les critères de recherche (résultats parfois supprenants mais cohérents)
 * Penser un affichage convi pour les listes (visibilité de l'arbre)
 
 Liste des tickets / Droits utilisateurs

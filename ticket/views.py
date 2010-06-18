@@ -216,11 +216,10 @@ def list_all(request, form=None, filterdict=None, template_name=None, *args, **k
 
     if not get_filters(request).get("state"):
         qs = Ticket.open_tickets.filter(parent__isnull=True)
-        cqs = Ticket.open_tickets.filter(parent__isnull=False)
     else:
         qs = Ticket.tickets.filter(parent__isnull=True)
-        cqs = Ticket.tickets.filter(parent__isnull=False)
 
+    cqs = Ticket.tickets.filter(parent__isnull=False)
 
     # Form cleaned_data ?
     if form.is_valid():
@@ -229,13 +228,10 @@ def list_all(request, form=None, filterdict=None, template_name=None, *args, **k
             qs = qs.filter_or_child(models.Q(title__icontains=form.cleaned_data["text"]) | models.Q(text__icontains=form.cleaned_data["text"]))
             del data["text"]
         qs = qs.filter_queryset(data)
-        if data['state']:
-            cqs = cqs.filter(state=data['state'])
 
     # unassigned / nonvalide
     if filterdict:
         qs = qs.filter_or_child(filterdict)
-        cqs = cqs.filter(**filterdict)
 
     # On va filtrer la liste des tickets en fonction de la relation user => client
     qs = qs.filter_ticket_by_user(request.user)
