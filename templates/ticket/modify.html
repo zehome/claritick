@@ -193,6 +193,15 @@
                     fl.style('opacity', '0.5');
                     fl.push(last_focused);
                     dojo.connect(last_focused, 'onclick', get_focus);
+                    dojo.parser.parse(last_focused)
+
+                    /* copie des valeurs du pêre */
+                    dojo.attr('id_form-'+count.value+'-assigned_to', 'value', dojo.byId('id_assigned_to').value);
+                    dojo.query('input[name="form-'+count.value+'-assigned_to"]')[0].value = dojo.query('input[name="assigned_to"]')[0].value;
+                    dojo.forEach(['category', 'project', 'state'], function (e) {
+                            dojo.byId('id_form-'+count.value+'-'+e).selectedIndex = dojo.byId('id_'+e).selectedIndex;
+                        });
+
                     count.value = parseInt(count.value)+1;
                     buttons.forEach(function (b) {
                             dijit.byId(b.id).attr('disabled', false);
