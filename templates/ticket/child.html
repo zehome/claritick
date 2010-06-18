@@ -4,8 +4,8 @@
         <legend>Nouveau Ticket fils</legend>
         <div>
     {% else %}
-    <legend><img src="/media/images/{% if child.state_id == 4 %}plus.png{% else %}minus.png{% endif %}" alt="plus" class="summary" onClick="togglePlusMinus(this);" /><p>{{ child.title }}</p></legend>
-        <div style="display: {% if child.state_id == 4 %}none{% else %}block{% endif %}">
+    <legend><img src="/media/images/{% if child.state_id == 4 %}plus.png{% else %}minus.png{% endif %}" alt="plus" onClick="togglePlusMinus(this, 'child{{ child.id }}_content');" />{{ child.title }}</legend>
+        <div id="child{{ child.id }}_content" style="display: {% if child.state_id == 4 %}none{% else %}block{% endif %}">
     {% endif %}
             {{ cf.id }}
             <span>{{ cf.category.label_tag }} {{ cf.category }}</span>

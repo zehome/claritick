@@ -425,6 +425,11 @@ div#gauche a:hover {
 	height: 45px;
 }
 
+#contenu table td.bigrow {
+    vertical-align: middle;
+    text-align: center;
+}
+
 #contenu table tr.smallrow_row1 {
     height: 10px;
     background-color: #F2F0DC;
@@ -746,11 +751,6 @@ ol#pagination-digg {
 
 #contenu .child legend img:hover {
     cursor: pointer;
-}
-
-#contenu .child legend p {
-    display: inline;
-    text-align: center;
 }
 
 #contenu .child hr {

@@ -201,8 +201,7 @@
     }
 {% endif %}
 
-    function togglePlusMinus(img) {
-        var content = img.parentNode.parentNode.children[1];
+    function togglePlusMinus(img, content) {
         if (dojo.style(content, "display") == "block") {
             dojo.style(content, "display", "none");
             img.src = "/media/images/plus.png";

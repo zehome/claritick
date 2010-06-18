@@ -91,7 +91,7 @@
             show_selected_action(dijit.byId("id_action-actions").attr("value"));
     });
 </script>
-{% endblock %}
+{% endblock extrajs %}
 
 {% block content %}
 <form method="post" action="?page=1" id="list_form">{% csrf_token %}
@@ -149,7 +149,7 @@
         </script>
     </button>
 </fieldset>
-{% endblock %}
+{% endblock list_filters %}
 </form>
 
 {% if tickets.object_list %}
@@ -201,36 +201,26 @@
 </thead>
 <tbody>
 {% for row in tickets.object_list %}
-    {# get_comment_count for ticket.ticket row.id as comment_count #}
-    <tr class="bigrow {% cycle 'row1' 'row2' %}" id="ticket_line_{{ forloop.counter }}">
-        <td style="display: none;"><div dojoType="dijit.Tooltip" connectId="ticket_line_{{ forloop.counter }}" position="above"><h3>{{ row.title|wordwrap:80 }}</h3>{{ row.text|wordwrap:80|linebreaks }}</div></td>
-        <td><input type="checkbox" name="ticket_checked" id="ticket_select_{{ forloop.counter }}" value="{{ row.pk }}" /></td>
-        <td style="width: 60px;{{ row.close_style }}{{ row.priority_back_style }}"><a style="{{ row.priority_text_style }}" href="{% url ticket_modify row.id %}">{{ row.id }}</a></td>
-        <td style="width: 200px;">{% if row.client %}{{ row.client }}{% endif %}</td>
-        <td style="width: 100px;">{{ row.category }}</td>
-        <td style="width: 100px;">{% if row.project %}{{ row.project }}{% endif %}</td>
-        <td style="min-width: 250px;{{ row.close_style }}"><a stle="{{ row.priority_text_style }}" href="{% url ticket_modify row.id %}">{{ row.title|truncatewords:8 }}</a></td>
-        <td>({{ row.nb_comments }})</td>
-        <td>{{ row.contact }}</td>
-        <td style="width: 150px;">{{ row.last_modification|date:'d/m/y H\hi' }}</td>
-        <td>{{ row.opened_by }}</td>
-        <td>{{ row.assigned_to }}</td>
+    <tr class="bigrow {% cycle 'row1' 'row2' as rowcolor %}" id="ticket_line_{{ forloop.counter }}">
+        <td class="bigrow"><input type="checkbox" name="ticket_checked" id="ticket_select_{{ forloop.counter }}" value="{{ row.pk }}" /></td>
+        <td class="bigrow" style="width: 60px;{{ row.close_style }}{{ row.priority_back_style }}" rowspan="{{ row.enfants|length|add:"1" }}"><a style="{{ row.priority_text_style }}" href="{% url ticket_modify row.id %}">{{ row.id }}</a></td>
+        <td class="bigrow" style="width: 200px;">{% if row.client %}{{ row.client }}{% endif %}</td>
+        <td class="bigrow" style="width: 100px;">{{ row.category }}</td>
+        <td class="bigrow" style="width: 100px;">{% if row.project %}{{ row.project }}{% endif %}</td>
+        <td class="bigrow" style="min-width: 250px;{{ row.close_style }}"><a stle="{{ row.priority_text_style }}" href="{% url ticket_modify row.id %}">{{ row.title|truncatewords:8 }}</a></td>
+        <td class="bigrow">({{ row.nb_comments }})</td>
+        <td class="bigrow">{{ row.contact }}</td>
+        <td class="bigrow" style="width: 150px;">{{ row.last_modification|date:'d/m/y H\hi' }}</td>
+        <td class="bigrow">{{ row.opened_by }}</td>
+        <td class="bigrow">{{ row.assigned_to }}</td>
     </tr>
+    <div dojoType="dijit.Tooltip" connectId="ticket_line_{{ forloop.counter }}" position="above"><h3>{{ row.title|wordwrap:80 }}</h3>{{ row.text|wordwrap:80|linebreaks }}</div>
     {% for child in row.enfants %}
-        <tr class="smallrow_{% cycle 'row1' 'row2' %}" id="ticket_child{{ forloop.parentloop.counter }}_line_{{ forloop.counter }}">
-            <td style="display: none;"><div dojoType="dijit.Tooltip" connectId="ticket_child{{ forloop.parentloop.counter }}_line_{{ forloop.counter }}" position="above"><h3>{{ child.title|wordwrap:80 }}</h3>{{ child.text|wordwrap:80|linebreaks }}</div></td>
+        <tr class="{{ rowcolor }}" id="ticket_child{{ forloop.parentloop.counter }}_line_{{ forloop.counter }}">
             <td><input type="checkbox" name="ticket_checked" id="ticket_child{{ forloop.parentloop.counter}}_select_{{ forloop.counter }}" value="{{ child.pk }}" /></td>
-            <td style="width: 60px;{{ child.close_style }}{{ child.priority_back_style }}"><a style="{{ child.priority_text_style }}" href="{% url ticket_modify child.id %}">{{ child.id }}</a></td>
-            <td style="width: 200px;"></td>
-            <td style="width: 100px;">{{ child.category }}</td>
-            <td style="width: 100px;"></td>
-            <td style="text-align: center;min-width: 250px;{{ child.close_style }}"><a sytle="{{ child.priority_text_style }}" href="{% url ticket_modify child.id %}">{{ child.title|truncatewords:8 }}</a></td>
-            <td>({{ child.nb_comments }})</td>
-            <td></td>
-            <td style="width: 150px;">{{ child.last_modification|date:'d/m/y H\hi' }}</td>
-            <td>{{ child.opened_by }}</td>
-            <td>{{ child.assigned_to }}</td>
+            <td colspan="9" class="rowchild" style="{{ child.close_style }}"><a sytle="{{ child.priority_text_style }}" href="{% url ticket_modify child.id %}">{{ child.title|truncatewords:8 }}</a></td>
         </tr>
+        <div dojoType="dijit.Tooltip" connectId="ticket_child{{ forloop.parentloop.counter }}_line_{{ forloop.counter }}" position="above"><h3>{{ child.title|wordwrap:80 }}</h3>{{ child.text|wordwrap:80|linebreaks }}</div>
     {% endfor %}
 {% endfor %}
 </tbody>
@@ -245,4 +235,4 @@
 <h3>Aucun résultat</h3>
 {% endif %}
 
-{% endblock %}
+{% endblock content %}
