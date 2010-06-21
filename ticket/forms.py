@@ -51,8 +51,8 @@ class NewTicketSmallForm(NewTicketForm):
         exclude = ("opened_by", "category", "project", "keywords", "state", "priority", "assigned_to", "validated_by")
 
 class ChildForm(forms.ModelForm):
-    title = df.CharField(label=u'Titre', widget=forms.TextInput(attrs={'size': '80'}), required=True)
-    text = df.CharField(widget=forms.Textarea(attrs={'cols':'90', 'rows': '15'}))
+    title = df.CharField(label=u'Titre', widget=forms.TextInput(attrs={'size': '80', 'onBlur': 'showDeletebox(this);'}), required=True)
+    text = df.CharField(widget=forms.Textarea(attrs={'cols':'90', 'rows': '15', 'onBlur': 'showDeletebox(this);'}))
     keywords = df.CharField(widget=forms.TextInput(attrs={'size': '80'}), required=False)
     state       = forms.ModelChoiceField(label=u'État', queryset = State.objects.all())
     assigned_to = df.ModelChoiceField(widget=FilteringSelect(), label=u'Assigné à', queryset=ClaritickUser.objects.all(), required=False)

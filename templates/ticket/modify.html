@@ -170,7 +170,7 @@
                 dojo.query(dojo.doc.location.hash).style("opacity", "1");
                 dojo.style("parent", "opacity", "0.5");
             }
-            buttons = dojo.query("#save_buttons").query("button")
+            buttons = dojo.query("#save_buttons").query("button");
             });
 
     function get_focus (ev) {
@@ -215,6 +215,19 @@
                     dojo.doc.location.hash = '';
                     dojo.doc.location.hash = 'last_child';
                 }});
+    }
+
+    function showDeletebox(input) {
+        var tid = input.parentNode.getAttribute('ticket_id');
+        if (tid) {
+            var child = dojo.query('div#child'+tid);
+            var title = child.query('input[name$="-title"]')[0];
+            var text = child.query('textarea[name$="-text"]')[0];
+            if (title.value == '' && text.value == '')
+                dojo.style('delete_child'+tid, 'display', 'inline');
+            else
+                dojo.style('delete_child'+tid, 'display', 'none');
+        }
     }
 {% endif %}
 

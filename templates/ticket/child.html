@@ -15,16 +15,19 @@
             <span>{{ cf.project.label_tag }} {{ cf.project }}</span>
             <span>{{ cf.state.label_tag }} {{ cf.state }}</span>
             <span>{{ cf.assigned_to.label_tag }} {{ cf.assigned_to }}</span>
+            {% if child %}
+            <span id="delete_child{{ child.id }}" style="display: none">{{ cf.DELETE.label_tag }} {{ cf.DELETE }}</span>
+            {% endif %}
             <hr />
             <table>
                 <tr>
                     <th class="large">{{ cf.title.label_tag }}</th>
-                    <td class="large right">{{ cf.title }}</td>
+                    <td ticket_id="{{ child.id }}" class="large right">{{ cf.title }}</td>
                     <td class="large right">{{ cf.title.errors }}</td>
                 </tr>
                 <tr>
                     <th></th>
-                    <td class="right">{{ cf.text }}</td>
+                    <td ticket_id="{{ child.id }}" class="right">{{ cf.text }}</td>
                     <td class="right">{{ cf.text.errors }}</td>
                 </tr>
                 <tr>

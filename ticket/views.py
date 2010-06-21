@@ -332,7 +332,7 @@ def modify(request, ticket_id):
         template_name = "ticket/modify_small.html"
         TicketForm = NewTicketSmallForm
 
-    ChildFormSet = modelformset_factory(Ticket, form=ChildForm, extra=0)
+    ChildFormSet = modelformset_factory(Ticket, form=ChildForm, extra=0, can_delete=True)
     child = ticket.child.order_by('date_open')
 
     if request.method == "POST":
@@ -349,8 +349,11 @@ def modify(request, ticket_id):
 
         # Save existing childs
         for f in child_formset.initial_forms:
-            if f.is_valid():
+            if not f in child_formset.deleted_forms and f.is_valid():
                 f.save()
+
+        for f in child_formset.deleted_forms:
+            f.instance.delete()
 
         # Add new childs
         if request.user.has_perm('ticket.can_add_child'):
