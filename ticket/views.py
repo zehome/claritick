@@ -352,15 +352,16 @@ def modify(request, ticket_id):
             if not f in child_formset.deleted_forms and f.is_valid():
                 f.save()
 
-        for f in child_formset.deleted_forms:
-            f.instance.delete()
+        if hasattr(child_formset, 'deleted_forms'):
+            for f in child_formset.deleted_forms:
+                f.instance.delete()
 
         # Add new childs
         if request.user.has_perm('ticket.can_add_child'):
             for f in child_formset.extra_forms:
                 if f.is_valid():
                     new_child = copy_model_instance(ticket)
-                    for a in ('state', 'assigned_to', 'title',
+                    for a in ('state', 'assigned_to', 'title', 'diffusion',
                             'text', 'keywords', 'category', 'project'):
                         setattr(new_child, a, f.cleaned_data.get(a))
                     new_child.opened_by = request.user
@@ -370,7 +371,7 @@ def modify(request, ticket_id):
 
         post_comment_child(request, queryset=child)
 
-        if form.is_valid() and child_formset.is_valid():
+        if form.is_valid():
             # Si l'utilisateur peut assigner ce ticket à l'utilisateur passé en POST
             if not request.user.is_superuser and form.cleaned_data["assigned_to"] and form.cleaned_data["assigned_to"]\
                     not in ClaritickUser.objects.get(pk=request.user.pk).get_child_users():

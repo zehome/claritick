@@ -57,6 +57,7 @@ class ChildForm(forms.ModelForm):
     state       = forms.ModelChoiceField(label=u'État', queryset = State.objects.all())
     assigned_to = df.ModelChoiceField(widget=FilteringSelect(), label=u'Assigné à', queryset=ClaritickUser.objects.all(), required=False)
     project = forms.ModelChoiceField(label=u'Projet', queryset=Project.objects.all(), required=False)
+    diffusion = forms.BooleanField(required=True)
 
     class Meta:
         model = Ticket

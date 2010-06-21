@@ -15,6 +15,7 @@
             <span>{{ cf.project.label_tag }} {{ cf.project }}</span>
             <span>{{ cf.state.label_tag }} {{ cf.state }}</span>
             <span>{{ cf.assigned_to.label_tag }} {{ cf.assigned_to }}</span>
+            <span>{{ cf.diffusion.label_tag }} {{ cf.diffusion }}</span>
             {% if child %}
             <span id="delete_child{{ child.id }}" style="display: none">{{ cf.DELETE.label_tag }} {{ cf.DELETE }}</span>
             {% endif %}

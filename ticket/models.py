@@ -408,10 +408,6 @@ class Ticket(models.Model):
         except Ticket.DoesNotExist:
             old_ticket = None
 
-        # diffusion = False pour tous les nouveau fils
-        if not old_ticket and self.parent:
-            self.diffusion = False
-
         # Override date_close
         if old_ticket:
             if not old_ticket.is_closed and self.is_closed:
@@ -467,13 +463,20 @@ class Ticket(models.Model):
             if old_ticket and old_ticket.diffusion and not self.diffusion:
                 self.ticketmailtrace_set.delete()
 
+        if self.parent:
+            send_email_reasons = ["Ticket enfant %d : %s" % (self.pk, string) for string in send_email_reasons]
+            send_fax_reasons = ["Ticket enfant %d : %s" % (self.pk, string) for string in send_fax_reasons]
+            target_ticket = self.parent
+        else:
+            target_ticket = self
+
         if self.diffusion:
             if send_email_reasons:
                 # LC: Do not send the email right now, wait some time before for grouping actions.
                 #self.send_email(send_email_reasons)
-                self.ticketmailaction_set.create(reasons=send_email_reasons)
+                target_ticket.ticketmailaction_set.create(reasons=send_email_reasons)
             if send_fax_reasons:
-                self.send_fax(send_fax_reasons)
+                target_ticket.send_fax(send_fax_reasons)
 
         return r
 
