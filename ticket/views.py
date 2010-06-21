@@ -346,15 +346,15 @@ def modify(request, ticket_id):
 
         # Il faut valider les fils en premier pour ne pas se faire jetter si on ferme tout
         child_formset = ChildFormSet(request.POST, queryset=child)
+        deleted_forms = child_formset.deleted_forms if hasattr(child_formset, 'deleted_forms') else []
 
         # Save existing childs
         for f in child_formset.initial_forms:
-            if not f in child_formset.deleted_forms and f.is_valid():
+            if not f in deleted_forms and f.is_valid():
                 f.save()
 
-        if hasattr(child_formset, 'deleted_forms'):
-            for f in child_formset.deleted_forms:
-                f.instance.delete()
+        for f in deleted_forms:
+            f.instance.delete()
 
         # Add new childs
         if request.user.has_perm('ticket.can_add_child'):
