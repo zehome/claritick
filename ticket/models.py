@@ -53,6 +53,7 @@ class State(models.Model):
 
     label = models.CharField("Libellé", max_length=64)
     weight = models.IntegerField("Poids", default=1)
+    img = models.FileField(upload_to='images/states', blank=True, null=True)
 
     def __unicode__(self):
         return u"%s" % (self.label,)

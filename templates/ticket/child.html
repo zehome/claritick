@@ -5,6 +5,9 @@
         <div>
     {% else %}
     <legend><img src="/media/images/{% if child.state_id == 4 %}plus.png{% else %}minus.png{% endif %}" alt="plus" onClick="togglePlusMinus(this, 'child{{ child.id }}_content');" />{{ child.title }}</legend>
+        {% if child.state.img %}
+        <div class="state_image"><img src="{{ child.state.img.url }}" alt="{{ child.state }}" /></div>
+        {% endif %}
         <div id="child{{ child.id }}_content" style="display: {% if child.state_id == 4 %}none{% else %}block{% endif %}">
     {% endif %}
             {{ cf.id }}

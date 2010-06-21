@@ -757,5 +757,12 @@ ol#pagination-digg {
     padding-bottom: 30px;
     background-color: #F2F0DC;
 }
+#contenu .state_image {
+    display: inline;
+    float: right;
+}
+#contenu .state_image img {
+    width: 40px;
+}
 
 /* EOF */
