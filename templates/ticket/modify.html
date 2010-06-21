@@ -206,6 +206,14 @@
                     buttons.forEach(function (b) {
                             dijit.byId(b.id).attr('disabled', false);
                         });
+
+                    /* aller vers le futur nouveau fils */
+                    var node;
+                    if ((node = dojo.byId('last_child')))
+                        node.removeAttribute('id');
+                    dojo.query('div.child:last-child')[0].setAttribute('id', 'last_child');
+                    dojo.doc.location.hash = '';
+                    dojo.doc.location.hash = 'last_child';
                 }});
     }
 {% endif %}
