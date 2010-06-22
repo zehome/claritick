@@ -764,5 +764,9 @@ ol#pagination-digg {
 #contenu .state_image img {
     width: 30px;
 }
+#contenu .mail_image img {
+    position: relative;
+    top: 20px;
+}
 
 /* EOF */

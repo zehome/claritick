@@ -242,6 +242,18 @@
             img.src = "/media/images/minus.png";
         }
     }
+    function toggleMailImage(img, checkboxContainer) {
+        var checkbox = dojo.byId(checkboxContainer).children[0];
+        console.log(checkbox.checked);
+        if (checkbox.checked) {
+            dojo.attr(img, 'src', '/media/images/no_mail.png');
+            checkbox.removeAttribute('checked');
+        }
+        else {
+            dojo.attr(img, 'src', '/media/images/mail.png');
+            dojo.attr(checkbox, 'checked', 'checked');
+        }
+    }
 </script>
 
 {% if perms.ticket.can_add_child %}
