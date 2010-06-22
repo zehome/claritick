@@ -93,7 +93,7 @@ def handle_update_user_signal(sender, **kw):
 
 def handle_del_user_signal(sender, **kw):
     user = kw["instance"]
-    del_observer(instance)
+    del_observer(user)
 
 def handle_update_profile_signal(sender, **kw):
     userprofile = kw["instance"]
