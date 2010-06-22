@@ -166,9 +166,9 @@ def list_view(request, view_id=None):
     # On filtre la liste a partir des datas de la vue
     filters = data.copy()
     if not request.user.has_perm("ticket.can_list_all") and data.get("text"):
-        qs = qs.filter_or_child(models.Q(title__icontains=data["title"]) | models.Q(text__icontains=data["text"]))
+        qs = qs.filter_or_child(models.Q(title__icontains=data["title"]) | models.Q(text__icontains=data["text"]), user=request.user)
         del filters["text"]
-    qs = qs.filter_queryset(filters)
+    qs = qs.filter_queryset(filters, user=request.user)
 
     # On va filtrer la liste des tickets en fonction de la relation user => client
     qs = qs.filter_ticket_by_user(request.user)
@@ -225,13 +225,13 @@ def list_all(request, form=None, filterdict=None, template_name=None, *args, **k
     if form.is_valid():
         data = form.cleaned_data.copy()
         if not request.user.has_perm("ticket.can_list_all") and form.cleaned_data["text"]:
-            qs = qs.filter_or_child(models.Q(title__icontains=form.cleaned_data["text"]) | models.Q(text__icontains=form.cleaned_data["text"]))
+            qs = qs.filter_or_child(models.Q(title__icontains=form.cleaned_data["text"]) | models.Q(text__icontains=form.cleaned_data["text"]), user=request.user)
             del data["text"]
-        qs = qs.filter_queryset(data)
+        qs = qs.filter_queryset(data, user=request.user)
 
     # unassigned / nonvalide
     if filterdict:
-        qs = qs.filter_or_child(filterdict)
+        qs = qs.filter_or_child(filterdict, user=request.user)
 
     # On va filtrer la liste des tickets en fonction de la relation user => client
     qs = qs.filter_ticket_by_user(request.user)

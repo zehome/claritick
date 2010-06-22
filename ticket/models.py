@@ -178,7 +178,7 @@ class Ticket(models.Model):
                 raise NoProfileException(user)
             return qs
 
-        def filter_queryset(self, filters):
+        def filter_queryset(self, filters, *args, **kwargs):
             """ Filtre un queryset de ticket a partir d'un dictionnaire de fields lookup. """
             search_mapping = {
                 'title': 'icontains',
@@ -202,7 +202,7 @@ class Ticket(models.Model):
                                 lookup = 'exact'
                         if lookup is None:
                             continue
-                        qs = qs.filter_or_child({"%s__%s"%(str(key), lookup): value})
+                        qs = qs.filter_or_child({"%s__%s"%(str(key), lookup): value}, *args, **kwargs)
                 except (AttributeError, FieldError):
                     pass
 
@@ -215,20 +215,27 @@ class Ticket(models.Model):
 
             return qs
 
-        def filter_or_child(self, filter):
+        def filter_or_child(self, filter, user=None):
             """ Filtre suivant filterdict avec un OR sur les fils
             ne renvoie que le pêre si un fils matche filterdict """
             qs = self.all()
+
+            child_condition = models.Q(child__isnull=False)
+
+            # Matcher sur les fils qui ne sont pas en diffusion ?
+            if user and not user.has_perm("ticket.can_list_all"):
+                child_condition &= models.Q(child__diffusion=True)
+
             if isinstance(filter, models.query_utils.Q):
                 query = models.Q()
                 for k,v in filter.children:
                     query |= models.Q(**{'child__%s'%k: v})
                 qs = qs.filter(filter | \
-                    (models.Q(child__isnull=False) & query))
+                    (child_condition & query))
             else:
                 for k,v in filter.items():
                     qs = qs.filter(models.Q(**{k: v}) | \
-                            (models.Q(child__isnull=False) & \
+                            (child_condition & \
                             models.Q(**{"child__%s"%k: v})))
             return qs.distinct()
 
