@@ -154,6 +154,7 @@ class Ticket(models.Model):
             ("can_list_all", u"Peut voir la liste détaillée"),
             ("can_validate_ticket", u"Peut valider un ticket"),
             ("can_add_child", u"Peut créer un ticket fils"),
+            ("can_view_internal_comments", u"Peut voir les commentaires internes"),
         )
 
     class QuerySet(models.query.QuerySet):

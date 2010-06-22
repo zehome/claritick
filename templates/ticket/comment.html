@@ -5,13 +5,13 @@
 <table class="comment_table">
   <thead>
     <tr>
-        <th style="width:48%">Interne</th>
+        {% if perms.ticket.can_view_internal_comments %}<th style="width:48%">Interne</th>{% endif %}
         <th style="width:48%">Diffusé au client</th>
     </tr>
   </thead>
   <tbody>
       <tr>
-
+        {% if perms.ticket.can_view_internal_comments %}
         <td>
             {% for comment in comment_list %}{% if comment.internal %}
                 <div class="comment">
@@ -20,6 +20,7 @@
                 </div>
             {% endif %}{% endfor %}
         </td>
+        {% endif %}
 
         <td>
             {% for comment in comment_list %}{% if not comment.internal %}
