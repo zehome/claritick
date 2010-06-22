@@ -291,7 +291,6 @@ class Ticket(models.Model):
 
     # parent ticket
     parent = models.ForeignKey('Ticket', related_name="child", verbose_name="Ticket parent", blank=True, null=True)
-    # diffusion (seulement les tickets pères)
     diffusion = models.BooleanField(default=True)
 
     # TODO nombre de comments
@@ -461,7 +460,7 @@ class Ticket(models.Model):
             # Si on change le paramètre diffusion de "True" vers "False",
             # On ne veut pas envoyer les emails en file d'attente!
             if old_ticket and old_ticket.diffusion and not self.diffusion:
-                self.ticketmailtrace_set.delete()
+                self.ticketmailtrace_set.all().delete()
 
         if self.parent:
             send_email_reasons = ["Ticket enfant %d : %s" % (self.pk, string) for string in send_email_reasons]
@@ -518,7 +517,7 @@ class Ticket(models.Model):
         
         # Application du template email
         template = get_template("email/ticket.txt")
-        context = Context({"ticket": self, 'reasons': reasons })
+        context = Context({"ticket": self, 'childs': self.child.order_by('date_open'), 'reasons': reasons })
         data = template.render(context)
         
         template = Template("{% autoescape off %}[Ticket {{ ticket.id }}]: {{ ticket.title|striptags|truncatewords:64 }}{% endautoescape %}")

@@ -21,6 +21,28 @@ Contact:               {% if ticket.contact %}{{ ticket.contact }}{% else %}{{ t
 {{ comment.comment|striptags|wordwrap:80 }}
 {% endif %}{% endfor %}
 
+{% for child in childs %}
++------------------------------------------------------------------------------------+
+| Ticket fils n°{{ child.id|ljust:'6' }}: [ {{ child.state }} ]  
+| Objet: {{ child.title|striptags|wordwrap:80 }}
++------------------------------------------------------------------------------------+
+Date d'ouverture:      {{ child.date_open|date:'d/m/Y H\hi' }}
+Dernière modification: {{ child.last_modification|date:'d/m/Y H\hi' }}
+Ouvert par:            {{ child.opened_by.first_name }} {{ child.opened_by.last_name }} ({{ child.opened_by.username }})
+{% if child.project %}Projet:                {{ child.project }}{% endif %}
+{% if child.assigned_to %}Assigné à:             {{ child.assigned_to.first_name }} {{ child.assigned_to.last_name }} ({{ child.assigned_to.username }}){% else %}
+Non assigné{% endif %}
+
+=======================================================================
+{{ child.text|striptags|wordwrap:80 }}
+
+
+{% get_comment_list for child as comment_list %}{% for comment in comment_list %}{% if not comment.internal %}
+***********************************************************************
+{{ comment.user.first_name }} {{ comment.user.last_name }} ({{ comment.user_name }}) le {{ comment.submit_date|date:'d/m/Y H\hi' }}:
+{{ comment.comment|striptags|wordwrap:80 }}
+{% endif %}{% endfor %}
+{% endfor %}
 
 +---------------------------------------------------------------------+
 | Nous vous rappelons que le laboratoire doit valider chaque          |
