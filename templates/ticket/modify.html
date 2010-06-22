@@ -168,6 +168,7 @@
             fl.onclick(get_focus);
             if (dojo.doc.location.hash != '') {
                 dojo.query(dojo.doc.location.hash).style("opacity", "1");
+                dojo.style(dojo.doc.location.hash.substring(1)+'_content', 'display', 'inline');
                 dojo.style("parent", "opacity", "0.5");
             }
             buttons = dojo.query("#save_buttons").query("button");
@@ -232,12 +233,12 @@
 {% endif %}
 
     function togglePlusMinus(img, content) {
-        if (dojo.style(content, "display") == "block") {
+        if (dojo.style(content, "display") == "inline") {
             dojo.style(content, "display", "none");
             img.src = "/media/images/plus.png";
         }
         else {
-            dojo.style(content, "display", "block");
+            dojo.style(content, "display", "inline");
             img.src = "/media/images/minus.png";
         }
     }

@@ -2,13 +2,13 @@
     <fieldset class="block form">
     {% if not child %}
         <legend>Nouveau Ticket fils</legend>
-        <div>
+        <span>
     {% else %}
     <legend><img src="/media/images/{% if child.state_id == 4 %}plus.png{% else %}minus.png{% endif %}" alt="plus" onClick="togglePlusMinus(this, 'child{{ child.id }}_content');" />{{ child.title }}</legend>
         {% if child.state.img %}
         <div class="state_image"><img src="{{ child.state.img.url }}" alt="{{ child.state }}" /></div>
         {% endif %}
-        <div id="child{{ child.id }}_content" style="display: {% if child.state_id == 4 %}none{% else %}block{% endif %}">
+        <span id="child{{ child.id }}_content" style="display: {% if child.state_id == 4 %}none{% else %}inline{% endif %}">
     {% endif %}
             {{ cf.id }}
             <span>{{ cf.category.label_tag }} {{ cf.category }}</span>
@@ -43,6 +43,6 @@
             {% include "ticket/comment.html" %}
             {% endwith %}{% endwith %}
             {% endif %}
-        </div>
+        </span>
     </fieldset>
 </div>
