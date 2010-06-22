@@ -256,7 +256,6 @@ def list_all(request, form=None, filterdict=None, template_name=None, *args, **k
     return render_to_response(template_name or "ticket/list.html", context, context_instance=RequestContext(request))
 
 @permission_required("ticket.add_ticket")
-@login_required
 def partial_new(request, form=None):
     """
     Create a new ticket.
@@ -266,7 +265,6 @@ def partial_new(request, form=None):
     return render_to_response('ticket/partial_new.html', {'form': form }, context_instance=RequestContext(request))
 
 @permission_required("ticket.add_ticket")
-@login_required
 def new(request):
     """
     Create a new ticket.
@@ -290,7 +288,6 @@ def new(request):
     return redirect("ticket_modify", ticket_id=ticket.pk)
 
 @permission_required("ticket.change_ticket")
-@login_required
 def modify(request, ticket_id):
     def exit_action():
         saveaction = request.POST.get("savebutton", "save")
@@ -424,7 +421,6 @@ def get_file(request, file_id):
     return response
 
 @permission_required("ticket.can_add_child")
-@login_required
 def ajax_load_child(request, ticket_id):
     """
     Renvoie un formulaire HTML pour création d'un fils de ticket_id
