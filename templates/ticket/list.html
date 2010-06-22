@@ -218,7 +218,7 @@
     {% for child in row.enfants %}
         <tr class="{{ rowcolor }}" id="ticket_child{{ forloop.parentloop.counter }}_line_{{ forloop.counter }}">
             <td><input type="checkbox" name="ticket_checked" id="ticket_child{{ forloop.parentloop.counter}}_select_{{ forloop.counter }}" value="{{ child.pk }}" /></td>
-            <td colspan="9" class="rowchild" style="{{ child.close_style }}"><a sytle="{{ child.priority_text_style }}" href="{% url ticket_modify row.id %}#child{{ child.id }}">{{ child.title|truncatewords:8 }}</a></td>
+            <td colspan="9" class="rowchild"><img src="/media/images/oxygen/arrow-right.png" alt="-->" /><span style="{{ child.close_style }}"><a sytle="{{ child.priority_text_style }}" href="{% url ticket_modify row.id %}#child{{ child.id }}">{{ child.title|truncatewords:8 }}</a></span></td>
         </tr>
         <div dojoType="dijit.Tooltip" connectId="ticket_child{{ forloop.parentloop.counter }}_line_{{ forloop.counter }}" position="above"><h3>{{ child.title|wordwrap:80 }}</h3>{{ child.text|wordwrap:80|linebreaks }}</div>
     {% endfor %}
