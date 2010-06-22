@@ -247,6 +247,7 @@ def list_all(request, form=None, filterdict=None, template_name=None, *args, **k
             template_name = "ticket/list.html"
         else:
             template_name = "ticket/list_small.html"
+            cqs = cqs.filter(diffusion=True)
 
     context.update({
         "form": form, 
@@ -325,12 +326,13 @@ def modify(request, ticket_id):
     if request.user.has_perm("ticket.add_ticket_full"):
         template_name = "ticket/modify.html"
         TicketForm = NewTicketForm
+        child = ticket.child.order_by('date_open')
     else:
         template_name = "ticket/modify_small.html"
         TicketForm = NewTicketSmallForm
+        child = ticket.child.filter(diffusion=True).order_by('date_open')
 
     ChildFormSet = modelformset_factory(Ticket, form=ChildForm, extra=0, can_delete=True)
-    child = ticket.child.order_by('date_open')
 
     if request.method == "POST":
         if request.POST.get("_validate-ticket", None) and request.user.has_perm("ticket.can_validate_ticket")\
