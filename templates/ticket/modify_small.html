@@ -6,22 +6,22 @@
   <legend>Contact</legend>
   <table>
     <tr>
-        <td class="large"><label for="id_client">Client</label></td><td>{{ form.client }}</td>
-        <td class="large right"><strong>Assigné à</strong></td><td>{{ ticket.assigned_to|default:"" }}</td>
+        <td class="large">{{ form.client.label_tag }}</td><td>{{ form.client }}</td>
+        <td class="large right"><strong>Assigné à</strong></td><td>{{ form.instance.assigned_to|default:"" }}</td>
     </tr>
     <tr>
-        <td class="large"><label for="id_contact">Contact</label></td><td>{{ form.contact }}</td>
-        <td class="large right"><label for="id_opened_by">Ouvert par</label></td><td>{{ ticket.opened_by }} le {{ ticket.date_open|date:"d/m/Y à H:i" }}</td>
+        <td class="large">{{ form.contact.label_tag }}</td><td>{{ form.contact }}</td>
+        <td class="large right"><label for="id_opened_by">Ouvert par</label></td><td>{{ form.instance.opened_by }} le {{ form.instance.date_open|date:"d/m/Y à H:i" }}</td>
     </tr>
     <tr>
-        <td class="large"><label for="id_phone">Téléphone</label></td><td>{{ form.telephone }}</td>
-        <td class="large right"><label for="id_last_modification">Dernière modif.</label></td><td>le {{ ticket.last_modification|date:"d/m/Y à H:i" }}</td>
+        <td class="large">{{ form.telephone.label_tag }}</td><td>{{ form.telephone }}</td>
+        <td class="large right"><label for="id_last_modification">Dernière modif.</label></td><td>le {{ form.instance.last_modification|date:"d/m/Y à H:i" }}</td>
     </tr>
     <tr>
         <td class="large">&nbsp;</td><td></td>
         <td class="large right">
-        {% if ticket.validated_by %}
-            <strong>Validé par</strong></td><td>{{ ticket.validated_by|default:"" }}</td>
+        {% if form.instance.validated_by %}
+            <strong>Validé par</strong></td><td>{{ form.instance.validated_by|default:"" }}</td>
         {% else %}
             {% if perms.ticket.can_validate_ticket %}
                 <td colspan="2"><button type="submit" dojoType="dijit.form.Button" name="_validate-ticket" value="Valider ce ticket">Valider ce ticket</button></td>
@@ -39,7 +39,7 @@
 <fieldset class="block form">
     <legend>Fichiers joint</legend>
     <table>
-        {% for file in ticket.ticketfile_set.all %}
+        {% for file in form.instance.ticketfile_set.all %}
         <tr>
             <td><a href="{% url ticket_get_file file.pk %}">{{ file.filename }}</a></td>
         </tr>
