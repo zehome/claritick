@@ -245,11 +245,11 @@
     function toggleMailImage(img, checkboxContainer) {
         var checkbox = dojo.byId(checkboxContainer).children[0];
         if (checkbox.checked) {
-            dojo.attr(img, 'src', '/media/images/no_mail.png');
+            dojo.attr(img, 'src', '/media/images/oxygen/nodiffusion.png');
             checkbox.removeAttribute('checked');
         }
         else {
-            dojo.attr(img, 'src', '/media/images/mail.png');
+            dojo.attr(img, 'src', '/media/images/oxygen/diffusion.png');
             dojo.attr(checkbox, 'checked', 'checked');
         }
     }
@@ -268,7 +268,7 @@
   <button dojoType="dijit.form.Button" iconClass="dijitEditorIcon dijitEditorIconSave" type="submit" name="savebutton" value="save">Enregistrer</button>
   <button dojoType="dijit.form.Button" iconClass="dijitEditorIcon dijitEditorIconSave" type="submit" name="savebutton" value="new">Enregistrer et ajouter un nouveau</button>
   <button dojoType="dijit.form.Button" iconClass="dijitEditorIcon dijitEditorIconSave" type="submit" name="savebutton" value="return" class="default">Enregistrer et retourner à la liste</button>
-{% if perms.ticket.can_add_child %}<button dojoType="dijit.form.Button" iconClass="dijitEditorIcon dijitEditorIconNewPage" onClick="loadChild();" id="button_add_child">Ajouter un fils</button>{% endif %}
+{% if perms.ticket.can_add_child %}<button dojoType="dijit.form.Button" iconClass="dijitEditorIcon dijitEditorIconNewPage claritickNewChild" onClick="loadChild();" id="button_add_child">Ajouter un fils</button>{% endif %}
 </div>
 
 </form>

@@ -4,10 +4,11 @@
         <legend>Nouveau Ticket fils</legend>
         <span>
     {% else %}
-    <legend><img src="/media/images/{% if child.state_id == 4 %}plus.png{% else %}minus.png{% endif %}" alt="plus" onClick="togglePlusMinus(this, 'child{{ child.id }}_content');" />{{ child.title }}</legend>
-        {% if child.state.img %}
-        <span class="state_image"><img src="{{ child.state.img.url }}" alt="{{ child.state }}" /></span>
-        {% endif %}
+    <legend><img src="/media/images/{% if child.state_id == 4 %}plus.png{% else %}minus.png{% endif %}" alt="plus" onClick="togglePlusMinus(this, 'child{{ child.id }}_content');" />
+        {% if child.state.img %}<img src="{{ child.state.img.url }}" alt="{{ child.state }}" />{% else %}[ {{ child.state }} ]{% endif %}
+        &nbsp;{{ child.title }}
+    </legend>
+        <!--        <span class="state_image"><img src="{{ child.state.img.url }}" alt="{{ child.state }}" /></span>-->
         <span id="child{{ child.id }}_content" style="display: {% if child.state_id == 4 %}none{% else %}inline{% endif %}">
     {% endif %}
             {{ cf.id }}
@@ -16,7 +17,7 @@
             <span>{{ cf.state.label_tag }} {{ cf.state }}</span>
             <span>{{ cf.assigned_to.label_tag }} {{ cf.assigned_to }}</span>
             <span id="diffusion_child{{ child.id }}" style="display: none;">{{ cf.diffusion }}</span>
-            <span class="mail_image"><img onClick="toggleMailImage(this, 'diffusion_child{{ child.id }}');" src="/media/images/{% if not child.diffusion %}no_{% endif %}mail.png" alt="mail" /></span>
+            <span class="mail_image"><img onClick="toggleMailImage(this, 'diffusion_child{{ child.id }}');" src="/media/images/oxygen/{% if not child.diffusion %}no{% endif %}diffusion.png" alt="diffusion" /></span>
             {% if child %}
             <span id="delete_child{{ child.id }}" style="display: none">{{ cf.DELETE.label_tag }} {{ cf.DELETE }}</span>
             {% endif %}

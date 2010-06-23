@@ -738,15 +738,15 @@ ol#pagination-digg {
 
 #contenu .childs fieldset {
     background-color: #F2F0DC;
+    padding-top: 2px;
 }
 
 #contenu .child legend {
-    font-size: 1em;
+    font-size: 1.5em;
 }
 
 #contenu .child legend img {
     text-align: left;
-    margin-right: 10px;
 }
 
 #contenu .child legend img:hover {
@@ -767,6 +767,11 @@ ol#pagination-digg {
 #contenu .mail_image img {
     position: relative;
     top: 20px;
+}
+
+.claritickNewChild {
+    background-image: url('/media/images/oxygen/list-add.png') !important;
+    background-position: 0 100% !important;
 }
 
 /* EOF */

@@ -144,7 +144,7 @@
     {% for child in row.enfants %}
         <tr class="{{ rowcolor }}" id="ticket_child{{ forloop.parentloop.counter }}_line_{{ forloop.counter }}">
             <td><input type="checkbox" name="ticket_checked" id="ticket_child{{ forloop.parentloop.counter}}_select_{{ forloop.counter }}" value="{{ child.pk }}" /></td>
-            <td colspan="7" class="rowchild"><img src="/media/images/oxygen/arrow-right.png" alt="-->" /><span style="{{ child.close_style }}"><a sytle="{{ child.priority_text_style }}" href="{% url ticket_modify row.id %}#child{{ child.id }}">{{ child.title|truncatewords:8 }}</a></span></td>
+            <td colspan="7" class="rowchild"><img src="/media/images/oxygen/code-class.png" alt="-->" />&nbsp;<span style="{{ child.close_style }}"><a sytle="{{ child.priority_text_style }}" href="{% url ticket_modify row.id %}#child{{ child.id }}">{{ child.title|truncatewords:8 }}</a></span></td>
         </tr>
     {% endfor %}
 {% endfor %}
