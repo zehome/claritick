@@ -255,14 +255,12 @@
     }
 </script>
 
-{% if perms.ticket.can_add_child %}
 <div id="div_childs" class="childs">
 {{ child_formset.management_form }}
 {% for child,cf,cfc in child_form %}
 {% include "ticket/child.html" %}
 {% endfor %}
 </div>
-{% endif %}
 
 <div id="save_buttons">
   <button dojoType="dijit.form.Button" iconClass="dijitEditorIcon dijitEditorIconSave" type="submit" name="savebutton" value="save">Enregistrer</button>
