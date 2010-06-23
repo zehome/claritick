@@ -15,8 +15,8 @@
             <span>{{ cf.project.label_tag }} {{ cf.project }}</span>
             <span>{{ cf.state.label_tag }} {{ cf.state }}</span>
             <span>{{ cf.assigned_to.label_tag }} {{ cf.assigned_to }}</span>
-            <span style="display: none;">{{ cf.diffusion }}</span>
-            <span class="mail_image"><img onClick="toggleMailImage(this);" src="/media/images/oxygen/{% if not cf.instance.diffusion %}no{% endif %}diffusion.png" alt="diffusion" /></span>
+            <span>{{ cf.diffusion }}</span>
+            <span class="mail_image"><img onClick="toggleMailImage(this);" src="/media/images/oxygen/{% if cf.instance.id and cf.instance.diffusion %}diffusion{% else %}nodiffusion{% endif %}.png" alt="diffusion" /></span>
             {% if cf.instance.id %}
             <span id="delete_child{{ cf.instance.id }}" style="display: none">{{ cf.DELETE.label_tag }} {{ cf.DELETE }}</span>
             {% endif %}

@@ -438,7 +438,7 @@ def ajax_load_child(request, ticket_id):
     if ticket.parent:
         raise PermissionDenied("Ce ticket est déjà un fils")
 
-    form = ChildForm(user=request.user, prefix=prefix, auto_id='id_%s')
+    form = ChildForm(user=request.user, initial={"diffusion": False }, prefix=prefix, auto_id='id_%s')
     return render_to_response('ticket/child.html',
             {"cf": form},
             context_instance=RequestContext(request))

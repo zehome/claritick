@@ -247,13 +247,13 @@
     }
     function toggleMailImage(img) {
         var checkbox = dojo.query('input[name$="-diffusion"]', img.parentNode.parentNode)[0];
-        if (checkbox.checked) {
+        if (checkbox.value == 'True') {
             dojo.attr(img, 'src', '/media/images/oxygen/nodiffusion.png');
-            checkbox.removeAttribute('checked');
+            dojo.attr(checkbox, 'value', 'False');
         }
         else {
             dojo.attr(img, 'src', '/media/images/oxygen/diffusion.png');
-            dojo.attr(checkbox, 'checked', 'checked');
+            dojo.attr(checkbox, 'value', 'True');
         }
     }
 </script>
