@@ -30,7 +30,7 @@ class NewTicketForm(forms.ModelForm):
     keywords = forms.CharField(widget=forms.TextInput(attrs={'size': '80'}), required=False)
     calendar_start_time = df.DateTimeField(required=False)
     calendar_end_time = df.DateTimeField(required=False)
-    assigned_to = df.ModelChoiceField(widget=FilteringSelect(), queryset=ClaritickUser.objects.all(), required=False)
+    assigned_to = df.ModelChoiceField(label=u'Assigné à', widget=FilteringSelect(), queryset=ClaritickUser.objects.all(), required=False)
     #validated_by = df.ModelChoiceField(widget=FilteringSelect(), queryset=ClaritickUser.objects.all(), required=False)
     file = df.FileField(required=False)
     

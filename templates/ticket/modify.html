@@ -1,37 +1,37 @@
 <!-- <?xml version='1.0' encoding='utf-8'?> -->
 {% extends "base.html" %}
 
-{% block title %}Ticket numéro {{ ticket.id }}{% endblock %}
-{% block content_title %}Ticket numéro {{ ticket.id }}{% endblock %}
+{% block title %}Ticket numéro {{ form.instance.id }}{% endblock %}
+{% block content_title %}Ticket numéro {{ form.instance.id }}{% endblock %}
 {% block image %}<img src="/media/images/oxygen/folder-open.png" />{% endblock %}
 
 {% block content %}
 {{ form.non_field_errors }}
-<form enctype="multipart/form-data" action="{% url ticket_modify ticket.id %}" method="post">
+<form enctype="multipart/form-data" action="{% url ticket_modify form.instance.id %}" method="post">
 <div id="parent">
 {% csrf_token %}
 {% block content_ticket %}
 <fieldset class="inline form">
   <legend>Général</legend>
-  <div><label for="id_category">Catégorie</label> {{ form.category }}</div>
-  <div><label for="id_project">Projet</label> {{ form.project }}</div>
-  <div><label for="id_priority">Priorité</label> {{ form.priority }}</div>
-  <div><label for="id_state">État</label> {{ form.state }}</div>
+  <div>{{ form.category.label_tag }} {{ form.category }}</div>
+  <div>{{ form.project.label_tag }} {{ form.project }}</div>
+  <div>{{ form.priority.label_tag }} {{ form.priority }}</div>
+  <div>{{ form.state.label_tag }} {{ form.state }}</div>
 </fieldset>
 
 <fieldset class="block form">
   <legend>Contact</legend>
   <table>
     <tr>
-        <td class="large"><label for="id_client">Client</label></td><td>{{ form.client }}</td>
-        <td class="large right"><label for="id_assigned_to">Assigné à</label></td><td>{{ form.assigned_to }}</td>
+        <td class="large">{{ form.client.label_tag }}</td><td>{{ form.client }}</td>
+        <td class="large right">{{ form.assigned_to.label_tag }}</td><td>{{ form.assigned_to }}</td>
     </tr>
     <tr>
-        <td class="large"><label for="id_contact">Contact</label></td><td>{{ form.contact }}</td>
-        <td class="large right"><label for="id_opened_by">Ouvert par</label></td><td>{{ ticket.opened_by }} le {{ ticket.date_open|date:"d/m/Y à H:i" }}</td>
+        <td class="large">{{ form.contact.label_tag }}</td><td>{{ form.contact }}</td>
+        <td class="large right"><label for="id_opened_by">Ouvert par</label></td><td>{{ form.instance.opened_by }} le {{ form.instance.date_open|date:"d/m/Y à H:i" }}</td>
     </tr>
     <tr>
-        <td class="large"><label for="id_telephone">Téléphone</label></td><td>{{ form.telephone }}
+        <td class="large">{{ form.telephone.label_tag }}</td><td>{{ form.telephone }}
             <div dojoType="dijit.form.Button" onClick="loadTelephone();" id="telephoneContainer">Présélection</div>
             <!-- Dojo dialog telephone preselection -->
             <script type="text/javascript">
@@ -67,13 +67,13 @@
             </script>
             <!-- / Telephone preselection -->
         </td>
-        <td class="large right"><label for="id_last_modification">Dernière modif.</label></td><td>le {{ ticket.last_modification|date:"d/m/Y à H:i" }}</td>
+        <td class="large right">Dernière modif.</td><td>le {{ form.instance.last_modification|date:"d/m/Y à H:i" }}</td>
     </tr>
     <tr>
         <td class="large">&nbsp;</td><td></td>
         <td class="large right">
-            {% if ticket.validated_by %}
-                <strong>Validé par</strong></td><td>{{ ticket.validated_by }}
+            {% if form.instance.validated_by %}
+                <strong>Validé par</strong></td><td>{{ form.instance.validated_by }}
             {% else %}
                 {% if perms.ticket.can_validate_ticket %}
                     <td colspan="2"><button type="submit" dojoType="dijit.form.Button" name="_validate-ticket" value="Valider ce ticket">Valider ce ticket</button></td>
@@ -104,7 +104,7 @@
   </table>
 </fieldset>
 
-{% with ticket as ticket_to_comment %}{% with comment_form as form_to_comment %}
+{% with form.instance as ticket_to_comment %}{% with comment_form as form_to_comment %}
 <fieldset class="block form" style="padding: 0;">
   <legend>Réponses</legend>
 {% include "ticket/comment.html" %}
@@ -141,7 +141,7 @@
 <fieldset class="block form">
     <legend>Fichiers joint</legend>
     <table>
-        {% for file in ticket.ticketfile_set.all %}
+        {% for file in form.instance.ticketfile_set.all %}
         <tr>
             <td><a href="{% url ticket_get_file file.pk %}">{{ file.filename }}</a></td>
         </tr>
@@ -186,7 +186,7 @@
         buttons.forEach(function (b) {
                     dijit.byId(b.id).attr('disabled', true);
                 });
-        dojo.xhrGet({url: '{% url ajax_load_child ticket.id %}?count='+count.value,
+        dojo.xhrGet({url: '{% url ajax_load_child form.instance.id %}?count='+count.value,
                 load: function (data) {
                     var childs;
                     dojo.place(data, 'div_childs', 'last');

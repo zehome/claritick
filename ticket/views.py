@@ -406,7 +406,7 @@ def modify(request, ticket_id):
     child_form = [(c, f, django.contrib.comments.get_form()(c, auto_id='%s', prefix='child%d_comment'% (c.pk)) if c else None) for c,f in map(None, child, child_formset.forms)]
     # Just open
     return render_to_response(template_name,
-            { "form": form, "ticket": ticket, "comment_form": comment_form, "child_form": child_form, "child_formset": child_formset },
+            { "form": form, "comment_form": comment_form, "child_form": child_form, "child_formset": child_formset },
         context_instance=RequestContext(request))
 
 @login_required
