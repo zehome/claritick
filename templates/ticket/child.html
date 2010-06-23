@@ -8,7 +8,6 @@
         {% if child.state.img %}<img src="{{ child.state.img.url }}" alt="{{ child.state }}" />{% else %}[ {{ child.state }} ]{% endif %}
         &nbsp;{{ child.title }}
     </legend>
-        <!--        <span class="state_image"><img src="{{ child.state.img.url }}" alt="{{ child.state }}" /></span>-->
         <span id="child{{ child.id }}_content" style="display: {% if child.state_id == 4 %}none{% else %}inline{% endif %}">
     {% endif %}
             {{ cf.id }}
