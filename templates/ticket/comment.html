@@ -45,8 +45,8 @@
     {{ form_to_comment.object_pk }}
     {{ form_to_comment.security_hash }}
     {{ form_to_comment.content_type }}
-    <input type="hidden" name="{% if child %}child{{ child.id }}_comment-{% endif %}email" value="{% if request.user.email %}{{ request.user.email }}{% else %}noreply@invalid.com{% endif %}" />
-    <input type="hidden" name="{% if child %}child{{ child.id }}_comment-{% endif %}name" value="{% if request.user.username %}{{ request.user.username }}{% else %}anonyme{% endif %}" />
+    <input type="hidden" name="{% if cf.instance.id %}child{{ cf.instance.id }}_comment-{% endif %}email" value="{% if request.user.email %}{{ request.user.email }}{% else %}noreply@invalid.com{% endif %}" />
+    <input type="hidden" name="{% if cf.instance.id %}child{{ cf.instance.id }}_comment-{% endif %}name" value="{% if request.user.username %}{{ request.user.username }}{% else %}anonyme{% endif %}" />
     </div>
     <table>
         <tr>
@@ -66,5 +66,5 @@
             <p>La réponse sera conservée en interne</p>
         </div>
     </div>
-    <p><input type="checkbox" checked="checked" name="{% if child %}child{{ child.id }}_comment-{% endif %}internal" onChange="toggleComment(this, 'dijit_comment_{{ ticket_to_comment.id }}');" /> Commentaire <b>interne</b> (Si cette case est cochée, cette réponse ne sera pas transmise au client final)</p>
+    <p><input type="checkbox" checked="checked" name="{% if cf.instance.id %}child{{ cf.instance.id }}_comment-{% endif %}internal" onChange="toggleComment(this, 'dijit_comment_{{ ticket_to_comment.id }}');" /> Commentaire <b>interne</b> (Si cette case est cochée, cette réponse ne sera pas transmise au client final)</p>
 {% endblock comment_form %}

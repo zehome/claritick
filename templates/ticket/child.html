@@ -1,14 +1,14 @@
-<div class="child" {% if child %}id="child{{ child.id }}"{% endif %}>
+<div class="child" {% if cf.instance.id %}id="child{{ cf.instance.id }}"{% endif %}>
     <fieldset class="block form">
-    {% if not child %}
+    {% if not cf.instance.id %}
         <legend>Nouveau Ticket fils</legend>
         <span>
     {% else %}
-    <legend><img src="/media/images/{% if child.state_id == 4 %}plus.png{% else %}minus.png{% endif %}" alt="plus" onClick="togglePlusMinus(this, 'child{{ child.id }}_content');" />
-        {% if child.state.img %}<img src="{{ child.state.img.url }}" alt="{{ child.state }}" />{% else %}[ {{ child.state }} ]{% endif %}
-        &nbsp;{{ child.title }}
+    <legend><img src="/media/images/{% if cf.instance.state_id == 4 %}plus.png{% else %}minus.png{% endif %}" alt="plus" onClick="togglePlusMinus(this, 'child{{ cf.instance.id }}_content');" />
+        {% if cf.instance.state.img %}<img src="{{ cf.instance.state.img.url }}" alt="{{ cf.instance.state }}" />{% else %}[ {{ cf.instance.state }} ]{% endif %}
+        &nbsp;{{ cf.instance.title }}
     </legend>
-        <span id="child{{ child.id }}_content" style="display: {% if child.state_id == 4 %}none{% else %}inline{% endif %}">
+        <span id="child{{ cf.instance.id }}_content" style="display: {% if cf.instance.state_id == 4 %}none{% else %}inline{% endif %}">
     {% endif %}
             {{ cf.id }}
             <span>{{ cf.category.label_tag }} {{ cf.category }}</span>
@@ -16,20 +16,20 @@
             <span>{{ cf.state.label_tag }} {{ cf.state }}</span>
             <span>{{ cf.assigned_to.label_tag }} {{ cf.assigned_to }}</span>
             <span style="display: none;">{{ cf.diffusion }}</span>
-            <span class="mail_image"><img onClick="toggleMailImage(this);" src="/media/images/oxygen/{% if not child.diffusion %}no{% endif %}diffusion.png" alt="diffusion" /></span>
-            {% if child %}
-            <span id="delete_child{{ child.id }}" style="display: none">{{ cf.DELETE.label_tag }} {{ cf.DELETE }}</span>
+            <span class="mail_image"><img onClick="toggleMailImage(this);" src="/media/images/oxygen/{% if not cf.instance.diffusion %}no{% endif %}diffusion.png" alt="diffusion" /></span>
+            {% if cf.instance.id %}
+            <span id="delete_child{{ cf.instance.id }}" style="display: none">{{ cf.DELETE.label_tag }} {{ cf.DELETE }}</span>
             {% endif %}
             <hr />
             <table>
                 <tr>
                     <th class="large">{{ cf.title.label_tag }}</th>
-                    <td ticket_id="{{ child.id }}" class="large right">{{ cf.title }}</td>
+                    <td ticket_id="{{ cf.instance.id }}" class="large right">{{ cf.title }}</td>
                     <td class="large right">{{ cf.title.errors }}</td>
                 </tr>
                 <tr>
                     <th></th>
-                    <td ticket_id="{{ child.id }}" class="right">{{ cf.text }}</td>
+                    <td ticket_id="{{ cf.instance.id }}" class="right">{{ cf.text }}</td>
                     <td class="right">{{ cf.text.errors }}</td>
                 </tr>
                 <tr>
@@ -39,8 +39,8 @@
                 </tr>
             </table>
             <hr />
-            {% if child %}
-            {% with child as ticket_to_comment %}{% with cfc as form_to_comment %}
+            {% if cf.instance.id %}
+            {% with cf.instance as ticket_to_comment %}{% with cfc as form_to_comment %}
             {% include "ticket/comment.html" %}
             {% endwith %}{% endwith %}
             {% endif %}

@@ -260,7 +260,7 @@
 
 <div id="div_childs" class="childs">
 {{ child_formset.management_form }}
-{% for child,cf,cfc in child_form %}
+{% for cf,cfc in child_form %}
 {% include "ticket/child.html" %}
 {% endfor %}
 </div>
