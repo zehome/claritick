@@ -242,8 +242,8 @@
             img.src = "/media/images/minus.png";
         }
     }
-    function toggleMailImage(img, checkboxContainer) {
-        var checkbox = dojo.byId(checkboxContainer).children[0];
+    function toggleMailImage(img) {
+        var checkbox = dojo.query('input[name$="-diffusion"]', img.parentNode.parentNode)[0];
         if (checkbox.checked) {
             dojo.attr(img, 'src', '/media/images/oxygen/nodiffusion.png');
             checkbox.removeAttribute('checked');
