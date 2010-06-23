@@ -51,9 +51,10 @@
                         var telephone;
                         dojo.forEach(ajax_response.telephones, function(telephone) {
                             var menuItem = new dijit.MenuItem({
-                                    label: telephone[1],
+                                    label: telephone[2],
                                     onClick: function() {
-                                        dojo.byId('id_telephone').value = telephone[0];
+                                        dojo.byId('id_contact').value = telephone[0];
+                                        dojo.byId('id_telephone').value = telephone[1];
                                         menu.destroyRecursive();
                                     }
                                 });

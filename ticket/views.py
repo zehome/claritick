@@ -462,7 +462,6 @@ def ajax_load_telephone(request):
     
     # Récupère la liste des numéros
     telephones = []
-    strings = []
 
     if settings.POSTGRESQL_VERSION >= 8.4:
         client_and_childs = Client.objects.get_childs("parent", client.pk)
@@ -480,8 +479,7 @@ def ajax_load_telephone(request):
                 if coord.city:
                     coord_supp += ' ' + str(coord.city)
                 coord_supp += ')'
-            telephones.append(str(coord.telephone))
-            strings.append("%s%s"% (coord.telephone, coord_supp))
+            telephones.append(("", str(coord.telephone), "%s%s" % (coord.telephone, coord_supp)))
 
     # Récupère la liste des derniers tickets
     tickets = Ticket.tickets.filter(parent__isnull=True).filter(client__in=client_and_childs)
@@ -490,12 +488,11 @@ def ajax_load_telephone(request):
 
     for ticket in tickets:
         if not ticket.telephone in telephones:
-            telephones.append(str(ticket.telephone))
-            strings.append("%s (Ticket %s de %s)" % (ticket.telephone, ticket.id, ticket.client))
-            if len(telephones) == 5:
+            telephones.append((ticket.contact, str(ticket.telephone), "%s %s (Ticket %s de %s)" % (ticket.contact, ticket.telephone, ticket.id, ticket.client)))
+            if len(telephones) >= 5:
                 break
 
-    ret["telephones"] = [(t,s) for t,s in zip(telephones, strings)]
+    ret["telephones"] = telephones
     return ret
 
 @login_required
