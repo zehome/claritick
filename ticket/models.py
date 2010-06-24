@@ -121,6 +121,8 @@ class Procedure(models.Model):
 class QuerySetManager(models.Manager):
     def get_query_set(self):
         return self.model.QuerySet(self.model)
+    def __getattr__(self, name):
+        return getattr(self.get_query_set(), name)
 
 class BaseTicketManager(QuerySetManager):
     def get_query_set(self):
