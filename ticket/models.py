@@ -313,7 +313,7 @@ class Ticket(models.Model):
         return self.state and (self.state.id in (1,2,3) and 1 or 0) or 0
     @property
     def reporting_state_closed(self):
-        return self.state and (self.state.id == 4 and 1 or 0) or 0
+        return self.state and (self.state.id == settings.TICKET_STATE_CLOSED and 1 or 0) or 0
     @property
     def reporting_priority_low(self):
         return self.priority and (self.priority.id == 1 and 1 or 0) or 0

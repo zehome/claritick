@@ -204,7 +204,12 @@
                     dojo.attr('id_form-'+count.value+'-assigned_to', 'value', dojo.byId('id_assigned_to').value);
                     dojo.query('input[name="form-'+count.value+'-assigned_to"]')[0].value = dojo.query('input[name="assigned_to"]')[0].value;
                     dojo.forEach(['category', 'project', 'state'], function (e) {
-                            dojo.byId('id_form-'+count.value+'-'+e).selectedIndex = dojo.byId('id_'+e).selectedIndex;
+                            if (e == 'state'  && dojo.byId('id_'+e).selectedIndex == {{ settings.TICKET_STATE_CLOSED }}) {
+                                dojo.byId('id_'+e).selectedIndex = {{ settings.TICKET_STATE_ACTIVE }};
+                                dojo.byId('id_form-'+count.value+'-'+e).selectedIndex = {{ settings.TICKET_STATE_NEW }};
+                            }
+                            else
+                                dojo.byId('id_form-'+count.value+'-'+e).selectedIndex = dojo.byId('id_'+e).selectedIndex;
                         });
 
                     count.value = parseInt(count.value)+1;

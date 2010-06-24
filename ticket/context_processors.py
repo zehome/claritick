@@ -29,7 +29,11 @@ def ticket_views(request):
         "ticket_views": TicketView.objects.filter(user=request.user),
         "ticket_dashboard_critical": get_critical_tickets(request),
         "ticket_dashboard_text_statistics": get_ticket_text_statistics(request),
-        "settings": { "TICKET_STATE_CLOSED": settings.TICKET_STATE_CLOSED },
+        "settings": {
+            "TICKET_STATE_CLOSED": settings.TICKET_STATE_CLOSED,
+            "TICKET_STATE_NEW": settings.TICKET_STATE_NEW,
+            "TICKET_STATE_ACTIVE": settings.TICKET_STATE_ACTIVE,
+            },
         }
     return {}
 
