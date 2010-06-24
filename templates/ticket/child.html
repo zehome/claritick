@@ -8,7 +8,7 @@
         {% if cf.instance.state.img %}<img src="{{ cf.instance.state.img.url }}" alt="{{ cf.instance.state }}" />{% else %}[ {{ cf.instance.state }} ]{% endif %}
         &nbsp;{{ cf.instance.title }}
     </legend>
-        <span id="child{{ cf.instance.id }}_content" style="display: {% if cf.instance.state_id == 4 %}none{% else %}inline{% endif %}">
+        <span id="child{{ cf.instance.id }}_content" style="display: {% if cf.instance.state_id == settings.TICKET_STATE_CLOSED %}none{% else %}inline{% endif %}">
     {% endif %}
             {{ cf.id }}
             <span>{{ cf.category.label_tag }} {{ cf.category }}</span>

@@ -1,6 +1,7 @@
 from ticket.models import TicketView, Ticket
 import qsstats
 import datetime
+import settings
 
 SUMMARY_TICKETS=15
 
@@ -28,5 +29,7 @@ def ticket_views(request):
         "ticket_views": TicketView.objects.filter(user=request.user),
         "ticket_dashboard_critical": get_critical_tickets(request),
         "ticket_dashboard_text_statistics": get_ticket_text_statistics(request),
+        "settings": { "TICKET_STATE_CLOSED": settings.TICKET_STATE_CLOSED },
         }
     return {}
+
