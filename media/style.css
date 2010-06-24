@@ -474,6 +474,10 @@ div#gauche a:hover {
 	color: black;
 }
 
+#contenu textarea, #contenu input {
+    font-size: 1.4em;
+}
+
 #contenu form fieldset table tr {
 	height: 25px;
 }
