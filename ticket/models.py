@@ -528,13 +528,13 @@ class Ticket(models.Model):
         context = Context({"ticket": self, 'childs': self.child.order_by('date_open'), 'reasons': reasons })
         data = template.render(context)
         
-        template = Template("{% autoescape off %}[Ticket {{ ticket.id }}]: {{ ticket.title|striptags|truncatewords:64 }}{% endautoescape %}")
+        template = Template("{% autoescape off %}[Ticket {{ ticket.id }} ({{ ticket.state }})]: {{ ticket.title|striptags|truncatewords:64 }}{% endautoescape %}")
         subject = template.render(context)
 
         # Send the email
         mail = EmailMessage(subject, data, settings.DEFAULT_FROM_EMAIL, dests)
-        self.ticketmailtrace_set.create(email=mail)
         mail.send()
+        self.ticketmailtrace_set.create(email=mail)
 
 class TicketView(models.Model):
     """
