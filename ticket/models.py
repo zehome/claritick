@@ -533,8 +533,8 @@ class Ticket(models.Model):
 
         # Send the email
         mail = EmailMessage(subject, data, settings.DEFAULT_FROM_EMAIL, dests)
-        mail.send()
         self.ticketmailtrace_set.create(email=mail)
+        mail.send()
 
 class TicketView(models.Model):
     """
