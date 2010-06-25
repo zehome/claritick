@@ -3,6 +3,7 @@
 from django.conf.urls.defaults import *
 from django.shortcuts import render_to_response
 from django.contrib import admin
+from ticket.context_processors import get_ticket_text_statistics, get_critical_tickets
 
 import reporting
 
@@ -24,6 +25,8 @@ reporting.autodiscover()
 # Utilities
 def flatpage(template, data={}):
     def render(request):
+        data.update({"ticket_dashboard_critical": get_critical_tickets(request)})
+        data.update({"ticket_dashboard_text_statistics": get_ticket_text_statistics(request)})
         return render_to_response(template, data, context_instance=RequestContext(request))
     return render
 
