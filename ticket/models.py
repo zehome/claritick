@@ -118,11 +118,111 @@ class Procedure(models.Model):
     def __unicode__(self):
         return u"%s" % (self.label,)
 
+class TicketQuerySet(models.query.QuerySet):
+    def add_order_by(self, request):
+        sort = request.GET.get('sort', 'id')
+        sort_order = int(request.GET.get('sort_order', 1))
+        return self.order_by('%s%s' % (sort_order and '-' or '', sort))
+
+    def filter_ticket_by_user(self, user):
+        """
+            Filtre un queryset de ticket en fonction des clients qu'a le droit de voir l'utilisateur.
+        """
+        # Si on est root, on ne filtre pas la liste
+        if user.is_superuser:
+            return self
+        qs = Ticket.objects.none()
+        try:
+            client_list = user.get_profile().get_clients()
+            qs = self.filter(client__pk__in=[x.id for x in client_list])
+        except UserProfile.DoesNotExist:
+            raise NoProfileException(user)
+        return qs
+
+    def filter_queryset(self, filters, *args, **kwargs):
+        """ Filtre un queryset de ticket a partir d'un dictionnaire de fields lookup. """
+        search_mapping = {
+            'title': 'icontains',
+            'text': 'icontains',
+            'contact': 'icontains',
+            'keywords': 'icontains',
+            'client': None,
+        }
+
+        qs = self.all()
+        d = {}
+        for key, value in filters.items():
+            try:
+                if value:
+                    try:
+                        lookup = search_mapping[key]
+                    except KeyError:
+                        if isinstance(value, (list, models.query.QuerySet)):
+                            lookup = "in"
+                        else:
+                            lookup = 'exact'
+                    if lookup is None:
+                        continue
+                    qs = qs.filter_or_child({"%s__%s"%(str(key), lookup): value}, *args, **kwargs)
+            except (AttributeError, FieldError):
+                pass
+
+        client = filters.get("client", None)
+
+        if client:
+            # Traitement des lookup None
+            clients = Client.objects.get_childs("parent", int(client))
+            qs = qs.filter(client__in=[ c.id for c in clients ])
+
+        return qs
+
+    def filter_or_child(self, filter, user=None):
+        """ Filtre suivant filterdict avec un OR sur les fils
+        ne renvoie que le pêre si un fils matche filterdict """
+        qs = self.all()
+
+        child_condition = models.Q(child__isnull=False)
+
+        # Matcher sur les fils qui ne sont pas en diffusion ?
+        if user and not user.has_perm("ticket.can_list_all"):
+            child_condition &= models.Q(child__diffusion=True)
+
+        if isinstance(filter, models.query_utils.Q):
+            query = models.Q()
+            for k,v in filter.children:
+                query |= models.Q(**{'child__%s'%k: v})
+            qs = qs.filter(filter | \
+                (child_condition & query))
+        else:
+            for k,v in filter.items():
+                qs = qs.filter(models.Q(**{k: v}) | \
+                        (child_condition & \
+                        models.Q(**{"child__%s"%k: v})))
+        return qs.distinct()
+
+    def get_and_child(self, cqs):
+        """ Retourne les valeurs d'un SortedDict avec parents et enfants
+        accessibles par l'attribut enfants. Il faut fournir un QuerySet
+        des enfants en paramêtre """
+
+        ret = SortedDict()
+
+        for p in self:
+            p.enfants = []
+            ret[p.pk] = p
+
+        cqs = cqs.filter(parent__pk__in=ret)
+
+        for e in cqs:
+            ret[e.parent.pk].enfants.append(e)
+
+        return ret.values()
+
+
+
 class QuerySetManager(models.Manager):
     def get_query_set(self):
-        return self.model.QuerySet(self.model)
-    def __getattr__(self, name):
-        return getattr(self.get_query_set(), name)
+        return TicketQuerySet(self.model)
 
 class BaseTicketManager(QuerySetManager):
     def get_query_set(self):
@@ -158,107 +258,6 @@ class Ticket(models.Model):
             ("can_add_child", u"Peut créer un ticket fils"),
             ("can_view_internal_comments", u"Peut voir les commentaires internes"),
         )
-
-    class QuerySet(models.query.QuerySet):
-        def add_order_by(self, request):
-            sort = request.GET.get('sort', 'id')
-            sort_order = int(request.GET.get('sort_order', 1))
-            return self.order_by('%s%s' % (sort_order and '-' or '', sort))
-
-        def filter_ticket_by_user(self, user):
-            """
-                Filtre un queryset de ticket en fonction des clients qu'a le droit de voir l'utilisateur.
-            """
-            # Si on est root, on ne filtre pas la liste
-            if user.is_superuser:
-                return self
-            qs = Ticket.objects.none()
-            try:
-                client_list = user.get_profile().get_clients()
-                qs = self.filter(client__pk__in=[x.id for x in client_list])
-            except UserProfile.DoesNotExist:
-                raise NoProfileException(user)
-            return qs
-
-        def filter_queryset(self, filters, *args, **kwargs):
-            """ Filtre un queryset de ticket a partir d'un dictionnaire de fields lookup. """
-            search_mapping = {
-                'title': 'icontains',
-                'text': 'icontains',
-                'contact': 'icontains',
-                'keywords': 'icontains',
-                'client': None,
-            }
-
-            qs = self.all()
-            d = {}
-            for key, value in filters.items():
-                try:
-                    if value:
-                        try:
-                            lookup = search_mapping[key]
-                        except KeyError:
-                            if isinstance(value, (list, models.query.QuerySet)):
-                                lookup = "in"
-                            else:
-                                lookup = 'exact'
-                        if lookup is None:
-                            continue
-                        qs = qs.filter_or_child({"%s__%s"%(str(key), lookup): value}, *args, **kwargs)
-                except (AttributeError, FieldError):
-                    pass
-
-            client = filters.get("client", None)
-
-            if client:
-                # Traitement des lookup None
-                clients = Client.objects.get_childs("parent", int(client))
-                qs = qs.filter(client__in=[ c.id for c in clients ])
-
-            return qs
-
-        def filter_or_child(self, filter, user=None):
-            """ Filtre suivant filterdict avec un OR sur les fils
-            ne renvoie que le pêre si un fils matche filterdict """
-            qs = self.all()
-
-            child_condition = models.Q(child__isnull=False)
-
-            # Matcher sur les fils qui ne sont pas en diffusion ?
-            if user and not user.has_perm("ticket.can_list_all"):
-                child_condition &= models.Q(child__diffusion=True)
-
-            if isinstance(filter, models.query_utils.Q):
-                query = models.Q()
-                for k,v in filter.children:
-                    query |= models.Q(**{'child__%s'%k: v})
-                qs = qs.filter(filter | \
-                    (child_condition & query))
-            else:
-                for k,v in filter.items():
-                    qs = qs.filter(models.Q(**{k: v}) | \
-                            (child_condition & \
-                            models.Q(**{"child__%s"%k: v})))
-            return qs.distinct()
-
-        def get_and_child(self, cqs):
-            """ Retourne les valeurs d'un SortedDict avec parents et enfants
-            accessibles par l'attribut enfants. Il faut fournir un QuerySet
-            des enfants en paramêtre """
-
-            ret = SortedDict()
-
-            for p in self:
-                p.enfants = []
-                ret[p.pk] = p
-
-            cqs = cqs.filter(parent__pk__in=ret)
-
-            for e in cqs:
-                ret[e.parent.pk].enfants.append(e)
-
-            return ret.values()
-
 
 
     objects = BaseTicketManager()
