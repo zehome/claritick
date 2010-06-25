@@ -40,7 +40,7 @@ class ByteaField(models.TextField):
         raise TypeError('Lookup type %r not supported.' % lookup_type)
 
     def get_db_prep_value(self, value):
-        return self.get_prep_value(self, value)
+        return self.get_prep_value(value)
 
     def get_prep_value(self, value):
         return buffer(value)
