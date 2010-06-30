@@ -1,6 +1,6 @@
 {% load comments %}
 {% load filters %}
-{% get_comment_list for ticket_to_comment as comment_list %}
+{% get_comment_list for form_to_comment.instance as comment_list %}
 
 {% if comment_list %}
 <table class="comment_table">
