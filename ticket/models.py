@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import pdb
 import datetime
 
 from django.conf import settings
@@ -9,7 +10,6 @@ from django.contrib.comments.moderation import CommentModerator, moderator
 import django.contrib.comments
 from django.contrib.comments.signals import comment_was_posted
 from django.core.exceptions import ValidationError, FieldError
-from django.utils.datastructures import SortedDict
 
 # for email
 from django.core.mail import EmailMessage
@@ -199,26 +199,6 @@ class TicketQuerySet(models.query.QuerySet):
                         (child_condition & \
                         models.Q(**{"child__%s"%k: v})))
         return qs.distinct()
-
-    def get_and_child(self, cqs):
-        """ Retourne les valeurs d'un SortedDict avec parents et enfants
-        accessibles par l'attribut enfants. Il faut fournir un QuerySet
-        des enfants en paramêtre """
-
-        ret = SortedDict()
-
-        for p in self:
-            p.enfants = []
-            ret[p.pk] = p
-
-        cqs = cqs.filter(parent__pk__in=ret)
-
-        for e in cqs:
-            ret[e.parent.pk].enfants.append(e)
-
-        return ret.values()
-
-
 
 class QuerySetManager(models.Manager):
     def get_query_set(self):

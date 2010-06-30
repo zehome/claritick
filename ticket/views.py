@@ -26,10 +26,26 @@ from common.exceptions import NoProfileException
 from common.utils import user_has_perms_on_client, filter_form_for_user
 
 from backlinks.decorators import backlink_setter
-from copy import copy
+from django.utils.datastructures import SortedDict
 
 INVALID_TITLE = "Invalid title"
 
+def get_and_child(parents, cqs):
+    """ Retourne les valeurs d'un SortedDict avec parents (liste reduite)
+    et enfants accessibles par l'attribut enfants, les enfants sont données
+    en queryset par le param cqs """
+    ret = SortedDict()
+
+    for p in parents:
+        p.enfants = []
+        ret[p.id] = p
+
+    cqs = cqs.filter(parent__in=ret.keys())
+
+    for e in cqs:
+        ret[e.parent.id].enfants.append(e)
+
+    return ret.values()
 
 def get_filters(request):
     if "list_filters" in request.session:
@@ -123,10 +139,10 @@ def list_view(request, view_id=None):
 
     if not data.get("state"):
         qs = Ticket.open_tickets.filter(parent__isnull=True)
-        cqs = Ticket.open_tickets.filter(parent__isnull=False)
     else:
         qs = Ticket.tickets.filter(parent__isnull=True)
-        cqs = Ticket.tickets.filter(parent__isnull=False)
+
+    cqs = Ticket.tickets.filter(parent__isnull=False)
 
     # On va enregistrer les criteres actuels en tant que nouvelle liste
     if request.method == "POST" and form.is_valid():
@@ -151,6 +167,7 @@ def list_view(request, view_id=None):
     if not request.user.has_perm("ticket.can_list_all") and data.get("text"):
         qs = qs.filter_or_child(models.Q(title__icontains=data["title"]) | models.Q(text__icontains=data["text"]), user=request.user)
         del filters["text"]
+        cqs = cqs.filter(diffusion=True)
     qs = qs.filter_queryset(filters, user=request.user)
 
     # On va filtrer la liste des tickets en fonction de la relation user => client
@@ -161,10 +178,13 @@ def list_view(request, view_id=None):
     qs = qs.add_order_by(request)
     cqs = cqs.add_order_by(request)
 
+    pagination = get_pagination(qs, request)
+    pagination.object_list = get_and_child(pagination.object_list, cqs)
+
     context.update({
         "form": form,
         "action_form": action_form,
-        "tickets": get_pagination(qs.get_and_child(cqs), request),
+        "tickets": pagination,
     })
 
     return render_to_response(template_name, context, context_instance=RequestContext(request))
@@ -202,8 +222,6 @@ def list_all(request, form=None, filterdict=None, template_name=None, *args, **k
     else:
         qs = Ticket.tickets.filter(parent__isnull=True)
 
-    cqs = Ticket.tickets.filter(parent__isnull=False)
-
     # Form cleaned_data ?
     if form.is_valid():
         data = form.cleaned_data.copy()
@@ -218,7 +236,7 @@ def list_all(request, form=None, filterdict=None, template_name=None, *args, **k
 
     # On va filtrer la liste des tickets en fonction de la relation user => client
     qs = qs.filter_ticket_by_user(request.user)
-    cqs = cqs.filter_ticket_by_user(request.user)
+    cqs = Ticket.objects.filter(parent__isnull=False).filter_ticket_by_user(request.user)
 
     # Le tri
     qs = qs.add_order_by(request)
@@ -232,10 +250,13 @@ def list_all(request, form=None, filterdict=None, template_name=None, *args, **k
             template_name = "ticket/list_small.html"
             cqs = cqs.filter(diffusion=True)
 
+    pagination = get_pagination(qs, request)
+    pagination.object_list = get_and_child(pagination.object_list, cqs)
+
     context.update({
         "form": form, 
         "action_form": action_form,
-        "tickets": get_pagination(qs.get_and_child(cqs), request),
+        "tickets": pagination,
     })
     return render_to_response(template_name or "ticket/list.html", context, context_instance=RequestContext(request))
 
