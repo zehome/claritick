@@ -24,12 +24,12 @@
             <table>
                 <tr>
                     <th class="large">{{ cf.title.label_tag }}</th>
-                    <td ticket_id="{{ cf.instance.id }}" class="large right">{{ cf.title }}</td>
+                    <td {% if cf.instance.id %}ticket_id="{{ cf.instance.id }}"{% endif %} class="large right">{{ cf.title }}</td>
                     <td class="large right">{{ cf.title.errors }}</td>
                 </tr>
                 <tr>
                     <th></th>
-                    <td ticket_id="{{ cf.instance.id }}" class="right">{{ cf.text }}</td>
+                    <td {% if cf.instance.id %}ticket_id="{{ cf.instance.id }}"{% endif %} class="right">{{ cf.text }}</td>
                     <td class="right">{{ cf.text.errors }}</td>
                 </tr>
                 <tr>
