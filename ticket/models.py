@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import pdb
 import datetime
 
 from django.conf import settings

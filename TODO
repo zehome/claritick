@@ -1,6 +1,6 @@
 Bugs:
 =====
-* Dans les commentaires, django.contrib.comments fait une requête par utilisateur qui a commenté
+* optimiser / cleaner
 
 Liste des tickets / Droits utilisateurs
 =======================================
