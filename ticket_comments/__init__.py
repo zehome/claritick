@@ -6,6 +6,3 @@ from ticket_comments.forms import TicketCommentForm
 def get_model():
     return TicketComment
 
-def get_form():
-    return TicketCommentForm
-

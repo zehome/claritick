@@ -105,7 +105,7 @@
   </table>
 </fieldset>
 
-{% with form.instance as ticket_to_comment %}{% with comment_form as form_to_comment %}
+{% with form.instance as ticket_to_comment %}{% with form as form_to_comment %}
 <fieldset class="block form" style="padding: 0;">
   <legend>Réponses</legend>
 {% include "ticket/comment.html" %}
@@ -113,14 +113,15 @@
 {% endwith %}{% endwith %}
 
 <script type="text/javascript">
-    function toggleComment(id, did) {
-        if (id.checked) {
-            dojo.byId(did).children[0].style.display = 'none';
-            dojo.byId(did).children[1].style.display = 'block';
+    function toggleComment(checkbox) {
+        var did = dojo.byId(checkbox.id+'-tooltip').children;
+        if (checkbox.checked) {
+            did[0].style.display = 'none';
+            did[1].style.display = 'block';
         }
         else {
-            dojo.byId(did).children[0].style.display = 'block';
-            dojo.byId(did).children[1].style.display = 'none';
+            did[0].style.display = 'block';
+            did[1].style.display = 'none';
         }
     }
 </script>
@@ -266,7 +267,7 @@
 
 <div id="div_childs" class="childs">
 {{ child_formset.management_form }}
-{% for cf,cfc in child_form %}
+{% for cf in child_formset.forms %}
 {% include "ticket/child.html" %}
 {% endfor %}
 </div>

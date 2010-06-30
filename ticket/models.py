@@ -7,7 +7,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.comments.moderation import CommentModerator, moderator
 import django.contrib.comments
-from django.contrib.comments.signals import comment_was_posted, comment_will_be_posted
+from django.contrib.comments.signals import comment_was_posted
 from django.core.exceptions import ValidationError, FieldError
 from django.utils.datastructures import SortedDict
 

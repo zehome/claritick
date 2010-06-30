@@ -1,4 +1,5 @@
 {% load comments %}
+{% load filters %}
 {% get_comment_list for ticket_to_comment as comment_list %}
 
 {% if comment_list %}
@@ -39,32 +40,18 @@
 {% endif %}
 
 {% block comment_form %}
-    {{ form_to_comment.errors }}
-    <div style="display: none">
-    {{ form_to_comment.timestamp }}
-    {{ form_to_comment.object_pk }}
-    {{ form_to_comment.security_hash }}
-    {{ form_to_comment.content_type }}
-    <input type="hidden" name="{% if cf.instance.id %}child{{ cf.instance.id }}_comment-{% endif %}email" value="{% if request.user.email %}{{ request.user.email }}{% else %}noreply@invalid.com{% endif %}" />
-    <input type="hidden" name="{% if cf.instance.id %}child{{ cf.instance.id }}_comment-{% endif %}name" value="{% if request.user.username %}{{ request.user.username }}{% else %}anonyme{% endif %}" />
-    </div>
-    <table>
-        <tr>
-            <td>{{ form_to_comment.non_field_errors }}</td>
-        </tr>
-        <tr>
-            <td>Nouvelle réponse: {{ form_to_comment.comment }}</td>
-        </tr>
-    </table>
-    <div dojoType="dijit.Tooltip" connectId="{{ form_to_comment.get_comment_html_id }}" position="after" id="dijit_comment_{{ ticket_to_comment.id }}">
-        <div style="display: none;">
-            <img src="/media/images/oxygen/comment_public.png" alt="commentaire_public" />
-            <p>Attention, la réponse sera transmise au client final</p>
+    <div>
+        <p>Nouvelle réponse: {{ form_to_comment.comment }}</p>
+        <div dojoType="dijit.Tooltip" connectId="{{ form_to_comment.get_exact_id|interpret:"comment" }}" position="after" id="{{ form_to_comment.get_exact_id|interpret:"internal"}}-tooltip">
+            <div style="display: none;">
+                <img src="/media/images/oxygen/comment_public.png" alt="commentaire_public" />
+                <p>Attention, la réponse sera transmise au client final</p>
+            </div>
+            <div>
+                <img src="/media/images/oxygen/comment_internal.png" alt="commentaire_interne" />
+                <p>La réponse sera conservée en interne</p>
+            </div>
         </div>
-        <div>
-            <img src="/media/images/oxygen/comment_internal.png" alt="commentaire_interne" />
-            <p>La réponse sera conservée en interne</p>
-        </div>
+        <p>{{ form_to_comment.internal }} Commentaire <b>Interne</b> (Si cette case est cochée, la réponse ne sera pas transmise au client final) </p>
     </div>
-    <p><input type="checkbox" checked="checked" name="{% if cf.instance.id %}child{{ cf.instance.id }}_comment-{% endif %}internal" onChange="toggleComment(this, 'dijit_comment_{{ ticket_to_comment.id }}');" /> Commentaire <b>interne</b> (Si cette case est cochée, cette réponse ne sera pas transmise au client final)</p>
 {% endblock comment_form %}

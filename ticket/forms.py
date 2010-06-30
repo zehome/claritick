@@ -17,12 +17,17 @@ from common.models import UserProfile, ClaritickUser
 from common.utils import filter_form_for_user, sort_queryset
 from common.widgets import FilteringSelect
 
+class CustomModelForm(forms.ModelForm):
+    def get_exact_id(self):
+        prefix = self.prefix + '-' if self.prefix else ''
+        return self.auto_id % prefix + '%s'
+
 class PartialNewTicketForm(forms.ModelForm):
     class Meta:
         model = Ticket
         fields = ("category",)
 
-class NewTicketForm(forms.ModelForm):
+class NewTicketForm(CustomModelForm):
     title = forms.CharField(widget=forms.TextInput(attrs={'size': '80'}))
     text = df.CharField(widget=forms.Textarea(attrs={'cols':'90', 'rows': '15'}))
     client = df.ModelChoiceField(queryset = Client.objects.all(),
@@ -33,7 +38,9 @@ class NewTicketForm(forms.ModelForm):
     assigned_to = df.ModelChoiceField(label=u'Assigné à', widget=FilteringSelect(), queryset=ClaritickUser.objects.all(), required=False)
     #validated_by = df.ModelChoiceField(widget=FilteringSelect(), queryset=ClaritickUser.objects.all(), required=False)
     file = df.FileField(required=False)
-    
+    comment = df.CharField(widget=forms.Textarea(), required=False)
+    internal = forms.BooleanField(widget=df.widgets.CheckboxInput(attrs={'onChange': 'toggleComment(this)'}), initial=True, required=False)
+
     class Meta:
         model = Ticket
         exclude = ("opened_by", "validated_by", "diffusion")
@@ -50,7 +57,7 @@ class NewTicketSmallForm(NewTicketForm):
         model = Ticket
         exclude = ("opened_by", "category", "project", "keywords", "state", "priority", "assigned_to", "validated_by", "diffusion")
 
-class ChildForm(forms.ModelForm):
+class ChildForm(CustomModelForm):
     title = df.CharField(label=u'Titre', widget=forms.TextInput(attrs={'size': '80', 'onBlur': 'showDeletebox(this);'}), required=True)
     text = df.CharField(widget=forms.Textarea(attrs={'cols':'90', 'rows': '15', 'onBlur': 'showDeletebox(this);'}))
     keywords = df.CharField(widget=forms.TextInput(attrs={'size': '80'}), required=False)
@@ -58,6 +65,8 @@ class ChildForm(forms.ModelForm):
     assigned_to = df.ModelChoiceField(widget=FilteringSelect(), label=u'Assigné à', queryset=ClaritickUser.objects.all(), required=False)
     project = forms.ModelChoiceField(label=u'Projet', queryset=Project.objects.all(), required=False)
     diffusion = forms.NullBooleanField(widget=forms.HiddenInput())
+    comment = forms.CharField(widget=forms.Textarea(), required=False)
+    internal = forms.BooleanField(widget=df.widgets.CheckboxInput(attrs={'onChange': 'toggleComment(this)'}), initial=True, required=False)
 
     class Meta:
         model = Ticket

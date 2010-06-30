@@ -13,12 +13,10 @@ from django.template import RequestContext
 from django.contrib.auth.decorators import login_required, permission_required
 from django.core.urlresolvers import reverse
 
-import django.contrib.comments
-from django.contrib.comments.views.comments import post_comment
-
 from dojango.decorators import json_response
 
 from ticket.models import Ticket, TicketView, TicketFile
+from ticket_comments.views import post_comment
 from ticket.forms import *
 from django.forms.models import modelformset_factory
 
@@ -32,21 +30,6 @@ from copy import copy
 
 INVALID_TITLE = "Invalid title"
 
-# django.contrib.comments ne permet pas de spécifier un prefix
-# dans le cas de plusieurs commentaires sur le même formulaire
-# (cf le code de post_comment)
-# on lui donne une copie de request avec le POST modifié
-def post_comment_child(request, queryset):
-    req = copy(request)
-    req.POST = request.POST.copy()
-    for child in queryset:
-        for k in ("timestamp", "object_pk", "security_hash",
-                "content_type", "email", "name", "comment"):
-            req.POST[k] = request.POST.get('child%d_comment-%s'%(child.pk, k))
-        req.POST['internal'] = request.POST.get('child%d_comment-internal'%(child.pk), '')
-        form = django.contrib.comments.get_form()(child, data=req.POST)
-        if form.is_valid():
-            post_comment(req)
 
 def get_filters(request):
     if "list_filters" in request.session:
@@ -341,7 +324,6 @@ def modify(request, ticket_id):
             ticket.save()
 
         form = TicketForm(request.POST, request.FILES, instance=ticket, user=request.user)
-        comment_form = django.contrib.comments.get_form()(ticket) # Initialization vide
 
         # Il faut valider les fils en premier pour ne pas se faire jetter si on ferme tout
         child_formset = ChildFormSet(request.POST, queryset=child)
@@ -351,6 +333,8 @@ def modify(request, ticket_id):
         for f in child_formset.initial_forms:
             if not f in deleted_forms and f.is_valid():
                 f.save()
+                post_comment(f, request)
+
 
         for f in deleted_forms:
             f.instance.delete()
@@ -367,8 +351,9 @@ def modify(request, ticket_id):
                     new_child.date_open = datetime.datetime.now()
                     new_child.parent = ticket
                     new_child.save()
+                    f.instance = new_child
+                    post_comment(f, request)
 
-        post_comment_child(request, queryset=child)
 
         if form.is_valid():
             # Si l'utilisateur peut assigner ce ticket à l'utilisateur passé en POST
@@ -376,6 +361,7 @@ def modify(request, ticket_id):
                     not in ClaritickUser.objects.get(pk=request.user.pk).get_child_users():
                 raise PermissionDenied()
             form.save()
+            post_comment(form, request)
 
 
             file = form.cleaned_data["file"]
@@ -390,23 +376,15 @@ def modify(request, ticket_id):
                 ticket_file.data = data
                 ticket_file.save()
 
-            comment_form = django.contrib.comments.get_form()(ticket, data=request.POST)
-            if comment_form.is_valid():
-                post_comment(request)
-
-            comment_form = django.contrib.comments.get_form()(ticket) # Initialization vide
             return exit_action()
     else:
         form = TicketForm(instance=ticket, user=request.user)
-        comment_form  = django.contrib.comments.get_form()(ticket)
         child_formset = ChildFormSet(queryset=child)
         for f in child_formset.forms:
             filter_form_for_user(f, request.user)
 
-    child_form = [(f, django.contrib.comments.get_form()(c, auto_id='%s', prefix='child%d_comment'% (c.pk)) if c else None) for c,f in map(None, child, child_formset.forms)]
-    # Just open
     return render_to_response(template_name,
-            { "form": form, "comment_form": comment_form, "child_form": child_form, "child_formset": child_formset },
+            { "form": form, "child_formset": child_formset },
         context_instance=RequestContext(request))
 
 @login_required
