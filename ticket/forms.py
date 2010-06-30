@@ -47,7 +47,7 @@ class NewTicketForm(CustomModelForm):
 
     def __init__(self, *args, **kwargs):
         if "user" in kwargs:
-            filter_form_for_user(self, kwargs["user"])
+            filter_form_for_user([self], kwargs["user"])
             del kwargs["user"] # user= ne doit pas arriver a l'init parent ...
         super(NewTicketForm, self).__init__(*args, **kwargs)
 
@@ -76,7 +76,7 @@ class ChildForm(CustomModelForm):
 
         user = kwargs.pop("user", None)
         if user:
-            filter_form_for_user(self, user)
+            filter_form_for_user([self], user)
 
         super(ChildForm, self).__init__(*args, **kwargs)
 
@@ -102,7 +102,7 @@ class SearchTicketForm(df.Form, ModelFormTableMixin):
 
     def __init__(self, *args, **kwargs):
         if "user" in kwargs:
-            filter_form_for_user(self, kwargs["user"])
+            filter_form_for_user([self], kwargs["user"])
             del kwargs["user"] # user= ne doit pas arriver a l'init parent ...
         self.base_fields["assigned_to"].choices = [(x.pk, x) for x in ClaritickUser.objects.all()]
         self.base_fields["assigned_to"].choices.insert(0, ("", ""))

@@ -1,9 +1,6 @@
 Bugs:
 =====
-* Numéros de ticket incorrects pour les ticket fils (numéro de séquence pas bon!) 
-* Lister tous les ticket enfants (même fermés) -> OK
-        ---> Pouvoir voir quel fils matche les critères de recherche (résultats parfois supprenants mais cohérents)
-* Penser un affichage convi pour les listes (visibilité de l'arbre) -> OK (ou pas)
+* Dans les commentaires, django.contrib.comments fait une requête par utilisateur qui a commenté
 
 Liste des tickets / Droits utilisateurs
 =======================================

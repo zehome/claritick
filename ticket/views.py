@@ -401,8 +401,7 @@ def modify(request, ticket_id):
     else:
         form = TicketForm(instance=ticket, user=request.user)
         child_formset = ChildFormSet(queryset=child)
-        for f in child_formset.forms:
-            filter_form_for_user(f, request.user)
+        filter_form_for_user(child_formset.forms, request.user)
 
     return render_to_response(template_name,
             { "form": form, "child_formset": child_formset },

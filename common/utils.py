@@ -26,22 +26,23 @@ def user_has_perms_on_client(user, client):
 
     return True
 
-def filter_form_for_user(form, user):
+def filter_form_for_user(forms, user):
     from common.models import UserProfile, Client, ClaritickUser
+
     if user.is_superuser:
-        if "client" in form.base_fields:
-            form.base_fields["client"].choices = [(x.pk, x) for x in sort_queryset(Client.objects.all())]
-        if "assigned_to" in form.base_fields:
-            form.base_fields["assigned_to"].choices = [(x.pk, x) for x in ClaritickUser.objects.all()]
+        clients = sort_queryset(Client.objects.all())
+        claritick_users = ClaritickUser.objects.all()
     else:
         try:
-            if "client" in form.base_fields:
-                form.base_fields["client"].choices = [(x.pk, x) for x in sort_queryset(user.get_profile().get_clients())]
-            if "assigned_to" in form.base_fields:
-                form.base_fields["assigned_to"].choices = [(x.pk, x) for x in ClaritickUser.objects.get(pk=user.pk).get_child_users()]
+            clients = sort_queryset(user.get_profile().get_clients())
+            claritick_users = ClaritickUser.objects.get(pk=user.pk).get_child_user()
         except UserProfile.DoesNotExist:
             raise NoProfileException(user)
-    if "client" in form.base_fields:
-        form.base_fields["client"].choices.insert(0, ("", ""))
-    if "assigned_to" in form.base_fields:
-        form.base_fields["assigned_to"].choices.insert(0, ("", ""))
+
+    for f in forms:
+        for key,qs in zip(("client", "assigned_to"), [clients, claritick_users]):
+            if key in f.base_fields:
+                f.base_fields[key].choices = [(x.pk, x) for x in qs]
+        for key,qs in zip(("client", "assigned_to"), [clients, claritick_users]):
+            if key in f.base_fields:
+                f.base_fields[key].choices.insert(0, ("", ""))
