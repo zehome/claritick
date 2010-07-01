@@ -25,8 +25,9 @@ reporting.autodiscover()
 # Utilities
 def flatpage(template, data={}):
     def render(request):
-        data.update({"ticket_dashboard_critical": get_critical_tickets(request)})
-        data.update({"ticket_dashboard_text_statistics": get_ticket_text_statistics(request)})
+        if request.user and not request.user.is_anonymous():
+            data.update({"ticket_dashboard_critical": get_critical_tickets(request)})
+            data.update({"ticket_dashboard_text_statistics": get_ticket_text_statistics(request)})
         return render_to_response(template, data, context_instance=RequestContext(request))
     return render
 
