@@ -112,20 +112,6 @@
 </fieldset>
 {% endwith %}
 
-<script type="text/javascript">
-    function toggleComment(checkbox) {
-        var did = dojo.byId(checkbox.id+'-tooltip').children;
-        if (checkbox.checked) {
-            did[0].style.display = 'none';
-            did[1].style.display = 'block';
-        }
-        else {
-            did[0].style.display = 'block';
-            did[1].style.display = 'none';
-        }
-    }
-</script>
-
 <fieldset class="block form">
   <legend>Planification</legend>
   <table>
@@ -201,6 +187,7 @@
                     dojo.connect(last_focused, 'onclick', get_focus);
                     dojo.parser.parse(last_focused)
 
+                    {% if perms.ticket.add_ticket_full %}
                     /* copie des valeurs du pêre */
                     dojo.attr('id_form-'+count.value+'-assigned_to', 'value', dojo.byId('id_assigned_to').value);
                     dojo.query('input[name="form-'+count.value+'-assigned_to"]')[0].value = dojo.query('input[name="assigned_to"]')[0].value;
@@ -212,6 +199,7 @@
                             else
                                 dojo.byId('id_form-'+count.value+'-'+e).selectedIndex = dojo.byId('id_'+e).selectedIndex;
                         });
+                    {% endif %}
 
                     count.value = parseInt(count.value)+1;
                     buttons.forEach(function (b) {
@@ -263,14 +251,27 @@
             dojo.attr(checkbox, 'value', 'True');
         }
     }
+    function toggleComment(checkbox) {
+        var did = dojo.byId(checkbox.id+'-tooltip').children;
+        if (checkbox.checked) {
+            did[0].style.display = 'none';
+            did[1].style.display = 'block';
+        }
+        else {
+            did[0].style.display = 'block';
+            did[1].style.display = 'none';
+        }
+    }
 </script>
 
+{% block content_childs %}
 <div id="div_childs" class="childs">
 {{ child_formset.management_form }}
 {% for cf in child_formset.forms %}
 {% include "ticket/child.html" %}
 {% endfor %}
 </div>
+{% endblock content_childs %}
 
 
 <div id="save_buttons">

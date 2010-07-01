@@ -50,5 +50,14 @@
     </table>
 </fieldset>
 <hr />
-
 {% endblock content_ticket %}
+
+{% block content_childs %}
+<div id="div_childs" class="childs">
+{{ child_formset.management_form }}
+{% for cf in child_formset.forms %}
+{% include "ticket/child_small.html" %}
+{% endfor %}
+</div>
+{% endblock content_childs %}
+

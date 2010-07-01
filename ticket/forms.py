@@ -57,14 +57,21 @@ class NewTicketSmallForm(NewTicketForm):
         model = Ticket
         exclude = ("opened_by", "category", "project", "keywords", "state", "priority", "assigned_to", "validated_by", "diffusion")
 
-class ChildForm(CustomModelForm):
+class ChildFormSmall(CustomModelForm):
+    title = df.CharField(label=u'Titre', widget=forms.TextInput(attrs={'size': '80'}), required=True)
+    text = df.CharField(widget=forms.Textarea(attrs={'cols':'90', 'rows': '15'}))
+    class Meta:
+        model = Ticket
+        fields = ("title", "text")
+
+class ChildForm(ChildFormSmall):
     title = df.CharField(label=u'Titre', widget=forms.TextInput(attrs={'size': '80', 'onBlur': 'showDeletebox(this);'}), required=True)
     text = df.CharField(widget=forms.Textarea(attrs={'cols':'90', 'rows': '15', 'onBlur': 'showDeletebox(this);'}))
     keywords = df.CharField(widget=forms.TextInput(attrs={'size': '80'}), required=False)
     state       = forms.ModelChoiceField(label=u'État', queryset = State.objects.all())
     assigned_to = df.ModelChoiceField(widget=FilteringSelect(), label=u'Assigné à', queryset=ClaritickUser.objects.all(), required=False)
     project = forms.ModelChoiceField(label=u'Projet', queryset=Project.objects.all(), required=False)
-    diffusion = forms.NullBooleanField(widget=forms.HiddenInput())
+    diffusion = forms.NullBooleanField(widget=forms.HiddenInput(), initial=False)
     comment = forms.CharField(widget=forms.Textarea(), required=False)
     internal = forms.BooleanField(widget=df.widgets.CheckboxInput(attrs={'onChange': 'toggleComment(this)'}), initial=True, required=False)
 
@@ -79,7 +86,6 @@ class ChildForm(CustomModelForm):
             filter_form_for_user([self], user)
 
         super(ChildForm, self).__init__(*args, **kwargs)
-
 
 class SearchTicketForm(df.Form, ModelFormTableMixin):
     title       = df.CharField(widget=df.TextInput(attrs={'size':'64'}), required=False)

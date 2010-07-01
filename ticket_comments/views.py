@@ -10,7 +10,7 @@ from models import TicketComment
 # form doit être un formulaire de Ticket
 # avec deux champs 'comment' et 'internal'
 def post_comment(form, request):
-    if form.cleaned_data['comment']:
+    if "comment" in form.cleaned_data and form.cleaned_data['comment']:
         comment = TicketComment(
                 content_object=form.instance,
                 site=Site.objects.get_current(),

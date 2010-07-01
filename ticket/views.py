@@ -331,12 +331,15 @@ def modify(request, ticket_id):
         template_name = "ticket/modify.html"
         TicketForm = NewTicketForm
         child = ticket.child.order_by('date_open')
+        TicketChildForm = ChildForm
     else:
         template_name = "ticket/modify_small.html"
         TicketForm = NewTicketSmallForm
         child = ticket.child.filter(diffusion=True).order_by('date_open')
+        TicketChildForm = ChildFormSmall
 
-    ChildFormSet = modelformset_factory(Ticket, form=ChildForm, extra=0, can_delete=True)
+
+    ChildFormSet = modelformset_factory(Ticket, form=TicketChildForm, extra=0, can_delete=True)
 
     if request.method == "POST":
         if request.POST.get("_validate-ticket", None) and request.user.has_perm("ticket.can_validate_ticket")\
@@ -376,7 +379,6 @@ def modify(request, ticket_id):
                     new_child.save()
                     f.instance = new_child
                     post_comment(f, request)
-
 
         if form.is_valid():
             # Si l'utilisateur peut assigner ce ticket à l'utilisateur passé en POST
@@ -438,9 +440,15 @@ def ajax_load_child(request, ticket_id):
     if ticket.parent:
         raise PermissionDenied("Ce ticket est déjà un fils")
 
-    form = ChildForm(user=request.user, initial={"diffusion": False }, prefix=prefix, auto_id='id_%s')
-    return render_to_response('ticket/child.html',
-            {"cf": form},
+    if request.user.has_perm("ticket.add_ticket_full"):
+        form = ChildForm(user=request.user, prefix=prefix)
+        template = "ticket/child.html"
+    else:
+        form = ChildFormSmall(prefix=prefix)
+        template = "ticket/child_small.html"
+
+    return render_to_response(template,
+            {"cf": form, },
             context_instance=RequestContext(request))
 
 @permission_required("ticket.can_delete_tma")
