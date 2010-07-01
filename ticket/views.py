@@ -365,9 +365,11 @@ def modify(request, ticket_id):
             for f in child_formset.extra_forms:
                 if f.is_valid():
                     new_child = copy_model_instance(ticket)
-                    for a in ('state', 'assigned_to', 'title', 'diffusion',
-                            'text', 'keywords', 'category', 'project'):
+
+                    # Valeurs à écraser
+                    for a in f.Meta.fields:
                         setattr(new_child, a, f.cleaned_data.get(a))
+
                     new_child.opened_by = request.user
                     new_child.date_open = datetime.datetime.now()
                     new_child.parent = ticket
