@@ -540,6 +540,11 @@ class TicketFile(models.Model):
     data = ByteaField()
 
 class TicketMailAction(models.Model):
+    class Meta:
+        permissions = (
+            ("can_delete_tma", u"Peut supprimer des ticket mail action"),
+        )
+        ordering = ["date"]
     """
     
     Une action d'envoie d'email a faire plus tard

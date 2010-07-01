@@ -441,6 +441,25 @@ def ajax_load_child(request, ticket_id):
             {"cf": form},
             context_instance=RequestContext(request))
 
+@permission_required("ticket.can_delete_tma")
+def ajax_delete_tma(request, ticket_id):
+    """ Supprime le/les tma(s) du ticket """
+    if not ticket_id:
+        raise PermissionDenied
+
+    ticket = get_object_or_404(Ticket, pk=ticket_id)
+
+    if not user_has_perms_on_client(request.user, ticket.client):
+        raise PermissionDenied
+
+    tma_id = int(request.GET.get('tma_id', 0))
+
+    if not tma_id: # Delete all
+        ticket.ticketmailaction_set.all().delete()
+    else:
+        ticket.ticketmailaction_set.filter(pk=tma_id).delete()
+    return http.HttpResponse()
+
 @login_required
 @json_response
 def ajax_load_telephone(request):

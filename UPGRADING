@@ -1,0 +1,3 @@
+r263
+    Nouvelle permission ticket.can_delete_tma pour supprimer des ticketmailaction
+    --> syncdb
