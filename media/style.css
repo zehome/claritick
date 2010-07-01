@@ -777,4 +777,9 @@ ol#pagination-digg {
     background-position: 0 100% !important;
 }
 
+.claritickTicketMailAction {
+    background-image: url('/media/images/mail.png') !important;
+    background-position: 0 100% !important;
+}
+
 /* EOF */

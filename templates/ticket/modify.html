@@ -277,11 +277,11 @@
     <button dojoType="dijit.form.Button" iconClass="dijitEditorIcon dijitEditorIconSave" type="submit" name="savebutton" value="save">Enregistrer</button>
       <button dojoType="dijit.form.Button" iconClass="dijitEditorIcon dijitEditorIconSave" type="submit" name="savebutton" value="new">Enregistrer et ajouter un nouveau</button>
     <button dojoType="dijit.form.Button" iconClass="dijitEditorIcon dijitEditorIconSave" type="submit" name="savebutton" value="return" class="default">Enregistrer et retourner à la liste</button>
-    {% if perms.ticket.can_add_child %}<button dojoType="dijit.form.Button" iconClass="dijitEditorIcon dijitEditorIconNewPage claritickNewChild" onClick="loadChild();" id="button_add_child">Ajouter un fils</button>{% endif %}
+    {% if perms.ticket.can_add_child %}<button dojoType="dijit.form.Button" iconClass="dijitEditorIcon claritickNewChild" onClick="loadChild();" id="button_add_child">Ajouter un fils</button>{% endif %}
 
 
     {% if perms.ticket.can_delete_tma and form.instance.ticketmailaction_set.count %}
-    <div dojoType="dijit.form.DropDownButton" iconClass="dijitEditorIcon dijitEditorIconNewPage" style="float: right; margin-right: 40px;" id="dijit_tmas">
+    <div dojoType="dijit.form.DropDownButton" iconClass="dijitEditorIcon claritickTicketMailAction" style="float: right; margin-right: 40px;" id="dijit_tmas">
         <span>{{ form.instance.ticketmailaction_set.count }}</span>
         <div dojoType="dijit.Menu">
             <div dojoType="dijit.MenuItem" iconClass="dijitEditorIcon dijitEditorIconDelete" onClick='deleteTmas(dijit.byId("dijit_tmas"), 0);'>Supprimer tout</div>
@@ -293,15 +293,20 @@
 
     <script type="text/javascript">
     function deleteTmas(button, tma_id) {
-        dojo.xhrGet({
-            url: '{% url ajax_delete_tma form.instance.id %}?tma_id='+tma_id,
-            });
-        count = dojo.byId('dijit_tmas_label');
-        count.innerHTML = parseInt(count.innerHTML)-1;
-        if (count.innerHTML == 0)
-            dijit.byId("dijit_tmas").destroyRecursive();
-        else
-            button.destroyRecursive();
+        var confirm_string = "Supprimer ";
+        confirm_string += (tma_id==0) ? "tous les" : "ce";
+        confirm_string += " ticket mail action ?";
+        if (confirm(confirm_string)) {
+            dojo.xhrGet({
+                url: '{% url ajax_delete_tma form.instance.id %}?tma_id='+tma_id,
+                });
+            count = dojo.byId('dijit_tmas_label');
+            count.innerHTML = parseInt(count.innerHTML)-1;
+            if (count.innerHTML == 0)
+                dijit.byId("dijit_tmas").destroyRecursive();
+            else
+                button.destroyRecursive();
+        }
     }
     </script>
     {% endif %}
