@@ -514,8 +514,8 @@ def ajax_load_telephone(request):
     tickets = tickets.filter_ticket_by_user(request.user).order_by("-id")
 
     for ticket in tickets:
-        if not ticket.telephone in telephones:
-            telephones.append((ticket.contact, str(ticket.telephone), "%s %s (Ticket %s de %s)" % (ticket.contact, ticket.telephone, ticket.id, ticket.client)))
+        if not ticket.telephone in [t[1] for t in telephones]:
+            telephones.append((ticket.contact, ticket.telephone, "%s %s (Ticket %s de %s)" % (ticket.contact, ticket.telephone, ticket.id, ticket.client)))
             if len(telephones) >= 5:
                 break
 
