@@ -83,6 +83,9 @@
           <a href="/"><img src="/media/images/logo_pt.png" alt="logo" /></a>
         </td>
         <td align="right" width="33%">
+          {% if chuserform %}
+          <div style="float: left;"><button dojoType="dijit.form.Button">Changer d'utilisateur</button><span>{{ chuserform.user }}</span></div>
+          {% endif %}
           <span id="status">[ IDLE ]</span>
           {% if user.is_authenticated %}
           <p style="padding: 0; margin: 0;">Utilisateur: {{ user.username }}<br />
