@@ -488,7 +488,7 @@ def ajax_load_telephone(request):
         raise PermissionDenied
     
     # Récupère la liste des numéros
-    telephones = []
+    telephones = {}
 
     if settings.POSTGRESQL_VERSION >= 8.4:
         client_and_childs = Client.objects.get_childs("parent", client.pk)
@@ -497,7 +497,7 @@ def ajax_load_telephone(request):
     
     for client in client_and_childs:
         coord = client.coordinates
-        if coord and coord.telephone:
+        if coord and coord.telephone and not coord.telephone in telephones:
             coord_supp = ''
             if coord.postalcode or coord.city:
                 coord_supp += ' (Client '
@@ -506,20 +506,19 @@ def ajax_load_telephone(request):
                 if coord.city:
                     coord_supp += ' ' + str(coord.city)
                 coord_supp += ')'
-            telephones.append(("", str(coord.telephone), "%s%s" % (coord.telephone, coord_supp)))
+            telephones[coord.telephone] = (("", str(coord.telephone), "%s%s" % (coord.telephone, coord_supp)))
 
     # Récupère la liste des derniers tickets
     tickets = Ticket.tickets.filter(parent__isnull=True).filter(client__in=client_and_childs)
     tickets = tickets.exclude(telephone__isnull=True).exclude(telephone='')
-    tickets = tickets.filter_ticket_by_user(request.user).order_by("-id")
+    tickets = tickets.filter_ticket_by_user(request.user).order_by("-id")[:5]
+    # TODO il faudrait faire un queryset avec des telephones uniques et après faire le [:5]
 
     for ticket in tickets:
-        if not ticket.telephone in [t[1] for t in telephones]:
-            telephones.append((ticket.contact, ticket.telephone, "%s %s (Ticket %s de %s)" % (ticket.contact, ticket.telephone, ticket.id, ticket.client)))
-            if len(telephones) >= 5:
-                break
+        if not ticket.telephone in telephones:
+            telephones[ticket.telephone] = ((ticket.contact, ticket.telephone, "%s %s (Ticket %s de %s)" % (ticket.contact, ticket.telephone, ticket.id, ticket.client)))
 
-    ret["telephones"] = telephones
+    ret["telephones"] = telephones.values()
     return ret
 
 @login_required
