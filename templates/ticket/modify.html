@@ -280,9 +280,41 @@
     <button dojoType="dijit.form.Button" iconClass="dijitEditorIcon dijitEditorIconSave" type="submit" name="savebutton" value="return" class="default">Enregistrer et retourner à la liste</button>
     {% if perms.ticket.can_add_child %}<button dojoType="dijit.form.Button" iconClass="dijitEditorIcon claritickNewChild" onClick="loadChild();" id="button_add_child">Ajouter un fils</button>{% endif %}
 
+    <div class="right_buttons">
+    {% if form.instance.ticketmailtrace_set.count %}
+    <div dojoType="dijit.form.Button" iconClass="dijitEditorIcon claritickTicketMailAction" onClick="viewTicketMailTraceDialog();">Trace</div>
+
+    <script type="text/javascript">
+        dojo.require('dijit.layout.AccordionContainer');
+        var ticketmailtrace = null;
+        function viewTicketMailTraceDialog() {
+            if (!ticketmailtrace)
+            {
+                dojo.xhrGet({
+                url: '{% url ajax_load_ticketmailtrace form.instance.id %}',
+                load: function (data) {
+                    ticketmailtrace = data;
+                    dojo.parser.parse(ticketmailtrace);
+                    showTicketMailTraceDialog();
+                },
+                });
+            }
+            else
+                showTicketMailTraceDialog();
+        }
+        function showTicketMailTraceDialog() {
+            var dialog = new dijit.Dialog({
+                title: 'Ticket Mail Trace',
+                content: ticketmailtrace,
+                draggable: false,
+                });
+            dialog.show();
+        }
+    </script>
+    {% endif %}
 
     {% if perms.ticket.can_delete_tma and form.instance.ticketmailaction_set.count %}
-    <div dojoType="dijit.form.DropDownButton" iconClass="dijitEditorIcon claritickTicketMailAction" style="float: right; margin-right: 40px;" id="dijit_tmas">
+    <div dojoType="dijit.form.DropDownButton" iconClass="dijitEditorIcon claritickTicketMailAction" id="dijit_tmas">
         <span>{{ form.instance.ticketmailaction_set.count }}</span>
         <div dojoType="dijit.Menu">
             <div dojoType="dijit.MenuItem" iconClass="dijitEditorIcon dijitEditorIconDelete" onClick='deleteTmas(dijit.byId("dijit_tmas"), 0);'>Supprimer tout</div>
@@ -311,6 +343,7 @@
     }
     </script>
     {% endif %}
+    </div><!-- right_buttons -->
 
 </div>
 

@@ -471,6 +471,24 @@ def ajax_delete_tma(request, ticket_id):
     return http.HttpResponse()
 
 @login_required
+def ajax_load_ticketmailtrace(request, ticket_id):
+    """ Renvoie les ticketmailtrace pour le ticket ticket_id """
+    if not ticket_id:
+        raise PermissionDenied
+
+    ticket = Ticket.objects.select_related('client').only('id').get(pk=ticket_id)
+
+    if not user_has_perms_on_client(request.user, ticket.client):
+        raise PermissionDenied
+
+    ticketmailtrace = TicketMailTrace.objects.filter(ticket=ticket)
+
+    return render_to_response("ticket/ticketmailtrace.html",
+            {"ticketmailtrace": ticketmailtrace},
+            context_instance=RequestContext(request))
+
+
+@login_required
 @json_response
 def ajax_load_telephone(request):
     """

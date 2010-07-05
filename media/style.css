@@ -782,4 +782,9 @@ ol#pagination-digg {
     background-position: 0 100% !important;
 }
 
+.right_buttons {
+    float: right;
+    margin-right: 40px;
+}
+
 /* EOF */

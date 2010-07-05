@@ -1,0 +1,11 @@
+<div dojoType="dijit.layout.AccordionContainer" style="height: 400px;">
+{% for tmt in ticketmailtrace %}
+<div dojoType="dijit.layout.ContentPane" title="Le {{ tmt.date_sent|date:"d/m/Y à H:i" }}" {% if forloop.last %}selected="selected"{% endif %}>
+<pre><strong>From:</strong> {{ tmt.email.from_email }}
+<strong>To:</strong> {{ tmt.email.to|join:", " }}
+<strong>Subject:</strong> {{ tmt.email.subject }}</pre>
+<pre>{{ tmt.email.body }}</pre>
+    </div>
+{% endfor %}
+</div>
+

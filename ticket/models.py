@@ -572,6 +572,7 @@ class TicketMailTrace(models.Model):
     class Meta:
         verbose_name = u"Logs des mails envoyés"
         verbose_name_plural = u"Logs des mails envoyés"
+        ordering = ["date_sent"]
 
 #moderator.register(Ticket, TicketCommentModerator)
 
