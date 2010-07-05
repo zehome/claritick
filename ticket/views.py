@@ -431,12 +431,14 @@ def ajax_load_child(request, ticket_id):
     """
     if not ticket_id:
         raise PermissionDenied
-    ticket = get_object_or_404(Ticket, pk=ticket_id)
+
+    ticket = Ticket.objects.select_related('client').only('id', 'parent').get(pk=ticket_id)
 
     prefix = 'form-%d' % (int(request.GET.get('count', 0)))
 
     if not user_has_perms_on_client(request.user, ticket.client):
         raise PermissionDenied
+
     if ticket.parent:
         raise PermissionDenied("Ce ticket est déjà un fils")
 
@@ -457,7 +459,7 @@ def ajax_delete_tma(request, ticket_id):
     if not ticket_id:
         raise PermissionDenied
 
-    ticket = get_object_or_404(Ticket, pk=ticket_id)
+    ticket = Ticket.objects.select_related('client').only('id').get(pk=ticket_id)
 
     if not user_has_perms_on_client(request.user, ticket.client):
         raise PermissionDenied
