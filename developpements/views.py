@@ -65,7 +65,9 @@ def liste(request):
         if not dev.done:
             if dev.date_sortie and dev.engagement and dev.date_sortie > dev.engagement:
                 dev.alerte = u"Date de sortie prévue dépasse la date d'engagement"
-            if dev.version_requise and dev.version_requise.date_sortie and dev.date_sortie > dev.version_requise.date_sortie:
+            if not dev.date_sortie:
+                dev.alerte = u"Pas de date sortie calculable pour ce dev"
+            elif dev.version_requise and dev.version_requise.date_sortie and dev.date_sortie > dev.version_requise.date_sortie:
                 dev.alerte = u"Date de sortie prévue dépasse la date de sortie de la version"
     
     request.session["developpements"] = developpements
