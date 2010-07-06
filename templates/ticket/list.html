@@ -203,7 +203,10 @@
 {% for row in tickets.object_list %}
     <tr class="bigrow {% cycle 'row1' 'row2' as rowcolor %}" id="ticket_line_{{ forloop.counter }}">
         <td class="bigrow"><input type="checkbox" name="ticket_checked" id="ticket_select_{{ forloop.counter }}" value="{{ row.pk }}" /></td>
-        <td class="bigrow" style="width: 60px;{{ row.close_style }}{{ row.priority_back_style }}" rowspan="{{ row.enfants|length|add:"1" }}"><a style="{{ row.priority_text_style }}" href="{% url ticket_modify row.id %}">{{ row.id }}</a></td>
+        <td class="bigrow" style="width: 60px;{{ row.close_style }}{{ row.priority_back_style }}" rowspan="{{ row.enfants|length|add:"1" }}">
+            {% if row.alarm %}<img src="/media/images/important.png" alt="[alarme]" />{% endif %}
+            <a style="{{ row.priority_text_style }}" href="{% url ticket_modify row.id %}">{{ row.id }}</a>
+        </td>
         <td class="bigrow" style="width: 200px;">{% if row.client %}{{ row.client }}{% endif %}</td>
         <td class="bigrow" style="width: 100px;">{{ row.category }}</td>
         <td class="bigrow" style="width: 100px;">{% if row.project %}{{ row.project }}{% endif %}</td>
@@ -214,7 +217,15 @@
         <td class="bigrow">{{ row.opened_by }}</td>
         <td class="bigrow">{{ row.assigned_to }}</td>
     </tr>
-    <div dojoType="dijit.Tooltip" connectId="ticket_line_{{ forloop.counter }}" position="above"><h3>{{ row.title|wordwrap:80 }}</h3>{{ row.text|wordwrap:80|linebreaks }}</div>
+    <div dojoType="dijit.Tooltip" connectId="ticket_line_{{ forloop.counter }}" position="above">
+        {% if row.alarm %}
+            <h3>Alarme le {{ row.alarm.date_open|date:"d/m/Y à H:i" }} par {{ row.alarm.user_open }}</h3>
+            {{ row.alarm.reason }}
+            </h3>
+        {% endif %}
+        <h3>{{ row.title|wordwrap:80 }}</h3>
+        {{ row.text|wordwrap:80|linebreaks }}
+    </div>
     {% for child in row.enfants %}
         <tr class="{{ rowcolor }}" id="ticket_child{{ forloop.parentloop.counter }}_line_{{ forloop.counter }}">
             <td><input type="checkbox" name="ticket_checked" id="ticket_child{{ forloop.parentloop.counter}}_select_{{ forloop.counter }}" value="{{ child.pk }}" /></td>

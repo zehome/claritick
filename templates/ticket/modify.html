@@ -275,10 +275,47 @@
 
 
 <div id="save_buttons">
-    <button dojoType="dijit.form.Button" iconClass="dijitEditorIcon dijitEditorIconSave" type="submit" name="savebutton" value="save">Enregistrer</button>
-      <button dojoType="dijit.form.Button" iconClass="dijitEditorIcon dijitEditorIconSave" type="submit" name="savebutton" value="new">Enregistrer et ajouter un nouveau</button>
-    <button dojoType="dijit.form.Button" iconClass="dijitEditorIcon dijitEditorIconSave" type="submit" name="savebutton" value="return" class="default">Enregistrer et retourner à la liste</button>
-    {% if perms.ticket.can_add_child %}<button dojoType="dijit.form.Button" iconClass="dijitEditorIcon claritickNewChild" onClick="loadChild();" id="button_add_child">Ajouter un fils</button>{% endif %}
+    {% with form.instance.get_current_alarm as alarm %}
+    <div class="left_buttons">
+        <div dojoType="dijit.form.Button" id="alarm_button" iconClass="dijitEditorIcon claritick{% if not alarm %}No{% endif %}TicketAlarm" onClick="dijit.byId('alarm_dialog').show();">Alarme</div>
+    </div>
+
+    <div dojoType="dijit.Dialog" id="alarm_dialog" title="{{ alarm.title_string|default:"Nouvelle Alarme" }}">
+        <label for="id_alarm">Raison </label><br /><textarea rows="12" cols="32" id="id_alarm" name="alarm_reason">{{ alarm.reason }}</textarea>
+        <div style="text-align: center;">
+            <button dojoType="dijit.form.Button" type="submit" onClick="dojo.byId('id_alarm').value=''; setTicketAlarm();">Annuler l'alarme</button>
+            <button dojoType="dijit.form.Button" onClick="setTicketAlarm();">Valider</button>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        {% if alarm %}
+        dojo.addOnLoad(function () {
+                dijit.byId('alarm_dialog').show();
+        });
+        {% endif %}
+        function setTicketAlarm() {
+            dojo.xhrPost({
+            url: '{% url ajax_set_alarm form.instance.id %}',
+            postData: dojo.byId('id_alarm').value,
+            handleAs: 'text',
+            load: function (data) {
+                dijit.byId('alarm_dialog').hide();
+                var newclass = dojo.byId('id_alarm').value ? "claritickTicketAlarm" : "claritickNoTicketAlarm";
+                dijit.byId('alarm_button').attr('iconClass', 'dijitEditorIcon '+newclass);
+                dijit.byId('alarm_dialog').attr('title', data);
+            }});
+        }
+    </script>
+    {% endwith %}
+
+        <button dojoType="dijit.form.Button" iconClass="dijitEditorIcon dijitEditorIconSave" type="submit" name="savebutton" value="save">Enregistrer</button>
+          <button dojoType="dijit.form.Button" iconClass="dijitEditorIcon dijitEditorIconSave" type="submit" name="savebutton" value="new">Enregistrer et ajouter un nouveau</button>
+        <button dojoType="dijit.form.Button" iconClass="dijitEditorIcon dijitEditorIconSave" type="submit" name="savebutton" value="return" class="default">Enregistrer et retourner à la liste</button>
+        {% if perms.ticket.can_add_child %}
+            <button dojoType="dijit.form.Button" iconClass="dijitEditorIcon claritickNewChild" onClick="loadChild();" id="button_add_child">Ajouter un fils</button>
+        {% endif %}
+
 
     <div class="right_buttons">
     {% if form.instance.ticketmailtrace_set.count %}

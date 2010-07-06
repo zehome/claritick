@@ -40,10 +40,15 @@ def get_and_child(parents, cqs):
         p.enfants = []
         ret[p.id] = p
 
-    cqs = cqs.filter(parent__in=ret.keys())
+    parent_ids = ret.keys()
+    cqs = cqs.filter(parent__in=parent_ids)
+    alarms = TicketAlarm.objects.filter(user_close__isnull=True).filter(ticket__in=parent_ids)
 
     for e in cqs:
         ret[e.parent.id].enfants.append(e)
+
+    for a in alarms:
+        ret[a.ticket_id].alarm = a
 
     return ret.values()
 
@@ -385,9 +390,9 @@ def modify(request, ticket_id):
             if not request.user.is_superuser and form.cleaned_data["assigned_to"] and form.cleaned_data["assigned_to"]\
                     not in ClaritickUser.objects.get(pk=request.user.pk).get_child_users():
                 raise PermissionDenied()
+
             form.save()
             post_comment(form, request)
-
 
             file = form.cleaned_data["file"]
             if file:
@@ -489,6 +494,43 @@ def ajax_load_ticketmailtrace(request, ticket_id):
             {"ticketmailtrace": ticketmailtrace},
             context_instance=RequestContext(request))
 
+@login_required
+def ajax_set_alarm(request, ticket_id):
+    """ Met (ou enlève) une alarme sur le ticket """
+    if not ticket_id:
+        raise PermissionDenied
+
+    ticket = Ticket.objects.select_related('client').get(pk=ticket_id)
+
+    if not user_has_perms_on_client(request.user, ticket.client):
+        raise PermissionDenied
+
+    try:
+        reason = request.POST.keys()[0]
+    except IndexError:
+        reason = ''
+
+    alarm = ticket.get_current_alarm()
+
+    if reason:
+        if not alarm:  # Nouvelle alarme
+            alarm = TicketAlarm(reason=reason,
+                    user_open = request.user,
+                    date_open = datetime.datetime.now(),
+                    ticket = ticket)
+        else: # Changement de raison
+            alarm.reason = reason
+
+        alarm.save()
+        ret = alarm.title_string()
+    else: # not reason
+        if alarm: # Fermeture
+            alarm.user_close = request.user
+            alarm.date_close = datetime.datetime.now()
+            alarm.save()
+        ret = "Nouvelle Alarme"
+
+    return http.HttpResponse(ret)
 
 @login_required
 @json_response

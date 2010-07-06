@@ -117,6 +117,7 @@ class Procedure(models.Model):
     def __unicode__(self):
         return u"%s" % (self.label,)
 
+
 class TicketQuerySet(models.query.QuerySet):
     def add_order_by(self, request):
         sort = request.GET.get('sort', 'id')
@@ -340,6 +341,13 @@ class Ticket(models.Model):
     
     def get_absolute_url(self):
         return "/ticket/modify/%i" % (self.id,)
+
+    def get_current_alarm(self):
+        """ Renvoie l'alarme courante si elle existe sinon None """
+        try:
+            return self.ticketalarm_set.filter(user_close__isnull=True)[0]
+        except IndexError:
+            return None
     
     def __unicode__(self):
         return u"n°%s: %s" % (self.id, self.title) 
@@ -573,6 +581,27 @@ class TicketMailTrace(models.Model):
         verbose_name = u"Logs des mails envoyés"
         verbose_name_plural = u"Logs des mails envoyés"
         ordering = ["date_sent"]
+
+class TicketAlarm(models.Model):
+
+    reason = models.CharField(u"Raison", max_length=128)
+    date_open = models.DateTimeField(u"Date de creation")
+    user_open = models.ForeignKey(User, related_name="ticket_alarm_open")
+    date_close = models.DateTimeField(u"Date de fermeture", null=True )
+    user_close = models.ForeignKey(User, related_name="ticket_alarm_close", null=True)
+    ticket = models.ForeignKey(Ticket)
+
+    def title_string(self):
+        if self.id:
+            ret = "Alarme ouverte le %s par %s" % (self.date_open.strftime('%d/%m/%Y à %H:%M'), self.user_open,)
+        else:
+            ret = "Nouvelle alarme"
+        return ret
+
+    def __unicode__(self):
+        return self.reason
+
+
 
 #moderator.register(Ticket, TicketCommentModerator)
 

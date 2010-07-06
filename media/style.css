@@ -782,6 +782,20 @@ ol#pagination-digg {
     background-position: 0 100% !important;
 }
 
+.claritickTicketAlarm {
+    background-image: url('/media/images/important.png') !important;
+    background-position: 0 100% !important;
+}
+
+.claritickNoTicketAlarm {
+    background-image: url('/media/images/noimportant.png') !important;
+    background-position: 0 100% !important;
+}
+
+.left_buttons {
+    float: left;
+}
+
 .right_buttons {
     float: right;
     margin-right: 40px;

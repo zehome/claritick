@@ -43,7 +43,7 @@ class NewTicketForm(CustomModelForm):
 
     class Meta:
         model = Ticket
-        exclude = ("opened_by", "validated_by", "diffusion")
+        exclude = ("opened_by", "validated_by", "diffusion", "alarm", )
 
     def __init__(self, *args, **kwargs):
         if "user" in kwargs:
@@ -55,7 +55,7 @@ class NewTicketSmallForm(NewTicketForm):
 
     class Meta:
         model = Ticket
-        exclude = ("opened_by", "category", "project", "keywords", "state", "priority", "assigned_to", "validated_by", "diffusion")
+        exclude = ("opened_by", "category", "project", "keywords", "state", "priority", "assigned_to", "validated_by", "diffusion", "alarm", )
 
 class ChildFormSmall(CustomModelForm):
     title = df.CharField(label=u'Titre', widget=forms.TextInput(attrs={'size': '80'}), required=True)
