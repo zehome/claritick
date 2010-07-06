@@ -394,6 +394,14 @@ def modify(request, ticket_id):
             form.save()
             post_comment(form, request)
 
+            # Alarme automatique
+            if ticket.priority \
+                    and ticket.priority.alarm \
+                    and not ticket.ticketalarm_set.all():
+                        ticket.ticketalarm_set.create(reason=ticket.priority.alarm,
+                                user_open = request.user,
+                                date_open = datetime.datetime.now())
+
             file = form.cleaned_data["file"]
             if file:
                 ticket_file = TicketFile(ticket=ticket, filename=file.name, content_type=file.content_type)

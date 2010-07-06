@@ -35,6 +35,7 @@ class Priority(models.Model):
     label = models.CharField("Libellé", max_length=64, blank=True)
     forecolor = ColorField("Couleur du texte", blank=True)
     backcolor = ColorField("Couleur de fond", blank=True)
+    alarm = models.CharField("Alarme automatique", max_length=128, null=True)
     
     good_duration = models.IntegerField("Durée en seconde => Bon", blank=True, null=True)
     warning_duration = models.IntegerField("Durée en seconde => Attention", blank=True, null=True)
