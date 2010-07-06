@@ -586,7 +586,7 @@ class TicketMailTrace(models.Model):
 class TicketAlarm(models.Model):
 
     reason = models.CharField(u"Raison", max_length=128)
-    date_open = models.DateTimeField(u"Date de creation")
+    date_open = models.DateTimeField(u"Date de creation", auto_now_add = True)
     user_open = models.ForeignKey(User, related_name="ticket_alarm_open")
     date_close = models.DateTimeField(u"Date de fermeture", null=True )
     user_close = models.ForeignKey(User, related_name="ticket_alarm_close", null=True)

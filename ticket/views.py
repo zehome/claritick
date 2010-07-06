@@ -399,8 +399,7 @@ def modify(request, ticket_id):
                     and ticket.priority.alarm \
                     and not ticket.ticketalarm_set.all():
                         ticket.ticketalarm_set.create(reason=ticket.priority.alarm,
-                                user_open = request.user,
-                                date_open = datetime.datetime.now())
+                                user_open = request.user)
 
             file = form.cleaned_data["file"]
             if file:
@@ -524,10 +523,10 @@ def ajax_set_alarm(request, ticket_id):
         if not alarm:  # Nouvelle alarme
             alarm = TicketAlarm(reason=reason,
                     user_open = request.user,
-                    date_open = datetime.datetime.now(),
                     ticket = ticket)
-        else: # Changement de raison
+        else: # Changement de raison (on change l'user aussi)
             alarm.reason = reason
+            alarm.user_open = request.user
 
         alarm.save()
         ret = alarm.title_string()
