@@ -78,6 +78,7 @@
       <tr>
         <td align="left" width="33%">
           <a href="/"><img src="/media/images/accueil.png" alt="accueil" /></a>
+          {% if ticket_alarms %}{{ ticket_alarms|length }} alarmes actives!{% endif %}
         </td>
         <td valign="middle" align="center" width="33%">
           <a href="/"><img src="/media/images/logo_pt.png" alt="logo" /></a>
