@@ -6,6 +6,7 @@
 {% block image %}<img src="/media/images/oxygen/folder-open.png" />{% endblock %}
 
 {% block content %}
+<script type="text/javascript" src="/media/javascript/modify.js"></script>
 {{ form.non_field_errors }}
 <form enctype="multipart/form-data" action="{% url ticket_modify form.instance.id %}" method="post">
 <div id="parent">
@@ -20,19 +21,7 @@
 </fieldset>
 
 <script type="text/javascript">
-    dojo.addOnLoad(function () {
-            var was_fixed = false;
-            dojo.connect(dojo.global, 'scroll', function () {
-                if (dojo.global.pageYOffset > 117) {
-                    dojo.query('#fieldset_general').attr('class', 'inline fieldset_fixed');
-                    was_fixed = true;
-                }
-                else if (was_fixed) {
-                    dojo.query('#fieldset_general').attr('class', 'inline form');
-                    was_fixed = false;
-                }
-            });
-    });
+    changeClassOnScroll(117, '#fieldset_general', 'inline form', 'inline fieldset_fixed');
 </script>
 
 <fieldset class="block form">
@@ -48,41 +37,7 @@
     </tr>
     <tr>
         <td class="large">{{ form.telephone.label_tag }}</td><td>{{ form.telephone }}
-            <div dojoType="dijit.form.Button" onClick="loadTelephone();" id="telephoneContainer">Présélection</div>
-            <!-- Dojo dialog telephone preselection -->
-            <script type="text/javascript">
-            function loadTelephone() {
-                var client = dijit.byId("id_client");
-                var client_id = client.value;
-
-                SimpleAjax('{% url ajax_load_telephone %}', 'client_id='+client_id, function(ajax_response)
-                {
-                    if (! ajax_response.telephones) { return; }
-                    var menu = dijit.byId('telephone_menu');
-                    if (menu) {
-                        menu.destroyRecursive();
-                    } else {
-                        menu = new dijit.Menu({id: 'telephone_menu'});
-                        
-                        var telephone;
-                        dojo.forEach(ajax_response.telephones, function(telephone) {
-                            var menuItem = new dijit.MenuItem({
-                                    label: telephone[2],
-                                    onClick: function() {
-                                        dojo.byId('id_contact').value = telephone[0];
-                                        dojo.byId('id_telephone').value = telephone[1];
-                                        menu.destroyRecursive();
-                                    }
-                                });
-                            menu.addChild(menuItem);
-                        });
-                        dojo.byId("telephoneContainer").appendChild(menu.domNode);
-                        menu.focus();
-                    }
-                });
-            }
-            </script>
-            <!-- / Telephone preselection -->
+            <div dojoType="dijit.form.Button" onClick="ajaxMenu2D('{% url ajax_load_telephone %}', 'client_id='+dijit.byId('id_client'), this.id, 'telephone_menu', 'telephones', 'id_contact', 'id_telephone');" id="telephoneContainer">Présélection</div>
         </td>
         <td class="large right">Dernière modif.</td><td>le {{ form.instance.last_modification|date:"d/m/Y à H:i" }}</td>
     </tr>
