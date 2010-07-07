@@ -154,6 +154,9 @@ TICKET_EMAIL_DELAY=120 # delay for 120s before sending email. (Permits grouping)
 TICKET_STATE_CLOSED = 4 # pk de l'etat fermé
 TICKET_STATE_NEW = 1 # pk de l'etat nouveau
 TICKET_STATE_ACTIVE = 2 # pk de l'état actif
+SUMMARY_TICKETS=15 # Nombre de tickets affich�s sur la page d'accueil
+EMAIL_INTERNAL_COMMENTS = False # Ne transmet pas d'email lorsque l'on poste un commentaire interne
+COMMENT_MAX_LENGTH = 65535 * 4
 
 TICKET_PRIORITY_NORMAL = 2 # pk de la priorité normale
 POSTGRESQL_VERSION = 8.3
