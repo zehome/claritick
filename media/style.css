@@ -805,4 +805,20 @@ ol#pagination-digg {
     margin-right: 40px;
 }
 
+.fieldset_fixed {
+    position: fixed;
+    height: 40px;
+    top: 0;
+    width: 100%;
+    z-index: 20;
+    background-color: white;
+    text-align: center;
+    margin: 0px !important;
+}
+
+
+.fieldset_fixed legend {
+    display: none;
+}
+
 /* EOF */

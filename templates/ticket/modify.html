@@ -11,13 +11,29 @@
 <div id="parent">
 {% csrf_token %}
 {% block content_ticket %}
-<fieldset class="inline form">
+<fieldset id="fieldset_general" class="inline form">
   <legend>Général</legend>
   <div>{{ form.category.label_tag }} {{ form.category }}</div>
   <div>{{ form.project.label_tag }} {{ form.project }}</div>
   <div>{{ form.priority.label_tag }} {{ form.priority }}</div>
   <div>{{ form.state.label_tag }} {{ form.state }}</div>
 </fieldset>
+
+<script type="text/javascript">
+    dojo.addOnLoad(function () {
+            var was_fixed = false;
+            dojo.connect(dojo.global, 'scroll', function () {
+                if (dojo.global.pageYOffset > 117) {
+                    dojo.query('#fieldset_general').attr('class', 'inline fieldset_fixed');
+                    was_fixed = true;
+                }
+                else if (was_fixed) {
+                    dojo.query('#fieldset_general').attr('class', 'inline form');
+                    was_fixed = false;
+                }
+            });
+    });
+</script>
 
 <fieldset class="block form">
   <legend>Contact</legend>
