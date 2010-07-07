@@ -294,6 +294,10 @@
     {% with form.instance.get_current_alarm as alarm %}
     <div class="left_buttons">
         <div dojoType="dijit.form.Button" id="alarm_button" iconClass="dijitEditorIcon claritick{% if not alarm %}No{% endif %}TicketAlarm" onClick="dijit.byId('alarm_dialog').show();">Alarme</div>
+        <div dojoType="dijit.Tooltip" connectId="alarm_button">
+            <h3>Alarme</h3>
+            <p>En mettant une alarme sur ce ticket, il sera marqué comme urgence.</p>
+        </div>
     </div>
 
     <div dojoType="dijit.Dialog" id="alarm_dialog" title="{{ alarm.title_string|default:"Nouvelle Alarme" }}">
@@ -335,7 +339,11 @@
 
     <div class="right_buttons">
     {% if form.instance.ticketmailtrace_set.count %}
-    <div dojoType="dijit.form.Button" iconClass="dijitEditorIcon claritickTicketMailAction" onClick="viewTicketMailTraceDialog();">Trace</div>
+    <div dojoType="dijit.form.Button" iconClass="dijitEditorIcon claritickTicketMailAction" id="id_tmt_button" onClick="viewTicketMailTraceDialog();">Trace</div>
+    <div dojoType="dijit.Tooltip" connectId="id_tmt_button">
+        <h3>Ticket Mail Trace</h3>
+        <p>Liste les mails envoyés pour ce ticket</p>
+    </div>
 
     <script type="text/javascript">
         dojo.require('dijit.layout.AccordionContainer');
@@ -375,6 +383,11 @@
             <div dojoType="dijit.MenuItem" iconClass="dijitEditorIcon dijitEditorIconDelete" onClick='deleteTmas(this, {{ tma.id }})' style="display: block;">{{ tma.reasons|join:"<br />" }}</div>
             {% endfor %}
         </div>
+    </div>
+
+    <div dojoType="dijit.Tooltip" connectId="dijit_tmas">
+        <h3>Ticket mail action</h3>
+        <p>Un mail va bientôt être envoyé en raison des actions récentes qu'il y a eu sur ce ticket</p>
     </div>
 
     <script type="text/javascript">
