@@ -1,5 +1,5 @@
-{% load filters %}
 <div class="child" {% if cf.instance.id %}id="child{{ cf.instance.id }}"{% endif %}>
+{% load filters %}
     <fieldset class="block form">
     {% if not cf.instance.id %}
         <legend>Nouveau Ticket fils</legend>
