@@ -708,3 +708,33 @@ def ajax_graph_average_close_time(request):
     ret["x_labels"] = [ {'value': idx+1, 'text': text_mapping[month-1]} for idx, month in enumerate(mapping) ]
     
     return ret
+
+
+def get_critical_tickets(request):
+    qs = Ticket.open_tickets.select_related().only('id', 'title').\
+            filter_ticket_by_user(request.user).\
+            filter(priority__gt=3).\
+            order_by('-date_open')
+    return qs[:settings.SUMMARY_TICKETS]
+
+def get_ticket_text_statistics(request):
+    statList = []
+    statList.append(u"Tickets sans client: %s" % (Ticket.objects.filter(client__isnull = True).count()),)
+    qs = Ticket.objects.select_related().only('id', 'date_open').\
+            filter_ticket_by_user(request.user)
+    if qs:
+        qss = qsstats.QuerySetStats(qs, 'date_open')
+        statList.append(u"Ouverts aujourd'hui: %s" % (qss.this_day(),))
+        statList.append(u"Ouverts ce mois: %s" % (qss.this_month(),))
+        statList.append(u"Ouverts en %s: %s" % (datetime.date.today().year, qss.this_year(),))
+    return statList
+
+def get_ticket_alarm(request):
+    alarms = TicketAlarm.opened.select_related().only('id')
+    qs = Ticket.objects.all().\
+            filter_ticket_by_user(request.user).\
+            filter(ticketalarm__in=alarms).\
+            select_related().only('title', 'id')[:settings.SUMMARY_TICKETS]
+    return qs
+
+

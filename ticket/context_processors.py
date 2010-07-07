@@ -3,34 +3,8 @@ import qsstats
 import datetime
 import settings
 
-SUMMARY_TICKETS=15
-
-def get_critical_tickets(request):
-    qs = Ticket.open_tickets.select_related().only('id', 'title').\
-            filter_ticket_by_user(request.user).\
-            filter(priority__gt=3).\
-            order_by('-date_open')[:SUMMARY_TICKETS]
-    return qs[:SUMMARY_TICKETS]
-
-def get_ticket_text_statistics(request):
-    statList = []
-    statList.append(u"Tickets sans client: %s" % (Ticket.objects.filter(client__isnull = True).count()),)
-    qs = Ticket.objects.select_related().only('id', 'date_open').\
-            filter_ticket_by_user(request.user)
-    if qs:
-        qss = qsstats.QuerySetStats(qs, 'date_open')
-        statList.append(u"Ouverts aujourd'hui: %s" % (qss.this_day(),))
-        statList.append(u"Ouverts ce mois: %s" % (qss.this_month(),))
-        statList.append(u"Ouverts en %s: %s" % (datetime.date.today().year, qss.this_year(),))
-    return statList
-
-def get_ticket_alarm(request):
-    alarms = TicketAlarm.opened.select_related().only('id')
-    qs = Ticket.objects.all().\
-            filter_ticket_by_user(request.user).\
-            filter(ticketalarm__in=alarms).\
-            select_related().only('title', 'id')[:SUMMARY_TICKETS]
-    return qs
+def get_active_alarms(request):
+    return TicketAlarm.opened.all()
 
 def ticket_views(request):
     if request.user and not request.user.is_anonymous():
@@ -41,6 +15,7 @@ def ticket_views(request):
             "TICKET_STATE_NEW": settings.TICKET_STATE_NEW,
             "TICKET_STATE_ACTIVE": settings.TICKET_STATE_ACTIVE,
             },
+        "ticket_alarms": get_active_alarms(request),
         }
     return {}
 
