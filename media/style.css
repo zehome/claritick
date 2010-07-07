@@ -807,7 +807,7 @@ ol#pagination-digg {
 
 .fieldset_fixed {
     position: fixed;
-    height: 40px;
+    padding-top: 0;
     top: 0;
     width: 100%;
     z-index: 20;
