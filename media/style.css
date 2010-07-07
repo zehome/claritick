@@ -734,7 +734,7 @@ ol#pagination-digg {
 	background: white;
 	position: fixed;
 	bottom: 0;
-	height: 40px;
+	min-height: 40px;
 	z-index: 20; /* over evrything */
 	width: 100%;
 }
