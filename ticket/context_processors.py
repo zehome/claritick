@@ -1,4 +1,4 @@
-from ticket.models import TicketView, Ticket
+from ticket.models import TicketView, Ticket, TicketAlarm
 import qsstats
 import datetime
 import settings
@@ -22,6 +22,13 @@ def get_ticket_text_statistics(request):
         statList.append(u"Ouverts en %s: %s" % (datetime.date.today().year, qss.this_year(),))
     
     return statList
+
+def get_ticket_alarm(request):
+    alarms = TicketAlarm.opened.all()
+    qs = Ticket.objects.all().\
+            filter_ticket_by_user(request.user).\
+            filter(ticketalarm__in=alarms)[:SUMMARY_TICKETS]
+    return qs
 
 def ticket_views(request):
     if request.user and not request.user.is_anonymous():

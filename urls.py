@@ -3,7 +3,8 @@
 from django.conf.urls.defaults import *
 from django.shortcuts import render_to_response
 from django.contrib import admin
-from ticket.context_processors import get_ticket_text_statistics, get_critical_tickets
+from ticket.context_processors import get_ticket_text_statistics, get_critical_tickets, get_ticket_alarm
+from claritick.ticket.models import TicketAlarm
 
 import reporting
 
@@ -27,8 +28,11 @@ reporting.autodiscover()
 def flatpage(template, data={}):
     def render(request):
         if request.user and not request.user.is_anonymous():
-            data.update({"ticket_dashboard_critical": get_critical_tickets(request)})
-            data.update({"ticket_dashboard_text_statistics": get_ticket_text_statistics(request)})
+            data.update(
+                    ticket_dashboard_critical = get_critical_tickets(request),
+                    ticket_dashboard_text_statistics = get_ticket_text_statistics(request),
+                    ticket_alarms = get_ticket_alarm(request),
+                    )
         return render_to_response(template, data, context_instance=RequestContext(request))
     return render
 

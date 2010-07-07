@@ -346,9 +346,10 @@ class Ticket(models.Model):
     def get_current_alarm(self):
         """ Renvoie l'alarme courante si elle existe sinon None """
         try:
-            return self.ticketalarm_set.filter(user_close__isnull=True)[0]
-        except IndexError:
-            return None
+            ret = TicketAlarm.opened.get(ticket=self)
+        except TicketAlarm.DoesNotExist:
+            ret = None
+        return ret
     
     def __unicode__(self):
         return u"n°%s: %s" % (self.id, self.title) 
@@ -583,7 +584,23 @@ class TicketMailTrace(models.Model):
         verbose_name_plural = u"Logs des mails envoyés"
         ordering = ["date_sent"]
 
+class TicketAlarmManager(models.Manager):
+    def get_query_set(self):
+        qs = super(TicketAlarmManager, self).get_query_set().\
+                select_related('user_open')
+        return qs
+
+class TicketAlarmOpenManager(TicketAlarmManager):
+    def get_query_set(self):
+        qs =  super(TicketAlarmOpenManager, self).get_query_set().\
+                select_related('ticket__title').\
+                filter(user_close__isnull=True)
+        return qs
+
 class TicketAlarm(models.Model):
+
+    objects = TicketAlarmManager()
+    opened = TicketAlarmOpenManager()
 
     reason = models.CharField(u"Raison", max_length=128)
     date_open = models.DateTimeField(u"Date de creation", auto_now_add = True)

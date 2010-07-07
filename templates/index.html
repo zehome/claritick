@@ -15,13 +15,12 @@
 <p>Merci de vous <a href="/accounts/login/">IDENTIFIER</a></p>
 {% else %}
 <div id="index_content">
-    {% if ticket_views %}
-    <div id="list_filters" class="container">
-        <h2>Mes filtres</h2>
+    {% if ticket_alarms %}
+    <div class="container">
+        <h2>Alarmes</h2>
         <ul>
-            
-            {% for view in ticket_views %}
-            <li><a href="{% url ticket_list_view view.pk %}">{{ view.name }}</a></li>
+            {% for ticket in ticket_alarms %}
+            <li><a href="{% url ticket_modify ticket.pk %}">[{{ ticket.id }}] {{ ticket.title|truncatewords:8 }}</a></li>
             {% endfor %}
         </ul>
     </div>
