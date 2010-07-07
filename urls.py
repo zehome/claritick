@@ -25,7 +25,7 @@ admin.autodiscover()
 reporting.autodiscover()
 
 # Utilities
-def flatpage(template, data={}):
+def indexpage(template, data={}):
     def render(request):
         if request.user and not request.user.is_anonymous():
             data.update(
@@ -52,7 +52,7 @@ def raise_trial_exception(*kw, **args):
     raise Exception("Trial exception")
 
 urlpatterns = patterns('',
-    (r'^/*$', flatpage("index.html")),
+    (r'^/*$', indexpage("index.html")),
     ## Medias (STATIC Content)
     #(r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT}),
     (r'^comments/', include('django.contrib.comments.urls')),
@@ -72,9 +72,6 @@ urlpatterns = patterns('',
     ## Reporting
     (r'^reporting/', include('reporting.urls')),
     
-    ## Backlinks
-#    (r'^backlinks/', include('backlinks.urls')),
-
     ## Error testing
     (r'^error/', raise_trial_exception),
     
