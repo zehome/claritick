@@ -116,123 +116,8 @@
 </div><!-- parent -->
 
 <script type="text/javascript">
-    var last_focused = dojo.byId("parent");
-    var fl = null; /* focus list */
-    var buttons;
-
-    dojo.addOnLoad(function () {
-            fl = dojo.query("div.child");
-            fl.style("opacity", "0.5");
-            fl.push(dojo.byId("parent"));
-            fl.onclick(get_focus);
-            if (dojo.doc.location.hash != '') {
-                var node = dojo.query(dojo.doc.location.hash);
-                if (node.length == 1) {
-                    dojo.style(node[0], 'opacity', '1');
-                    dojo.style(node[0].id + '_content', 'display', 'inline');
-                    dojo.style('parent', 'opacity', '0.5');
-                }
-            }
-            buttons = dojo.query("#save_buttons").query("button");
-            });
-
-    function get_focus (ev) {
-        fl.style("opacity", "0.5");
-        dojo.style(this, "opacity", "1");
-        last_focused = this;
-    }
-
-{% if perms.ticket.can_add_child %}
-    function loadChild () {
-        var count = dojo.byId('id_form-TOTAL_FORMS');
-        buttons.forEach(function (b) {
-                    dijit.byId(b.id).attr('disabled', true);
-                });
-        dojo.xhrGet({url: '{% url ajax_load_child form.instance.id %}?count='+count.value,
-                load: function (data) {
-                    var childs;
-                    dojo.place(data, 'div_childs', 'last');
-                    last_focused = dojo.query('div.child:last-child')[0]
-                    fl.style('opacity', '0.5');
-                    fl.push(last_focused);
-                    dojo.connect(last_focused, 'onclick', get_focus);
-                    dojo.parser.parse(last_focused)
-
-                    {% if perms.ticket.add_ticket_full %}
-                    /* copie des valeurs du pêre */
-                    dojo.attr('id_form-'+count.value+'-assigned_to', 'value', dojo.byId('id_assigned_to').value);
-                    dojo.query('input[name="form-'+count.value+'-assigned_to"]')[0].value = dojo.query('input[name="assigned_to"]')[0].value;
-                    dojo.forEach(['category', 'project', 'state'], function (e) {
-                            if (e == 'state'  && dojo.byId('id_'+e).selectedIndex == {{ settings.TICKET_STATE_CLOSED }}) {
-                                dojo.byId('id_'+e).selectedIndex = {{ settings.TICKET_STATE_ACTIVE }};
-                                dojo.byId('id_form-'+count.value+'-'+e).selectedIndex = {{ settings.TICKET_STATE_NEW }};
-                            }
-                            else
-                                dojo.byId('id_form-'+count.value+'-'+e).selectedIndex = dojo.byId('id_'+e).selectedIndex;
-                        });
-                    {% endif %}
-
-                    count.value = parseInt(count.value)+1;
-                    buttons.forEach(function (b) {
-                            dijit.byId(b.id).attr('disabled', false);
-                        });
-
-                    /* aller vers le futur nouveau fils */
-                    var node;
-                    if ((node = dojo.byId('last_child')))
-                        node.removeAttribute('id');
-                    dojo.query('div.child:last-child')[0].setAttribute('id', 'last_child');
-                    dojo.doc.location.hash = '';
-                    dojo.doc.location.hash = 'last_child';
-                }});
-    }
-
-    function showDeletebox(input) {
-        var tid = input.parentNode.getAttribute('ticket_id');
-        if (tid) {
-            var child = dojo.query('div#child'+tid);
-            var title = child.query('input[name$="-title"]')[0];
-            var text = child.query('textarea[name$="-text"]')[0];
-            if (title.value == '' && text.value == '')
-                dojo.style('delete_child'+tid, 'display', 'inline');
-            else
-                dojo.style('delete_child'+tid, 'display', 'none');
-        }
-    }
-{% endif %}
-
-    function togglePlusMinus(img, content) {
-        if (dojo.style(content, "display") == "inline") {
-            dojo.style(content, "display", "none");
-            img.src = "/media/images/plus.png";
-        }
-        else {
-            dojo.style(content, "display", "inline");
-            img.src = "/media/images/minus.png";
-        }
-    }
-    function toggleMailImage(img) {
-        var checkbox = dojo.query('input[name$="-diffusion"]', img.parentNode.parentNode)[0];
-        if (checkbox.value == 'True') {
-            dojo.attr(img, 'src', '/media/images/oxygen/nodiffusion.png');
-            dojo.attr(checkbox, 'value', 'False');
-        }
-        else {
-            dojo.attr(img, 'src', '/media/images/oxygen/diffusion.png');
-            dojo.attr(checkbox, 'value', 'True');
-        }
-    }
-    function toggleComment(checkbox) {
-        var did = dojo.byId(checkbox.id+'-tooltip').children;
-        if (checkbox.checked) {
-            did[0].style.display = 'none';
-            did[1].style.display = 'block';
-        }
-        else {
-            did[0].style.display = 'block';
-            did[1].style.display = 'none';
-        }
-    }
+    var last_focused, fl, buttons;
+    childManagement();
 </script>
 
 {% block content_childs %}
@@ -258,8 +143,8 @@
     <div dojoType="dijit.Dialog" id="alarm_dialog" title="{{ alarm.title_string|default:"Nouvelle Alarme" }}">
         <label for="id_alarm">Raison </label><br /><textarea rows="12" cols="32" id="id_alarm" name="alarm_reason">{{ alarm.reason }}</textarea>
         <div style="text-align: center;">
-            <button dojoType="dijit.form.Button" type="submit" onClick="dojo.byId('id_alarm').value=''; setTicketAlarm();">Annuler l'alarme</button>
-            <button dojoType="dijit.form.Button" onClick="setTicketAlarm();">Valider</button>
+            <button dojoType="dijit.form.Button" type="submit" onClick="dojo.byId('id_alarm').value=''; setTicketAlarm('{% url ajax_set_alarm form.instance.id %}');">Annuler l'alarme</button>
+            <button dojoType="dijit.form.Button" onClick="setTicketAlarm('{% url ajax_set_alarm form.instance.id %}');">Valider</button>
         </div>
     </div>
 
@@ -269,18 +154,6 @@
                 dijit.byId('alarm_dialog').show();
         });
         {% endif %}
-        function setTicketAlarm() {
-            dojo.xhrPost({
-            url: '{% url ajax_set_alarm form.instance.id %}',
-            postData: dojo.byId('id_alarm').value,
-            handleAs: 'text',
-            load: function (data) {
-                dijit.byId('alarm_dialog').hide();
-                var newclass = dojo.byId('id_alarm').value ? "claritickTicketAlarm" : "claritickNoTicketAlarm";
-                dijit.byId('alarm_button').attr('iconClass', 'dijitEditorIcon '+newclass);
-                dijit.byId('alarm_dialog').attr('title', data);
-            }});
-        }
     </script>
     {% endwith %}
 
@@ -288,13 +161,13 @@
           <button dojoType="dijit.form.Button" iconClass="dijitEditorIcon dijitEditorIconSave" type="submit" name="savebutton" value="new">Enregistrer et ajouter un nouveau</button>
         <button dojoType="dijit.form.Button" iconClass="dijitEditorIcon dijitEditorIconSave" type="submit" name="savebutton" value="return" class="default">Enregistrer et retourner à la liste</button>
         {% if perms.ticket.can_add_child %}
-            <button dojoType="dijit.form.Button" iconClass="dijitEditorIcon claritickNewChild" onClick="loadChild();" id="button_add_child">Ajouter un fils</button>
+        <button dojoType="dijit.form.Button" iconClass="dijitEditorIcon claritickNewChild" onClick="loadChild('{% url ajax_load_child form.instance.id %}', {% if perms.ticket.add_ticket_full %}true{% else %}false{% endif %}, {{ settings.TICKET_STATE_NEW }}, {{ settings.TICKET_STATE_CLOSED }}, {{ settings.TICKET_STATE_ACTIVE }});" id="button_add_child">Ajouter un fils</button>
         {% endif %}
 
 
     <div class="right_buttons">
     {% if form.instance.ticketmailtrace_set.count %}
-    <div dojoType="dijit.form.Button" iconClass="dijitEditorIcon claritickTicketMailAction" id="id_tmt_button" onClick="viewTicketMailTraceDialog();">Trace</div>
+    <div dojoType="dijit.form.Button" iconClass="dijitEditorIcon claritickTicketMailAction" id="id_tmt_button" onClick="viewTicketMailTraceDialog('{% url ajax_load_ticketmailtrace form.instance.id %}');">Trace</div>
     <div dojoType="dijit.Tooltip" connectId="id_tmt_button">
         <h3>Ticket Mail Trace</h3>
         <p>Liste les mails envoyés pour ce ticket</p>
@@ -303,29 +176,6 @@
     <script type="text/javascript">
         dojo.require('dijit.layout.AccordionContainer');
         var ticketmailtrace = null;
-        function viewTicketMailTraceDialog() {
-            if (!ticketmailtrace)
-            {
-                dojo.xhrGet({
-                url: '{% url ajax_load_ticketmailtrace form.instance.id %}',
-                load: function (data) {
-                    ticketmailtrace = data;
-                    dojo.parser.parse(ticketmailtrace);
-                    showTicketMailTraceDialog();
-                },
-                });
-            }
-            else
-                showTicketMailTraceDialog();
-        }
-        function showTicketMailTraceDialog() {
-            var dialog = new dijit.Dialog({
-                title: 'Ticket Mail Trace',
-                content: ticketmailtrace,
-                draggable: false,
-                });
-            dialog.show();
-        }
     </script>
     {% endif %}
 
@@ -333,7 +183,7 @@
     <div dojoType="dijit.form.DropDownButton" iconClass="dijitEditorIcon claritickTicketMailAction" id="dijit_tmas">
         <span>{{ form.instance.ticketmailaction_set.count }}</span>
         <div dojoType="dijit.Menu">
-            <div dojoType="dijit.MenuItem" iconClass="dijitEditorIcon dijitEditorIconDelete" onClick='deleteTmas(dijit.byId("dijit_tmas"), 0);'>Supprimer tout</div>
+            <div dojoType="dijit.MenuItem" iconClass="dijitEditorIcon dijitEditorIconDelete" onClick='deleteTmas("{% url ajax_delete_tma form.instance.id %}", dijit.byId("dijit_tmas"), 0);'>Supprimer tout</div>
             {% for tma in form.instance.ticketmailaction_set.all %}
             <div dojoType="dijit.MenuItem" iconClass="dijitEditorIcon dijitEditorIconDelete" onClick='deleteTmas(this, {{ tma.id }})' style="display: block;">{{ tma.reasons|join:"<br />" }}</div>
             {% endfor %}
@@ -345,24 +195,6 @@
         <p>Un mail va bientôt être envoyé en raison des actions récentes qu'il y a eu sur ce ticket</p>
     </div>
 
-    <script type="text/javascript">
-    function deleteTmas(button, tma_id) {
-        var confirm_string = "Supprimer ";
-        confirm_string += (tma_id==0) ? "tous les" : "ce";
-        confirm_string += " ticket mail action ?";
-        if (confirm(confirm_string)) {
-            dojo.xhrGet({
-                url: '{% url ajax_delete_tma form.instance.id %}?tma_id='+tma_id,
-                });
-            count = dojo.byId('dijit_tmas_label');
-            count.innerHTML = parseInt(count.innerHTML)-1;
-            if (count.innerHTML == 0)
-                dijit.byId("dijit_tmas").destroyRecursive();
-            else
-                button.destroyRecursive();
-        }
-    }
-    </script>
     {% endif %}
     </div><!-- right_buttons -->
 
