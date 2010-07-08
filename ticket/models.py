@@ -631,17 +631,19 @@ class TicketAlarm(models.Model):
     def __unicode__(self):
         return self.reason
 
-class TicketAppelManager(models.Model):
+class TicketAppelManager(models.Manager):
     def get_query_set(self):
         return super(TicketAppelManager, self).get_query_set().\
                 select_related('user')
 
 class TicketAppel(models.Model):
     """ Liste de date où le client a rappelé  """
+
+    objects = TicketAppelManager()
+
     date = models.DateTimeField(auto_now_add=True)
     ticket = models.ForeignKey(Ticket)
     user = models.ForeignKey(User)
-
 
 #moderator.register(Ticket, TicketCommentModerator)
 
