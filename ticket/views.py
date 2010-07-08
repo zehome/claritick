@@ -726,7 +726,7 @@ def get_critical_tickets(request):
 def get_ticket_text_statistics(request):
     statList = []
     statList.append(u"Tickets sans client: %s" % (Ticket.objects.filter(client__isnull = True).count()),)
-    qs = Ticket.objects.select_related().only('id', 'date_open').\
+    qs = Ticket.minimal.only('id', 'date_open').\
             filter_ticket_by_user(request.user)
     if qs:
         qss = qsstats.QuerySetStats(qs, 'date_open')
@@ -737,10 +737,8 @@ def get_ticket_text_statistics(request):
 
 def get_ticket_alarm(request):
     alarms = TicketAlarm.opened.select_related().only('id')
-    qs = Ticket.objects.all().\
-            filter_ticket_by_user(request.user).\
-            filter(ticketalarm__in=alarms).\
-            select_related().only('title', 'id')[:settings.SUMMARY_TICKETS]
-    return qs
+    qs = Ticket.minimal.filter(ticketalarm__in=alarms).\
+            filter_ticket_by_user(request.user)
+    return qs[:settings.SUMMARY_TICKETS]
 
 
