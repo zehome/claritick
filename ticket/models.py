@@ -251,6 +251,7 @@ class Ticket(models.Model):
         )
 
 
+    minimal = QuerySetManager()
     objects = BaseTicketManager()
     tickets = TicketManager()
     open_tickets = OpenTicketManager()

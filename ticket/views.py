@@ -432,9 +432,7 @@ def get_file(request, file_id):
     """
     file = get_object_or_404(TicketFile, pk=file_id)
 
-    if not Ticket.objects.select_related().only('id').\
-            filter_ticket_by_user(request.user).\
-            get(pk=file.ticket_id):
+    if not Ticket.minimal.all().filter_ticket_by_user(request.user).get(pk=file.ticket_id):
         raise PermissionDenied
 
     response = http.HttpResponse(str(file.data), mimetype=file.content_type)
@@ -450,8 +448,7 @@ def ajax_load_child(request, ticket_id):
         raise PermissionDenied
 
     try:
-        ticket = Ticket.objects.select_related('client').only('id', 'parent').\
-                filter_ticket_by_user(request.user, no_client=True).get(pk=ticket_id)
+        ticket = Ticket.minimal.all().filter_ticket_by_user(request.user, no_client=True).get(pk=ticket_id)
     except Ticket.DoesNotExist:
         raise PermissionDenied
 
@@ -478,7 +475,7 @@ def ajax_delete_tma(request, ticket_id):
         raise PermissionDenied
 
     try:
-        ticket = Ticket.objects.select_related('client').only('id').\
+        ticket = Ticket.minimal.all().\
             filter_ticket_by_user(request.user, no_client=True).get(pk=ticket_id)
     except Ticket.DoesNotExist:
         raise PermissionDenied
@@ -498,7 +495,7 @@ def ajax_load_ticketmailtrace(request, ticket_id):
         raise PermissionDenied
 
     try:
-        ticket = Ticket.objects.select_related('client').only('id').\
+        ticket = Ticket.minimal.all().\
             filter_ticket_by_user(request.user, no_client=True).get(pk=ticket_id)
     except Ticket.DoesNotExist:
         raise PermissionDenied
@@ -516,7 +513,7 @@ def ajax_set_alarm(request, ticket_id):
         raise PermissionDenied
 
     try:
-        ticket = Ticket.objects.select_related('client').only('id', 'client__id').\
+        ticket = Ticket.minimal.all().\
             filter_ticket_by_user(request.user, no_client=True).get(pk=ticket_id)
     except Ticket.DoesNotExist:
         raise PermissionDenied
