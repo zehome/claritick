@@ -38,17 +38,22 @@ def get_and_child(parents, cqs):
 
     for p in parents:
         p.enfants = []
+        p.file = False
         ret[p.id] = p
 
     parent_ids = ret.keys()
     cqs = cqs.filter(parent__in=parent_ids)
     alarms = TicketAlarm.opened.filter(ticket__in=parent_ids)
+    files = TicketFile.objects.select_related().only('id', 'ticket__id').filter(ticket__in=parent_ids)
 
     for e in cqs:
         ret[e.parent.id].enfants.append(e)
 
     for a in alarms:
         ret[a.ticket_id].alarm = a
+
+    for f in files:
+        ret[f.ticket.id].file = True
 
     return ret.values()
 
