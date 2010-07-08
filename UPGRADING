@@ -1,3 +1,5 @@
+r304
+    ALTER TABLE ticket_ticket ADD nb_appels integer NOT NULL DEFAULT 0; 
 r300
     Nouveau modèle
     -> syncdb

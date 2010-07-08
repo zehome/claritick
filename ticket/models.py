@@ -298,6 +298,8 @@ class Ticket(models.Model):
     # TODO nombre de comments
     nb_comments = models.IntegerField(default=0, editable=False)
 
+    nb_appels = models.IntegerField(default=0, editable=False)
+
     # Par defaut à false
     update_google = False
 
@@ -638,12 +640,21 @@ class TicketAppelManager(models.Manager):
 
 class TicketAppel(models.Model):
     """ Liste de date où le client a rappelé  """
+    class Meta:
+        ordering = ["date"]
 
     objects = TicketAppelManager()
 
     date = models.DateTimeField(auto_now_add=True)
     ticket = models.ForeignKey(Ticket)
     user = models.ForeignKey(User)
+
+    def save(self, **kwargs):
+        ticket = Ticket.minimal.get(pk=self.ticket.pk)
+        # peut être mieux de recalculer à chaque fois ....
+        ticket.nb_appels = models.F('nb_appels') + 1
+        ticket.save()
+        super(TicketAppel, self).save()
 
 #moderator.register(Ticket, TicketCommentModerator)
 
