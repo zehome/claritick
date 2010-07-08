@@ -1,3 +1,6 @@
+r300
+    Nouveau modèle
+    -> syncdb
 r275
     Nouveau modèle
     --> ALTER TABLE ticket_priority ADD alarm varchar(128);

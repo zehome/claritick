@@ -27,6 +27,7 @@ def copy_model_instance(obj):
                        not f in obj._meta.parents.values()])
     return obj.__class__(**initial)
 
+
 class Priority(models.Model):
     class Meta:
         verbose_name = "Priorité"
@@ -630,6 +631,16 @@ class TicketAlarm(models.Model):
     def __unicode__(self):
         return self.reason
 
+class TicketAppelManager(models.Model):
+    def get_query_set(self):
+        return super(TicketAppelManager, self).get_query_set().\
+                select_related('user')
+
+class TicketAppel(models.Model):
+    """ Liste de date où le client a rappelé  """
+    date = models.DateTimeField(auto_now_add=True)
+    ticket = models.ForeignKey(Ticket)
+    user = models.ForeignKey(User)
 
 
 #moderator.register(Ticket, TicketCommentModerator)

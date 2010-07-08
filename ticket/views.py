@@ -403,6 +403,10 @@ def modify(request, ticket_id):
                         ticket.ticketalarm_set.create(reason=ticket.priority.alarm,
                                 user_open = request.user)
 
+            # Appel du client
+            if form.cleaned_data['appel']:
+                ticket.ticketappel_set.create(user=request.user)
+
             file = form.cleaned_data["file"]
             if file:
                 ticket_file = TicketFile(ticket=ticket, filename=file.name, content_type=file.content_type)

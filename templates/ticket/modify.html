@@ -84,6 +84,18 @@
 {% endwith %}
 
 <fieldset class="block form">
+    <legend>Appels du client</legend>
+    {% if form.instance.ticketappel_set.all %}
+    <ul>
+        {% for r in form.instance.ticketappel_set.all %}
+        <li>Le {{ r.date|date:"d/m/Y à H:i" }} par {{ r.user.username }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    <div>{{ form.appel }} {{ form.appel.label_tag }}</div>
+</fieldset>
+
+<fieldset class="block form">
   <legend>Planification</legend>
   <table>
     <tr>

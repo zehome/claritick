@@ -40,6 +40,7 @@ class NewTicketForm(CustomModelForm):
     file = df.FileField(required=False)
     comment = df.CharField(widget=forms.Textarea(), required=False)
     internal = forms.BooleanField(widget=df.widgets.CheckboxInput(attrs={'onChange': 'toggleComment(this)'}), initial=True, required=False)
+    appel = forms.BooleanField(label=u"Signaler un (r)appel du client", widget=df.widgets.CheckboxInput, initial=False, required=False)
 
     class Meta:
         model = Ticket
