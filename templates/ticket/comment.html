@@ -42,6 +42,7 @@
 {% block comment_form %}
     <div>
         <p>Nouvelle réponse: {{ form_to_comment.comment }}</p>
+        {% if perms.ticket.can_view_internal_comments %}
         <div dojoType="dijit.Tooltip" connectId="{{ form_to_comment.get_exact_id|interpret:"comment" }}" position="after" id="{{ form_to_comment.get_exact_id|interpret:"internal"}}-tooltip">
             <div style="display: none;">
                 <img src="/media/images/oxygen/comment_public.png" alt="commentaire_public" />
@@ -53,5 +54,6 @@
             </div>
         </div>
         <p>{{ form_to_comment.internal }} Commentaire <b>Interne</b> (Si cette case est cochée, la réponse ne sera pas transmise au client final) </p>
+        {% endif %}
     </div>
 {% endblock comment_form %}
