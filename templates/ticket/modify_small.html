@@ -50,6 +50,14 @@
     </table>
 </fieldset>
 <hr />
+
+{% with form as form_to_comment %}
+<fieldset class="block form" style="padding: 0;">
+  <legend>Réponses</legend>
+{% include "ticket/comment.html" %}
+</fieldset>
+{% endwith %}
+
 {% endblock content_ticket %}
 
 {% block content_childs %}
