@@ -125,17 +125,27 @@ class TicketQuerySet(models.query.QuerySet):
         sort_order = int(request.GET.get('sort_order', 1))
         return self.order_by('%s%s' % (sort_order and '-' or '', sort))
 
-    def filter_ticket_by_user(self, user):
+    def filter_ticket_by_user(self, user, **kwargs):
         """
             Filtre un queryset de ticket en fonction des clients qu'a le droit de voir l'utilisateur.
+            kwargs:
+                -> no_client à True accepte les ticket sans client
         """
+
+        no_client = kwargs.pop("no_client", False)
+
         # Si on est root, on ne filtre pas la liste
         if user.is_superuser:
             return self
         qs = Ticket.objects.none()
         try:
-            client_list = user.get_profile().get_clients()
-            qs = self.filter(client__pk__in=[x.id for x in client_list])
+            clients = user.get_profile().get_clients()
+            query = models.Q(client__in=clients)
+
+            if no_client:
+                query |= models.Q(client__isnull=True)
+
+            qs = self.filter(query)
         except UserProfile.DoesNotExist:
             raise NoProfileException(user)
         return qs

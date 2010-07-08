@@ -185,7 +185,7 @@
         <div dojoType="dijit.Menu">
             <div dojoType="dijit.MenuItem" iconClass="dijitEditorIcon dijitEditorIconDelete" onClick='deleteTmas("{% url ajax_delete_tma form.instance.id %}", dijit.byId("dijit_tmas"), 0);'>Supprimer tout</div>
             {% for tma in form.instance.ticketmailaction_set.all %}
-            <div dojoType="dijit.MenuItem" iconClass="dijitEditorIcon dijitEditorIconDelete" onClick='deleteTmas(this, {{ tma.id }})' style="display: block;">{{ tma.reasons|join:"<br />" }}</div>
+            <div dojoType="dijit.MenuItem" iconClass="dijitEditorIcon dijitEditorIconDelete" onClick='deleteTmas("{% url ajax_delete_tma form.instance.id %}", this, {{ tma.id }})' style="display: block;">{{ tma.reasons|join:"<br />" }}</div>
             {% endfor %}
         </div>
     </div>

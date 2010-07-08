@@ -320,15 +320,12 @@ def modify(request, ticket_id):
         else:
             raise PermissionDenied("Hacking attempt!")
 
-    ticket = get_object_or_404(Ticket, pk=ticket_id)
+    qs = Ticket.objects.all().filter_ticket_by_user(request.user, no_client=True)
+    ticket = get_object_or_404(qs, pk=ticket_id)
 
     # Si c'est un fils rediriger vers le pêre au bon endroit
     if ticket.parent:
         return http.HttpResponseRedirect("/ticket/modify/%d/#child%s" % (ticket.parent_id, ticket_id))
-
-    # On verifie que l'utilisateur a les droits de modifier le ticket_id
-    if not user_has_perms_on_client(request.user, ticket.client):
-        raise PermissionDenied
 
     if not ticket.text and ticket.title == INVALID_TITLE:
         ticket.title = None
@@ -434,9 +431,12 @@ def get_file(request, file_id):
         Retourne au client le TicketFile file_id avec le bon mimetype.
     """
     file = get_object_or_404(TicketFile, pk=file_id)
-    
-    if not user_has_perms_on_client(request.user, file.ticket.client):
+
+    if not Ticket.objects.select_related().only('id').\
+            filter_ticket_by_user(request.user).\
+            get(pk=file.ticket_id):
         raise PermissionDenied
+
     response = http.HttpResponse(str(file.data), mimetype=file.content_type)
     response["Content-Disposition"] = "attachment; filename=%s" % file.filename
     return response
@@ -449,12 +449,13 @@ def ajax_load_child(request, ticket_id):
     if not ticket_id:
         raise PermissionDenied
 
-    ticket = Ticket.objects.select_related('client').only('id', 'parent').get(pk=ticket_id)
+    try:
+        ticket = Ticket.objects.select_related('client').only('id', 'parent').\
+                filter_ticket_by_user(request.user, no_client=True).get(pk=ticket_id)
+    except Ticket.DoesNotExist:
+        raise PermissionDenied
 
     prefix = 'form-%d' % (int(request.GET.get('count', 0)))
-
-    if not user_has_perms_on_client(request.user, ticket.client):
-        raise PermissionDenied
 
     if ticket.parent:
         raise PermissionDenied("Ce ticket est déjà un fils")
@@ -476,9 +477,10 @@ def ajax_delete_tma(request, ticket_id):
     if not ticket_id:
         raise PermissionDenied
 
-    ticket = Ticket.objects.select_related('client').only('id').get(pk=ticket_id)
-
-    if not user_has_perms_on_client(request.user, ticket.client):
+    try:
+        ticket = Ticket.objects.select_related('client').only('id').\
+            filter_ticket_by_user(request.user, no_client=True).get(pk=ticket_id)
+    except Ticket.DoesNotExist:
         raise PermissionDenied
 
     tma_id = int(request.GET.get('tma_id', 0))
@@ -495,9 +497,10 @@ def ajax_load_ticketmailtrace(request, ticket_id):
     if not ticket_id:
         raise PermissionDenied
 
-    ticket = Ticket.objects.select_related('client').only('id').get(pk=ticket_id)
-
-    if not user_has_perms_on_client(request.user, ticket.client):
+    try:
+        ticket = Ticket.objects.select_related('client').only('id').\
+            filter_ticket_by_user(request.user, no_client=True).get(pk=ticket_id)
+    except Ticket.DoesNotExist:
         raise PermissionDenied
 
     ticketmailtrace = TicketMailTrace.objects.filter(ticket=ticket)
@@ -512,9 +515,10 @@ def ajax_set_alarm(request, ticket_id):
     if not ticket_id:
         raise PermissionDenied
 
-    ticket = Ticket.objects.select_related('client').get(pk=ticket_id)
-
-    if not user_has_perms_on_client(request.user, ticket.client):
+    try:
+        ticket = Ticket.objects.select_related('client').only('id', 'client__id').\
+            filter_ticket_by_user(request.user, no_client=True).get(pk=ticket_id)
+    except Ticket.DoesNotExist:
         raise PermissionDenied
 
     try:
