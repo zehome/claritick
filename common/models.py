@@ -302,18 +302,12 @@ class UserProfile(models.Model):
             return u"%s (%s)" % (self.user, self.client.label)
         return u"%s" % self.user
 
-    def get_clients(self, as_list=True):
+    def get_clients(self):
         if self.user.is_superuser:
-            ret = Client.objects.all()
-        elif self.client:
-            ret = Client.objects.get_childs("parent", self.client.pk)
-        else:
-            ret = Client.objects.none()
-
-        if as_list:
-            ret = sort_queryset(ret)
-
-        return ret
+            return sort_queryset(Client.objects.all())
+        if self.client:
+            return sort_queryset(Client.objects.get_childs("parent", self.client.pk))
+        return Client.objects.none()
 
     # Trafiquables
     def _get_trafiquables(self):

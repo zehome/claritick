@@ -139,7 +139,7 @@ class TicketQuerySet(models.query.QuerySet):
             return self
         qs = Ticket.objects.none()
         try:
-            clients = user.get_profile().get_clients(as_list=False)
+            clients = user.get_profile().get_clients()
             query = models.Q(client__in=clients)
 
             if no_client:
