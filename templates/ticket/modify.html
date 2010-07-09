@@ -3,10 +3,10 @@
 
 {% block title %}Ticket numéro {{ form.instance.id }}{% endblock %}
 {% block content_title %}Ticket numéro {{ form.instance.id }}{% endblock %}
-{% block image %}<img src="/media/images/oxygen/folder-open.png" />{% endblock %}
+{% block image %}<img src="{{ MEDIA_URL }}images/oxygen/folder-open.png" />{% endblock %}
 
 {% block content %}
-<script type="text/javascript" src="/media/javascript/modify.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}javascript/modify.js"></script>
 {{ form.non_field_errors }}
 <form enctype="multipart/form-data" action="{% url ticket_modify form.instance.id %}" method="post">
 <div id="parent">

@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   <head>
     <title>CLARITICK - Gestion{% block title %}{% endblock %}</title>
-    <link rel="stylesheet" type="text/css" href="/media/style.css" />
+    <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}style.css" />
     <!-- Admin -->
     <link rel="stylesheet" type="text/css" href="{% block stylesheet %}{% load adminmedia %}{% admin_media_prefix %}css/base.css{% endblock %}" />
     {% block extrastyle %}
@@ -77,11 +77,11 @@
     <table id="menuPrincipal" summary="Menu">
       <tr>
         <td align="left" width="33%">
-          <a href="/"><img src="/media/images/accueil.png" alt="accueil" /></a>
+            <a href="/"><img src="{{ MEDIA_URL }}images/accueil.png" alt="accueil" /></a>
           {% if ticket_alarms_count %}{{ ticket_alarms_count }} alarmes actives!{% endif %}
         </td>
         <td valign="middle" align="center" width="33%">
-          <a href="/"><img src="/media/images/logo_pt.png" alt="logo" /></a>
+            <a href="/"><img src="{{ MEDIA_URL }}images/logo_pt.png" alt="logo" /></a>
         </td>
         <td align="right" width="33%">
           {% if chuserform %}
@@ -93,7 +93,7 @@
           <span id="status">[ IDLE ]</span>
           {% if user.is_authenticated %}
           <p style="padding: 0; margin: 0;">Utilisateur: {{ user.username }}<br />
-            <a class="bouton" href="/accounts/logout"><img src="/media/images/oxygen/disconnect.png" alt="disconnect" />Déconnexion</a>
+          <a class="bouton" href="/accounts/logout"><img src="{{ MEDIA_URL }}images/oxygen/disconnect.png" alt="disconnect" />Déconnexion</a>
           </p>
           {% endif %}
           Aller au ticket # <input type="text" id="id_num_ticket" size="5" /> <button dojoType="dijit.form.Button" id="id_go_ticket">Go</button>
@@ -103,7 +103,7 @@
 
     <div id="gauche">
         {% block claritick_menu %}
-        <h2><img src="/media/images/icon-home.png" alt="home" />Général</h2>
+        <h2><img src="{{ MEDIA_URL }}images/icon-home.png" alt="home" />Général</h2>
         <ul class="menu">
             <li><a href="/">Accueil</a></li>
     {% if user.is_authenticated %}
@@ -117,7 +117,7 @@
             <li><a href="{% url common_client_modify %}">Mes infos.</a></li>
         </ul>
         
-        <h2><img src="/media/images/icon-new.png" alt="+" />Création</h2>
+        <h2><img src="{{ MEDIA_URL }}images/icon-new.png" alt="+" />Création</h2>
         <ul class="menu">
             <li><a href="/ticket/partial_new">Ticket</a></li>
             {% if perms.clariadmin.can_access_clariadmin %}
@@ -128,7 +128,7 @@
             {% endif %}
         </ul>
         
-        <h2><img src="/media/images/icon-list.png" alt="/" />Tickets</h2>
+        <h2><img src="{{ MEDIA_URL }}images/icon-list.png" alt="/" />Tickets</h2>
         <ul class="menu">
             <li><a href="{% url ticket_list_all %}?reset=1">Tous</a></li>
             <li><a href="{% url ticket_list_me %}">Les miens</a></li>
@@ -143,12 +143,12 @@
             <!-- /Loop poducts -->
         </ul>
         {% if perms.clariadmin.can_access_clariadmin %}
-        <h2><img src="/media/images/oxygen/computer.png" alt="/" />Clariadmin</h2>
+        <h2><img src="{{ MEDIA_URL }}images/oxygen/computer.png" alt="/" />Clariadmin</h2>
         <ul class="menu">
             <li><a href="/clariadmin/list/all">Toute machine</a></li>
         {% endif %}
         {% if perms.developpements.can_access_suividev %}
-        <h2><img src="/media/images/oxygen/suividev.png" alt="/" />SuiviDev</h2>
+        <h2><img src="{{ MEDIA_URL }}images/oxygen/suividev.png" alt="/" />SuiviDev</h2>
         <ul class="menu">
             <li><a href="/developpements/">Developpements</a></li>
         {% endif %}

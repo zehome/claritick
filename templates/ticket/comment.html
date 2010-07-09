@@ -45,11 +45,11 @@
         {% if perms.ticket.can_view_internal_comments %}
         <div dojoType="dijit.Tooltip" connectId="{{ form_to_comment.get_exact_id|interpret:"comment" }}" position="after" id="{{ form_to_comment.get_exact_id|interpret:"internal"}}-tooltip">
             <div style="display: none;">
-                <img src="/media/images/oxygen/comment_public.png" alt="commentaire_public" />
+                <img src="{{ MEDIA_URL }}images/oxygen/comment_public.png" alt="commentaire_public" />
                 <p>Attention, la réponse sera transmise au client final</p>
             </div>
             <div>
-                <img src="/media/images/oxygen/comment_internal.png" alt="commentaire_interne" />
+                <img src="{{ MEDIA_URL }}images/oxygen/comment_internal.png" alt="commentaire_interne" />
                 <p>La réponse sera conservée en interne</p>
             </div>
         </div>

@@ -5,7 +5,7 @@
         <legend>Nouveau Ticket fils</legend>
         <span>
     {% else %}
-    <legend><img src="/media/images/{% if cf.instance.state_id == 4 %}plus.png{% else %}minus.png{% endif %}" alt="plus" onClick="togglePlusMinus(this, 'child{{ cf.instance.id }}_content');" />
+    <legend><img src="{{ MEDIA_URL }}images/{% if cf.instance.state_id == 4 %}plus.png{% else %}minus.png{% endif %}" alt="plus" onClick="togglePlusMinus(this, 'child{{ cf.instance.id }}_content');" />
         {% if cf.instance.state.img %}<img src="{{ cf.instance.state.img.url }}" alt="{{ cf.instance.state }}" />{% else %}[ {{ cf.instance.state }} ]{% endif %}
         &nbsp;{{ cf.instance.title }}
     </legend>
@@ -17,7 +17,7 @@
             <span>{{ cf.state.label_tag }} {{ cf.state }}</span>
             <span>{{ cf.assigned_to.label_tag }} {{ cf.assigned_to }}</span>
             <span>{{ cf.diffusion }}</span>
-            <span id="{{ cf.get_exact_id|interpret:"tooltip-diffusion" }}" class="mail_image"><img onClick="toggleMailImage(this);" src="/media/images/oxygen/{% if cf.instance.id and cf.instance.diffusion %}diffusion{% else %}nodiffusion{% endif %}.png" alt="diffusion" /></span>
+            <span id="{{ cf.get_exact_id|interpret:"tooltip-diffusion" }}" class="mail_image"><img onClick="toggleMailImage(this);" src="{{ MEDIA_URL }}images/oxygen/{% if cf.instance.id and cf.instance.diffusion %}diffusion{% else %}nodiffusion{% endif %}.png" alt="diffusion" /></span>
             <div dojoType="dijit.Tooltip" connectId="{{ cf.get_exact_id|interpret:"tooltip-diffusion" }}" position"above">
                 <h3>Diffusion du ticket fils</h3>
                 <p>Si activé, le ticket fils sera présent dans les mails envoyés par Claritick et visible par le client</p>
