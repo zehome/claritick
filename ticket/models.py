@@ -298,7 +298,11 @@ class Ticket(models.Model):
     # TODO nombre de comments
     nb_comments = models.IntegerField(default=0, editable=False)
 
+    # Nombre d'appels du client
     nb_appels = models.IntegerField(default=0, editable=False)
+
+    # Message id (si crée par email)
+    message_id = models.TextField(null=True, editable=False, blank=True)
 
     # Par defaut à false
     update_google = False

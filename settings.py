@@ -28,6 +28,10 @@ DATABASE_PORT = '5432'         # Set to empty string for default. Not used with 
 DEFAULT_FROM_EMAIL = 'claritick@clarisys.fr'
 SERVER_EMAIL = DEFAULT_FROM_EMAIL
 
+IMAP_SERVER='localhost' # IMAP server used for email2ticket
+IMAP_LOGIN=''
+IMAP_PASSWORD=''
+
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 # although not all choices may be available on all operating systems.

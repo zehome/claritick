@@ -4,7 +4,7 @@ from django.contrib.comments import signals
 from django.contrib.comments.views.comments import CommentPostBadRequest
 from django.contrib.sites.models import Site
 from datetime import datetime
-from models import TicketComment
+from ticket_comments.models import TicketComment
 
 # Custom post_comment,
 # form doit être un formulaire de Ticket
