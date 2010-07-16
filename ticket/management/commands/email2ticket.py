@@ -69,6 +69,7 @@ def email2ticket(string):
         request = type("", (), {})()
         request.user = user
         post_comment(form, request)
+        print "Ticket commenté ", ticket.pk
     else: # New ticket
         try:
             ticket.text = content
@@ -82,6 +83,7 @@ def email2ticket(string):
             ticket.state = State.objects.get(pk=settings.TICKET_STATE_NEW)
             ticket.category = Category.objects.get(label='Ticket')
             ticket.save()
+            print "Ticket crée : ", ticket.pk
         except:
             to = cur.get('Return-Path')
             if to:
@@ -97,6 +99,7 @@ def email2ticket(string):
                         "Téléphone: 09 72 11 43 60   Fax: 05 11 11 11 11\n"
                         "\nEmail généré automatiquement par le système de suivi CLARITICK.",
                         settings.DEFAULT_FROM_EMAIL, [to])
+                print "Erreur envoyé à ", to
 
 class Command(BaseCommand):
 

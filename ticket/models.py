@@ -541,6 +541,11 @@ class Ticket(models.Model):
 
         # Send the email
         mail = EmailMessage(subject, data, settings.DEFAULT_FROM_EMAIL, dests)
+
+        if self.message_id:
+            mail.extra_headers['In-Reply-To'] = self.message_id
+            mail.extra_headers['References'] = self.message_id
+
         self.ticketmailtrace_set.create(email=mail)
         mail.send()
 
