@@ -76,7 +76,7 @@ def email2ticket(string):
             m = pattern.search(cur.get('Subject', None))
             m = m.groups()
             ticket.client = Client.objects.get(pk=m[0])
-            ticket.title = " ".join([part[0] for part in email.header.decode_header(m[1])])
+            ticket.title = " ".join([part[0].decode(part[1] or 'utf8') for part in email.header.decode_header(m[1])])
             ticket.message_id = cur.get('Message-ID', None)
             ticket.opened_by = user
             ticket.state = State.objects.get(pk=settings.TICKET_STATE_NEW)
@@ -105,6 +105,7 @@ class Command(BaseCommand):
     def handle(self, *a, **kw):
         srv = imaplib.IMAP4_SSL(settings.IMAP_SERVER)
         srv.login(settings.IMAP_LOGIN, settings.IMAP_PASSWORD)
+        #srv.login_cram_md5(settings.IMAP_LOGIN, settings.IMAP_PASSWORD)
         srv.select('INBOX')
         typ, data = srv.search(None, 'UNSEEN')
         for n in data[0].split():
