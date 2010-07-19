@@ -91,7 +91,7 @@ def email2ticket(string):
         if errors:
             send_error(mail_from, errors)
         else:
-            ticket.message_id = cur.get('Message-ID', None)
+            ticket.message_id = mail.get('Message-ID', None)
             ticket.opened_by = user
             ticket.state = State.objects.get(pk=settings.TICKET_STATE_NEW)
             ticket.category = Category.objects.get(label='Ticket')
