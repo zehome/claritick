@@ -108,7 +108,7 @@ class Command(BaseCommand):
     def handle(self, *a, **kw):
         srv = imaplib.IMAP4_SSL(settings.IMAP_SERVER)
 
-        if getattr(settings.IMAP_CRAM_MD5_LOGIN, False):
+        if getattr(settings, 'IMAP_CRAM_MD5_LOGIN', False):
             srv.login_cram_md5(settings.IMAP_LOGIN, settings.IMAP_PASSWORD)
         else:
             srv.login(settings.IMAP_LOGIN, settings.IMAP_PASSWORD)
