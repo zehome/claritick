@@ -71,12 +71,12 @@ def email2ticket(string):
         print "Ticket commenté ", ticket.pk
     else: # New ticket
         try:
+            subject = mail.get('Subject', '')
             ticket.text = content
-            pattern = re.compile('(\d+) (.*)')
-            m = pattern.search(cur.get('Subject', None))
-            m = m.groups()
-            ticket.client = Client.objects.get(pk=m[0])
-            ticket.title = " ".join([part[0].decode(part[1] or 'utf8') for part in email.header.decode_header(m[1])])
+            m = re.compile('^(\d+)\ ').search(subject)
+            ticket.client = Client.objects.get(pk=m.groups()[0])
+            subject = subject[m.span()[1]:]
+            ticket.title = " ".join([part[0].decode(part[1] or 'utf8') for part in email.header.decode_header(subject)])
             ticket.message_id = cur.get('Message-ID', None)
             ticket.opened_by = user
             ticket.state = State.objects.get(pk=settings.TICKET_STATE_NEW)
