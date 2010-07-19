@@ -5,7 +5,7 @@ import imaplib
 import re
 import email
 from common.models import Client
-from ticket.models import Category, Ticket, State
+from ticket.models import Category, Ticket, State, TicketFile
 from ticket.views import post_comment
 from common.html2text import html2text
 from django.core.management.base import BaseCommand, CommandError
@@ -33,8 +33,6 @@ def email2ticket(string):
     errors = []
 
     cur = mail = email.message_from_string(string)
-    import pdb
-    pdb.set_trace()
 
     match = pattern_from.search(mail.get('From', ''))
 
@@ -103,6 +101,13 @@ def email2ticket(string):
     elif errors:
         send_error(mail_from, errors)
 
+    # Get attachements
+    for part in mail.walk():
+        filename = part.get_filename()
+        content_type = part.get_content_type()
+        if filename and content_type in settings.IMAP_ALLOWED_CONTENT_TYPES:
+            ticket_file = TicketFile(ticket=ticket, filename=filename, content_type = content_type, data=part.get_payload(decode=True))
+            ticket_file.save()
 
 class Command(BaseCommand):
 
