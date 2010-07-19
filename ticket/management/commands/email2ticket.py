@@ -46,8 +46,7 @@ def email2ticket(string):
         content = html2text(content)
 
     if references: # Separation avec citation mail precedent
-        pattern = re.compile('(Le|On)\ .*(a\ écrit|wrote)\ ?:')
-        m = pattern.search(content)
+        m = re.compile('(On|Le).*,\ .*\s?.*@.*(wrote|écrit):').search(content)
         if m:
             content = content[:m.span()[0]]
 
