@@ -84,14 +84,15 @@ def email2ticket(string):
             ticket.save()
             print "Ticket crée : ", ticket.pk
         except:
-            to = cur.get('Return-Path')
+            m = re.compile('.*<(.*@.*)>').search(cur.get('From', ''))
+            to = cur.get('Return-Path', cur.get('Reply-To', m.groups()[0] if m else None))
             if to:
                 send_mail("Ticket invalide",
                         "Votre ticket est invalide, veuillez recommencer s'il vous plait\n"
                         "Rappels:\n"
                         "- Le mail doit avoir pour sujet votre numéro client suivi par le titre du ticket\n"
                         "- Le contenu du mail sera le contenu du ticket, il ne doit pas être vide\n"
-                        "- Pour des raisons de compatibilité nous vous conseillons d'utiliser un programme de messagerie tel que Thunderbird : http://fr.www.mozillamessaging.com/fr/\n"
+                        "- Pour des raisons de compatibilité nous vous conseillons d'utiliser un programme de messagerie tel que Thunderbird : http://fr.www.mozillamessaging.com/fr/\n\n"
                         "--\n"
                         "CLARISYS Informatique       http://www.clarisys.fr/\n"
                         "1, Impasse de ratalens      31240 SAINT JEAN\n"
@@ -99,6 +100,8 @@ def email2ticket(string):
                         "\nEmail généré automatiquement par le système de suivi CLARITICK.",
                         settings.DEFAULT_FROM_EMAIL, [to])
                 print "Erreur envoyé à ", to
+            else:
+                print "Impossible de renvoyer une erreur:", mail
 
 class Command(BaseCommand):
 
