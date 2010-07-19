@@ -1,0 +1,16 @@
+Votre ticket est invalide, veuillez recommencer s'il vous plait.
+
+Le ticket est invalide pour les raisons suivantes:
+{% for reason in reasons %}
+- {{ reason }}
+{% endfor %}
+
+Rappels:
+- Pour la création d'un ticket, il faut que le sujet du mail soit votre numéro de client suivi par le titre du ticket à créer
+- Pour envoyer une réponse (commentaire), il suffit de répondre aux mails envoyé par claritick pour le ticket en question.
+- Le contenu utile du mail doit TOUJOURS être encadré par [contenu][/contenu] (Par exemple: [contenu]Mon commentaire[/contenu]), tout ce qui n'est pas à l'intérieur de ces deux balise sera IGNORÉ.
+
+--
+CLARISYS Informatique        http://www.clarisys.fr/
+1, Impasse de ratalens,      31240 SAINT JEAN
+Téléphone: 09 72 11 43 60    Fax: 05 11 11 11 11

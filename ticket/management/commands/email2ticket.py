@@ -11,13 +11,35 @@ from common.html2text import html2text
 from django.core.management.base import BaseCommand, CommandError
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
+from django.template.loader import get_template
+from django.template import Context
+
+pattern_from = re.compile('.*<(.*@.*)>')
+pattern_subject = re.compile('^(\d+)\ ')
+pattern_body = re.compile('\[contenu\](.+)\[/contenu\]', re.DOTALL | re.IGNORECASE)
+
+
+def send_error(to, reasons):
+    """ Envoie un mail d'érreur """
+    template = get_template("email/ticket_error.txt")
+    context = Context({"reasons": reasons })
+    data = template.render(context)
+    send_mail("Ticket invalide", data, settings.DEFAULT_FROM_EMAIL, [to])
+    print "Erreur <%s> : %s" % (to, ", ".join(reasons))
+
 
 def email2ticket(string):
     """ Parse un mail et crée ou modifie le ticket concerné """
-
-    ticket = Ticket()
+    errors = []
 
     cur = mail = email.message_from_string(string)
+    import pdb
+    pdb.set_trace()
+
+    match = pattern_from.search(mail.get('From', ''))
+
+    mail_from = mail.get('Return-Path', \
+            mail.get('Reply-To', match.groups()[0] if match else None))
 
     references = cur.get('References', '').split()
 
@@ -35,33 +57,21 @@ def email2ticket(string):
     content = cur.get_payload(decode=True)
 
     if cur.get_content_type() == 'text/html':
-        try:
-            pos = content.index('blockquote')
-            content = content[:pos]
-        except ValueError:
-            pass
-
         enc = cur.get_charsets()[0]
-        content = contend.decode(enc, 'ignore')
+        content = content.decode(enc, 'ignore')
         content = html2text(content)
 
-    if references: # Separation avec citation mail precedent
-        m = re.compile('(On|Le).*,\ .*\s?.*@.*(wrote|écrit):').search(content)
-        if m:
-            content = content[:m.span()[0]]
+    match = pattern_body.search(content)
 
-    splited = []
-    for line in content.split('\n'):
-        if line == '--': # Thunderbird signature
-            break
-        elif line and line[0] != '>':
-            splited.append(line)
-    content = '\n'.join(splited)
+    if not match:
+        errors.append('Contenu vide ou non encadré par [contenu][/contenu]')
+        content = None
+    else:
+        content = match.groups()[0]
 
-    # TODO à reflechir
     user = User.objects.get(username='admin')
 
-    if references: # New comment
+    if references and content: # New comment
         form = type("", (), {})()
         form.cleaned_data = {'comment': content, 'internal': False }
         form.instance = ticket
@@ -69,39 +79,30 @@ def email2ticket(string):
         request.user = user
         post_comment(form, request)
         print "Ticket commenté ", ticket.pk
-    else: # New ticket
+    elif not references: # New ticket
+
         try:
             subject = mail.get('Subject', '')
-            ticket.text = content
-            m = re.compile('^(\d+)\ ').search(subject)
-            ticket.client = Client.objects.get(pk=m.groups()[0])
-            subject = subject[m.span()[1]:]
+            match = pattern_subject.search(subject)
+            ticket.client = Client.objects.get(pk=match.groups()[0])
+            subject = subject[match.span()[1]:]
             ticket.title = " ".join([part[0].decode(part[1] or 'utf8') for part in email.header.decode_header(subject)])
+        except:
+            errors.append('Impossible de parser le sujet, client invalide ou sujet mal formé')
+
+        if errors:
+            send_error(mail_from, errors)
+        else:
             ticket.message_id = cur.get('Message-ID', None)
             ticket.opened_by = user
             ticket.state = State.objects.get(pk=settings.TICKET_STATE_NEW)
             ticket.category = Category.objects.get(label='Ticket')
+            ticket.text = content
             ticket.save()
             print "Ticket crée : ", ticket.pk
-        except:
-            m = re.compile('.*<(.*@.*)>').search(cur.get('From', ''))
-            to = cur.get('Return-Path', cur.get('Reply-To', m.groups()[0] if m else None))
-            if to:
-                send_mail("Ticket invalide",
-                        "Votre ticket est invalide, veuillez recommencer s'il vous plait\n"
-                        "Rappels:\n"
-                        "- Le mail doit avoir pour sujet votre numéro client suivi par le titre du ticket\n"
-                        "- Le contenu du mail sera le contenu du ticket, il ne doit pas être vide\n"
-                        "- Pour des raisons de compatibilité nous vous conseillons d'utiliser un programme de messagerie tel que Thunderbird : http://fr.www.mozillamessaging.com/fr/\n\n"
-                        "--\n"
-                        "CLARISYS Informatique       http://www.clarisys.fr/\n"
-                        "1, Impasse de ratalens      31240 SAINT JEAN\n"
-                        "Téléphone: 09 72 11 43 60   Fax: 05 11 11 11 11\n"
-                        "\nEmail généré automatiquement par le système de suivi CLARITICK.",
-                        settings.DEFAULT_FROM_EMAIL, [to])
-                print "Erreur envoyé à ", to
-            else:
-                print "Impossible de renvoyer une erreur:", mail
+    elif errors:
+        send_error(mail_from, errors)
+
 
 class Command(BaseCommand):
 
