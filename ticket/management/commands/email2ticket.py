@@ -107,8 +107,12 @@ class Command(BaseCommand):
 
     def handle(self, *a, **kw):
         srv = imaplib.IMAP4_SSL(settings.IMAP_SERVER)
-        srv.login(settings.IMAP_LOGIN, settings.IMAP_PASSWORD)
-        #srv.login_cram_md5(settings.IMAP_LOGIN, settings.IMAP_PASSWORD)
+
+        if getattr(settings.IMAP_CRAM_MD5_LOGIN, False):
+            srv.login_cram_md5(settings.IMAP_LOGIN, settings.IMAP_PASSWORD)
+        else:
+            srv.login(settings.IMAP_LOGIN, settings.IMAP_PASSWORD)
+
         srv.select('INBOX')
         typ, data = srv.search(None, 'UNSEEN')
         for n in data[0].split():
