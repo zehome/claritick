@@ -32,17 +32,18 @@ def email2ticket(string):
     """ Parse un mail et crée ou modifie le ticket concerné """
     errors = []
 
-    cur = mail = email.message_from_string(string)
+    mail = email.message_from_string(string)
+    cur = None
 
     match = pattern_from.search(mail.get('From', ''))
 
     mail_from = mail.get('Return-Path', \
             mail.get('Reply-To', match.groups()[0] if match else None))
 
-    references = cur.get('References', '').split()
+    references = mail.get('References', '').split()
 
     if not references:
-        references = cur.get('In-Reply-To', '').split()
+        references = mail.get('In-Reply-To', '').split()
 
     if references:
         ticket = Ticket.objects.get(message_id__in=references)
@@ -50,8 +51,14 @@ def email2ticket(string):
         ticket = Ticket()
 
     # Get first part
-    while cur.is_multipart():
-        cur = cur.get_payload(0)
+    for part in mail.walk():
+        if part.get_content_type() in ('text/html', 'text/plain'):
+            cur = part
+            break
+
+    if cur is None:
+        return send_error(mail_from, ['Impossible de parser le message'])
+
     content = cur.get_payload(decode=True)
 
     if cur.get_content_type() == 'text/html':
