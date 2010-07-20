@@ -19,6 +19,7 @@ from django.template import Context, Template
 from common.models import ColorField, Client, ClientField, JsonField, ByteaField, PickleField, UserProfile
 from common.exceptions import NoProfileException
 from django.db.models import AutoField
+from django.core.mail.message import make_msgid
 
 def copy_model_instance(obj):
     initial = dict([(f.name, getattr(obj, f.name))
@@ -545,6 +546,10 @@ class Ticket(models.Model):
         if self.message_id:
             mail.extra_headers['In-Reply-To'] = self.message_id
             mail.extra_headers['References'] = self.message_id
+        else:
+            self.message_id = make_msgid()
+            self.save()
+            mail.extra_headers['Message-ID'] = self.message_id
 
         self.ticketmailtrace_set.create(email=mail)
         mail.send()
