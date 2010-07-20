@@ -44,7 +44,7 @@ def get_and_child(parents, cqs):
     parent_ids = ret.keys()
     cqs = cqs.filter(parent__in=parent_ids)
     alarms = TicketAlarm.opened.filter(ticket__in=parent_ids)
-    files = TicketFile.objects.select_related().only('id', 'ticket__id').filter(ticket__in=parent_ids)
+    files = TicketFile.objects.only('id').filter(ticket__in=parent_ids)
 
     for e in cqs:
         ret[e.parent.id].enfants.append(e)
@@ -434,7 +434,7 @@ def get_file(request, file_id):
     """
         Retourne au client le TicketFile file_id avec le bon mimetype.
     """
-    file = get_object_or_404(TicketFile, pk=file_id)
+    file = get_object_or_404(TicketFile.with_data, pk=file_id)
 
     if not Ticket.minimal.all().filter_ticket_by_user(request.user).get(pk=file.ticket_id):
         raise PermissionDenied

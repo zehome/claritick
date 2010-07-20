@@ -568,10 +568,18 @@ class TicketView(models.Model):
     def __unicode__(self):
         return u"%s (%s)" % (self.name, self.user)
 
+class TicketFileManager(models.Manager):
+    def get_query_set(self):
+        qs = super(TicketFileManager, self).get_query_set().\
+                defer('data')
+        return qs
+
 class TicketFile(models.Model):
     """
         Pièces jointe attachées aux tickets.
     """
+    objects = TicketFileManager()
+    with_data = models.Manager()
     ticket = models.ForeignKey(Ticket)
     filename = models.TextField()
     content_type = models.TextField()
