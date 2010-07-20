@@ -32,6 +32,8 @@ IMAP_SERVER='localhost' # IMAP server used for email2ticket
 IMAP_LOGIN=''
 IMAP_PASSWORD=''
 IMAP_ALLOWED_CONTENT_TYPES = ['application/pdf',]
+EMAIL_USER_PK = 79 # User pk who open ticket recevied by email
+EMAIL_TICKET_CATEGORY_DEFAULT = 46 # category when open ticket recevied by email
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name

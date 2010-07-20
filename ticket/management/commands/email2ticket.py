@@ -74,7 +74,7 @@ def email2ticket(string):
     else:
         content = match.groups()[0]
 
-    user = User.objects.get(username='admin')
+    user = User.objects.get(pk=settings.EMAIL_USER_PK)
 
     if references and content: # New comment
         form = type("", (), {})()
@@ -101,7 +101,7 @@ def email2ticket(string):
             ticket.message_id = mail.get('Message-ID', None)
             ticket.opened_by = user
             ticket.state = State.objects.get(pk=settings.TICKET_STATE_NEW)
-            ticket.category = Category.objects.get(label='Ticket')
+            ticket.category = Category.objects.get(pk=settings.EMAIL_TICKET_CATEGORY_DEFAULT)
             ticket.text = content
             ticket.save()
             print "Ticket crée : ", ticket.pk
