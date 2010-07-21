@@ -429,7 +429,7 @@ def modify(request, ticket_id):
             filter(models.Q(object_pk__in=[str(c.pk) for c in child]) | models.Q(object_pk=str(ticket.pk)))
     for c in comments:
         if c.object_pk == str(ticket.pk):
-            ticket.comment = c
+            ticket.comment.append(c)
         else:
             for f in child_formset.forms:
                 if not hasattr(f.instance, 'comment'):
