@@ -74,11 +74,16 @@ class Category(models.Model):
     def __unicode__(self):
         return u"%s" % (self.label,)
 
+class ProjectManager(models.Manager):
+    def get_query_set(self):
+        return super(ProjectManager, self).get_query_set().select_related('procedure__label')
+
 class Project(models.Model):
     class Meta:
         verbose_name = u"Projet"
         ordering = ['label']
-    
+
+    objects = ProjectManager()
     label = models.CharField("Libellé", max_length=64)
     color = ColorField(name="Couleur associée", blank=True, null=True)
     #watchers = models.ManyToManyField(User, blank=True)
