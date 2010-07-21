@@ -425,6 +425,18 @@ def modify(request, ticket_id):
         child_formset = ChildFormSet(queryset=child)
         filter_form_for_user(child_formset.forms, request.user)
 
+    comments = django.contrib.comments.get_model().objects.filter(content_type__model="ticket").\
+            filter(models.Q(object_pk__in=[str(c.pk) for c in child]) | models.Q(object_pk=str(ticket.pk)))
+    for c in comments:
+        if c.object_pk == str(ticket.pk):
+            ticket.comment = c
+        else:
+            for f in child_formset.forms:
+                if not hasattr(f.instance, 'comment'):
+                    f.instance.comment = []
+                if c.object_pk == str(f.instance.pk):
+                    f.instance.comment.append(c)
+
     return render_to_response(template_name,
             { "form": form, "child_formset": child_formset },
         context_instance=RequestContext(request))

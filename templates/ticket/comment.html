@@ -1,8 +1,6 @@
-{% load comments %}
 {% load filters %}
-{% get_comment_list for form_to_comment.instance as comment_list %}
 
-{% if comment_list %}
+{% if form_to_comment.instance.comment %}
 <table class="comment_table">
   <thead>
     <tr>
@@ -14,7 +12,7 @@
       <tr>
         {% if perms.ticket.can_view_internal_comments %}
         <td>
-            {% for comment in comment_list %}{% if comment.internal %}
+            {% for comment in form_to_comment.instance.comment %}{% if comment.internal %}
                 <div class="comment">
                     <h3><b>{{ comment.user.first_name }} {{ comment.user.last_name }}</b> ({{ comment.user_name }})&nbsp;<i>Le {{ comment.submit_date|date:'d/m/Y à H\hi' }}</i></h3>
                     <pre class="{% cycle 'row1' 'row2' %}">{{ comment.comment|wordwrap:80 }}</pre>
@@ -24,7 +22,7 @@
         {% endif %}
 
         <td>
-            {% for comment in comment_list %}{% if not comment.internal %}
+            {% for comment in form_to_comment.instance.comment %}{% if not comment.internal %}
                 <div class="comment">
                     <h3><b>{{ comment.user.first_name }} {{ comment.user.last_name }}</b> ({{ comment.user_name }})&nbsp;<i>Le {{ comment.submit_date|date:'d/m/Y à H\hi' }}</i></h3>
                     <pre class="{% cycle 'row1' 'row2' %}">{{ comment.comment|wordwrap:80 }}</pre>
