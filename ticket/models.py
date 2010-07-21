@@ -571,7 +571,7 @@ class TicketView(models.Model):
 class TicketFileManager(models.Manager):
     def get_query_set(self):
         qs = super(TicketFileManager, self).get_query_set().\
-                defer('data')
+                defer('data').select_related('ticket__id')
         return qs
 
 class TicketFile(models.Model):
