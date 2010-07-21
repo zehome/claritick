@@ -221,7 +221,7 @@ class BaseTicketManager(QuerySetManager):
     def get_query_set(self):
         qs = super(BaseTicketManager, self).get_query_set().\
             select_related("opened_by", "assigned_to",
-            "priority", "state", "validated_by", "category", "project",
+            "priority", "state", "validated_by", "category", "project", "parent__id",
             "client", "client__coordinates", "client__parent", "client__parent__coordinates", "client__parent__parent")
         return qs
 
