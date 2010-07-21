@@ -427,6 +427,7 @@ def modify(request, ticket_id):
 
     comments = django.contrib.comments.get_model().objects.filter(content_type__model="ticket").\
             filter(models.Q(object_pk__in=[str(c.pk) for c in child]) | models.Q(object_pk=str(ticket.pk)))
+    ticket.comment = []
     for c in comments:
         if c.object_pk == str(ticket.pk):
             ticket.comment.append(c)
