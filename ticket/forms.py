@@ -54,7 +54,7 @@ class NewTicketSmallForm(NewTicketForm):
 
     class Meta:
         model = Ticket
-        exclude = ("opened_by", "category", "project", "keywords", "state", "priority", "assigned_to", "validated_by", "diffusion", "alarm", )
+        exclude = ("opened_by", "category", "project", "keywords", "priority", "assigned_to", "validated_by", "diffusion", "alarm", )
 
 class ChildFormSmall(CustomModelForm):
     title = df.CharField(label=u'Titre', widget=forms.TextInput(attrs={'size': '80'}), required=True)
