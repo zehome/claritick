@@ -1,11 +1,12 @@
 {% extends "base.html" %}
 
 {% block content_title %}Système de gestion{% endblock %}
-{% block image %}<img src="{{ MEDIA_URL }}images/oxygen/help.png" alt="?" />{% endblock %}
 {% block extrajs %}
 <script type="text/javascript">
     var MENU_CAN_HIDE = false;
     dojo.addOnLoad(function() { dojo.style("gauche", "display", "block"); });
+    dojo.addOnLoad(function() { dojo.style("menuPrincipal", "padding-left", "210px"); });
+    dojo.addOnLoad(function() { dojo.style("contenu", "margin-left", "210px"); });
 </script>
 {% endblock %}
 
@@ -19,28 +20,30 @@
     <div class="container">
         <h2>Alarmes</h2>
         <ul>
-            {% for ticket in ticket_alarms %}
+          {% for ticket in ticket_alarms %}
             <li><a href="{% url ticket_modify ticket.pk %}">[{{ ticket.id }}] {{ ticket.title|truncatewords:8 }}</a></li>
-            {% endfor %}
+          {% endfor %}
         </ul>
     </div>
     {% endif %}
+    {% if ticket_dashboard_critical %}
     <div id="list_critical_tickets" class="container" style="width: 500px;" >
         <h2>Tickets critiques</h2>
         <ul>
-            {% for ticket in ticket_dashboard_critical %}
+          {% for ticket in ticket_dashboard_critical %}
             <li><a href="{% url ticket_modify ticket.pk %}">[{{ ticket.id }}] {{ ticket.title|truncatewords:8 }}</a></li>
-            {% endfor %}
+          {% endfor %}
         </ul>
     </div>
+    {% endif %}
     
     {% if ticket_dashboard_text_statistics %}
     <div id="list_stats" class="container">
         <h2>Statistiques</h2>
         <ul>
-            {% for entry in ticket_dashboard_text_statistics %}
+          {% for entry in ticket_dashboard_text_statistics %}
             <li>{{ entry }}</li>
-            {% endfor %}
+          {% endfor %}
         </ul>
     </div>
     {% endif %}

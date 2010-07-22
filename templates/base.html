@@ -74,32 +74,6 @@
 {% load i18n %}
   <body class="{{ DOJANGO.THEME }} {% if is_popup %}popup {% endif %}{% block bodyclass %}claritick{% endblock %}">
     {% if not is_popup %}
-    <table id="menuPrincipal" summary="Menu">
-      <tr>
-        <td align="left" width="33%">
-            <a href="/"><img src="{{ MEDIA_URL }}images/accueil.png" alt="accueil" /></a>
-          {% if ticket_alarms_count %}{{ ticket_alarms_count }} alarmes actives!{% endif %}
-        </td>
-        <td valign="middle" align="center" width="33%">
-            <a href="/"><img src="{{ MEDIA_URL }}images/logo_pt.png" alt="logo" /></a>
-        </td>
-        <td align="right" width="33%">
-          {% if chuserform %}
-          <form action="{% url chuser_change_user %}" method="post">
-          {% csrf_token %}
-          <div style="float: left;"><button dojoType="dijit.form.Button" type="submit">Changer d'utilisateur</button><span>{{ chuserform.user }}</span></div>
-          </form>
-          {% endif %}
-          <span id="status">[ IDLE ]</span>
-          {% if user.is_authenticated %}
-          <p style="padding: 0; margin: 0;">Utilisateur: {{ user.username }}<br />
-          <a class="bouton" href="/accounts/logout"><img src="{{ MEDIA_URL }}images/oxygen/disconnect.png" alt="disconnect" />Déconnexion</a>
-          </p>
-          {% endif %}
-          Aller au ticket # <input type="text" id="id_num_ticket" size="5" /> <button dojoType="dijit.form.Button" id="id_go_ticket">Go</button>
-        </td>
-      </tr>
-    </table>
 
     <div id="gauche">
         {% block claritick_menu %}
@@ -156,9 +130,34 @@
     {% endif %}
         {% endblock %}
     </div>
-    <div id="gauche-spin">
-    </div>
+    <div id="gauche-spin"></div>
 
+    <table id="menuPrincipal" summary="Menu">
+      <tr>
+        <td align="left" width="33%">
+            <a href="/"><img src="{{ MEDIA_URL }}images/accueil.png" alt="accueil" /></a>
+          {% if ticket_alarms_count %}{{ ticket_alarms_count }} alarmes actives!{% endif %}
+        </td>
+        <td valign="middle" align="center" width="33%">
+            <a href="/"><img src="{{ MEDIA_URL }}images/logo_pt.png" alt="logo" /></a>
+        </td>
+        <td align="right" width="33%">
+          {% if chuserform %}
+          <form action="{% url chuser_change_user %}" method="post">
+          {% csrf_token %}
+          <div style="float: left;"><button dojoType="dijit.form.Button" type="submit">Changer d'utilisateur</button><span>{{ chuserform.user }}</span></div>
+          </form>
+          {% endif %}
+          <span id="status">[ IDLE ]</span>
+          {% if user.is_authenticated %}
+          <p style="padding: 0; margin: 0;">Utilisateur: {{ user.username }}<br />
+          <a class="bouton" href="/accounts/logout"><img src="{{ MEDIA_URL }}images/oxygen/disconnect.png" alt="disconnect" />Déconnexion</a>
+          </p>
+          {% endif %}
+          Aller au ticket # <input type="text" id="id_num_ticket" size="5" /> <button dojoType="dijit.form.Button" id="id_go_ticket">Go</button>
+        </td>
+      </tr>
+    </table>
     <div id="contenu" class="{% block admin_class %}claritick{% endblock %}">
         <h1 class="title">{% block content_title %}{% if title %}{{ title }}{% endif %}{% endblock content_title %}</h1>
         <div class="image">{% block image %}{% endblock image %}</div>

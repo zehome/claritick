@@ -127,10 +127,10 @@ table a:hover {
 table#menuPrincipal{
     background:white;
     color:black;
-    width:100%;
 	padding-left: 15px;
 	border-collapse: separate;
     border-bottom:gray solid 1px;
+    width: 100%;
 }
 
 #menuPrincipal td {
@@ -301,8 +301,8 @@ form {
 #gauche {
     position: fixed;
     top: 0px;
-    left:20px;
-    width: 170px;
+    left: 20px;
+    width: 185px;
     height:100%;
     background-color:#98b3e9;
     background-image:url('/media/images/deg_menugauche.png');
@@ -315,6 +315,7 @@ form {
     text-align:center;
     z-index: 100;
     display: none;
+    overflow-y: auto;
 }
 
 #gauche-spin {
@@ -348,7 +349,7 @@ div#gauche h2 {
 
 div#gauche h2 img {
 	position: relative;
-	left: -10px;
+/*	left: -10px; */
 }
 
 
@@ -682,7 +683,6 @@ ol#pagination-digg {
 }
 
 #index_content {
-	margin-left: 170px;
 	text-align: left;
 }
 
