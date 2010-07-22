@@ -2,6 +2,10 @@
 {% extends "ticket/modify.html" %}
 
 {% block content_ticket %}
+<fieldset id="fieldset_general" class="inline form">
+  <legend>Général</legend>
+  <div>{{ form.state.label_tag }} {{ form.state }}</div>
+</fieldset>
 <fieldset class="block form">
   <legend>Contact</legend>
   <table>
