@@ -318,6 +318,8 @@ class UserProfile(models.Model):
 
     # Trafiquables
     def _get_trafiquables(self):
+        if not self.trafiquables:
+            return {}
         try:
             traf = json.loads(self.trafiquables)
         except (ValueError, TypeError):
