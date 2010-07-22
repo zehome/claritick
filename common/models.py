@@ -291,7 +291,14 @@ class ClaritickUser(User):
         words = string.letters + string.digits
         return "".join(map(lambda x: random.choice(words), range(8)))
 
+class UserProfileManager(models.Manager):
+    def get_query_set(self):
+        return super(UserProfileManager, self).get_query_set().\
+                select_related("user", "client")
+
 class UserProfile(models.Model):
+
+    objects = UserProfileManager()
     user = models.ForeignKey(User, verbose_name="Utilisateur", unique=True)
     google_account = models.ForeignKey(GoogleAccount, verbose_name="Compte google", null=True, blank=True)
     client = ClientField(Client, verbose_name="Client", blank=True, null=True)

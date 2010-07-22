@@ -47,9 +47,7 @@ class NewTicketForm(CustomModelForm):
         exclude = ("opened_by", "validated_by", "diffusion", "alarm", )
 
     def __init__(self, *args, **kwargs):
-        if "user" in kwargs:
-            filter_form_for_user([self], kwargs["user"])
-            del kwargs["user"] # user= ne doit pas arriver a l'init parent ...
+        filter_form_for_user(self, kwargs.pop("user", None))
         super(NewTicketForm, self).__init__(*args, **kwargs)
 
 class NewTicketSmallForm(NewTicketForm):
@@ -81,11 +79,7 @@ class ChildForm(ChildFormSmall):
         fields = ("state", "title", "text", "keywords", "assigned_to", "category", "project", "diffusion")
 
     def __init__(self, *args, **kwargs):
-
-        user = kwargs.pop("user", None)
-        if user:
-            filter_form_for_user([self], user)
-
+        filter_form_for_user(self, kwargs.pop("user", None))
         super(ChildForm, self).__init__(*args, **kwargs)
 
 class SearchTicketForm(df.Form, ModelFormTableMixin):
@@ -108,11 +102,7 @@ class SearchTicketForm(df.Form, ModelFormTableMixin):
     contact = df.CharField(required=False)
 
     def __init__(self, *args, **kwargs):
-        if "user" in kwargs:
-            filter_form_for_user([self], kwargs["user"])
-            del kwargs["user"] # user= ne doit pas arriver a l'init parent ...
-        self.base_fields["assigned_to"].choices = [(x.pk, x) for x in ClaritickUser.objects.all()]
-        self.base_fields["assigned_to"].choices.insert(0, ("", ""))
+        filter_form_for_user(self, kwargs.pop("user", None))
         self.base_fields["opened_by"].choices = self.base_fields["assigned_to"].choices
         super(SearchTicketForm, self).__init__(*args, **kwargs)
 
@@ -168,8 +158,9 @@ class TicketActionsForm(df.Form):
 
         self.base_fields["actions"].choices = self.get_actions()
         self.base_fields["actions"].choices.insert(0, ("", ""))
-        self.base_fields["assigned_to"].choices = [(x.pk, x) for x in ClaritickUser.objects.all()]
-        self.base_fields["assigned_to"].choices.insert(0, ("", ""))
+
+
+        filter_form_for_user(self, kwargs.pop("user", None))
         super(TicketActionsForm, self).__init__(*args, **kwargs)
 
     def get_actions(self):

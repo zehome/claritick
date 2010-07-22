@@ -14,12 +14,12 @@ from django.core.exceptions import ValidationError, FieldError
 from django.core.mail import EmailMessage
 from django.template.loader import get_template
 from django.template import Context, Template
+from django.core.mail.message import make_msgid
 
 # Clarisys fields
 from common.models import ColorField, Client, ClientField, JsonField, ByteaField, PickleField, UserProfile
 from common.exceptions import NoProfileException
 from django.db.models import AutoField
-from django.core.mail.message import make_msgid
 
 def copy_model_instance(obj):
     initial = dict([(f.name, getattr(obj, f.name))
@@ -47,7 +47,6 @@ class Priority(models.Model):
         return u"%s" % (self.label,)
 
 class State(models.Model):
-
     class Meta:
         verbose_name = "État"
         verbose_name_plural = "État"
@@ -108,8 +107,7 @@ class Project(models.Model):
                     ticket.project = self
                     if client_id and not ticket.client:
                         ticket.client = Client.objects.get(pk=int(client_id))
-                    
-                    ticket.save()        
+                    ticket.save()
         return r
 
 class Procedure(models.Model):
@@ -144,17 +142,16 @@ class TicketQuerySet(models.query.QuerySet):
         # Si on est root, on ne filtre pas la liste
         if user.is_superuser:
             return self
+
         qs = Ticket.objects.none()
-        try:
-            clients = user.get_profile().get_clients()
-            query = models.Q(client__in=clients)
 
-            if no_client:
-                query |= models.Q(client__isnull=True)
+        query = models.Q(client__in=user.clients)
 
-            qs = self.filter(query)
-        except UserProfile.DoesNotExist:
-            raise NoProfileException(user)
+        if no_client:
+            query |= models.Q(client__isnull=True)
+
+        qs = self.filter(query)
+
         return qs
 
     def filter_queryset(self, filters, *args, **kwargs):
@@ -690,3 +687,4 @@ comment_was_posted.connect(Ticket.handle_comment_posted_signal)
 
 # Google calendar sync
 models.signals.pre_save.connect(Ticket.handle_ticket_presave_signal, sender=Ticket)
+

@@ -82,6 +82,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'common.exceptionmiddleware.UserBasedExceptionMiddleware',
     'backlinks.middleware.BacklinksMiddleware',
+    'ticket.middleware.PopulateUserMiddleware',
     'django.middleware.gzip.GZipMiddleware',
 )
 

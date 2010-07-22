@@ -140,9 +140,9 @@ def list_view(request, view_id=None):
 
     # le form d'actions
     if request.user.has_perm("ticket.can_list_all") or request.user.is_superuser:
-        action_form = TicketActionsForm(request.POST, prefix="action")
+        action_form = TicketActionsForm(request.POST, user=request.user, prefix="action")
     else:
-        action_form = TicketActionsSmallForm(request.POST, prefix="action")
+        action_form = TicketActionsSmallForm(request.POST, user=request.user, prefix="action")
 
     if action_form.process_actions(request):
         return http.HttpResponseRedirect("%s?%s" % (request.META["PATH_INFO"], request.META["QUERY_STRING"]))
@@ -208,9 +208,9 @@ def list_all(request, form=None, filterdict=None, template_name=None, *args, **k
     context = get_context(request)
 
     if request.user.has_perm("can_commit_full") or request.user.is_superuser:
-        action_form = TicketActionsForm(request.POST, prefix="action")
+        action_form = TicketActionsForm(request.POST, user=request.user, prefix="action")
     else:
-        action_form = TicketActionsSmallForm(request.POST, prefix="action")
+        action_form = TicketActionsSmallForm(request.POST, user=request.user, prefix="action")
 
     if action_form.process_actions(request):
         return http.HttpResponseRedirect("%s?%s" % (request.META["PATH_INFO"], request.META["QUERY_STRING"]))
@@ -423,7 +423,8 @@ def modify(request, ticket_id):
     else:
         form = TicketForm(instance=ticket, user=request.user)
         child_formset = ChildFormSet(queryset=child)
-        filter_form_for_user(child_formset.forms, request.user)
+        for f in child_formset.forms:
+            filter_form_for_user(f, request.user)
 
     comments = django.contrib.comments.get_model().objects.filter(content_type__model="ticket").\
             filter(models.Q(object_pk__in=[str(c.pk) for c in child]) | models.Q(object_pk=str(ticket.pk)))
