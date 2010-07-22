@@ -161,6 +161,23 @@
 <form method="post" name="action_form">{% csrf_token %}
 {{ action_form.non_field_errors }}
 {{ action_form.comment }}
+
+<!-- Tooltips -->
+{% for row in tickets.object_list %}
+    <div dojoType="dijit.Tooltip" connectId="ticket_line_{{ forloop.counter }}" position="above">
+        {% if row.alarm %}
+            <h3>Alarme le {{ row.alarm.date_open|date:"d/m/Y à H:i" }} par {{ row.alarm.user_open }}</h3>
+            {{ row.alarm.reason }}
+            </h3>
+        {% endif %}
+        <h3>{{ row.title|wordwrap:80 }}</h3>
+        {{ row.text|wordwrap:80|linebreaks }}
+    </div>
+    {% for child in row.enfants %}
+        <div dojoType="dijit.Tooltip" connectId="ticket_child{{ forloop.parentloop.counter }}_line_{{ forloop.counter }}" position="above"><h3>{{ child.title|wordwrap:80 }}</h3>{{ child.text|wordwrap:80|linebreaks }}</div>
+    {% endfor %}
+{% endfor %}
+
 <table class="resultat trafiquable exportables" id="ticket_result_all">
 <tr class="form">
     <td colspan="12">
@@ -219,23 +236,14 @@
         <td class="bigrow">{{ row.last_modification|date:'d/m/y H\hi' }}</td>
         <td class="bigrow">{{ row.opened_by }}</td>
         <td class="bigrow">{{ row.assigned_to }}</td>
-    </tr>
-    <div dojoType="dijit.Tooltip" connectId="ticket_line_{{ forloop.counter }}" position="above">
-        {% if row.alarm %}
-            <h3>Alarme le {{ row.alarm.date_open|date:"d/m/Y à H:i" }} par {{ row.alarm.user_open }}</h3>
-            {{ row.alarm.reason }}
-            </h3>
-        {% endif %}
-        <h3>{{ row.title|wordwrap:80 }}</h3>
-        {{ row.text|wordwrap:80|linebreaks }}
-    </div>
     {% for child in row.enfants %}
+        </tr>
         <tr class="{{ rowcolor }}" id="ticket_child{{ forloop.parentloop.counter }}_line_{{ forloop.counter }}">
             <td><input type="checkbox" name="ticket_checked" id="ticket_child{{ forloop.parentloop.counter}}_select_{{ forloop.counter }}" value="{{ child.pk }}" /></td>
-            <td colspan="10" class="rowchild"><img src="{{ MEDIA_URL }}images/oxygen/code-class.png" alt="-->" />&nbsp;<span style="{{ child.close_style }}"><a sytle="{{ child.priority_text_style }}" href="{% url ticket_modify row.id %}#child{{ child.id }}">{{ child.title|truncatewords:8 }}</a></span></td>
+            <td colspan="11" class="rowchild"><img src="{{ MEDIA_URL }}images/oxygen/code-class.png" alt="-->" />&nbsp;<span style="{{ child.close_style }}"><a sytle="{{ child.priority_text_style }}" href="{% url ticket_modify row.id %}#child{{ child.id }}">{{ child.title|truncatewords:8 }}</a></span></td>
         </tr>
-        <div dojoType="dijit.Tooltip" connectId="ticket_child{{ forloop.parentloop.counter }}_line_{{ forloop.counter }}" position="above"><h3>{{ child.title|wordwrap:80 }}</h3>{{ child.text|wordwrap:80|linebreaks }}</div>
     {% endfor %}
+    {% if not row.enfants %}</tr>{% endif %}
 {% endfor %}
 </tbody>
 </table>
