@@ -34,6 +34,11 @@ def indexpage(template, data={}):
         return render_to_response(template, data, context_instance=RequestContext(request))
     return render
 
+def iepage(template, data = {}):
+    def render(request):
+        return render_to_response(template, data, context_instance=RequestContext(request))
+    return render
+
 def agenda(request, data={}):
     template="agenda.html"
     user = request.user
@@ -51,6 +56,7 @@ def raise_trial_exception(*kw, **args):
 
 urlpatterns = patterns('',
     (r'^/*$', indexpage("index.html")),
+    url(r'^ie/*$', iepage("ie.html"), name="internet_explorer"),
     ## Medias (STATIC Content)
     #(r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT}),
     (r'^comments/', include('django.contrib.comments.urls')),

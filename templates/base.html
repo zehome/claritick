@@ -158,7 +158,13 @@
           Aller au ticket # <input type="text" id="id_num_ticket" size="5" /> <button dojoType="dijit.form.Button" id="id_go_ticket">Go</button>
         </td>
       </tr>
+      <tr id="ie_tr" style="display: none;"><td colspan="3" style="text-align: center; font-size: 1.4em;"><a href="{% url internet_explorer %}" style="color: red;">Internet explorer n'est pas supporte.</a></td></tr>
     </table>
+    <script type="text/javascript">
+      if (dojo.isIE) {
+        dojo.style("ie_tr", "display", "block");
+      }
+    </script>
     <div id="contenu" class="{% block admin_class %}claritick{% endblock %}">
         <h1 class="title">{% block content_title %}{% if title %}{{ title }}{% endif %}{% endblock content_title %}</h1>
         <div class="image">{% block image %}{% endblock image %}</div>
