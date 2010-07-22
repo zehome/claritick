@@ -66,7 +66,6 @@ function ajaxMenu2D(url, query_string, container, id_menu, json_key, id_input0, 
 function childManagement() {
     last_focused = dojo.byId("parent");
     fl = null; /* focus list */
-    buttons;
 
     dojo.addOnLoad(function () {
             fl = dojo.query("div.child");
@@ -98,10 +97,11 @@ function showDeletebox(input) {
         var child = dojo.query('div#child'+tid);
         var title = child.query('input[name$="-title"]')[0];
         var text = child.query('textarea[name$="-text"]')[0];
-        if (title.value == '' && text.value == '')
+        if (title.value == '' && text.value == '') {
             dojo.style('delete_child'+tid, 'display', 'inline');
-        else
+        } else {
             dojo.style('delete_child'+tid, 'display', 'none');
+        }
     }
 }
 
@@ -162,9 +162,9 @@ function loadChild (url, add_ticket_full, state_new, state_closed, state_active)
                             if (e == 'state'  && dojo.byId('id_'+e).selectedIndex == state_closed) {
                                 dojo.byId('id_'+e).selectedIndex = state_active;
                                 dojo.byId('id_form-'+count.value+'-'+e).selectedIndex = state_new;
-                            }
-                            else
+                            } else {
                                 dojo.byId('id_form-'+count.value+'-'+e).selectedIndex = dojo.byId('id_'+e).selectedIndex;
+                            }
                         });
                 }
 
@@ -175,8 +175,9 @@ function loadChild (url, add_ticket_full, state_new, state_closed, state_active)
 
                 /* aller vers le futur nouveau fils */
                 var node;
-                if ((node = dojo.byId('last_child')))
+                if ((node = dojo.byId('last_child'))) {
                     node.removeAttribute('id');
+                }
                 dojo.query('div.child:last-child')[0].setAttribute('id', 'last_child');
                 dojo.doc.location.hash = '';
                 dojo.doc.location.hash = 'last_child';
@@ -201,23 +202,23 @@ function viewTicketMailTraceDialog(url) {
     if (!ticketmailtrace)
     {
         dojo.xhrGet({
-        url: url,
-        load: function (data) {
-            ticketmailtrace = data;
-            dojo.parser.parse(ticketmailtrace);
-            showTicketMailTraceDialog();
-        },
+            url: url,
+            load: function (data) {
+                ticketmailtrace = data;
+                dojo.parser.parse(ticketmailtrace);
+                showTicketMailTraceDialog();
+            }
         });
-    }
-    else
+    } else {
         showTicketMailTraceDialog();
+    }
 }
 function showTicketMailTraceDialog() {
     var dialog = new dijit.Dialog({
         title: 'Ticket Mail Trace',
         content: ticketmailtrace,
-        draggable: false,
-        });
+        draggable: false
+    });
     dialog.show();
 }
 
@@ -227,14 +228,15 @@ function deleteTmas(url, button, tma_id) {
     confirm_string += " ticket mail action ?";
     if (confirm(confirm_string)) {
         dojo.xhrGet({
-            url: url+'?tma_id='+tma_id,
-            });
+            url: url+'?tma_id='+tma_id
+        });
         count = dojo.byId('dijit_tmas_label');
         count.innerHTML = parseInt(count.innerHTML)-1;
-        if (count.innerHTML == 0)
+        if (count.innerHTML == 0) {
             dijit.byId("dijit_tmas").destroyRecursive();
-        else
+        } else {
             button.destroyRecursive();
+        }
     }
 }
 

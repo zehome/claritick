@@ -1,12 +1,11 @@
 <!-- <?xml version='1.0' encoding='utf-8'?> -->
 {% extends "base.html" %}
+{% block extrajs %}<script type="text/javascript" src="{{ MEDIA_URL }}javascript/modify.js"></script>{% endblock %}
 
 {% block title %}Ticket numéro {{ form.instance.id }}{% endblock %}
 {% block content_title %}Ticket numéro {{ form.instance.id }}{% endblock %}
 {% block image %}<img src="{{ MEDIA_URL }}images/oxygen/folder-open.png" />{% endblock %}
-
 {% block content %}
-<script type="text/javascript" src="{{ MEDIA_URL }}javascript/modify.js"></script>
 {{ form.non_field_errors }}
 <form enctype="multipart/form-data" action="{% url ticket_modify form.instance.id %}" method="post">
 <div id="parent">
@@ -21,7 +20,9 @@
 </fieldset>
 
 <script type="text/javascript">
+  if (! dojo.isIE ) {
     changeClassOnScroll(117, '#fieldset_general', 'inline form', 'inline fieldset_fixed');
+  }
 </script>
 
 <fieldset class="block form">
@@ -130,8 +131,12 @@
 </div><!-- parent -->
 
 <script type="text/javascript">
-    var last_focused, fl, buttons;
-    childManagement();
+    if (! dojo.isIE) {
+      var last_focused;
+      var fl;
+      var buttons;
+      childManagement();
+    }
 </script>
 
 {% block content_childs %}

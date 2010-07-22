@@ -316,6 +316,9 @@ form {
     z-index: 100;
     display: none;
     overflow-y: auto;
+    /* Ie sucks */
+    _position: absolute;
+    top: expression(body.scrollTop + 0 + "px");
 }
 
 #gauche-spin {
@@ -329,6 +332,9 @@ form {
     background-image:url('/media/images/deg_menugauche.png');
     background-repeat:repeat-x;
     background-position:top;
+    /* Ie sucks */
+    _position: absolute;
+    top: expression(body.scrollTop + 0 + "px");
 }
 
 div#gauche ul.menu {
@@ -732,6 +738,7 @@ ol#pagination-digg {
 #save_buttons {
 	border-top: 1px solid black;
 	background: white;
+    /* Ie sucks */
 	position: fixed;
 	bottom: 0;
 	min-height: 40px;

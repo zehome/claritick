@@ -164,7 +164,7 @@
 
 <!-- Tooltips -->
 {% for row in tickets.object_list %}
-    <div dojoType="dijit.Tooltip" connectId="ticket_line_{{ forloop.counter }}" position="above">
+    <div dojoType="dijit.Tooltip" connectId="ticket_line_{{ forloop.counter }}" position="above" style="display: none;">
         {% if row.alarm %}
             <h3>Alarme le {{ row.alarm.date_open|date:"d/m/Y à H:i" }} par {{ row.alarm.user_open }}</h3>
             {{ row.alarm.reason }}
@@ -174,7 +174,7 @@
         {{ row.text|wordwrap:80|linebreaks }}
     </div>
     {% for child in row.enfants %}
-        <div dojoType="dijit.Tooltip" connectId="ticket_child{{ forloop.parentloop.counter }}_line_{{ forloop.counter }}" position="above"><h3>{{ child.title|wordwrap:80 }}</h3>{{ child.text|wordwrap:80|linebreaks }}</div>
+        <div dojoType="dijit.Tooltip" connectId="ticket_child{{ forloop.parentloop.counter }}_line_{{ forloop.counter }}" position="above" style="display: none;"><h3>{{ child.title|wordwrap:80 }}</h3>{{ child.text|wordwrap:80|linebreaks }}</div>
     {% endfor %}
 {% endfor %}
 
