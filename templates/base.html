@@ -142,17 +142,18 @@
             <a href="/"><img src="{{ MEDIA_URL }}images/logo_pt.png" alt="logo" /></a>
         </td>
         <td align="right" width="33%">
-          {% if chuserform %}
-          <form action="{% url chuser_change_user %}" method="post">
-          {% csrf_token %}
-          <div style="float: left;"><button dojoType="dijit.form.Button" type="submit">Changer d'utilisateur</button><span>{{ chuserform.user }}</span></div>
-          </form>
-          {% endif %}
           <span id="status">[ IDLE ]</span>
-          {% if user.is_authenticated %}
-          <p style="padding: 0; margin: 0;">Utilisateur: {{ user.username }}<br />
-          <a class="bouton" href="/accounts/logout"><img src="{{ MEDIA_URL }}images/oxygen/disconnect.png" alt="disconnect" />Déconnexion</a>
-          </p>
+          {% if chuserform %}
+            <form action="{% url chuser_change_user %}" method="post">
+            {% csrf_token %}
+            <div><button dojoType="dijit.form.Button" type="submit">Changer d'utilisateur</button><span>{{ chuserform.user }}</span></div>
+            </form>
+          {% else %}
+            {% if user.is_authenticated %}
+            <p style="padding: 0; margin: 0;">Utilisateur: {{ user.username }}<br />
+            <a class="bouton" href="/accounts/logout"><img src="{{ MEDIA_URL }}images/oxygen/disconnect.png" alt="disconnect" />Déconnexion</a>
+            </p>
+            {% endif %}
           {% endif %}
           Aller au ticket # <input type="text" id="id_num_ticket" size="5" /> <button dojoType="dijit.form.Button" id="id_go_ticket">Go</button>
         </td>

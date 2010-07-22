@@ -1,6 +1,5 @@
 {% extends "base.html" %}
 
-{% block content_title %}Système de gestion{% endblock %}
 {% block extrajs %}
 <script type="text/javascript">
     var MENU_CAN_HIDE = false;
@@ -11,7 +10,6 @@
 {% endblock %}
 
 {% block content %}
-<p>Bienvenue sur le système de gestion.</p>
 {% if not user.is_authenticated %}
 <p>Merci de vous <a href="/accounts/login/">IDENTIFIER</a></p>
 {% else %}
