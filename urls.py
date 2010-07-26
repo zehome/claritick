@@ -17,6 +17,7 @@ import claritick.clariadmin.urls
 import claritick.developpements.urls
 import claritick.ws.urls
 import claritick.chuser.urls
+import claritick.lock.urls
 
 # Init code
 admin.autodiscover()
@@ -64,6 +65,7 @@ urlpatterns = patterns('',
     (r'^ticket/', include(claritick.ticket.urls)),
     (r'^common/', include(claritick.common.urls)),
     (r'^chuser/', include(claritick.chuser.urls)),
+    (r'^lock/', include(claritick.lock.urls)),
     (r'^clariadmin/', include(claritick.clariadmin.urls)),
     (r'^developpements/', include(claritick.developpements.urls)),
     (r'^agenda/$', agenda),

@@ -7,7 +7,7 @@
 {% block image %}<img src="{{ MEDIA_URL }}images/oxygen/folder-open.png" />{% endblock %}
 {% block content %}
 {{ form.non_field_errors }}
-<form enctype="multipart/form-data" action="{% url ticket_modify form.instance.id %}" method="post">
+<form enctype="multipart/form-data" action="{% url ticket_modify form.instance.id %}" method="post" id="ticket_form">
 <div id="parent">
 {% csrf_token %}
 {% block content_ticket %}
@@ -23,6 +23,13 @@
   if (! dojo.isIE ) {
     changeClassOnScroll(117, '#fieldset_general', 'inline form', 'inline fieldset_fixed');
   }
+var lock_url = '{% url lock_ajax_lock form.instance.id %}?model=ticket.Ticket&last_timestamp_field=last_modification&timestamp={{ form.instance.last_modification|date:"U" }}';
+var lock_status_updated = {{ lock_settings.LOCK_STATUS_UPDATED }};
+var lock_status_expired = {{ lock_settings.LOCK_STATUS_EXPIRED }};
+var lock_status_locked = {{ lock_settings.LOCK_STATUS_LOCKED }};
+var lock_status_created = {{ lock_settings.LOCK_STATUS_CREATED }};
+var lock_expire = {{ lock_settings.LOCK_EXPIRE }};
+var lock_update = {{ lock_settings.LOCK_UPDATE }};
 </script>
 
 <fieldset class="block form">
@@ -220,5 +227,13 @@
 </div>
 
 </form>
+
+    <div dojoType="dijit.Dialog" id="lock_dialog" title="Ticket verrouillé">
+        <p id="lock_dialog_content"></p>
+        <div style="text-align: center;">
+            <div dojoType="dijit.form.Button" onClick="dijit.byId('lock_dialog').hide();">Ignorer</div>
+            <div dojoType="dijit.form.Button" onClick="dojo.global.location.reload();">Recharger</div>
+        </div>
+    </div>
 
 {% endblock content %}

@@ -21,6 +21,9 @@ from common.models import ColorField, Client, ClientField, JsonField, ByteaField
 from common.exceptions import NoProfileException
 from django.db.models import AutoField
 
+# Lock
+from lock.decorators import locked_content
+
 def copy_model_instance(obj):
     initial = dict([(f.name, getattr(obj, f.name))
                     for f in obj._meta.fields
@@ -93,10 +96,10 @@ class Project(models.Model):
             return u"%s (%s)" % (self.label, self.procedure)
         return u"%s" % self.label 
     
-    def save(self, client_id=None):
+    def save(self, client_id=None, *a, **kw):
         """ Override save in order to pass "client" from ModelAdmin form """
         created = bool(not self.id)
-        r = super(Project, self).save()
+        r = super(Project, self).save(*a, **kw)
         if created:
             # Ajoute les tickets correspondant a la procédure
             if self.procedure:
@@ -417,7 +420,8 @@ class Ticket(models.Model):
         if self.state_id == settings.TICKET_STATE_CLOSED and self.child.exclude(state=self.state).exists():
             raise ValidationError("Impossible de fermer le ticket si tous les tickets fils ne sont pas fermés")
 
-    def save(self):
+    @locked_content
+    def save(self, *a, **kw):
         """ Overwrite save in order to do checks if email should be sent, then send email """
         send_email_reason=None
 
@@ -435,7 +439,7 @@ class Ticket(models.Model):
             if old_ticket.is_closed and self.state_id != settings.TICKET_STATE_CLOSED:
                 self.date_close = None
 
-        r = super(Ticket, self).save()
+        ret = super(Ticket, self).save(*a, **kw)
         send_fax_reasons = []
         send_email_reasons = []
 
@@ -460,7 +464,6 @@ class Ticket(models.Model):
                         send_email_reasons.append(u"Ticket re-affecté à %s" % (self.assigned_to,))
                 elif (not old_ticket.assigned_to and self.assigned_to):
                     send_email_reasons.append(u"Ticket affecté à %s" % (self.assigned_to,))
-
             # Copie des paramêtres du père à reporter sur les fils
             # (Temporaire ?)
             if old_ticket and self.child:
@@ -496,7 +499,7 @@ class Ticket(models.Model):
             if send_fax_reasons:
                 target_ticket.send_fax(send_fax_reasons)
 
-        return r
+        return ret
 
 
     def send_fax(self, reasons=[u'Demande spécifique']):
@@ -673,12 +676,12 @@ class TicketAppel(models.Model):
     ticket = models.ForeignKey(Ticket)
     user = models.ForeignKey(User)
 
-    def save(self, **kwargs):
+    def save(self, *args, **kwargs):
         ticket = Ticket.minimal.get(pk=self.ticket.pk)
         # peut être mieux de recalculer à chaque fois ....
         ticket.nb_appels = models.F('nb_appels') + 1
         ticket.save()
-        super(TicketAppel, self).save()
+        return super(TicketAppel, self).save(*args, **kwargs)
 
 #moderator.register(Ticket, TicketCommentModerator)
 

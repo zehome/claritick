@@ -1,3 +1,6 @@
+r341
+    Nouveau modèle
+    - syncdb
 r311
     ALTER TABLE ticket_ticket ADD message_id text;
 r304

@@ -240,3 +240,50 @@ function deleteTmas(url, button, tma_id) {
     }
 }
 
+function update_lock() {
+    dojo.xhrPost({url: lock_url, load: function (data) {
+            dojo.global.window.setTimeout("update_lock()", 10000);
+            }});
+}
+
+function modif_ticket() {
+    if (connections != []) {
+        dojo.forEach(connections, dojo.disconnect);
+        connections = [];
+    }
+    else { return; }
+    dojo.xhrPost({url: lock_url, load: function (data) {
+        var ret = dojo.fromJson(data);
+        var dialog = dijit.byId('lock_dialog');
+        var content = dojo.byId('lock_dialog_content');
+        if (ret.status == lock_status_locked) {
+            content.innerHTML = "Ce ticket est bloqué par "+ret.locker;
+
+            dialog.show();
+        }
+        else if (ret.status == lock_status_expired) {
+            content.innerHTML = "Les donnés pour ce ticket ont changés"
+            dialog.show();
+        }
+        else {
+            dojo.global.window.setTimeout("update_lock()", 10000);
+        }
+    }});
+}
+
+var locker_fields;
+var connections = [];
+
+dojo.addOnLoad(function () {
+        locker_fields = dojo.query("textarea[name$='text'], input[name$='title'], input[name$='keywords']");
+        locker_fields_onchange = dojo.query("select");
+        dojo.forEach(locker_fields, function (f) {
+            connections.push(dojo.connect(f, 'onkeypress', modif_ticket));
+            });
+        dojo.forEach(locker_fields_onchange, function (f) {
+            connections.push(dojo.connect(f, 'onchange', modif_ticket));
+            });
+});
+
+
+

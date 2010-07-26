@@ -96,6 +96,7 @@ TEMPLATE_CONTEXT_PROCESSORS = ("django.core.context_processors.auth",
     'django.core.context_processors.request',
     'ticket.context_processors.ticket_views',
     'chuser.context_processors.chuser',
+    'lock.context_processors.lock_settings',
 )
 
 ROOT_URLCONF = 'claritick.urls'
@@ -123,6 +124,7 @@ INSTALLED_APPS = (
     'qsstats',                 # Fun with aggregates ;)
     'backlinks',               # Return to page saved in sessions
     'chuser',                  # Switch user
+    'lock',                    # Lock objects by users
 )
 
 COMMENTS_APP = 'ticket_comments'

@@ -31,16 +31,16 @@ class NewTicketForm(CustomModelForm):
     title = forms.CharField(widget=forms.TextInput(attrs={'size': '80'}))
     text = df.CharField(widget=forms.Textarea(attrs={'cols':'90', 'rows': '15'}))
     client = df.ModelChoiceField(queryset = Client.objects.all(),
-         widget=FilteringSelect(attrs={'queryExpr': '${0}*'}), empty_label='', required=False)
+            widget=FilteringSelect(attrs={'queryExpr': '${0}*', 'onChange': 'modif_ticket();'}), empty_label='', required=False)
     keywords = forms.CharField(widget=forms.TextInput(attrs={'size': '80'}), required=False)
     calendar_start_time = df.DateTimeField(required=False)
     calendar_end_time = df.DateTimeField(required=False)
-    assigned_to = df.ModelChoiceField(label=u'Assigné à', widget=FilteringSelect(), queryset=ClaritickUser.objects.all(), required=False)
+    assigned_to = df.ModelChoiceField(label=u'Assigné à', widget=FilteringSelect(attrs={'onChange': 'modif_ticket();'}), queryset=ClaritickUser.objects.all(), required=False)
     #validated_by = df.ModelChoiceField(widget=FilteringSelect(), queryset=ClaritickUser.objects.all(), required=False)
     file = df.FileField(required=False)
     comment = df.CharField(widget=forms.Textarea(), required=False)
-    internal = forms.BooleanField(widget=df.widgets.CheckboxInput(attrs={'onChange': 'toggleComment(this)'}), initial=True, required=False)
-    appel = forms.BooleanField(label=u"Signaler un (r)appel du client", widget=df.widgets.CheckboxInput, initial=False, required=False)
+    internal = forms.BooleanField(widget=df.widgets.CheckboxInput(attrs={'onChange': 'modif_ticket(); toggleComment(this);'}), initial=True, required=False)
+    appel = forms.BooleanField(label=u"Signaler un (r)appel du client", widget=df.widgets.CheckboxInput(attrs={'onChange': 'modif_ticket();'}), initial=False, required=False)
 
     class Meta:
         model = Ticket
@@ -68,7 +68,7 @@ class ChildForm(ChildFormSmall):
     text = df.CharField(widget=forms.Textarea(attrs={'cols':'90', 'rows': '15', 'onBlur': 'showDeletebox(this);'}))
     keywords = df.CharField(widget=forms.TextInput(attrs={'size': '80'}), required=False)
     state       = forms.ModelChoiceField(label=u'État', queryset = State.objects.all())
-    assigned_to = df.ModelChoiceField(widget=FilteringSelect(), label=u'Assigné à', queryset=ClaritickUser.objects.all(), required=False)
+    assigned_to = df.ModelChoiceField(widget=FilteringSelect(attrs={'onChange': 'modif_ticket();',}), label=u'Assigné à', queryset=ClaritickUser.objects.all(), required=False)
     project = forms.ModelChoiceField(label=u'Projet', queryset=Project.objects.all(), required=False)
     diffusion = forms.NullBooleanField(widget=forms.HiddenInput(), initial=False)
     comment = forms.CharField(widget=forms.Textarea(), required=False)
