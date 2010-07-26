@@ -145,7 +145,7 @@
                 <tr>
                     <td class="align-center" style="background-color: #C0C0C0;">{{ forloop.counter }}</td>
                     <td class="align-right">{{ item.calcul_poids }}</td>
-                    <td class="align-right" title="{% for client in item.client_demandeur.all %} {{ client.nom }}{% endfor %}">{{ item.client_demandeur.count }}</td>
+                    <td class="align-right" title="{{ item.clients|join:" " }}">{{ item.clients|length }}</td>
                     <td class="align-right">{{ item.poids }}</td>
                     <td class="{% if perms.developpements.change_groupedev %}modifiable{% endif %}" url="{% url admin:developpements_groupedev_change item.groupe.pk %}" title="{{ item.groupe.description }}">
                         {{ item.groupe }}

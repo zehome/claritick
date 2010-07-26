@@ -6,22 +6,24 @@ from django.db import models
 
 class Client(models.Model):
     nom = models.TextField()
-    
+
     def __unicode__(self):
         return self.nom
 
 class Version(models.Model):
+    class Meta:
+        ordering = ["date_sortie"]
+        permissions = (
+            ("can_view_versions", u"Voir versions"),
+        )
+
     majeur = models.IntegerField()
     mineur = models.IntegerField()
     date_sortie = models.DateField(null = True, blank = True)
     contenu = models.ManyToManyField('Developpement')
-    
+
     def __unicode__(self):
         return "%i.%i" % (self.majeur, self.mineur,)
-    class Meta:
-        permissions = (
-            ("can_view_versions", u"Voir versions"),
-        )
 
 class GroupeDev(models.Model):
     nom = models.TextField()
@@ -33,7 +35,16 @@ class GroupeDev(models.Model):
     def __unicode__(self):
         return self.nom
 
+class DeveloppementManager(models.Manager):
+    def get_query_set(self, *a, **kw):
+        return super(DeveloppementManager, self).\
+                get_query_set(*a, **kw).\
+                select_related("groupe", "version_requise")
+
 class Developpement(models.Model):
+
+    objects = DeveloppementManager()
+
     nom = models.TextField()
     description = models.TextField(null = True, blank = True)
     lien = models.TextField(null = True, blank = True)
@@ -49,7 +60,7 @@ class Developpement(models.Model):
     couleur = models.TextField(null = True, blank = True)
 
     def calcul_poids(self):
-        n_clients = max(1, self.client_demandeur.count())
+        n_clients = max(1, len(self.clients))
         poids = n_clients * self.groupe.poids * self.poids
         if self.bug:
             poids += 100000
@@ -58,6 +69,7 @@ class Developpement(models.Model):
 
     def __unicode__(self):
         return self.nom
+
     class Meta:
         permissions = (
             ("can_view_liste", u"Voir roadmap"),

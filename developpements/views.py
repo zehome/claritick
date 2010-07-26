@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 
 from django.utils import simplejson as json
 
-from claritick.developpements.models import Developpement, Version
+from developpements.models import Developpement, Version, Client
 import datetime
 
 FORCE_DEV = 55 # heures par semaine
@@ -27,13 +27,34 @@ def home(request):
 
 @permission_required('developpements.can_view_liste')
 def liste(request):
-    developpements = list(Developpement.objects.select_related("groupedev","version","client"))
+    devs = Developpement.objects.all()
+    clients = Developpement.client_demandeur.\
+            through.objects.select_related("client").all()
+    versions = Version.contenu.through.\
+            objects.select_related("version").all()
+
+    # join devs clients and versions
+    developpements = {}
+    for d in devs:
+        d.clients = []
+        d.dispo_version = None
+        developpements[d.pk] = d
+
+    for c in clients:
+        developpements[c.developpement_id].clients.append(c.client)
+    for v in versions:
+        old = developpements[v.developpement_id].dispo_version
+        # overwrite ?
+        if not old or float(unicode(old)) > float(unicode(v.version)):
+            developpements[v.developpement_id].dispo_version = v.version
+
+    developpements = developpements.values()
     developpements.sort(lambda a, b: cmp(b.calcul_poids(), a.calcul_poids()))
     now = datetime.datetime.now()
     semaine_en_cours = now.isocalendar()[1] + 1
     heures_dev = 0
     couleurs = []
-    
+
     for dev in developpements:
         if dev.couleur and not dev.couleur in couleurs:
             couleurs.append(dev.couleur)
@@ -57,11 +78,9 @@ def liste(request):
             dev.date_sortie = dev.date_sortie.date()
         if isinstance(dev.engagement, datetime.datetime):
             dev.engagement = dev.engagement.date()
-        dispo_version = dev.version_set.order_by('date_sortie')
-        if dispo_version:
-            dispo_version = dispo_version[0]
-            dev.deja_dispo = "%s" % (dispo_version,)
-            dev.date_sortie = dispo_version.date_sortie
+        if dev.dispo_version:
+            dev.deja_dispo = "%s" % (dev.dispo_version,)
+            dev.date_sortie = dev.dispo_version.date_sortie
         if not dev.done:
             if dev.date_sortie and dev.engagement and dev.date_sortie > dev.engagement:
                 dev.alerte = u"Date de sortie prévue dépasse la date d'engagement"
