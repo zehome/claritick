@@ -242,7 +242,7 @@ function deleteTmas(url, button, tma_id) {
 
 function update_lock() {
     dojo.xhrPost({url: lock_url, load: function (data) {
-            dojo.global.window.setTimeout("update_lock()", 10000);
+            dojo.global.window.setTimeout("update_lock()", lock_settings.UPDATE * 1000);
             }});
 }
 
@@ -256,17 +256,17 @@ function modif_ticket() {
         var ret = dojo.fromJson(data);
         var dialog = dijit.byId('lock_dialog');
         var content = dojo.byId('lock_dialog_content');
-        if (ret.status == lock_status_locked) {
+        if (ret.status == lock_settings.LOCK_STATUS_LOCKED) {
             content.innerHTML = "Ce ticket est bloqué par "+ret.locker;
 
             dialog.show();
         }
-        else if (ret.status == lock_status_expired) {
+        else if (ret.status == lock_settings.LOCK_STATUS_EXPIRED) {
             content.innerHTML = "Les donnés pour ce ticket ont changés"
             dialog.show();
         }
         else {
-            dojo.global.window.setTimeout("update_lock()", 10000);
+            dojo.global.window.setTimeout("update_lock()", lock_settings.LOCK_UPDATE * 1000);
         }
     }});
 }
