@@ -38,7 +38,7 @@ def ajax_lock(request, object_pk):
         if lock.user == user:
             lock.save()
             ret = LOCK_STATUS_UPDATED
-        elif datetime.now() - lock.updated > timedelta(seconds=LOCK_EXPIRE):
+        elif lock.is_expired:
             lock.user = user # get lock
             ret = LOCK_STATUS_EXPIRED
         else:
