@@ -240,11 +240,21 @@ function deleteTmas(url, button, tma_id) {
     }
 }
 
+function Lock () {
+    this.timeout_id = null;
+}
+
+lock = new Lock();
+
 function update_lock() {
     dojo.xhrPost({url: lock_url, load: function (data) {
-            dojo.global.window.setTimeout("update_lock()", lock_settings.UPDATE * 1000);
+            if (lock.timeout_id) {
+                dojo.global.window.clearTimeout(lock.timeout_id);
+            }
+            lock.timeout_id = dojo.global.window.setTimeout("update_lock()", lock_settings.UPDATE * 1000);
             }});
 }
+
 
 function modif_ticket() {
     if (connections != []) {
@@ -266,7 +276,7 @@ function modif_ticket() {
             dialog.show();
         }
         else {
-            dojo.global.window.setTimeout("update_lock()", lock_settings.LOCK_UPDATE * 1000);
+            lock.timeout_id = dojo.global.window.setTimeout("update_lock()", lock_settings.LOCK_UPDATE * 1000);
         }
     }});
 }
