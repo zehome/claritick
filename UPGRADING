@@ -1,3 +1,10 @@
+r348
+    ALTER TABLE developpements_version ADD "revision" integer NOT NULL DEFAULT 0;
+    ALTER TABLE developpements_developpement ADD "poids_total" double precision NOT NULL DEFAULT 0;
+
+    # Mise à jour du poids total
+    for d in Developpement.objects.all():
+        d.save()
 r341
     Nouveau modèle
     - syncdb

@@ -1,7 +1,7 @@
 # -*- coding: utf8 -*-
 
 import lock.settings
-import simplejson as json
+from django.utils import simplejson as json
 
 def lock_settings(request):
     ret = {}

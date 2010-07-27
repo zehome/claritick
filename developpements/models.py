@@ -19,11 +19,20 @@ class Version(models.Model):
 
     majeur = models.IntegerField()
     mineur = models.IntegerField()
+    revision = models.IntegerField()
     date_sortie = models.DateField(null = True, blank = True)
     contenu = models.ManyToManyField('Developpement')
 
+    def __cmp__(self, other):
+        count0 = int("%i%i%i", (self.majeur, self.mineur, self.revision,))
+        count1 = int("%i%i%i", (other.majeur, other.mineur, other.revision,))
+        return count0 - count1
+
     def __unicode__(self):
-        return "%i.%i" % (self.majeur, self.mineur,)
+        ret = "%i.%i" % (self.majeur, self.mineur,)
+        if self.revision:
+            ret = "%s.%i" % (ret, self.revision,)
+        return ret
 
 class GroupeDev(models.Model):
     nom = models.TextField()
@@ -42,6 +51,12 @@ class DeveloppementManager(models.Manager):
                 select_related("groupe", "version_requise")
 
 class Developpement(models.Model):
+    class Meta:
+        permissions = (
+            ("can_view_liste", u"Voir roadmap"),
+            ("can_access_suividev", u"Accès suividev"),
+        )
+        ordering = ["-poids_total"]
 
     objects = DeveloppementManager()
 
@@ -58,8 +73,12 @@ class Developpement(models.Model):
     client_demandeur = models.ManyToManyField(Client, null = True, blank = True)
     done = models.BooleanField()
     couleur = models.TextField(null = True, blank = True)
+    poids_total = models.FloatField(default=0)
 
+    @property
     def calcul_poids(self):
+        if not hasattr(self, "clients"):
+            self.clients = self.client_demandeur.all()
         n_clients = max(1, len(self.clients))
         poids = n_clients * self.groupe.poids * self.poids
         if self.bug:
@@ -67,11 +86,10 @@ class Developpement(models.Model):
         poids += self.poids_manuel * 1000000
         return poids
 
+    def save(self, *a, **kw):
+        self.poids_total = self.calcul_poids
+        return super(Developpement, self).save(*a, **kw)
+
     def __unicode__(self):
         return self.nom
 
-    class Meta:
-        permissions = (
-            ("can_view_liste", u"Voir roadmap"),
-            ("can_access_suividev", u"Accès suividev"),
-        )

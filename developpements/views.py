@@ -5,6 +5,7 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required, permission_required
 
+from django.utils.datastructures import SortedDict
 from django.utils import simplejson as json
 
 from developpements.models import Developpement, Version, Client
@@ -34,7 +35,7 @@ def liste(request):
             objects.select_related("version").all()
 
     # join devs clients and versions
-    developpements = {}
+    developpements = SortedDict()
     for d in devs:
         d.clients = []
         d.dispo_version = None
@@ -45,11 +46,10 @@ def liste(request):
     for v in versions:
         old = developpements[v.developpement_id].dispo_version
         # overwrite ?
-        if not old or float(unicode(old)) > float(unicode(v.version)):
+        if not old or old > v.version:
             developpements[v.developpement_id].dispo_version = v.version
 
     developpements = developpements.values()
-    developpements.sort(lambda a, b: cmp(b.calcul_poids(), a.calcul_poids()))
     now = datetime.datetime.now()
     semaine_en_cours = now.isocalendar()[1] + 1
     heures_dev = 0
