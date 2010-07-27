@@ -1,7 +1,11 @@
 # -*- coding: utf-8 -*-
 
 import datetime
+
 from django.db import models
+from django.core.exceptions import ValidationError
+
+from common.models import Client as ClaritickClient
 
 FORCE_DEV = 55 # heures par semaine
 
@@ -14,17 +18,29 @@ def week_start_date(year, week):
     delta = datetime.timedelta(days = -delta_days, weeks = delta_weeks)
     return (d + delta)
 
+class ClientManager(models.Manager):
+    def get_query_set(self):
+        return super(ClientManager, self).get_query_set().\
+                select_related("client")
+
 class Client(models.Model):
-    nom = models.TextField()
+    nom = models.TextField(null=True, blank=True)
+    client = models.ForeignKey(ClaritickClient, null=True, blank=True, related_name="dev_client")
 
     def save(self, *a, **kw):
+        if (not self.client and not self.nom) or \
+            (self.client and self.nom):
+                raise ValidationError("Un seul des deux champs, name ou client doit être renseigné")
+
+        ret = super(Client, self).save(*a, **kw)
+
         for d in self.developpement_set.all():
             d.poids_total = d.calcul_poids
             d.save()
-        return super(Client, self).save(*a, **kw)
+        return ret
 
     def __unicode__(self):
-        return self.nom
+        return self.nom or unicode(self.client)
 
 class Version(models.Model):
     class Meta:
