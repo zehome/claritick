@@ -1,11 +1,27 @@
 # -*- coding: utf-8 -*-
 
+import datetime
 from django.db import models
 
-# Create your models here.
+FORCE_DEV = 55 # heures par semaine
+
+def week_start_date(year, week):
+    d = datetime.date(year, 1, 1)
+    delta_days = d.isoweekday() - 1
+    delta_weeks = week
+    if year == d.isocalendar()[0]:
+        delta_weeks -= 1
+    delta = datetime.timedelta(days = -delta_days, weeks = delta_weeks)
+    return (d + delta)
 
 class Client(models.Model):
     nom = models.TextField()
+
+    def save(self, *a, **kw):
+        for d in self.developpement_set.all():
+            d.poids_total = d.calcul_poids
+            d.save()
+        return super(Client, self).save(*a, **kw)
 
     def __unicode__(self):
         return self.nom
@@ -40,15 +56,64 @@ class GroupeDev(models.Model):
     lien = models.TextField(null = True, blank = True)
     poids = models.IntegerField(default = 1)
     version_requise = models.ForeignKey(Version, null = True, blank = True)
-    
+
+    def save(self, *a, **kw):
+        for d in self.developpement_set.all():
+            d.poids_total = d.calcul_poids
+            d.save()
+        return super(GroupeDev, self).save(*a, **kw)
+
     def __unicode__(self):
         return self.nom
 
 class DeveloppementManager(models.Manager):
+
     def get_query_set(self, *a, **kw):
         return super(DeveloppementManager, self).\
                 get_query_set(*a, **kw).\
                 select_related("groupe", "version_requise")
+
+    def populate(self):
+
+        ret = []
+        devs = super(DeveloppementManager, self).all()
+
+        now = datetime.datetime.now()
+        semaine_en_cours = now.isocalendar()[1]+1
+        heures_dev = 0
+        couleurs = []
+
+        for d in devs:
+
+            if d.couleur and not d.couleur in couleurs:
+                couleurs.append(d.couleur)
+
+            if not hasattr(d, "date_sortie"):
+                d.date_sortie = None
+
+            if d.done or d.temps_prevu:
+                if d.temps_prevu:
+                    heures_dev += d.temps_prevu
+                semaine = semaine_en_cours + (heures_dev / FORCE_DEV)
+                d.date_sortie = week_start_date(now.year, int(semaine))
+
+            gvr = d.groupe.version_requise
+            dvr = d.version_requise
+            if (gvr and dvr and gvr < dvr) or (not dvr):
+                d.version_requise = gvr
+
+            if not d.done:
+                if d.date_sortie and d.engagement and d.date_sortie > d.engagement:
+                    d.alerte = u"Date de sortie prévue dépasse la date d'engagement"
+                if not d.date_sortie:
+                    d.alerte = u"Pas de date sortie calculable pour ce dev"
+                elif d.version_requise and d.version_requise.date_sortie and d.date_sortie > d.version_requise.date_sortie:
+                    d.alerte = u"Date de sortie prévue dépasse la date de sortie de la version"
+
+            ret.append(d)
+
+        return (ret, couleurs)
+
 
 class Developpement(models.Model):
     class Meta:

@@ -126,7 +126,6 @@
         <thead>
             <tr style="background-color: #C0C0C0;">
                 <th>&nbsp;</th>
-                <th title="Poids calculé">PC</th>
                 <th title="Cliens demandeurs">Clients</th>
                 <th title="Poids de l'item">P</th>
                 <th>Groupe</th>
@@ -144,14 +143,13 @@
             {% for item in developpements %}
                 <tr>
                     <td class="align-center" style="background-color: #C0C0C0;">{{ forloop.counter }}</td>
-                    <td class="align-right">{{ item.poids_total }}</td>
                     <td class="align-right" title="{{ item.clients|join:" " }}">{{ item.clients|length }}</td>
                     <td class="align-right">{{ item.poids }}</td>
                     <td class="{% if perms.developpements.change_groupedev %}modifiable{% endif %}" url="{% url admin:developpements_groupedev_change item.groupe.pk %}" title="{{ item.groupe.description }}">
                         {{ item.groupe }}
                     </td>
-                    <td class="align-right">{{ item.groupe.poids }}</td>
-                    <td class="align-right">{{ item.poids_manuel }}</td>
+                    <td class="align-right" title="{{ item.poids_total }}">{{ item.groupe.poids }}</td>
+                    <td class="align-right" title="{{ item.poids_total }}">{{ item.poids_manuel }}</td>
                     <td class="{% if perms.developpements.change_developpement %}modifiable{% endif %}{% if item.done %} done{% endif %}" url="{% url admin:developpements_developpement_change item.pk %}"
                         title="{{ item.description }}"
                         itempk="{{ item.pk }}"

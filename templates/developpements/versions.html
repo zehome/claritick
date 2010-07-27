@@ -41,13 +41,13 @@
             {% for item in versions %}
                 <tr>
                     <td class="align-right{% if perms.developpements.change_version %} modifiable{% endif %}" url="{% url admin:developpements_version_change item.pk %}">
-                        {% if item.developpement_set.all %}
+                        {% if item.content %}
                             <div dojoType="dijit.form.DropDownButton" class="bouton_discret">
                                 <span>{{ item.majeur }}.{{ item.mineur }}</span>
                                 <div dojoType="dijit.TooltipDialog" title="Liste complète" style="display:none;">
                                     <table>
                                         <tr><th colspan="999">Contenu requis</th></tr>
-                                        {% for dev in item.developpement_set.all %}
+                                        {% for dev in item.content %}
                                             <tr><td>{{ dev.groupe }}</td><td title="{{ dev.description }}">{{ dev }}</td></tr>
                                         {% endfor %}
                                     </table>
@@ -92,13 +92,13 @@
                         {% endif %}
                     </td>
                     <td class="align-center">
-                        {% if item.contenu.all %}
+                        {% if item.content %}
                             <div dojoType="dijit.form.DropDownButton" class="bouton_discret">
                                 <span>{{ item.deja_sortie|boolicon }}</span>
                                 <div dojoType="dijit.TooltipDialog" title="Liste complète" style="display:none;">
                                     <table>
                                         <tr><th colspan="999">Contenu</th></tr>
-                                        {% for dev in item.contenu.all %}
+                                        {% for dev in item.content %}
                                             <tr><td>{{ dev.groupe }}</td><td title="{{ dev.description }}">{{ dev }}</td></tr>
                                         {% endfor %}
                                     </table>
