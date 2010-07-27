@@ -1,5 +1,6 @@
 r350
     ALTER TABLE developpements_client ADD "client_id" integer REFERENCES "common_client" ("id") DEFERRABLE INITIALLY DEFERRED;
+    ALTER TABLE developpements_client ALTER nom DROP NOT NULL;
 r348
     ALTER TABLE developpements_version ADD "revision" integer NOT NULL DEFAULT 0;
     ALTER TABLE developpements_developpement ADD "poids_total" double precision NOT NULL DEFAULT 0;
