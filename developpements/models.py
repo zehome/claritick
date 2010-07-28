@@ -155,7 +155,7 @@ class Developpement(models.Model):
     client_demandeur = models.ManyToManyField(Client, null = True, blank = True)
     done = models.BooleanField()
     couleur = models.TextField(null = True, blank = True)
-    poids_total = models.FloatField(default=0)
+    poids_total = models.FloatField(default=0, editable=False)
 
     @property
     def calcul_poids(self):

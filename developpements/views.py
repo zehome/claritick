@@ -9,6 +9,7 @@ from django.utils.datastructures import SortedDict
 from django.utils import simplejson as json
 
 from developpements.models import Developpement, Version, Client
+from developpements.forms import DeveloppementForm
 
 
 @permission_required('developpements.can_access_suividev')
@@ -112,3 +113,21 @@ def done(request):
     dev.done = True
     dev.save()
     return HttpResponse(json.dumps({'dev_pk' : dev_pk}))
+
+@permission_required("developpements.change_developpement")
+def modify(request):
+    dev_pk = request.GET.get("dev_pk", request.POST.get("dev_pk", None))
+    dev = Developpement.objects.get(pk=dev_pk)
+
+    if request.method == "POST":
+        form = DeveloppementForm(request.POST, instance=dev)
+        if form.is_valid():
+            form.save()
+        # TODO renvoyer les errreurs en json
+        return HttpResponse()
+
+    form = DeveloppementForm(instance=dev, auto_id=None)
+
+    return render_to_response("developpements/modify.html",
+            {"form": form },
+            context_instance = RequestContext(request))

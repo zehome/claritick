@@ -6,18 +6,29 @@
     <script type="text/javascript">
         dojo.require("dijit.Menu");
         dojo.require("dijit.ColorPalette");
+        dojo.require("dijit.form.Select");
+        dojo.require("dijit.form.CheckBox");
+        dojo.require("dijit.form.MultiSelect");
         dojo.addOnLoad(function() {
             dojo.query("td.modifiable").forEach(function(ligne)
                 {
+                var itempk = dojo.attr(ligne, "itempk");
                 var contextMenu = new dijit.Menu({
                     targetNodeIds: [ligne]
                     });
                 contextMenu.addChild(new dijit.MenuItem({
                     label: "Modifier",
                     onClick: function(event)
-                        {
-                        window.location = dojo.attr(ligne, 'url');
-                        }
+                    {
+                    dojo.xhrGet({url : "{% url developpements.views.modify %}",
+                        content: { dev_pk : itempk, },
+                        load: function (ret) {
+                            dojo.place(ret, "table_dev", "after");
+                            dojo.parser.parse();
+                            dijit.byId("dialog_modify_"+itempk).show();
+                        },
+                        });
+                    }
                     }));
                 if (dojo.attr(ligne, 'itempk'))
                     {
@@ -30,7 +41,7 @@
                                 url : "{% url developpements.views.done %}",
                                 handleAs : "json",
                                 content : {
-                                    dev_pk : dojo.attr(ligne, 'itempk'),
+                                    dev_pk : itempk,
                                     },
                                 load: function (response)
                                     {
@@ -57,7 +68,7 @@
                                 url : "{% url developpements.views.change_color %}",
                                 handleAs : "json",
                                 content : {
-                                    dev_pk : dojo.attr(ligne, 'itempk'),
+                                    dev_pk : itempk,
                                     },
                                 load: function (response)
                                     {
@@ -89,7 +100,7 @@
                                     url : "{% url developpements.views.change_color %}",
                                     handleAs : "json",
                                     content : {
-                                        dev_pk : dojo.attr(ligne, 'itempk'),
+                                        dev_pk : itempk,
                                         couleur : "{{ couleur }}"
                                         },
                                     load: function (response)
@@ -121,18 +132,26 @@
         var global_connect = null;
         dialog = dijit.byId("dialog_"+pk);
         dialog.show();
-        console.log("show");
         global_connect = dojo.connect(dojo.global, "onclick", function () {
                 dojo.disconnect(global_connect);
                 dialog.hide();
-                console.log("hide");
+                });
+    }
+
+    function form_submit(form, pk) {
+        dojo.xhrPost({ url: "{% url developpements.views.modify %}",
+                form: form,
+                content: { dev_pk: pk, },
+                load: function (data) {
+                dojo.global.location.reload();
+                }
                 });
     }
     </script>
 {% endblock %}
 
 {% block content %}
-    <table>
+    <table id="table_dev">
         <thead>
             <tr style="background-color: #C0C0C0;">
                 <th>&nbsp;</th>
