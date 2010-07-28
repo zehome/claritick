@@ -167,6 +167,7 @@ class Developpement(models.Model):
         return poids
 
     def save(self, *a, **kw):
+        super(Developpement, self).save(*a, **kw)
         self.poids_total = self.calcul_poids
         return super(Developpement, self).save(*a, **kw)
 
