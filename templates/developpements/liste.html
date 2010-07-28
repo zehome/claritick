@@ -117,7 +117,17 @@
                 contextMenu.startup();
                 });
             });
-        
+    function show_hide(pk) {
+        var global_connect = null;
+        dialog = dijit.byId("dialog_"+pk);
+        dialog.show();
+        console.log("show");
+        global_connect = dojo.connect(dojo.global, "onclick", function () {
+                dojo.disconnect(global_connect);
+                dialog.hide();
+                console.log("hide");
+                });
+    }
     </script>
 {% endblock %}
 
@@ -153,11 +163,12 @@
                     <td class="{% if perms.developpements.change_developpement %}modifiable{% endif %}{% if item.done %} done{% endif %}" url="{% url admin:developpements_developpement_change item.pk %}"
                         title="{{ item.description }}"
                         itempk="{{ item.pk }}"
-                        id="nom_{{ item.pk }}"
+                        id="nom_{{ item.pk }}" ondblclick="show_hide('{{ item.pk }}');"
                         {% if item.couleur %}style="background-color: #{{ item.couleur }};"{% endif %}>
                         {% if item.done %}{{ item.done|boolicon }}{% endif %}
                         {% if item.bug %}<img src="{{ MEDIA_URL }}icones/bug.png"/>&nbsp;{% endif %}
                         {{ item.nom }}
+                        <div dojoType="dijit.Dialog" title="{{ item.nom }}" id="dialog_{{ item.pk }}">{{ item.description|urlize }}</div>
                     </td>
                     <td class="align-right">{{ item.temps_prevu|default_if_none:"&nbsp;" }}</td>
                     <td>{{ item.version_requise|default_if_none:"&nbsp;" }}</td>
