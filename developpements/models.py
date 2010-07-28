@@ -34,6 +34,7 @@ class Client(models.Model):
 
         ret = super(Client, self).save(*a, **kw)
 
+        # Il faut recalculer le poids des developpements associés
         for d in self.developpement_set.all():
             d.save()
         return ret
@@ -74,6 +75,7 @@ class GroupeDev(models.Model):
 
     def save(self, *a, **kw):
         ret = super(GroupeDev, self).save(*a, **kw)
+        # Il faut recalculer le poids des developpements associés
         for d in self.developpement_set.all():
             d.save()
         return ret
@@ -167,7 +169,9 @@ class Developpement(models.Model):
         return poids
 
     def save(self, *a, **kw):
-        super(Developpement, self).save(*a, **kw)
+        # On a besoin de la pk pour calcul_poids
+        if not self.pk:
+            super(Developpement, self).save(*a, **kw)
         self.poids_total = self.calcul_poids
         return super(Developpement, self).save(*a, **kw)
 
