@@ -35,7 +35,6 @@ class Client(models.Model):
         ret = super(Client, self).save(*a, **kw)
 
         for d in self.developpement_set.all():
-            d.poids_total = d.calcul_poids
             d.save()
         return ret
 
@@ -74,10 +73,10 @@ class GroupeDev(models.Model):
     version_requise = models.ForeignKey(Version, null = True, blank = True)
 
     def save(self, *a, **kw):
+        ret = super(GroupeDev, self).save(*a, **kw)
         for d in self.developpement_set.all():
-            d.poids_total = d.calcul_poids
             d.save()
-        return super(GroupeDev, self).save(*a, **kw)
+        return ret
 
     def __unicode__(self):
         return self.nom
