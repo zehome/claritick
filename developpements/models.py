@@ -5,6 +5,7 @@ import datetime
 from django.db import models
 from django.core.exceptions import ValidationError
 
+from ticket.models import Ticket
 from common.models import Client as ClaritickClient
 
 FORCE_DEV = 55 # heures par semaine
@@ -155,6 +156,7 @@ class Developpement(models.Model):
     done = models.BooleanField()
     couleur = models.TextField(null = True, blank = True)
     poids_total = models.FloatField(default=0, editable=False)
+    ticket = models.ForeignKey(Ticket, null=True, blank=True)
 
     @property
     def calcul_poids(self):

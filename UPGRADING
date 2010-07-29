@@ -1,3 +1,5 @@
+r375
+    ALTER TABLE developpements_developpement ADD "ticket_id" integer REFERENCES "ticket_ticket" ("id") DEFERRABLE INITIALLY DEFERRED
 r350
     ALTER TABLE developpements_client ADD "client_id" integer REFERENCES "common_client" ("id") DEFERRABLE INITIALLY DEFERRED;
     ALTER TABLE developpements_client ALTER nom DROP NOT NULL;
