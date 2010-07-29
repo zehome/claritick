@@ -116,18 +116,28 @@ def done(request):
 
 @permission_required("developpements.change_developpement")
 def modify(request):
-    dev_pk = request.GET.get("dev_pk", request.POST.get("dev_pk", None))
-    dev = Developpement.objects.get(pk=dev_pk)
+    """ modification dev en ajax, dev_pk = 0 -> nouveau dev """
+    dev_pk = int(request.GET.get("dev_pk", request.POST.get("dev_pk", 0)))
+
+    import pdb
+    pdb.set_trace();
+
+    ret = {"itempk": dev_pk}
+
+    if not dev_pk:
+        dev = None
+    else:
+        dev = Developpement.objects.get(pk=dev_pk)
 
     if request.method == "POST":
-        form = DeveloppementForm(request.POST, instance=dev)
+        form = DeveloppementForm(request.POST, instance=dev, auto_id=None)
         if form.is_valid():
             form.save()
-        # TODO renvoyer les errreurs en json
-        return HttpResponse()
+        else:
+            ret["error"] = u"Il y a des érreurs dans le formulaire"
+    else:
+        form = DeveloppementForm(instance=dev, auto_id=None)
 
-    form = DeveloppementForm(instance=dev, auto_id=None)
+    ret["form"] = u"%s" % (form)
 
-    return render_to_response("developpements/modify.html",
-            {"form": form },
-            context_instance = RequestContext(request))
+    return HttpResponse(json.dumps(ret))

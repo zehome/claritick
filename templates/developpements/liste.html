@@ -22,10 +22,17 @@
                     {
                     dojo.xhrGet({url : "{% url developpements.views.modify %}",
                         content: { dev_pk : itempk, },
+                        handleAs : "json",
                         load: function (ret) {
-                            dojo.place(ret, "table_dev", "after");
-                            dojo.parser.parse();
-                            dijit.byId("dialog_modify_"+itempk).show();
+                            if (ret.error) {
+                                alert(ret.error);
+                            }
+                            else {
+                                dojo.place(ret.form, "target_table", "only");
+                                dojo.attr("target_form", "itempk", ret.itempk);
+                                dojo.parser.parse();
+                                dijit.byId("dialog_edit").show();
+                            }
                         },
                         });
                     }
@@ -138,19 +145,34 @@
                 });
     }
 
-    function form_submit(form, pk) {
+    function form_submit(form) {
         dojo.xhrPost({ url: "{% url developpements.views.modify %}",
                 form: form,
-                content: { dev_pk: pk, },
-                load: function (data) {
-                dojo.global.location.reload();
+                handleAs: "json",
+                content: { dev_pk: dojo.attr("target_form", "itempk"), },
+                load: function (ret) {
+                    if (ret.error) {
+                        dojo.place(ret.form, "target_table", "only");
+                        dojo.parser.parse();
+                    }
+                    else {
+                        dojo.global.location.reload();
+                    }
                 }
                 });
+        return false;
     }
     </script>
 {% endblock %}
 
 {% block content %}
+    <div dojoType="dijit.Dialog" id="dialog_edit">
+        <form onsubmit="return form_submit(this);" id="target_form">
+            <table id="target_table"></table>
+        <div dojoType="dijit.form.Button" iconClass="dijitEditorIcon dijitEditorIconSave" type="submit">Valider</div>
+        </form>
+    </div>
+
     <table id="table_dev">
         <thead>
             <tr style="background-color: #C0C0C0;">
