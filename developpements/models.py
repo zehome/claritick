@@ -108,9 +108,8 @@ class DeveloppementManager(models.Manager):
             if not hasattr(d, "date_sortie"):
                 d.date_sortie = None
 
-            if d.done or d.temps_prevu:
-                if d.temps_prevu:
-                    heures_dev += d.temps_prevu
+            if d.temps_prevu:
+                heures_dev += d.temps_prevu
                 semaine = semaine_en_cours + (heures_dev / FORCE_DEV)
                 d.date_sortie = week_start_date(now.year, int(semaine))
 

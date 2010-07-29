@@ -192,12 +192,16 @@
                     <td class="align-right">{{ item.temps_prevu|default_if_none:"&nbsp;" }}</td>
                     <td>{{ item.version_requise|default_if_none:"&nbsp;" }}</td>
                     <td class="align-center">{{ item.engagement|date:"d/m/Y" }}</td>
-                    <td class="align-center">
+                    <td class="align-center"
                         {% if item.deja_dispo %}
-                            {{ item.deja_dispo }}
+                        title="{{ item.deja_dispo }}">
+                        {{ item.deja_dispo }}
+                        {% else %}{% if item.done %}>
+                        Proch. Version
                         {% else %}
-                            {{ item.date_sortie|date:"d/m/Y" }}
-                        {% endif %}
+                        title="{{ item.date_sortie|date:"d/m/Y" }}">
+                        {{ item.date_sortie|timeuntil }}
+                        {% endif %}{% endif %}
                     </td>
                     <td class="align-center">
                         {% if item.alerte %}
