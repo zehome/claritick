@@ -20,7 +20,7 @@ def home(request):
 def liste(request):
     devs, couleurs = Developpement.objects.populate()
     clients = Developpement.client_demandeur.\
-            through.objects.select_related("client").all()
+            through.objects.select_related("client", "client__client").all()
     versions = Version.contenu.through.\
             objects.select_related("version").all()
 
