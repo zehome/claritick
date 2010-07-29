@@ -4,11 +4,6 @@
 
 {% block head_addon %}
     <script type="text/javascript">
-        dojo.require("dijit.Menu");
-        dojo.require("dijit.ColorPalette");
-        dojo.require("dijit.form.Select");
-        dojo.require("dijit.form.CheckBox");
-        dojo.require("dijit.form.MultiSelect");
         dojo.addOnLoad(function() {
             dojo.query("td.modifiable").forEach(function(ligne)
                 {
@@ -18,24 +13,7 @@
                     });
                 contextMenu.addChild(new dijit.MenuItem({
                     label: "Modifier",
-                    onClick: function(event)
-                    {
-                    dojo.xhrGet({url : "{% url developpements.views.modify %}",
-                        content: { dev_pk : itempk, },
-                        handleAs : "json",
-                        load: function (ret) {
-                            if (ret.error) {
-                                alert(ret.error);
-                            }
-                            else {
-                                dojo.place(ret.form, "target_table", "only");
-                                dojo.attr("target_form", "itempk", ret.itempk);
-                                dojo.parser.parse();
-                                dijit.byId("dialog_edit").show();
-                            }
-                        },
-                        });
-                    }
+                    onClick: function(event) { form_request(itempk); },
                     }));
                 if (dojo.attr(ligne, 'itempk'))
                     {
@@ -144,35 +122,10 @@
                 dialog.hide();
                 });
     }
-
-    function form_submit(form) {
-        dojo.xhrPost({ url: "{% url developpements.views.modify %}",
-                form: form,
-                handleAs: "json",
-                content: { dev_pk: dojo.attr("target_form", "itempk"), },
-                load: function (ret) {
-                    if (ret.error) {
-                        dojo.place(ret.form, "target_table", "only");
-                        dojo.parser.parse();
-                    }
-                    else {
-                        dojo.global.location.reload();
-                    }
-                }
-                });
-        return false;
-    }
     </script>
 {% endblock %}
 
 {% block content %}
-    <div dojoType="dijit.Dialog" id="dialog_edit">
-        <form onsubmit="return form_submit(this);" id="target_form">
-            <table id="target_table"></table>
-        <div dojoType="dijit.form.Button" iconClass="dijitEditorIcon dijitEditorIconSave" type="submit">Valider</div>
-        </form>
-    </div>
-
     <table id="table_dev">
         <thead>
             <tr style="background-color: #C0C0C0;">

@@ -119,9 +119,6 @@ def modify(request):
     """ modification dev en ajax, dev_pk = 0 -> nouveau dev """
     dev_pk = int(request.GET.get("dev_pk", request.POST.get("dev_pk", 0)))
 
-    import pdb
-    pdb.set_trace();
-
     ret = {"itempk": dev_pk}
 
     if not dev_pk:
