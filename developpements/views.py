@@ -17,8 +17,8 @@ def home(request):
     return render_to_response("developpements/index.html", context_instance = RequestContext(request))
 
 @permission_required('developpements.can_view_liste')
-def liste(request):
-    devs, couleurs = Developpement.objects.populate()
+def liste(request, project_id):
+    devs, couleurs = Developpement.objects.populate(project_id=project_id)
     clients = Developpement.client_demandeur.\
             through.objects.select_related("client", "client__client").all()
     versions = Version.contenu.through.\
@@ -45,11 +45,11 @@ def liste(request):
     return render_to_response("developpements/liste.html", {'developpements' : developpements, 'couleurs': couleurs}, context_instance = RequestContext(request))
 
 @permission_required('developpements.can_view_versions')
-def versions(request):
+def versions(request, project_id):
     vers = Version.objects.order_by('majeur','mineur','revision')
     devs = Version.contenu.through.objects.select_related("developpement",
             "developpement__groupe", "developpement__version_requise").all()
-    tous_devs, _ = Developpement.objects.populate()
+    tous_devs, _ = Developpement.objects.populate(project_id=project_id)
 
     versions = SortedDict()
     for v in vers:

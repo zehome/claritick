@@ -31,16 +31,23 @@
             Consultation
         </span>
         <div dojoType="dijit.Menu" id="fileMenu">
-            {% if perms.developpements.can_view_liste %}
-                <div dojoType="dijit.MenuItem" onClick="window.location = '{% url developpements.views.liste %}';">
-                    Liste des développements
+            {% for project in developpements_projects %}
+            <div dojoType="dijit.PopupMenuItem">
+                <span>{{ project.label }}</span>
+                <div dojoType="dijit.Menu">
+                    {% if perms.developpements.can_view_liste %}
+                        <div dojoType="dijit.MenuItem" onClick="window.location = '{% url developpements.views.liste project.id %}';">
+                            Liste des développements
+                        </div>
+                    {% endif %}
+                    {% if perms.developpements.can_view_versions %}
+                        <div dojoType="dijit.MenuItem" onClick="window.location = '{% url developpements.views.versions project.id %}';">
+                            Versions
+                        </div>
+                    {% endif %}
                 </div>
-            {% endif %}
-            {% if perms.developpements.can_view_versions %}
-                <div dojoType="dijit.MenuItem" onClick="window.location = '{% url developpements.views.versions %}';">
-                    Versions
-                </div>
-            {% endif %}
+            {% endfor %}
+            </div>
         </div>
     </div>
     <div dojoType="dijit.PopupMenuBarItem">

@@ -19,6 +19,13 @@ def week_start_date(year, week):
     delta = datetime.timedelta(days = -delta_days, weeks = delta_weeks)
     return (d + delta)
 
+
+class Project(models.Model):
+    label = models.TextField()
+
+    def __unicode__(self):
+        return u"%s" % (self.label,)
+
 class ClientManager(models.Manager):
     def get_query_set(self):
         return super(ClientManager, self).get_query_set().\
@@ -67,12 +74,18 @@ class Version(models.Model):
             ret = "%s.%i" % (ret, self.revision,)
         return ret
 
+class GroupeDevManager(models.Model):
+    def get_query_set(self):
+        return super(GroupeDevManager, self).\
+                get_query_set().select_related("project")
+
 class GroupeDev(models.Model):
     nom = models.TextField()
     description = models.TextField(null = True, blank = True)
     lien = models.TextField(null = True, blank = True)
     poids = models.IntegerField(default = 1)
     version_requise = models.ForeignKey(Version, null = True, blank = True)
+    project = models.ForeignKey(Project)
 
     def save(self, *a, **kw):
         ret = super(GroupeDev, self).save(*a, **kw)
@@ -91,10 +104,13 @@ class DeveloppementManager(models.Manager):
                 get_query_set(*a, **kw).\
                 select_related("groupe", "version_requise")
 
-    def populate(self):
+    def populate(self, project_id=None):
 
         ret = []
-        devs = super(DeveloppementManager, self).all()
+        if project_id is not None:
+            devs = self.filter(groupe__project=project_id)
+        else:
+            devs = self.all()
 
         now = datetime.datetime.now()
         semaine_en_cours = now.isocalendar()[1]+1

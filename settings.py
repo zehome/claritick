@@ -97,6 +97,7 @@ TEMPLATE_CONTEXT_PROCESSORS = ("django.core.context_processors.auth",
     'ticket.context_processors.ticket_views',
     'chuser.context_processors.chuser',
     'lock.context_processors.lock_settings',
+    'developpements.context_processors.projects',
 )
 
 ROOT_URLCONF = 'claritick.urls'
