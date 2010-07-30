@@ -30,7 +30,7 @@ def ajax_lock(request, object_pk):
 
     obj = content_type.get_object_for_this_type(pk=object_pk)
     # Claritick specifics
-    if not obj.client in request.user.clients:
+    if obj.client and (not obj.client in request.user.clients):
         raise PermissionDenied
 
     if lock:
