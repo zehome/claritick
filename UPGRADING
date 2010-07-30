@@ -1,3 +1,5 @@
+r371
+    ALTER TABLE developpements_version ADD "project_id" integer NOT NULL REFERENCES "developpements_project" ("id") DEFERRABLE INITIALLY DEFERRED DEFAULT 1;
 r368
     syncdb
     INSERT INTO developpements_project (label) VALUES ('MCA');

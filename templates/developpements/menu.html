@@ -80,6 +80,24 @@
 </div>
 
 <script type="text/javascript">
+    function get_project_content(field) {
+        var groupe = dijit.byId("id_modify_groupe");
+        var version = dijit.byId("id_modify_version_requise");
+        dojo.xhrGet({url: "{% url developpements.views.populate_field %}",
+                handleAs: "json",
+                content: { "project_pk": field.value, },
+                load: function (ret) {
+                    if (ret.error) {
+                        alert(ret.error);
+                    }
+                    else {
+                        dojo.forEach(ret.groupe,
+                            function (c) { groupe.addOption(c); });
+                        dojo.forEach(ret.version,
+                            function (c) { version.addOption(c); });
+                    }
+                    }});
+    }
     function form_request(pk) {
         dojo.xhrGet({url: "{% url developpements.views.modify %}",
                 handleAs: "json",

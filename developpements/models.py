@@ -62,6 +62,7 @@ class Version(models.Model):
     revision = models.IntegerField()
     date_sortie = models.DateField(null = True, blank = True)
     contenu = models.ManyToManyField('Developpement')
+    project = models.ForeignKey(Project)
 
     def __cmp__(self, other):
         count0 = int("%i%i%i", (self.majeur, self.mineur, self.revision,))

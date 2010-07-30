@@ -7,4 +7,5 @@ urlpatterns = patterns('developpements.views',
     (r'^change_color/$', 'change_color'),
     (r'^done/$', 'done'),
     (r'^modify/$', 'modify'),
+    (r'^populate_field/$', 'populate_field'),
 )

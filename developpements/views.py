@@ -8,7 +8,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.utils.datastructures import SortedDict
 from django.utils import simplejson as json
 
-from developpements.models import Developpement, Version, Client
+from developpements.models import Developpement, Version, Client, GroupeDev
 from developpements.forms import DeveloppementForm
 
 
@@ -127,14 +127,30 @@ def modify(request):
         dev = Developpement.objects.get(pk=dev_pk)
 
     if request.method == "POST":
-        form = DeveloppementForm(request.POST, instance=dev, auto_id=None)
+        form = DeveloppementForm(request.POST, instance=dev, auto_id="id_modify_%s")
         if form.is_valid():
             form.save()
         else:
             ret["error"] = u"Il y a des érreurs dans le formulaire"
     else:
-        form = DeveloppementForm(instance=dev, auto_id=None)
+        form = DeveloppementForm(instance=dev, auto_id="id_modify_%s")
 
     ret["form"] = u"%s" % (form)
+
+    return HttpResponse(json.dumps(ret))
+
+@permission_required("developpements.change_developpement")
+def populate_field(request):
+    """ Renvoie les groupe & version en json pour un projet donné """
+    project_pk = int(request.GET.get("project_pk", None))
+    ret = {}
+
+    if not project_pk:
+        ret["error"] = u"Pas de projet spécifié"
+    else:
+        groupe = GroupeDev.objects.filter(project=project_pk)
+        version = Version.objects.filter(project=project_pk)
+        for key,val in zip(("groupe", "version"), [groupe, version]):
+            ret[key] = [{"value": x.pk, "label": unicode(x)} for x in val]
 
     return HttpResponse(json.dumps(ret))
