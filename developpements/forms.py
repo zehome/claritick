@@ -25,7 +25,7 @@ class DeveloppementForm(df.ModelForm):
                 clients_pk.extend([x.pk for x in ClaritickClient.objects.\
                         get_childs("parent", c.client.pk)])
 
-            tickets = Ticket.minimal.filter(client__in=clients_pk)
+                tickets = Ticket.minimal.filter(client__in=clients_pk)
 
             self.base_fields["groupe"].queryset = GroupeDev.objects.\
                     filter(project=instance.groupe.project)
@@ -44,6 +44,7 @@ class DeveloppementForm(df.ModelForm):
 
             self.base_fields.insert(0, "projet", projet_field)
 
-        self.base_fields["ticket"].queryset = tickets
+        self.base_fields["ticket"].choices = [(x.pk, x) for x in tickets[:5]]
+        self.base_fields["ticket"].choices.insert(0, ("", ""))
 
         return super(DeveloppementForm, self).__init__(*a, **kw)
