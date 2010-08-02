@@ -13,7 +13,22 @@
 
 {% block content %}
 {% if not user.is_authenticated %}
-<p>Merci de vous <a href="/accounts/login/">IDENTIFIER</a></p>
+<p style="margin-bottom: 0;">Merci de vous <a href="/accounts/login/">IDENTIFIER</a></p>
+<h1 style="text-align: left; color: black; padding: 0; margin: 0;">Rechercher sur Google:</h1>
+<!-- GOogle search -->
+<div id="cse" style="text-align: left; padding: 0 !important;">Chargement...</div>
+<script src="https://www.google.com/jsapi" type="text/javascript"></script>
+<script type="text/javascript">
+  google.load('search', '1', {language : 'fr'});
+  google.setOnLoadCallback(function() {
+    var customSearchControl = new google.search.CustomSearchControl('016334670055041449914:jgrecjhkx1o');
+    customSearchControl.setResultSetSize(google.search.Search.LARGE_RESULTSET);
+    customSearchControl.draw('cse');
+  }, true);
+</script>
+<link rel="stylesheet" href="https://www.google.com/cse/style/look/default.css" type="text/css" /> 
+<!-- End GOogle search -->
+
 {% else %}
 <div id="index_content">
     {% if ticket_alarms %}

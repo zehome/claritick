@@ -828,4 +828,9 @@ ol#pagination-digg {
     display: none;
 }
 
+/* Google */
+.gsc-control-cse {
+    padding: 0 !important;
+}
+
 /* EOF */
