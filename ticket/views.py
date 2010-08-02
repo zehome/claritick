@@ -411,9 +411,10 @@ def modify(request, ticket_id):
             if file:
                 ticket_file = TicketFile(ticket=ticket, filename=file.name, content_type=file.content_type)
                 if file.multiple_chunks():
-                    data = None
+                    dataList = []
                     for chunk in file.chunks():
-                        data += chunk
+                        dataList.append(chunk)
+                    data = "".join(data)
                 else:
                     data = file.read()
                 ticket_file.data = data
