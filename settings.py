@@ -114,7 +114,6 @@ INSTALLED_APPS = (
     'reporting',               # Override admin templates
     'django.contrib.admin',    # Site admin
     'django.contrib.comments', # Commentaires
-    'djangogcal',              # Google calendar OUTPUT integration
     'dojango',                 # Dojo/Django Dojango
     'common',
     'ticket',
