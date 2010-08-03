@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from common.models import Client, ClaritickUser, UserProfile
+from common.exceptions import NoProfileException
 
 class PopulateUserMiddleware(object):
     def process_request(self, request):
