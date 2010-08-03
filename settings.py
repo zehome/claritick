@@ -128,6 +128,7 @@ INSTALLED_APPS = (
     'backlinks',               # Return to page saved in sessions
     'chuser',                  # Switch user
     'lock',                    # Lock objects by users
+    'packaging',               # Clarideploy tools
 )
 
 COMMENTS_APP = 'ticket_comments'

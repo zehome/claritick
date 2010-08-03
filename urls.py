@@ -11,13 +11,14 @@ import django.contrib.auth.views
 from django.template import RequestContext
 
 # Custom models
-import claritick.ticket.urls
-import claritick.common.urls
-import claritick.clariadmin.urls
-import claritick.developpements.urls
-import claritick.ws.urls
-import claritick.chuser.urls
-import claritick.lock.urls
+import ticket.urls
+import common.urls
+import clariadmin.urls
+import developpements.urls
+import ws.urls
+import chuser.urls
+import lock.urls
+import packaging.urls
 
 # Init code
 admin.autodiscover()
@@ -62,14 +63,17 @@ urlpatterns = patterns('',
     #(r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT}),
     (r'^comments/', include('django.contrib.comments.urls')),
     (r'^admin/', include(admin.site.urls)),
-    (r'^ticket/', include(claritick.ticket.urls)),
-    (r'^common/', include(claritick.common.urls)),
-    (r'^chuser/', include(claritick.chuser.urls)),
-    (r'^lock/', include(claritick.lock.urls)),
-    (r'^clariadmin/', include(claritick.clariadmin.urls)),
-    (r'^developpements/', include(claritick.developpements.urls)),
+    (r'^ticket/', include(ticket.urls)),
+    (r'^common/', include(common.urls)),
+    (r'^chuser/', include(chuser.urls)),
+    (r'^lock/', include(lock.urls)),
+    (r'^clariadmin/', include(clariadmin.urls)),
+    (r'^developpements/', include(developpements.urls)),
     (r'^agenda/$', agenda),
     (r'^dojango/', include('dojango.urls')), # Dojango requires
+    
+    ## Packaging
+    (r'^packaging/', include(packaging.urls)),
     
     ## Auth
     (r'^accounts/$', 'django.contrib.auth.views.login'),
@@ -82,5 +86,5 @@ urlpatterns = patterns('',
     (r'^error/', raise_trial_exception),
     
     ## Web services
-    (r'^ws/', include(claritick.ws.urls)),
+    (r'^ws/', include(ws.urls)),
 )
