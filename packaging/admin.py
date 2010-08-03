@@ -1,17 +1,12 @@
 # -*- coding: utf-8 -*-
 
 from django.contrib import admin
-from packaging.models import Platform, PackageKind, PackageList, Package
+from packaging.models import ClientPackageAuth, Platform, PackageKind, PackageTemplate, Package
 
-class PackageInline(admin.StackedInline):
-    model = Package
-
-class PackageListAdmin(admin.ModelAdmin):
-    inlines = [
-        PackageInline,
-    ]
-
+class PackageAdmin(admin.ModelAdmin):
+    pass
+    
 admin.site.register(Platform)
 admin.site.register(PackageKind)
-admin.site.register(PackageList, PackageListAdmin)
-admin.site.register(Package)
+admin.site.register(PackageTemplate)
+admin.site.register(Package, PackageAdmin)

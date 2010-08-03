@@ -301,7 +301,7 @@ form {
 #gauche {
     position: fixed;
     top: 0px;
-    left: 20px;
+    padding-left: 20px;
     width: 185px;
     height:100%;
     background-color:#98b3e9;
@@ -355,7 +355,8 @@ div#gauche h2 {
 
 div#gauche h2 img {
 	position: relative;
-/*	left: -10px; */
+	left: -15px;
+	z-index: 150;
 }
 
 
