@@ -455,7 +455,12 @@ def get_file(request, file_id):
         raise PermissionDenied
 
     response = http.HttpResponse(str(file.data), mimetype=file.content_type)
-    response["Content-Disposition"] = "attachment; filename=%s" % file.filename
+    try:
+        response["Content-Disposition"] = "attachment; filename=%s" % file.filename
+    except UnicodeEncodeError:
+        ext = file.filename.split(".")[-1]
+        response["Content-Disposition"] = "attachment; filename=fichier%s.%s" % (file_id, ext)
+        
     return response
 
 @permission_required("ticket.can_add_child")
