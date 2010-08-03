@@ -135,8 +135,11 @@
     <table id="menuPrincipal" summary="Menu">
       <tr>
         <td align="left" width="33%">
-            <a href="/"><img src="{{ MEDIA_URL }}images/accueil.png" alt="accueil" /></a>
+          <a href="/"><img src="{{ MEDIA_URL }}images/accueil.png" alt="accueil" /></a>
           {% if ticket_alarms_count %}{{ ticket_alarms_count }} alarmes actives!{% endif %}
+            {% if user.is_authenticated %}
+            <p><a class="bouton" href="/accounts/logout"><img src="{{ MEDIA_URL }}images/oxygen/disconnect.png" alt="disconnect" />Déconnexion</a><!--<br />(autologout: {{ request.autologout_enabled }})--></p>
+            {% endif %}
         </td>
         <td valign="middle" align="center" width="33%">
             <a href="/"><img src="{{ MEDIA_URL }}images/logo_pt.png" alt="logo" /></a>
@@ -150,9 +153,7 @@
             </form>
           {% else %}
             {% if user.is_authenticated %}
-            <p style="padding: 0; margin: 0;">Utilisateur: {{ user.username }}<br />
-            <a class="bouton" href="/accounts/logout"><img src="{{ MEDIA_URL }}images/oxygen/disconnect.png" alt="disconnect" />Déconnexion</a>
-            </p>
+            <p style="padding: 0; margin: 0;">Utilisateur: {{ user.username }}</p>
             {% endif %}
           {% endif %}
           Aller au ticket # <input type="text" id="id_num_ticket" size="5" /> <button dojoType="dijit.form.Button" id="id_go_ticket">Go</button>
