@@ -2,6 +2,7 @@
 
 from django.conf import settings
 from django.utils.http import urlquote
+from django.http import HttpResponseRedirect
 from django.contrib import auth
 from datetime import datetime, timedelta
 
