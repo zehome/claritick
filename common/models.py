@@ -282,6 +282,10 @@ class ClaritickUser(User):
         verbose_name = u"Utilisateur Claritick"
         verbose_name_plural = u"Utilisateurs Claritick"
         proxy = True
+        permissions = (
+            ("no_autologout", u"Pas de logout automatique"),
+        )
+
 
     @staticmethod
     def generate_random_password():
