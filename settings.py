@@ -3,7 +3,7 @@
 import os
 basepath = os.path.abspath(os.path.dirname(__file__))
 
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
@@ -82,8 +82,10 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'common.exceptionmiddleware.UserBasedExceptionMiddleware',
     'backlinks.middleware.BacklinksMiddleware',
+    'django.middleware.http.ConditionalGetMiddleware',
     'ticket.middleware.PopulateUserMiddleware',
     'django.middleware.gzip.GZipMiddleware',
+    'common.middleware.autologout.AutoLogout',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = ("django.core.context_processors.auth",
@@ -99,6 +101,7 @@ TEMPLATE_CONTEXT_PROCESSORS = ("django.core.context_processors.auth",
     'lock.context_processors.lock_settings',
     'developpements.context_processors.projects',
 )
+
 
 ROOT_URLCONF = 'claritick.urls'
 
@@ -144,8 +147,8 @@ TIME_FORMAT = "H\hi"
 # Dojango config
 #DOJANGO_DOJO_PROFILE = "google"
 DOJANGO_DOJO_PROFILE = "local_release"
-DOJANGO_DOJO_VERSION = "1.4.0-dojango-optimized-with-dojo"
-#DOJANGO_DOJO_VERSION = "custom_build_141"
+DOJANGO_DOJO_VERSION = "custom_build_150"
+DOJANGO_DOJO_THEME = "claro"
 DOJO_BUILD_JAVA_EXEC = "/usr/bin/java"
 DOJANGO_BASE_MEDIA_ROOT = os.path.join(basepath, 'dojango', 'dojo-media')
 DOJANGO_BASE_MEDIA_URL = "/dojango/dojo-media"
@@ -164,27 +167,35 @@ TICKET_EMAIL_DELAY=120 # delay for 120s before sending email. (Permits grouping)
 TICKET_STATE_CLOSED = 4 # pk de l'etat fermé
 TICKET_STATE_NEW = 1 # pk de l'etat nouveau
 TICKET_STATE_ACTIVE = 2 # pk de l'état actif
+TICKET_PRIORITY_NORMAL = 2 # pk de la priorité normale
+
 SUMMARY_TICKETS=15 # Nombre de tickets affich�s sur la page d'accueil
 EMAIL_INTERNAL_COMMENTS = False # Ne transmet pas d'email lorsque l'on poste un commentaire interne
 COMMENT_MAX_LENGTH = 65535 * 4
 
 TICKET_PRIORITY_NORMAL = 2 # pk de la priorité normale
-POSTGRESQL_VERSION = 8.3
+POSTGRESQL_VERSION = 8.4
+
+# Autologout default in minutes
+AUTO_LOGOUT_DELAY = 10
+
 
 SVNDOC_CONFIG = {
-    'OPENED_BY' : 26,
-    'CATEGORY'  : 16,
-    'ASSIGNED_TO' : 9,
-    'VALIDATOR' : 26,
+    'OPENED_BY' : 75,
+    'CATEGORY'  : 48,
+    'ASSIGNED_TO' : 10,
+    'VALIDATOR' : 75,
     'STATE'     : 1,
     'PRIORITY'  : 2,
-    'CLIENT'    : 1,
+    'CLIENT'    : 52,
     'SVN_REPOSITORY_TO_CLARITICK_PROJECT' : {
         '/svn/MCA3' : 4,
         '/svn/MCA2' : 4,
+        '/svn/ghltest' : 4,
         '/svn/clarilab' : 2,
         }
     }
+
 try:
     from local_settings import *
 except ImportError:
