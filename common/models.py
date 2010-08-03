@@ -2,6 +2,8 @@
 
 import base64
 import random, string
+import settings
+
 try:
     import cPickle as pickle
 except ImportError:
@@ -157,38 +159,53 @@ class ClientManager(models.Manager):
         """
             Effectue un WITH RECURSIVE Postgres sur field à partir de l'objet object_pk.
         """
-        from django.db import connection
-        qn = connection.ops.quote_name
+        if settings.POSTGRESQL_VERSION >= 8.4:
+            from django.db import connection
+            qn = connection.ops.quote_name
 
-        # le nom de la table
-        db_table = self.model._meta.db_table
+            # le nom de la table
+            db_table = self.model._meta.db_table
 
-        # le nom de la pk
-        if self.model._meta.pk.db_column:
-            pk = self.model._meta.pk.db_column
-        else:
-            pk = self.model._meta.pk.column
+            # le nom de la pk
+            if self.model._meta.pk.db_column:
+                pk = self.model._meta.pk.db_column
+            else:
+                pk = self.model._meta.pk.column
 
-        # le nom du champs faisant la relation parent <-> enfant
-        model_field = getattr(self.model, field).field
-        if model_field.db_column:
-            db_field = model_field.db_column
-        else:
-            db_field = model_field.column
+            # le nom du champs faisant la relation parent <-> enfant
+            model_field = getattr(self.model, field).field
+            if model_field.db_column:
+                db_field = model_field.db_column
+            else:
+                db_field = model_field.column
         
-        query = """
-            WITH RECURSIVE deep(n) AS (
-                SELECT %(db_table)s.%(pk)s FROM %(db_table)s WHERE %(db_table)s.%(pk)s = %(value)i
-                UNION
-                SELECT %(db_table)s.%(pk)s FROM %(db_table)s JOIN deep ON %(db_table)s.%(relation_field)s = deep.n
-            ) SELECT * FROM deep
-        """ % {
-            "db_table": qn(db_table),
-            "pk": qn(pk),
-            "relation_field": qn(db_field),
-            "value": object_pk,
-        }
-        return self.extra(where=["%s.%s IN (%s)" % (qn(db_table), qn(pk), query)])
+            query = """
+                WITH RECURSIVE deep(n) AS (
+                    SELECT %(db_table)s.%(pk)s FROM %(db_table)s WHERE %(db_table)s.%(pk)s = %(value)i
+                    UNION
+                    SELECT %(db_table)s.%(pk)s FROM %(db_table)s JOIN deep ON %(db_table)s.%(relation_field)s = deep.n
+                ) SELECT * FROM deep
+            """ % {
+                "db_table": qn(db_table),
+                "pk": qn(pk),
+                "relation_field": qn(db_field),
+                "value": object_pk,
+            }
+            return self.extra(where=["%s.%s IN (%s)" % (qn(db_table), qn(pk), query)])
+        else:
+            ## SLOW METHOD
+            clients = list(self.select_related("parent", "id").all().exclude(id=object_pk))
+            childs = [ object_pk, ]
+            
+            def recurse_get_child(parent_pk):
+                for client in clients[:]: # for the remove
+                    if client.parent and client.parent.id == parent_pk:
+                        clients.remove(client)
+                        childs.append(client.id)
+                        recurse_get_child(client.id)
+
+            recurse_get_child(object_pk)
+            return self.filter(id__in=childs)
 
 # Models
 class Client(models.Model):
