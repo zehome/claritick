@@ -403,18 +403,10 @@ class Ticket(models.Model):
         if not new_ticket.id:
             return
         
-        from claritick import get_observer
         try:
             old_ticket = Ticket.objects.get(id=new_ticket.id)
         except Ticket.DoesNotExist:
             return
-        if old_ticket.assigned_to and old_ticket.assigned_to != new_ticket.assigned_to:
-            # Vérif ya t'il un google event ?
-            observer = get_observer(old_ticket.assigned_to)
-            if observer:
-                e = observer.get_event(observer.service, old_ticket)
-                if e:
-                    observer.delete(Ticket, old_ticket)
 
     def clean(self):
         if self.state_id == settings.TICKET_STATE_CLOSED and self.child.exclude(state=self.state).exists():
