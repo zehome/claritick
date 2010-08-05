@@ -197,6 +197,9 @@ SVNDOC_CONFIG = {
         }
     }
 
+# Where package files are stored
+PACKAGING_ROOT = os.path.join(basepath, 'packaging', 'filestorage')
+
 try:
     from local_settings import *
 except ImportError:

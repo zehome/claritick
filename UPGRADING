@@ -1,3 +1,4 @@
+    alter table packaging_package add column "file" varchar(100);
 r386
     syncdb (new permission auth.no_autologout)
 r380

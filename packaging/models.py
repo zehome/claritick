@@ -3,6 +3,7 @@
 from django.core.validators import RegexValidator
 from django.db import models
 from common.models import ClientField, Client
+from packaging.storage import packaging_storage
 
 packagename_validator = RegexValidator(r"^[-+_0-9a-z]{5,}$", message=u"Nom invalide.")
 
@@ -63,8 +64,17 @@ class Package(models.Model):
     revision = models.PositiveIntegerField(verbose_name=u"Release", blank=False, default=0)
     required = models.BooleanField(verbose_name=u"Requis", default=True)
     
+    file = models.FileField(upload_to=".", storage=packaging_storage, blank=True, null=True)
+    
     def __unicode__(self):
-        return u"%s pour %s %s.%s+%s%s" % (self.template.name, self.client, 
+        # LC: Do never use and or trick to return "False" value.
+        if not self.file:
+            fileStr = " (No file attached)"
+        else:
+            fileStr = ""
+        
+        return u"%s pour %s %s.%s+%s%s%s" % (self.template.name, self.client, 
             self.version_major, self.version_minor, self.revision, 
-            self.platform and u" plateforme %s" % (self.platform,) or u" toute plateforme")
+            self.platform and u" plateforme %s" % (self.platform,) or u" toute plateforme",
+            fileStr)
 
