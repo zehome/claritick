@@ -157,7 +157,7 @@ class Developpement(models.Model):
             ("can_view_liste", u"Voir roadmap"),
             ("can_access_suividev", u"Accès suividev"),
         )
-        ordering = ["-poids_total"]
+        ordering = ["done","-poids_total"]
 
     objects = DeveloppementManager()
 

@@ -1,28 +1,16 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr">
-    <head>
-        <meta http-equiv="Content-Type" Content="text/html; charset=UTF-8">
-        <script type="text/javascript" lang="javascript">
-            var ROOT_MCA3_URL = "{{ request.META.SCRIPT_NAME }}";
-            var MEDIA_URL     = "{{ MEDIA_URL }}";
-        </script>
-        {% include "developpements/include_dojango.html" %}
-        <link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}suividev.css"/>
-        <script type="text/javascript" lang="javascript">
-            dojo.require("dijit.MenuBar");
-            dojo.require("dijit.PopupMenuBarItem");
-            dojo.require("dijit.Menu");
-            dojo.require("dijit.MenuItem");
-            dojo.require("dijit.PopupMenuItem");
-        </script>
-        {% block head_addon %}{% endblock %}
-        <title>Gestion des développements</title>
-    </head>
-    <body class="tundra">
-        {% include "developpements/menu.html" %}
-        {% block content %}
-        {% endblock %}
-    </body>
-</html>
+{% extends "base.html" %}
+
+{% block extrajs %}
+    {{ block.super }}
+    <link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}suividev.css"/>
+    <script type="text/javascript" lang="javascript">
+        dojo.require("dijit.MenuBar");
+        dojo.require("dijit.PopupMenuBarItem");
+        dojo.require("dijit.Menu");
+        dojo.require("dijit.MenuItem");
+        dojo.require("dijit.PopupMenuItem");
+        dojo.require("dijit.InlineEditBox");
+    </script>
+{% endblock %}
+
+{% block content_title %}Suivi de développement{% endblock %}

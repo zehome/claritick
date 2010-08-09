@@ -11,6 +11,7 @@ from django.utils import simplejson as json
 from developpements.models import Developpement, Version, Client, GroupeDev
 from developpements.forms import DeveloppementForm
 
+import traceback
 
 @permission_required('developpements.can_access_suividev')
 def home(request):
@@ -102,6 +103,34 @@ def change_color(request):
     return HttpResponse(json.dumps({'dev_pk' : dev_pk}))
 
 @permission_required('developpements.change_developpement')
+def save_item_field(request):
+    try:
+        dev_pk = request.GET.get('dev_pk', None)
+        field_type = request.GET.get('field_type', '')
+        value_type = request.GET.get('value_type', 'integer')
+        newvalue = request.GET.get('newvalue', '')
+        if value_type == 'integer':
+            newvalue = int(newvalue)
+        elif value_type == 'float':
+            newvalue = float(newvalue)
+        try:
+            dev = Developpement.objects.get(pk = dev_pk)
+        except Developpement.DoesNotExist:
+            return HttpResponse(json.dumps({'dev_pk' : dev_pk, 'error' : 'does not exist'}))
+        if not (field_type and newvalue):
+            return HttpReponse(json.dumps({'dev_pk' : dev_pk, 'error' : 'No field or value'}))
+        if field_type not in ['temps_prevu','poids','poids_manuel','nom']:
+            return HttpResponse(json.dumps({'dev_pk' : dev_pk, 'error' : 'Unknown field type %s' % (field_type,)}))
+        if hasattr(dev, field_type):
+            setattr(dev, field_type, newvalue)
+            dev.save()
+        else:
+            return HttpResponse(json.dumps({'dev_pk' : dev_pk, 'error' : 'Dev does not have %s' % (field_type,)}))
+    except:
+        return HttpResponse(json.dumps({'dev_pk' : dev_pk, 'error' : traceback.format_exc()}))
+    return HttpResponse(json.dumps({'dev_pk' : dev_pk}))
+
+@permission_required('developpements.change_developpement')
 def done(request):
     dev_pk = request.GET.get('dev_pk', None)
     try:
@@ -109,8 +138,23 @@ def done(request):
     except Developpement.DoesNotExist:
         return HttpResponse(json.dumps({'dev_pk' : dev_pk, 'error' : 'does not exist'}))
     if dev.done:
-        return HttpResponse(json.dumps({'dev_pk' : dev_pk, 'error' : u'Déjà terminé'}))
-    dev.done = True
+        dev.done = False
+    else:
+        dev.done = True
+    dev.save()
+    return HttpResponse(json.dumps({'dev_pk' : dev_pk}))
+
+@permission_required('developpements.change_developpement')
+def bug(request):
+    dev_pk = request.GET.get('dev_pk', None)
+    try:
+        dev = Developpement.objects.get(pk = dev_pk)
+    except Developpement.DoesNotExist:
+        return HttpResponse(json.dumps({'dev_pk' : dev_pk, 'error' : 'does not exist'}))
+    if dev.bug:
+        dev.bug = False
+    else:
+        dev.bug = True
     dev.save()
     return HttpResponse(json.dumps({'dev_pk' : dev_pk}))
 
