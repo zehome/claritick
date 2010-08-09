@@ -65,9 +65,11 @@ class Version(models.Model):
     project = models.ForeignKey(Project)
 
     def __cmp__(self, other):
-        count0 = int("%i%i%i", (self.majeur, self.mineur, self.revision,))
-        count1 = int("%i%i%i", (other.majeur, other.mineur, other.revision,))
-        return count0 - count1
+        if self.majeur != other.majeur:
+            return cmp(self.majeur, other.majeur)
+        if self.mineur != other.mineur:
+            return cmp(self.mineur, other.mineur)
+        return cmp(self.revision, other.revision)
 
     def __unicode__(self):
         ret = "%i.%i" % (self.majeur, self.mineur,)
