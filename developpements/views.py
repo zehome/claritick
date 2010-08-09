@@ -32,14 +32,14 @@ def liste(request, project_id):
         developpements[d.pk] = d
 
     for c in clients:
-        developpements[c.developpement_id].clients.append(c.client)
+        developpements[c.developpement.pk].clients.append(c.client)
     for v in versions:
-        old = developpements[v.developpement_id].dispo_version
+        old = developpements[v.developpement.pk].dispo_version
         # overwrite ?
         if not old or old > v.version:
-            developpements[v.developpement_id].dispo_version = v.version
-            developpements[v.developpement_id].deja_dispo = "%s" % (v.version)
-            developpements[v.developpement_id].date_sortie = "%s" % (v.version.date_sortie)
+            developpements[v.developpement.pk].dispo_version = v.version
+            developpements[v.developpement.pk].deja_dispo = "%s" % (v.version)
+            developpements[v.developpement.pk].date_sortie = "%s" % (v.version.date_sortie)
     developpements = developpements.values()
 
     return render_to_response("developpements/liste.html", {'developpements' : developpements, 'couleurs': couleurs}, context_instance = RequestContext(request))

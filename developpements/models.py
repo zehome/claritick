@@ -61,7 +61,7 @@ class Version(models.Model):
     mineur = models.IntegerField()
     revision = models.IntegerField()
     date_sortie = models.DateField(null = True, blank = True)
-    contenu = models.ManyToManyField('Developpement')
+    contenu = models.ManyToManyField('Developpement', null = True, blank = True)
     project = models.ForeignKey(Project)
 
     def __cmp__(self, other):
