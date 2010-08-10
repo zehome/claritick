@@ -106,9 +106,9 @@
         <h2><img src="{{ MEDIA_URL }}images/icon-list.png" alt="/" />Tickets</h2>
         <ul class="menu">
             <li><a href="{% url ticket_list_all %}?reset=1">Tous</a></li>
-            <li><a href="{% url ticket_list_me %}">Les miens</a></li>
-            <li><a href="{% url ticket_list_unassigned %}">Non affectés</a></li>
-            <li><a href="{% url ticket_list_nonvalide %}">A valider</a></li>
+            <li><a href="{% url ticket_list_me %}?reset=1">Les miens</a></li>
+            <li><a href="{% url ticket_list_unassigned %}?reset=1">Non affectés</a></li>
+            <li><a href="{% url ticket_list_nonvalide %}?reset=1">A valider</a></li>
             {% if ticket_views %}
             {% for view in ticket_views %}
             <li><a href="{% url ticket_list_view view.pk %}">{{ view.name }}</a></li>
@@ -123,7 +123,9 @@
         {% if perms.developpements.can_access_suividev %}
         <h2><img src="{{ MEDIA_URL }}images/oxygen/suividev.png" alt="/" />SuiviDev</h2>
         <ul class="menu">
-            <li><a href="/developpements/">Developpements</a></li>
+            {% for project in developpements_projects %}
+                <li><a href="/developpements/liste/{{ project.pk }}/">{{ project.label }}</a></li>
+            {% endfor %}
         </ul>
         {% endif %}
         {% if perms.package.can_access %}
