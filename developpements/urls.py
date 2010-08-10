@@ -3,6 +3,7 @@ from django.conf.urls.defaults import *
 urlpatterns = patterns('developpements.views',
     (r'^$', 'home'),
     (r'^liste/(?P<project_id>\d+)/$', 'liste'),
+    (r'^shortlist/(?P<project_id>\d+)/$', 'shortlist'),
     (r'^versions/(?P<project_id>\d+)/$', 'versions'),
     (r'^change_color/$', 'change_color'),
     (r'^save_item_field/$', 'save_item_field'),

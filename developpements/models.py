@@ -4,6 +4,7 @@ import datetime
 
 from django.db import models
 from django.core.exceptions import ValidationError
+from django.contrib.auth.models import Group
 
 from ticket.models import Ticket
 from common.models import Client as ClaritickClient
@@ -22,6 +23,7 @@ def week_start_date(year, week):
 
 class Project(models.Model):
     label = models.TextField()
+    group = models.ForeignKey(Group)
 
     def __unicode__(self):
         return u"%s" % (self.label,)

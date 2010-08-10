@@ -17,13 +17,12 @@ import traceback
 def home(request):
     return render_to_response("developpements/index.html", context_instance = RequestContext(request))
 
-@permission_required('developpements.can_view_liste')
-def liste(request, project_id):
+def prepare_liste_dev(request, project_id, shortlist = False):
     devs, couleurs = Developpement.objects.populate(project_id=project_id)
     clients = Developpement.client_demandeur.\
-            through.objects.select_related("client", "client__client").all()
+            through.objects.select_related("client", "client__client").filter(developpement__groupe__project__pk = project_id)
     versions = Version.contenu.through.\
-            objects.select_related("version").all()
+            objects.select_related("version").filter(developpement__groupe__project__pk = project_id)
 
     # join devs clients and versions
     developpements = SortedDict()
@@ -41,15 +40,32 @@ def liste(request, project_id):
             developpements[v.developpement.pk].dispo_version = v.version
             developpements[v.developpement.pk].deja_dispo = "%s" % (v.version)
             developpements[v.developpement.pk].date_sortie = "%s" % (v.version.date_sortie)
-    developpements = developpements.values()
+    if shortlist:
+        filtered_devs = SortedDict()
+        for key, dev in developpements.items():
+            if not dev.done and dev.version_requise:
+                filtered_devs[key] = dev
+        developpements = filtered_devs.values()
+    else:
+        developpements = developpements.values()
+    versions_existantes = Version.objects.order_by('majeur','mineur','revision').values()
 
-    return render_to_response("developpements/liste.html", {'developpements' : developpements, 'couleurs': couleurs}, context_instance = RequestContext(request))
+    return render_to_response("developpements/liste.html", {'developpements' : developpements, 'couleurs': couleurs, 'versions_existantes' : versions_existantes, 'project_id' : project_id}, context_instance = RequestContext(request))
+    return developpements
+
+@permission_required('developpements.can_view_liste')
+def liste(request, project_id):
+    return prepare_liste_dev(request, project_id)
+
+@permission_required('developpements.can_view_liste')
+def shortlist(request, project_id):
+    return prepare_liste_dev(request, project_id, shortlist = True)
 
 @permission_required('developpements.can_view_versions')
 def versions(request, project_id):
-    vers = Version.objects.order_by('majeur','mineur','revision')
+    vers = Version.objects.filter(project__pk = project_id).order_by('majeur','mineur','revision')
     devs = Version.contenu.through.objects.select_related("developpement",
-            "developpement__groupe", "developpement__version_requise").all()
+            "developpement__groupe", "developpement__version_requise").filter(developpement__groupe__project__pk = project_id)
     tous_devs, _ = Developpement.objects.populate(project_id=project_id)
 
     versions = SortedDict()
@@ -84,7 +100,7 @@ def versions(request, project_id):
                             ver.contenu_sortie_retardee.extend([d for d in buffer if d not in ver.contenu_sortie_prevue and d not in dev_deja_sortis])
                             buffer = []
 
-    return render_to_response("developpements/versions.html", {'versions' : versions}, context_instance = RequestContext(request))
+    return render_to_response("developpements/versions.html", {'versions' : versions, 'project_id' : project_id}, context_instance = RequestContext(request))
 
 @permission_required('developpements.change_developpement')
 def change_color(request):
@@ -119,9 +135,21 @@ def save_item_field(request):
             return HttpResponse(json.dumps({'dev_pk' : dev_pk, 'error' : 'does not exist'}))
         if not (field_type and newvalue):
             return HttpReponse(json.dumps({'dev_pk' : dev_pk, 'error' : 'No field or value'}))
-        if field_type not in ['temps_prevu','poids','poids_manuel','nom']:
+        if field_type not in ['temps_prevu','poids','poids_manuel','nom', 'poids_groupe', 'version_requise', ]:
             return HttpResponse(json.dumps({'dev_pk' : dev_pk, 'error' : 'Unknown field type %s' % (field_type,)}))
-        if hasattr(dev, field_type):
+        if field_type == 'poids_groupe':
+            dev.groupe.poids = newvalue
+            dev.groupe.save()
+        elif field_type == 'version_requise':
+            try:
+                new_version = Version.objects.get(pk = newvalue)
+            except Version.DoesNotExist:
+                return HttpResponse(json.dumps({'dev_pk' : dev_pk, 'error' : 'Aucune version trouvee'}))
+            else:
+                dev.version_requise = new_version
+                dev.save()
+                return HttpResponse(json.dumps({'dev_pk' : dev_pk, 'innerHTML' : '%s.%s.%s' % (new_version.majeur, new_version.mineur, new_version.revision,)}))
+        elif hasattr(dev, field_type):
             setattr(dev, field_type, newvalue)
             dev.save()
         else:

@@ -14,3 +14,11 @@
 {% endblock %}
 
 {% block content_title %}Suivi de développement{% endblock %}
+
+{% block content %}
+    <ul class="sousmenu">
+        <li><a href="/developpements/liste/{{ project_id }}/">Liste complete</a></li>
+        <li><a href="/developpements/shortlist/{{ project_id }}/">Liste reduite</a></li>
+        <li><a href="/developpements/versions/{{ project_id }}/">Versions</a></li>
+    </ul>
+{% endblock %}

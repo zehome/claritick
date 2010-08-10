@@ -164,10 +164,54 @@
                     }
                 });
             }
+        function change_version_requise(itempk)
+            {
+            var dialog = new dijit.Dialog({
+                title : 'Choix de la version',
+                width: '350',
+                });
+            console.debug(dialog);
+            dialog.attr('content', '<ul>{% for vexist in versions_existantes %}<li><a href="#" onClick="choose_new_version(' + itempk + ', {{ vexist.id }}, \'' + dialog.id + '\');">{{ vexist.majeur }}.{{ vexist.mineur }}.{{ vexist.revision }}</a></li>{% endfor %}</ul>');
+            dialog.show();
+            }
+        function choose_new_version(itempk, versionpk, dialog_id)
+            {
+            console.debug(dialog_id);
+            dojo.style('change_version_requise_' + itempk, "background-color", "red");
+            var defer = dojo.xhrGet({
+                url : "{% url developpements.views.save_item_field %}",
+                handleAs : "json",
+                content : {
+                    dev_pk : itempk,
+                    field_type : 'version_requise',
+                    value_type : 'integer',
+                    newvalue : versionpk,
+                    },
+                load: function (response)
+                    {
+                    if (response.error)
+                        {
+                        alert (response.error);
+                        }
+                    else
+                        {
+                        dojo.style("change_version_requise_" + itempk, "backgroundColor", "green");
+                        dojo.attr('change_version_requise_' + itempk, 'innerHTML', response.innerHTML);
+                        console.debug(dialog_id);
+                        dijit.byId(dialog_id).hide();
+                        }
+                    },
+                error: function(error)
+                    {
+                    alert (error);
+                    }
+                });
+            }
     </script>
 {% endblock %}
 
 {% block content %}
+    {{ block.super }}
     <table id="table_dev">
         <thead>
             <tr style="background-color: #C0C0C0;">
@@ -198,7 +242,9 @@
                     <td class="{% if perms.developpements.change_groupedev %}modifiable{% endif %}" url="{% url admin:developpements_groupedev_change item.groupe.pk %}" title="{{ item.groupe.description }}">
                         {{ item.groupe }}
                     </td>
-                    <td class="align-right" title="{{ item.poids_total }}">{{ item.groupe.poids }}</td>
+                    <td class="align-right" title="{{ item.poids_total }}">
+                        <span id="change_poids_groupe_{{ item.pk }}" dojoType="dijit.InlineEditBox" onChange="save_item_field({{ item.pk }}, 'poids_groupe', 'integer', this.value);" autoSave="true">{{ item.groupe.poids }}</span>
+                    </td>
                     <td class="align-right" title="{{ item.poids_total }}">
                         <span id="change_poids_manuel_{{ item.pk }}" dojoType="dijit.InlineEditBox" onChange="save_item_field({{ item.pk }}, 'poids_manuel', 'float', this.value);" autoSave="true"> {{ item.poids_manuel }}</span>
                     </td>
@@ -213,9 +259,11 @@
                         {# <div dojoType="dijit.Dialog" title="{{ item.nom }}" id="dialog_{{ item.pk }}">{{ item.description|urlize }}</div> #}
                     </td>
                     <td class="align-right">
-                        <span id="change_temps_prevu_{{ item.pk }}" dojoType="dijit.InlineEditBox" onChange="save_item_field({{ item.pk }}, 'temps_prevu', 'integer', this.value);" autoSave="true">{{ item.temps_prevu|default_if_none:"&nbsp;" }}</span>
+                        <span id="change_temps_prevu_{{ item.pk }}" dojoType="dijit.InlineEditBox" onChange="save_item_field({{ item.pk }}, 'temps_prevu', 'integer', this.value);" autoSave="true">{{ item.temps_prevu|default_if_none:"&empty;" }}</span>
                     </td>
-                    <td>{{ item.version_requise|default_if_none:"&nbsp;" }}</td>
+                    <td>
+                        <a id="change_version_requise_{{ item.pk }}" href="javascript:void();" onClick="change_version_requise({{ item.pk }}, this);">{{ item.version_requise|default_if_none:"&nbsp;" }}</a>
+                    </td>
                     <td class="align-center">{{ item.engagement|date:"d/m/Y" }}</td>
                     <td class="align-center" title="{{ item.date_sortie|date:"d/m/Y" }}">
                         {% if item.deja_dispo %}

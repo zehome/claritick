@@ -61,3 +61,11 @@ td
     {
     padding: 1px;
     }
+
+ul.sousmenu li
+    {
+    display: inline;
+    border: 2px outset;
+    background-color: #eee;
+    padding: 3px;
+    }
