@@ -1,3 +1,5 @@
+r401
+    alter table developpements_project add group_id integer not null references auth_group( id) deferrable initially deferred; 
     alter table packaging_package add column "file" varchar(100);
 r386
     syncdb (new permission auth.no_autologout)
