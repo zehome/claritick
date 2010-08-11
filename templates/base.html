@@ -124,7 +124,7 @@
         <h2><img src="{{ MEDIA_URL }}images/oxygen/suividev.png" alt="/" />SuiviDev</h2>
         <ul class="menu">
             {% for project in developpements_projects %}
-                <li><a href="/developpements/liste/{{ project.pk }}/">{{ project.label }}</a></li>
+                <li><a href="/developpements/shortlist/{{ project.pk }}/">{{ project.label }}</a></li>
             {% endfor %}
         </ul>
         {% endif %}
