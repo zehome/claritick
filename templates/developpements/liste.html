@@ -234,6 +234,18 @@
                     }
                 });
             }
+        function only_show_this_groupe(group_pk)
+            {
+            var table = dojo.byId('table_dev');
+            dojo.query("tbody tr", table).forEach(function(tr, index)
+                {
+                if (dojo.query("td.groupe_dev_" + group_pk, tr).length == 0)
+                    {
+                    var display = dojo.style(tr, "display");
+                    dojo.style(tr, "display", (display == "table-row" ? "none" : "table-row"));
+                    }
+                });
+            }
     </script>
 {% endblock %}
 
@@ -265,8 +277,8 @@
                     <td class="align-right">
                         <span id="change_poids_{{ item.pk }}" dojoType="dijit.InlineEditBox" onChange="save_item_field({{ item.pk }}, 'poids', 'integer', this.value);" autoSave="true">{{ item.poids }}</span>
                     </td>
-                    <td class="{% if perms.developpements.change_groupedev %}modifiable{% endif %}" url="{% url admin:developpements_groupedev_change item.groupe.pk %}" title="{{ item.groupe.description }}">
-                        {{ item.groupe }}
+                    <td class="groupe_dev_{{ item.groupe.pk }} {% if perms.developpements.change_groupedev %}modifiable{% endif %}" url="{% url admin:developpements_groupedev_change item.groupe.pk %}" title="{{ item.groupe.description }}">
+                        <a href="javascript:only_show_this_groupe({{ item.groupe.pk }});">{{ item.groupe }}</a>
                     </td>
                     <td id="poids_groupe_{{ item.pk }}" class="align-right" title="{{ item.poids_total }}">
                         <span id="change_poids_groupe_{{ item.pk }}" dojoType="dijit.InlineEditBox" onChange="save_item_field({{ item.pk }}, 'poids_groupe', 'integer', this.value);" autoSave="true">{{ item.groupe.poids }}</span>
