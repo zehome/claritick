@@ -303,11 +303,31 @@
             dialog.refresh();
             dialog.show();
             }
+        function un_accent(str)
+            {
+            var new_string = String(str);
+            new_string = new_string.replace(/[èéêë]/g,"e");
+            new_string = new_string.replace(/[àäâ]/g,"a");
+            new_string = new_string.replace(/[ùüû]/g,"u");
+            new_string = new_string.replace(/[öô]/g,"o");
+            new_string = new_string.replace(/[ïî]/g,"i");
+            return new_string;
+            }
+        function filter_dev(value)
+            {
+            /* filtre la liste des dev pour n'afficher que ceux qui ont ce mot cle */
+            var table = dojo.byId('table_dev');
+            dojo.query("tbody tr", table).forEach(function(tr, index)
+                {
+                dojo.style(tr, "display", ((un_accent(tr.innerHTML.toLowerCase()).indexOf(un_accent(value.toLowerCase())) != -1) ? "table-row" : "none"));
+                });
+            }
     </script>
 {% endblock %}
 
 {% block content %}
     {{ block.super }}
+    <input type="text" onChange="filter_dev(this.value);"/>
     <table id="table_dev">
         <thead>
             <tr style="background-color: #C0C0C0;">
