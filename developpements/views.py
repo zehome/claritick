@@ -11,6 +11,8 @@ from django.utils import simplejson as json
 from developpements.models import Developpement, Version, Client, GroupeDev
 from developpements.forms import DeveloppementForm
 
+from ticket.models import Ticket
+
 import traceback
 
 @permission_required('developpements.can_access_suividev')
@@ -128,7 +130,10 @@ def save_item_field(request):
     old_poids_total = None
     try:
         if value_type == 'integer':
-            newvalue = int(newvalue)
+            if newvalue == '':
+                newvalue = 0
+            else:
+                newvalue = int(newvalue)
         elif value_type == 'float':
             newvalue = float(newvalue)
         try:
@@ -140,12 +145,19 @@ def save_item_field(request):
         if not field_type or newvalue is None:
             result_dict['error'] = 'No field or value'
             return HttpResponse(json.dumps(result_dict))
-        if field_type not in ['temps_prevu','poids','poids_manuel','nom', 'poids_groupe', 'version_requise', 'version_present', ]:
-            result_dict['error'] = 'Unknown field type %s' % (field_type,)
-            return HttpResponse(json.dumps(result_dict))
         if field_type == 'poids_groupe':
             dev.groupe.poids = newvalue
             dev.groupe.save()
+        elif field_type == 'ticket':
+            try:
+                ticket = Ticket.objects.get(pk = newvalue)
+            except Ticket.DoesNotExist:
+                result_dict['error'] = 'Aucun ticket trouve'
+                return HttpResponse(json.dumps(result_dict))
+            else:
+                dev.ticket = ticket
+                dev.save()
+                return HttpResponse(json.dumps(result_dict))
         elif field_type == 'version_requise':
             if newvalue == 0:
                 dev.version_requise = None

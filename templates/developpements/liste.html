@@ -288,11 +288,19 @@
             }
         function show_dev_dialog(itempk)
             {
-            var dialog = new dijit.Dialog({
-                'title' : 'Details',
-                'href' : '/developpements/dev_dialog/' + itempk + '/',
-                style: 'width: 600px;',
-                });
+            var dialog;
+            var dialog_id = 'dev_dialog_for_item_' + itempk;
+            dialog = dijit.byId(dialog_id);
+            if (!dialog)
+                {
+                dialog = new dijit.Dialog({
+                    'id' : dialog_id,
+                    'title' : 'Details',
+                    'href' : '/developpements/dev_dialog/' + itempk + '/',
+                    style: 'width: 600px;',
+                    });
+                }
+            dialog.refresh();
             dialog.show();
             }
     </script>

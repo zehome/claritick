@@ -6,24 +6,32 @@
         {% if dev.bug %}<img src="{{ MEDIA_URL }}icones/bug.png"/>&nbsp;{% endif %}
         ({{ dev.groupe }}) {{ dev.nom }}
     </h1>
-    <p class="description">{{ dev.description }}</p>
-    <dl>
-        {% if dev.lien %}
-            <dt>Lien</dt><dd><a href="{{ dev.lien }}">{{ dev.lien }}</a></dd>
-        {% endif %}
+    <p id="change_description_{{ dev.pk }}" dojoType="dijit.InlineEditBox" onChange="save_item_field({{ dev.pk }}, 'description', 'string', this.value);" autoSave="true" editor="dijit.form.Textarea" class="description">{{ dev.description }}</p>
+    <table>
+        <tr><th>{% if dev.lien %}<a target="_blank" href="{{ dev.lien }}">Lien</a>
+            {% else %}Lien
+            {% endif %}
+        </th>
+        <td>
+            <span id="change_lien_{{ dev.pk }}" dojoType="dijit.InlineEditBox" onChange="save_item_field({{ dev.pk }}, 'lien', 'string', this.value);" autoSave="true">{{ dev.lien }}</span>
+        </td></tr>
+        <tr><th>{% if dev.ticket %}<a target="_blank" href="/ticket/modify/{{ dev.ticket.pk }}/">Ticket {{ dev.ticket }}</a>
+            {% else %}Ticket
+            {% endif %}
+        </th>
+        <td>
+            <span id="change_ticket_{{ dev.pk }}" dojoType="dijit.InlineEditBox" onChange="save_item_field({{ dev.pk }}, 'ticket', 'integer', this.value);" autoSave="true">{{ dev.ticket.pk|default_if_none:"" }}</span>
+        </td></tr>
         {% if dev.version_requise %}
-            <dt>Version requise</dt><dd>{{ dev.version_requise }}</a></dd>
+            <tr><th>Version requise</th><td>{{ dev.version_requise }}</a></td></tr>
         {% endif %}
         {% if dev.engagement %}
-            <dt>Engagement client</dt><dd>{{ dev.engagement }}</dd>
+            <tr><th>Engagement client</th><td>{{ dev.engagement }}</td></tr>
         {% endif %}
-            <dt>Temps de dev prevu (heures)</dt><dd>{{ dev.temps_prevu }}</dd>
+            <tr><th>Temps de dev prevu (heures)</th><td>{{ dev.temps_prevu }}</td></tr>
         {% if dev.client_demandeur.count %}
-            <dt>Clients demandeurs</dt><dd>{% for cl in dev.client_demandeur.all %}{{ cl.nom }}{% endfor %}</dd>
+            <tr><th>Clients demandeurs</th><td>{% for cl in dev.client_demandeur.all %}{{ cl.nom }} {% endfor %}</td></tr>
         {% endif %}
-        <dt>Poids</dt><dd>{{ dev.poids_total }} = {{ dev.poids }}(P) * {{ dev.groupe.poids }}(PG) * {{ dev.client_demandeur.count }}(C) + {{ dev.poids_manuel  }}(PM) * 100000{% if dev.bug %} + 100000 (BUG){% endif %}</dd>
-        {% if dev.ticket %}
-            <dt>Ticket</dt><dd>{{ dev.ticket }}</dd>
-        {% endif %}
-    </dl>
+        <tr><th>Poids</th><td>{{ dev.poids_total }} = {{ dev.poids }}(P) * {{ dev.groupe.poids }}(PG) * {{ dev.client_demandeur.count }}(C) + {{ dev.poids_manuel  }}(PM) * 100000{% if dev.bug %} + 100000 (BUG){% endif %}</td></tr>
+    </table>
 </div>
