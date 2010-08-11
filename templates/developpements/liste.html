@@ -14,7 +14,7 @@
                     });
                 contextMenu.addChild(new dijit.MenuItem({
                     label: "Modifier",
-                    onClick: function(event) { form_request(itempk); },
+                    onClick: function(event) { window.location = dojo.attr(ligne, 'url'); },
                     }));
                 if (dojo.attr(ligne, 'itempk'))
                     {
@@ -198,7 +198,7 @@
             {
             var dialog = new dijit.Dialog({
                 title : 'Choix de la version',
-                width: '350',
+                style: 'width: 350px;',
                 });
             dialog.attr('content', '<ul>{% for vexist in versions_existantes %}<li><a href="#" onClick="choose_new_version(' + itempk + ', {{ vexist.id }}, \'' + dialog.id + '\');">{{ vexist.majeur }}.{{ vexist.mineur }}.{{ vexist.revision }}</a></li>{% endfor %}</ul>');
             dialog.show();
@@ -246,6 +246,15 @@
                     }
                 });
             }
+        function show_dev_dialog(itempk)
+            {
+            var dialog = new dijit.Dialog({
+                'title' : 'Details',
+                'href' : '/developpements/dev_dialog/' + itempk + '/',
+                style: 'width: 600px;',
+                });
+            dialog.show();
+            }
     </script>
 {% endblock %}
 
@@ -291,6 +300,7 @@
                         itempk="{{ item.pk }}"
                         id="nom_{{ item.pk }}"
                         {% if item.couleur %}style="background-color: #{{ item.couleur }};"{% endif %}>
+                        <a href="javascript:show_dev_dialog({{ item.pk }});"><img src="{{ MEDIA_URL }}icones/xeyes.png" height="16"/></a>
                         {% if item.done %}{{ item.done|boolicon }}{% endif %}
                         {% if item.bug %}<img src="{{ MEDIA_URL }}icones/bug.png"/>&nbsp;{% endif %}
                         <span id="change_nom_{{ item.pk }}" dojoType="dijit.InlineEditBox" onChange="save_item_field({{item.pk}}, 'nom', 'string', this.value);" autoSave="true">{{ item.nom }}</span>

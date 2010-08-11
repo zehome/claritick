@@ -1,0 +1,29 @@
+{% load sexyfication %}
+
+<div class="dev_dialog">
+    <h1 class="nom_dev" style="background-color: #{{ dev.couleur }};">
+        {% if dev.done %}{{ dev.done|boolicon }}{% endif %}
+        {% if dev.bug %}<img src="{{ MEDIA_URL }}icones/bug.png"/>&nbsp;{% endif %}
+        ({{ dev.groupe }}) {{ dev.nom }}
+    </h1>
+    <p class="description">{{ dev.description }}</p>
+    <dl>
+        {% if dev.lien %}
+            <dt>Lien</dt><dd><a href="{{ dev.lien }}">{{ dev.lien }}</a></dd>
+        {% endif %}
+        {% if dev.version_requise %}
+            <dt>Version requise</dt><dd>{{ dev.version_requise }}</a></dd>
+        {% endif %}
+        {% if dev.engagement %}
+            <dt>Engagement client</dt><dd>{{ dev.engagement }}</dd>
+        {% endif %}
+            <dt>Temps de dev prevu (heures)</dt><dd>{{ dev.temps_prevu }}</dd>
+        {% if dev.client_demandeur.count %}
+            <dt>Clients demandeurs</dt><dd>{% for cl in dev.client_demandeur.all %}{{ cl.nom }}{% endfor %}</dd>
+        {% endif %}
+        <dt>Poids</dt><dd>{{ dev.poids_total }} = {{ dev.poids }}(P) * {{ dev.groupe.poids }}(PG) * {{ dev.client_demandeur.count }}(C) + {{ dev.poids_manuel  }}(PM) * 100000{% if dev.bug %} + 100000 (BUG){% endif %}</dd>
+        {% if dev.ticket %}
+            <dt>Ticket</dt><dd>{{ dev.ticket }}</dd>
+        {% endif %}
+    </dl>
+</div>

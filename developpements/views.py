@@ -238,3 +238,11 @@ def populate_field(request):
             ret[key] = [{"value": x.pk, "label": unicode(x)} for x in val]
 
     return HttpResponse(json.dumps(ret))
+
+@permission_required("developpements.can_view_liste")
+def dev_dialog(request, dev_pk):
+    try:
+        dev = Developpement.objects.get(pk = dev_pk)
+    except Developpement.DoesNotExist:
+        return HttpResponse("Ce dev n'existe pas")
+    return render_to_response("developpements/dev_dialog.html", {"dev" : dev}, context_instance = RequestContext(request))
