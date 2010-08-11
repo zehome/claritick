@@ -120,11 +120,13 @@ def change_color(request):
 
 @permission_required('developpements.change_developpement')
 def save_item_field(request):
+    dev_pk = request.GET.get('dev_pk', None)
+    field_type = request.GET.get('field_type', '')
+    value_type = request.GET.get('value_type', 'integer')
+    newvalue = request.GET.get('newvalue', '')
+    result_dict = {'dev_pk' : dev_pk}
+    old_poids_total = None
     try:
-        dev_pk = request.GET.get('dev_pk', None)
-        field_type = request.GET.get('field_type', '')
-        value_type = request.GET.get('value_type', 'integer')
-        newvalue = request.GET.get('newvalue', '')
         if value_type == 'integer':
             newvalue = int(newvalue)
         elif value_type == 'float':
@@ -132,11 +134,15 @@ def save_item_field(request):
         try:
             dev = Developpement.objects.get(pk = dev_pk)
         except Developpement.DoesNotExist:
-            return HttpResponse(json.dumps({'dev_pk' : dev_pk, 'error' : 'does not exist'}))
+            result_dict['error'] = 'does not exist'
+            return HttpResponse(json.dumps(result_dict))
+        old_poids_total = dev.poids_total
         if not (field_type and newvalue):
-            return HttpReponse(json.dumps({'dev_pk' : dev_pk, 'error' : 'No field or value'}))
+            result_dict['error'] = 'No field or value'
+            return HttpReponse(json.dumps(result_dict))
         if field_type not in ['temps_prevu','poids','poids_manuel','nom', 'poids_groupe', 'version_requise', ]:
-            return HttpResponse(json.dumps({'dev_pk' : dev_pk, 'error' : 'Unknown field type %s' % (field_type,)}))
+            result_dict['error'] = 'Unknown field type %s' % (field_type,)
+            return HttpResponse(json.dumps(result_dict))
         if field_type == 'poids_groupe':
             dev.groupe.poids = newvalue
             dev.groupe.save()
@@ -144,19 +150,25 @@ def save_item_field(request):
             try:
                 new_version = Version.objects.get(pk = newvalue)
             except Version.DoesNotExist:
-                return HttpResponse(json.dumps({'dev_pk' : dev_pk, 'error' : 'Aucune version trouvee'}))
+                result_dict['error'] = 'Aucune version trouvee'
+                return HttpResponse(json.dumps(result_dict))
             else:
                 dev.version_requise = new_version
                 dev.save()
-                return HttpResponse(json.dumps({'dev_pk' : dev_pk, 'innerHTML' : '%s.%s.%s' % (new_version.majeur, new_version.mineur, new_version.revision,)}))
+                result_dict['innerHTML'] = '%s.%s.%s' % (new_version.majeur, new_version.mineur, new_version.revision,)
+                return HttpResponse(json.dumps(result_dict))
         elif hasattr(dev, field_type):
             setattr(dev, field_type, newvalue)
             dev.save()
         else:
-            return HttpResponse(json.dumps({'dev_pk' : dev_pk, 'error' : 'Dev does not have %s' % (field_type,)}))
+            result_dict['error'] = 'Dev does not have %s' % (field_type,)
+            return HttpResponse(json.dumps(result_dict))
+        if old_poids_total and dev.poids_total != old_poids_total:
+            result_dict['new_poids_total'] = dev.poids_total
     except:
-        return HttpResponse(json.dumps({'dev_pk' : dev_pk, 'error' : traceback.format_exc()}))
-    return HttpResponse(json.dumps({'dev_pk' : dev_pk}))
+        result_dict['error'] = traceback.format_exc()
+        return HttpResponse(json.dumps(result_dict))
+    return HttpResponse(json.dumps(result_dict))
 
 @permission_required('developpements.change_developpement')
 def done(request):

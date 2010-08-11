@@ -156,6 +156,13 @@
                     else
                         {
                         dojo.style("change_" + type + "_" + itempk, "backgroundColor", "green");
+                        if (response.new_poids_total)
+                            {
+                            dojo.attr(dojo.byId("poids_total_" + itempk), "value", response.new_poids_total);
+                            dojo.attr(dojo.byId("poids_groupe_" + itempk), "title", response.new_poids_total);
+                            dojo.attr(dojo.byId("poids_manuel_" + itempk), "title", response.new_poids_total);
+                            move_developpement(itempk, response.new_poids_total);
+                            }
                         }
                     },
                 error: function(error)
@@ -164,19 +171,40 @@
                     }
                 });
             }
+        function move_developpement(itempk, poids_total)
+            {
+            var this_ligne = dojo.byId('developpement_ligne_' + itempk);
+            var this_poids_total = poids_total;
+            var table_dev = dojo.byId('table_dev');
+            this_ligne.parentNode.removeChild(this_ligne);
+            var poids_precedent;
+            var found_place = false;
+            dojo.query("tbody tr", table_dev).forEach(function(tr, index)
+                {
+                var other_poids_total = dojo.attr(dojo.query("input.poids_total", tr)[0], "value");
+                if ((poids_precedent && other_poids_total < this_poids_total && poids_precedent > this_poids_total) || (!poids_precedent && other_poids_total < this_poids_total))
+                    {
+                    found_place = true;
+                    dojo.place(this_ligne, tr, "before");
+                    }
+                poids_precedent = other_poids_total;
+                });
+            if (!found_place)
+                {
+                dojo.place(this_ligne, table_dev);
+                }
+            }
         function change_version_requise(itempk)
             {
             var dialog = new dijit.Dialog({
                 title : 'Choix de la version',
                 width: '350',
                 });
-            console.debug(dialog);
             dialog.attr('content', '<ul>{% for vexist in versions_existantes %}<li><a href="#" onClick="choose_new_version(' + itempk + ', {{ vexist.id }}, \'' + dialog.id + '\');">{{ vexist.majeur }}.{{ vexist.mineur }}.{{ vexist.revision }}</a></li>{% endfor %}</ul>');
             dialog.show();
             }
         function choose_new_version(itempk, versionpk, dialog_id)
             {
-            console.debug(dialog_id);
             dojo.style('change_version_requise_' + itempk, "background-color", "red");
             var defer = dojo.xhrGet({
                 url : "{% url developpements.views.save_item_field %}",
@@ -197,7 +225,6 @@
                         {
                         dojo.style("change_version_requise_" + itempk, "backgroundColor", "green");
                         dojo.attr('change_version_requise_' + itempk, 'innerHTML', response.innerHTML);
-                        console.debug(dialog_id);
                         dijit.byId(dialog_id).hide();
                         }
                     },
@@ -232,9 +259,8 @@
         </thead>
         <tbody>
             {% for item in developpements %}
-                <tr>
-                    <td class="align-center" style="background-color: #C0C0C0;">{{ forloop.counter }}</td>
-                    {# <td class="align-center" style="background-color: #C0C0C0;">{{ item.poids_total }}</td> #}
+                <tr id="developpement_ligne_{{ item.pk }}">
+                    <td class="align-center" style="background-color: #C0C0C0;"><input type="hidden" class="poids_total" id="poids_total_{{ item.pk }}" value="{{ item.poids_total }}"/>{{ forloop.counter }}</td>
                     <td class="align-right" title="{{ item.clients|join:" " }}">{{ item.clients|length }}</td>
                     <td class="align-right">
                         <span id="change_poids_{{ item.pk }}" dojoType="dijit.InlineEditBox" onChange="save_item_field({{ item.pk }}, 'poids', 'integer', this.value);" autoSave="true">{{ item.poids }}</span>
@@ -242,10 +268,10 @@
                     <td class="{% if perms.developpements.change_groupedev %}modifiable{% endif %}" url="{% url admin:developpements_groupedev_change item.groupe.pk %}" title="{{ item.groupe.description }}">
                         {{ item.groupe }}
                     </td>
-                    <td class="align-right" title="{{ item.poids_total }}">
+                    <td id="poids_groupe_{{ item.pk }}" class="align-right" title="{{ item.poids_total }}">
                         <span id="change_poids_groupe_{{ item.pk }}" dojoType="dijit.InlineEditBox" onChange="save_item_field({{ item.pk }}, 'poids_groupe', 'integer', this.value);" autoSave="true">{{ item.groupe.poids }}</span>
                     </td>
-                    <td class="align-right" title="{{ item.poids_total }}">
+                    <td id="poids_manuel_{{ item.pk }}" class="align-right" title="{{ item.poids_total }}">
                         <span id="change_poids_manuel_{{ item.pk }}" dojoType="dijit.InlineEditBox" onChange="save_item_field({{ item.pk }}, 'poids_manuel', 'float', this.value);" autoSave="true"> {{ item.poids_manuel }}</span>
                     </td>
                     <td class="{% if perms.developpements.change_developpement %}modifiable{% endif %}{% if item.done %} done{% endif %}" url="{% url admin:developpements_developpement_change item.pk %}"
