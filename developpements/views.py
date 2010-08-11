@@ -123,7 +123,7 @@ def save_item_field(request):
     dev_pk = request.GET.get('dev_pk', None)
     field_type = request.GET.get('field_type', '')
     value_type = request.GET.get('value_type', 'integer')
-    newvalue = request.GET.get('newvalue', '')
+    newvalue = request.GET.get('newvalue', None)
     result_dict = {'dev_pk' : dev_pk}
     old_poids_total = None
     try:
@@ -137,16 +137,21 @@ def save_item_field(request):
             result_dict['error'] = 'does not exist'
             return HttpResponse(json.dumps(result_dict))
         old_poids_total = dev.poids_total
-        if not (field_type and newvalue):
+        if not field_type or newvalue is None:
             result_dict['error'] = 'No field or value'
-            return HttpReponse(json.dumps(result_dict))
-        if field_type not in ['temps_prevu','poids','poids_manuel','nom', 'poids_groupe', 'version_requise', ]:
+            return HttpResponse(json.dumps(result_dict))
+        if field_type not in ['temps_prevu','poids','poids_manuel','nom', 'poids_groupe', 'version_requise', 'version_present', ]:
             result_dict['error'] = 'Unknown field type %s' % (field_type,)
             return HttpResponse(json.dumps(result_dict))
         if field_type == 'poids_groupe':
             dev.groupe.poids = newvalue
             dev.groupe.save()
         elif field_type == 'version_requise':
+            if newvalue == 0:
+                dev.version_requise = None
+                dev.save()
+                result_dict['innerHTML'] = '&empty;'
+                return HttpResponse(json.dumps(result_dict))
             try:
                 new_version = Version.objects.get(pk = newvalue)
             except Version.DoesNotExist:
@@ -156,6 +161,20 @@ def save_item_field(request):
                 dev.version_requise = new_version
                 dev.save()
                 result_dict['innerHTML'] = '%s.%s.%s' % (new_version.majeur, new_version.mineur, new_version.revision,)
+                return HttpResponse(json.dumps(result_dict))
+        elif field_type == 'version_present':
+            if newvalue == 0:
+                dev.version_set.clear()
+                result_dict['innerHTML'] = '&empty;'
+                return HttpResponse(json.dumps(result_dict))
+            try:
+                present_version = Version.objects.get(pk = newvalue)
+            except Version.DoesNotExist:
+                result_dict['error'] = 'Aucune version trouvee',
+                return HttpResponse(json.dumps(result_dict))
+            else:
+                present_version.contenu.add(dev)
+                result_dict['innerHTML'] = '%s.%s.%s' % (present_version.majeur, present_version.mineur, present_version.revision,)
                 return HttpResponse(json.dumps(result_dict))
         elif hasattr(dev, field_type):
             setattr(dev, field_type, newvalue)

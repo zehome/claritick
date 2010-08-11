@@ -200,7 +200,16 @@
                 title : 'Choix de la version',
                 style: 'width: 350px;',
                 });
-            dialog.attr('content', '<ul>{% for vexist in versions_existantes %}<li><a href="#" onClick="choose_new_version(' + itempk + ', {{ vexist.id }}, \'' + dialog.id + '\');">{{ vexist.majeur }}.{{ vexist.mineur }}.{{ vexist.revision }}</a></li>{% endfor %}</ul>');
+            dialog.attr('content', '<ul><li><a href="#" onClick="choose_new_version(' + itempk + ', 0, \'' + dialog.id + '\');">Aucune</a></li>{% for vexist in versions_existantes %}<li><a href="#" onClick="choose_new_version(' + itempk + ', {{ vexist.id }}, \'' + dialog.id + '\');">{{ vexist.majeur }}.{{ vexist.mineur }}.{{ vexist.revision }}</a></li>{% endfor %}</ul>');
+            dialog.show();
+            }
+        function change_version_present(itempk)
+            {
+            var dialog = new dijit.Dialog({
+                title : 'Choix de la version',
+                style: 'width: 350px;',
+                });
+            dialog.attr('content', '<ul><li><a href="#" onClick="choose_present_version(' + itempk + ', 0, \'' + dialog.id + '\');">Aucune</a></li>{% for vexist in versions_existantes %}<li><a href="#" onClick="choose_present_version(' + itempk + ', {{ vexist.id }}, \'' + dialog.id + '\');">{{ vexist.majeur }}.{{ vexist.mineur }}.{{ vexist.revision }}</a></li>{% endfor %}</ul>');
             dialog.show();
             }
         function choose_new_version(itempk, versionpk, dialog_id)
@@ -225,6 +234,37 @@
                         {
                         dojo.style("change_version_requise_" + itempk, "backgroundColor", "green");
                         dojo.attr('change_version_requise_' + itempk, 'innerHTML', response.innerHTML);
+                        dijit.byId(dialog_id).hide();
+                        }
+                    },
+                error: function(error)
+                    {
+                    alert (error);
+                    }
+                });
+            }
+        function choose_present_version(itempk, versionpk, dialog_id)
+            {
+            dojo.style('change_version_present_' + itempk, "background-color", "red");
+            var defer = dojo.xhrGet({
+                url : "{% url developpements.views.save_item_field %}",
+                handleAs : "json",
+                content : {
+                    dev_pk : itempk,
+                    field_type : 'version_present',
+                    value_type : 'integer',
+                    newvalue : versionpk,
+                    },
+                load: function (response)
+                    {
+                    if (response.error)
+                        {
+                        alert (response.error);
+                        }
+                    else
+                        {
+                        dojo.style("change_version_present_" + itempk, "backgroundColor", "green");
+                        dojo.attr('change_version_present_' + itempk, 'innerHTML', response.innerHTML);
                         dijit.byId(dialog_id).hide();
                         }
                     },
@@ -314,13 +354,14 @@
                     </td>
                     <td class="align-center">{{ item.engagement|date:"d/m/Y" }}</td>
                     <td class="align-center" title="{{ item.date_sortie|date:"d/m/Y" }}">
+                        <a id="change_version_present_{{ item.pk }}" href="javascript:void();" onClick="change_version_present({{ item.pk }}, this);">
                         {% if item.deja_dispo %}
                             {{ item.deja_dispo }}
                         {% else %}{% if item.done %}
                             Proch. version
                         {% else %}
                             Sem. {{ item.date_sortie|date:'W' }}
-                        {% endif %}{% endif %}
+                        {% endif %}{% endif %}</a>
                     </td>
                     <td class="align-center">
                         {% if item.alerte %}
