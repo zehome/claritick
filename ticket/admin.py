@@ -31,7 +31,7 @@ class TicketMailTraceAdmin(admin.ModelAdmin):
     list_display = ("ticket", "date_sent")
     search_fields = ["ticket__title", "ticket__id", "email"]
 
-admin.site.register(Ticket)
+#admin.site.register(Ticket)
 admin.site.register(State)
 admin.site.register(Priority)
 admin.site.register(Category)
