@@ -15,7 +15,7 @@
             {% for comment in form_to_comment.instance.comment %}{% if comment.internal %}
                 <div class="comment">
                     <h3><b>{{ comment.user.first_name }} {{ comment.user.last_name }}</b> ({{ comment.user_name }})&nbsp;<i>Le {{ comment.submit_date|date:'d/m/Y à H\hi' }}</i></h3>
-                    <pre class="{% cycle 'row1' 'row2' %}">{{ comment.comment|wordwrap:80 }}</pre>
+                    <pre class="{% cycle 'row1' 'row2' %}">{{ comment.comment|linebreaks|wordwrap:80 }}</pre>
                 </div>
             {% endif %}{% endfor %}
         </td>
@@ -25,7 +25,7 @@
             {% for comment in form_to_comment.instance.comment %}{% if not comment.internal %}
                 <div class="comment">
                     <h3><b>{{ comment.user.first_name }} {{ comment.user.last_name }}</b> ({{ comment.user_name }})&nbsp;<i>Le {{ comment.submit_date|date:'d/m/Y à H\hi' }}</i></h3>
-                    <pre class="{% cycle 'row1' 'row2' %}">{{ comment.comment|wordwrap:80 }}</pre>
+                    <pre class="{% cycle 'row1' 'row2' %}">{{ comment.comment|linebreaks|wordwrap:80 }}</pre>
                 </div>
             {% endif %}{% endfor %}
         </td>
