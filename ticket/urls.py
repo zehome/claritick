@@ -13,6 +13,7 @@ urlpatterns = patterns('ticket.views',
     url(r'^list/me/$', 'list_me', name="ticket_list_me"),
     url(r'^list/unassigned/$', 'list_unassigned', name="ticket_list_unassigned"),
     url(r'^list/nonvalide/$', 'list_nonvalide', name="ticket_list_nonvalide"),
+    url(r'^list/notseen/$', 'list_notseen', name="ticket_list_notseen"),
     url(r'^getfile/(?P<file_id>\d+)/$', 'get_file', name="ticket_get_file"),
     ## Ajax
     url(r'^ajax_load_child/(?P<ticket_id>\d+)/$', 'ajax_load_child', name='ajax_load_child'),
@@ -23,4 +24,9 @@ urlpatterns = patterns('ticket.views',
     url(r'^ajax_graph_permonth/', 'ajax_graph_permonth', name='ajax_graph_permonth'),
     url(r'^ajax_graph_average_close_time/', 'ajax_graph_average_close_time', name='ajax_graph_average_close_time'),
 
+    url(r'^ajax_mark_all_ticket_seen/$', 'ajax_mark_all_ticket_seen', name='ajax_mark_all_ticket_seen'),
+    url(r'^ajax_reset_all_ticket_seen/$', 'ajax_reset_all_ticket_seen', name='ajax_reset_all_ticket_seen'),
+
+    ## Chrome extension / feeds
+    url(r'^feed/', 'ticket_feed', name='ticket_feed'),
 )

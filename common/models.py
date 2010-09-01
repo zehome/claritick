@@ -325,6 +325,9 @@ class UserProfile(models.Model):
     client = ClientField(Client, verbose_name="Client", blank=True, null=True)
     trafiquables = models.TextField(null = True, blank = True)
 
+    # Liste des tickets vus / date dernière modif ticket
+    tickets_vus = JsonField(null=True, blank=True)
+
     def __unicode__(self):
         if self.client:
             return u"%s (%s)" % (self.user, self.client.label)

@@ -94,13 +94,7 @@
         
         <h2><img src="{{ MEDIA_URL }}images/icon-new.png" alt="+" />Création</h2>
         <ul class="menu">
-            <li><a href="/ticket/partial_new">Ticket</a></li>
-            {% if perms.clariadmin.can_access_clariadmin %}
-            <li><a href="/admin/clariadmin/host/add/">Machine</a></li>
-            {% endif %}
-            {% if user.is_staff %}
-            <li><a href="/admin/common/client/add/">Client</a></li>
-            {% endif %}
+            <li><a href="/ticket/partial_new/">Ticket</a></li>
         </ul>
         
         <h2><img src="{{ MEDIA_URL }}images/icon-list.png" alt="/" />Tickets</h2>
@@ -109,6 +103,7 @@
             <li><a href="{% url ticket_list_me %}?reset=1">Les miens</a></li>
             <li><a href="{% url ticket_list_unassigned %}?reset=1">Non affectés</a></li>
             <li><a href="{% url ticket_list_nonvalide %}?reset=1">A valider</a></li>
+            <li><a href="{% url ticket_list_notseen %}?reset=1">Non consultés</a></li>
             {% if ticket_views %}
             {% for view in ticket_views %}
             <li><a href="{% url ticket_list_view view.pk %}">{{ view.name }}</a></li>

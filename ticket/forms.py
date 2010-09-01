@@ -116,6 +116,7 @@ class SearchTicketViewForm(SearchTicketForm):
     priority = forms.MultipleChoiceField(required=False, widget=df.CheckboxSelectMultiple())
     assigned_to = forms.MultipleChoiceField(required=False, widget=df.CheckboxSelectMultiple())
     opened_by   = forms.MultipleChoiceField(required=False, widget=df.CheckboxSelectMultiple())
+    notseen = forms.BooleanField(label=u"Non consultés", widget=df.widgets.CheckboxInput(), initial=False, required=False)
 
     def __init__(self, *args, **kwargs):
         self.base_fields["state"].choices = State.objects.values_list("pk", "label")

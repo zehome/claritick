@@ -558,6 +558,7 @@ class TicketView(models.Model):
     user = models.ForeignKey(User)
     name = models.TextField(default=u"Nom de la vue")
     filters = JsonField()
+    notseen = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = u"Vue"

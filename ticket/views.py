@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import qsstats
+import time
 import datetime
 
 from django import http
@@ -86,6 +87,13 @@ def get_pagination(queryset, request):
     paginator = DiggPaginator(queryset, settings.TICKETS_PER_PAGE, body=5, tail=2, padding=2)
     return paginator.page(request.GET.get("page", 1))
 
+def update_ticket_last_seen(request, ticket_id):
+    userprofile = request.user.get_profile()
+    ticket_vus = userprofile.tickets_vus or {} or {} or {}
+    ticket_vus[str(ticket_id)] = int(time.time())
+    userprofile.tickets_vus = ticket_vus
+    userprofile.save()
+
 @login_required
 @backlink_setter
 def list_me(request, *args, **kw):
@@ -105,10 +113,35 @@ def list_unassigned(request, *args, **kw):
 @backlink_setter
 def list_nonvalide(request):
     """
-        Liste des tickets Ã  valider.
+    liste des tickets ã  valider.
     """
     filterdict = {"validated_by__isnull": True}
     return list_all(request, filterdict=filterdict)
+
+@login_required
+@backlink_setter
+def list_notseen(request):
+    """liste des tickets non consultes."""
+    profile = request.user.get_profile()
+    ticket_vus = profile.tickets_vus or {}
+
+    def my_get_context(request):
+        ctx = get_context(request)
+        ctx["show_ticket_seen"] = True
+        return ctx
+
+    def postfiltercallback(qs):
+        for k,v in ticket_vus.items():
+            if k == "all":
+                q = models.Q(last_modification__gt=datetime.datetime.fromtimestamp(int(v)))
+                qs = qs.filter(q)
+            else:
+                q = models.Q(pk=int(k)) & models.Q(last_modification__lt=datetime.datetime.fromtimestamp(int(v)))
+                qs = qs.exclude(q)
+        return qs
+    
+    return list_all(request, postfiltercallback=postfiltercallback, get_context_callback=my_get_context)
+
 
 @login_required
 @backlink_setter
@@ -118,6 +151,9 @@ def list_view(request, view_id=None):
 
     # On charge la vue de la liste
     if view_id:
+        profile = request.user.get_profile()
+        ticket_vus = profile.tickets_vus or {}
+
         view = get_object_or_404(TicketView, pk=view_id, user=request.user)
         if request.method == "POST" and request.POST.get("validate-filters", None):
             if request.POST.get("delete_view", None):
@@ -159,13 +195,15 @@ def list_view(request, view_id=None):
         if view_id:
             TicketView.objects.filter(pk=view_id).update(
                 name=form.cleaned_data["view_name"],
-                filters=form.cleaned_data
+                filters=form.cleaned_data,
+                notseen=form.cleaned_data["notseen"],
             )
         else:
             t = TicketView.objects.create(
                 user=request.user,
                 name=form.cleaned_data["view_name"],
-                filters=form.cleaned_data
+                filters=form.cleaned_data,
+                notseen=form.cleaned_data["notseen"],
             )
 
 
@@ -184,6 +222,15 @@ def list_view(request, view_id=None):
     qs = qs.filter_ticket_by_user(request.user)
     cqs = cqs.filter_ticket_by_user(request.user)
 
+    if context.get("view", False) and view.notseen: 
+        for k,v in ticket_vus.items():
+            if k == "all":
+                q = models.Q(last_modification__gt=datetime.datetime.fromtimestamp(int(v)))
+                qs = qs.filter(q)
+            else:
+                q = models.Q(pk=int(k)) & models.Q(last_modification__lt=datetime.datetime.fromtimestamp(int(v)))
+                qs = qs.exclude(q)
+
     # Le tri
     qs = qs.add_order_by(request)
     cqs = cqs.add_order_by(request)
@@ -192,6 +239,7 @@ def list_view(request, view_id=None):
     pagination.object_list = get_and_child(pagination.object_list, cqs)
 
     context.update({
+        "show_ticket_seen": context.get("view", False) and view.notseen or False,
         "form": form,
         "action_form": action_form,
         "tickets": pagination,
@@ -201,11 +249,13 @@ def list_view(request, view_id=None):
 
 @login_required
 @backlink_setter
-def list_all(request, form=None, filterdict=None, template_name=None, *args, **kw):
+def list_all(request, form=None, 
+    filterdict=None, template_name=None, 
+    postfiltercallback=None, get_context_callback=get_context, *args, **kw):
     """
         Liste tous les tickets sans aucun filtre
     """
-    context = get_context(request)
+    context = get_context_callback(request)
 
     if request.user.has_perm("can_commit_full") or request.user.is_superuser:
         action_form = TicketActionsForm(request.POST, user=request.user, prefix="action")
@@ -247,6 +297,9 @@ def list_all(request, form=None, filterdict=None, template_name=None, *args, **k
     # On va filtrer la liste des tickets en fonction de la relation user => client
     qs = qs.filter_ticket_by_user(request.user)
     cqs = Ticket.objects.filter(parent__isnull=False).filter_ticket_by_user(request.user)
+
+    if postfiltercallback:
+        qs = postfiltercallback(qs)
 
     # Le tri
     qs = qs.add_order_by(request)
@@ -395,6 +448,7 @@ def modify(request, ticket_id):
 
             form.save()
             post_comment(form, request)
+            update_ticket_last_seen(request, ticket.pk)
 
             # Alarme automatique
             if ticket.priority \
@@ -414,7 +468,7 @@ def modify(request, ticket_id):
                     dataList = []
                     for chunk in file.chunks():
                         dataList.append(chunk)
-                    data = "".join(data)
+                    data = "".join(dataList)
                 else:
                     data = file.read()
                 ticket_file.data = data
@@ -439,6 +493,8 @@ def modify(request, ticket_id):
                     f.instance.comment = []
                 if c.object_pk == str(f.instance.pk):
                     f.instance.comment.append(c)
+    
+    update_ticket_last_seen(request, ticket.pk)
 
     return render_to_response(template_name,
             { "form": form, "child_formset": child_formset },
@@ -739,7 +795,7 @@ def ajax_graph_average_close_time(request):
     
     return ret
 
-
+@login_required
 def get_critical_tickets(request):
     qs = Ticket.open_tickets.select_related().only('id', 'title').\
             filter_ticket_by_user(request.user).\
@@ -747,6 +803,7 @@ def get_critical_tickets(request):
             order_by('-date_open')
     return qs[:settings.SUMMARY_TICKETS]
 
+@login_required
 def get_ticket_text_statistics(request):
     statList = []
     statList.append(u"Tickets sans client: %s" % (Ticket.objects.filter(client__isnull = True).count()),)
@@ -759,10 +816,40 @@ def get_ticket_text_statistics(request):
         statList.append(u"Ouverts en %s: %s" % (datetime.date.today().year, qss.this_year(),))
     return statList
 
+@login_required
 def get_ticket_alarm(request):
     alarms = TicketAlarm.opened.select_related().only('id')
     qs = Ticket.minimal.filter(ticketalarm__in=alarms).\
             filter_ticket_by_user(request.user)
     return qs[:settings.SUMMARY_TICKETS]
 
+
+@login_required
+@json_response
+def ticket_feed(request):
+    max_limit=20
+
+    alarms = TicketAlarm.opened.select_related().only('id')
+    ticket_alarms = Ticket.minimal.filter(ticketalarm__in=alarms).\
+            filter_ticket_by_user(request.user)[:max_limit]
+    ticket_mine = Ticket.minimal.filter(assigned_to=request.user).order_by("-date_open")[:max_limit] 
+
+    return {
+        "alarms": [ {"id": t.id, "title": t.title} for t in ticket_alarms ],
+        "mine": [ {"id": t.id, "title": t.title} for t in ticket_mine ],
+    }
+
+@login_required
+def ajax_mark_all_ticket_seen(request):
+    profile = request.user.get_profile()
+    profile.tickets_vus = {"all": datetime.datetime.now().strftime("%s")}
+    profile.save()
+    return http.HttpResponse("saved")
+
+@login_required
+def ajax_reset_all_ticket_seen(request):
+    profile = request.user.get_profile()
+    profile.tickets_vus = {}
+    profile.save()
+    return http.HttpResponse("saved")
 

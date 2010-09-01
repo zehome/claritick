@@ -133,17 +133,17 @@
         </tr>
 
     </table>
-    <button type="reset" dojoType="dijit.form.Button">Annuler
+    <button type="reset" dojoType="dijit.form.Button" iconClass="dijitIconClear">Annuler
         <script type="dojo/method" event="onClick">
             dojo.doc.location = "?reset=1";
         </script>
     </button>
-    <button type="submit" dojoType="dijit.form.Button" name="validate-filters" value="1">Rechercher
+    <button type="submit" dojoType="dijit.form.Button" name="validate-filters" value="1" iconClass="dijitIconSearch">Rechercher
         <script type="dojo/method" event="onClick">
             dojo.byId("list_form").action = "?page=1"
         </script>
     </button>
-    <button type="button" dojoType="dijit.form.Button">Créer une nouvelle vue
+    <button type="button" dojoType="dijit.form.Button" iconClass="dijitIconNewTask">Créer une nouvelle vue
         <script type="dojo/method" event="onClick">
             dojo.doc.location = "{% url ticket_list_view %}?reset=1";
         </script>
@@ -177,10 +177,10 @@
         <div dojoType="dijit.Tooltip" connectId="ticket_child{{ forloop.parentloop.counter }}_line_{{ forloop.counter }}" position="above" style="display: none;"><h3>{{ child.title|wordwrap:80 }}</h3>{{ child.text|wordwrap:80|linebreaks }}</div>
     {% endfor %}
 {% endfor %}
-
+    
 <table class="resultat trafiquable exportables" id="ticket_result_all">
 <tr class="form">
-    <td colspan="12">
+   <td colspan="12">
         {{ action_form.actions }} {{ action_form.assigned_to }} {{ action_form.category }} {{ action_form.project }} {{ action_form.state }} {{ action_form.priority }}
         <div id="id_close_comment" style="display: none;">
             <div dojoType="dijit.form.DropDownButton" >
@@ -200,7 +200,7 @@
             </script>
         </button>
     </td>
-</tr>
+ </tr>
 <thead>
 <tr>
     <th style="text-align: center;"><input type="checkbox" id="select_all" /></th>
@@ -212,7 +212,7 @@
     <th><a href="?sort=nb_comments&sort_order={{ sort_order }}"><img src="{{ MEDIA_URL }}images/comment.png" /></a></th>
     <th><a href="?sort=nb_appels&sort_order={{ sort_order }}"><img src="{{ MEDIA_URL }}images/phone.png" /></a></th>
     <th><a href="?sort=contact&sort_order={{ sort_order }}">Contact</a></th>
-    <th><a href="?sort=last_modification&sort_order={{ sort_order }}">M.à.J.</a></th>
+    <th><a href="?sort=last_modification&sort_order=1">M.à.J.</a></th>
     <th><a href="?sort=opened_by&sort_order={{ sort_order }}">Ouvert par</a></th>
     <th><a href="?sort=assigned_to&sort_order={{ sort_order }}">Assigné à</a></th>
 </tr>
@@ -255,6 +255,30 @@
 
 {% else %}
 <h3>Aucun résultat</h3>
+{% endif %}
+
+{% if show_ticket_seen %}
+<!-- Filtrage supplementaire -->
+<br />
+<div style="" class="form">
+  <script type="text/javascript">
+    function mark_all_ticket_seen() {
+        dojo.xhrGet({url: "{% url ajax_mark_all_ticket_seen %}",
+            handleAs: "text",
+            load: function(data) { console.log(data); }
+        });
+    }
+    function reset_all_ticket_seen() {
+        dojo.xhrGet({url: "{% url ajax_reset_all_ticket_seen %}",
+            handleAs: "text",
+            load: function(data) { console.log(data); }
+        });
+    }
+  </script>
+  <span>Cacher: </span>
+    <div dojoType="dijit.form.Button" onclick="reset_all_ticket_seen();" iconClass="dijitIconDelete">Remise a zero</div>
+    <div dojoType="dijit.form.Button" onclick="mark_all_ticket_seen();" iconClass="dijitIconFilter">Marquer tous comme vu</div>
+</div>
 {% endif %}
 
 {% endblock content %}
