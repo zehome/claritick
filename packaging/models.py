@@ -2,6 +2,8 @@
 
 from django.core.validators import RegexValidator
 from django.db import models
+from django.db.models import permalink
+
 from common.models import ClientField, Client
 from packaging.storage import packaging_storage
 
@@ -13,7 +15,10 @@ class ClientPackageAuth(models.Model):
     
     client = models.ForeignKey(Client, verbose_name=u"Client", blank=False)
     key = models.CharField(max_length=64, unique=True, blank=False)
-
+    
+    def __unicode__(self):
+        return u"Auth for %s" % (self.client,)
+    
 class Platform(models.Model):
     """system platform. linux-default, linux-xorgversion, win32-default, win32-5.1, ... """
     class Meta:
@@ -73,8 +78,24 @@ class Package(models.Model):
         else:
             fileStr = ""
         
-        return u"%s pour %s %s.%s+%s%s%s" % (self.template.name, self.client, 
-            self.version_major, self.version_minor, self.revision, 
+        return u"%s pour %s %s%s%s" % (self.template.name, self.client, 
+            self.version, 
             self.platform and u" plateforme %s" % (self.platform,) or u" toute plateforme",
             fileStr)
+    
+    @property
+    def version(self):
+        return u"%s.%s+%s" % (self.version_major, self.version_minor, self.revision)
+    
+    @property
+    def sha1(self):
+        digest = None
+        if self.file:
+            storage = self.file.storage
+            if storage:
+                digest = storage.sha1(self.file.name)
+        return digest
 
+    @permalink
+    def download_url(self):
+        return ('packaging_get_id', [ unicode(self.id), ])

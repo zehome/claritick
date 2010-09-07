@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<packagelist>
+    <client>{{ client }}</client>
+{% for package in packages %}
+    <package required="{% if package.required %}1{% else %}0{% endif %}">
+        <name>{{ package.template.name }}</name>
+        <length>{{ package.file.size }}</length>
+        <sha1>{{ package.sha1 }}</sha1>
+        <url>{{ ABSOLUTE_PATH }}{{ package.download_url }}</url>
+        <platform>
+            <name>{{ package.platform.name }}</name>
+            <description>{{ package.platform.description }}</description>
+            <identifier>{{ package.platform.identifier }}</identifier>
+        </platform>
+        <version>
+            <major>{{ package.version_major }}</major>
+            <minor>{{ package.version_minor }}</minor>
+            <revision>{{ package.revision }}</revision>
+            <full>{{ package.version }}</full>
+        </version>
+        <description>
+            {{ package.template.description }}
+        </description>
+    </package>
+{% endfor %}
+</packages>
