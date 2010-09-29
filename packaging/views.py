@@ -10,6 +10,7 @@ from common.models import Client
 from common.decorator import render_to_json
 from packaging.forms import SearchPackageForm
 from packaging.models import Package, ClientPackageAuth
+from django.db.models import Q
 
 @permission_required("package.can_access")
 def list(request, *args, **kwargs):
@@ -63,22 +64,31 @@ def listxml(request, *args, **kwargs):
 @csrf_exempt
 @render_to_json(indent=2)
 def listjson(request, *args, **kwargs):
+    request.is_text_exception = True
     data = request.POST
     try:
         authkey = data["authkey"]
     except KeyError:
         print "authkey not found"
-        return http.HttpResponse('No permission without valid key.', 403)
+        return http.HttpResponse('No permission without valid key.', status=403)
     
     # First determine packageAuth client
     try:
         packageauth = ClientPackageAuth.objects.get(key=authkey)
     except ClientPackageAuth.DoesNotExist:
         print "packagehost not found with key [%s]" % (authkey,)
-        return http.HttpResponse('No permission without valid key.', 403)
+        return http.HttpResponse('No permission without valid key.', status=403)
     
-    qs = Package.objects.all()
-    qs.filter(client=packageauth.client.id)
+    # Filter platform
+    try:
+        platform = data["platform"]
+    except KeyError:
+        print "platform not found."
+        return http.HttpResponse('Review protocol: platform not specified.')
+    
+    platform_q = Q(platform__identifier=platform) | Q(platform__isnull=True)
+    
+    qs = Package.objects.filter(platform_q, client=packageauth.client.id)
     
     qs = qs.order_by("template__kind__name")
     qs = qs.order_by("template__name")
@@ -98,7 +108,8 @@ def listjson(request, *args, **kwargs):
             "required": p.required,
             "length": p.file.size,
             "sha1": unicode(p.sha1),
-            "url": "%s%s" % (ABSOLUTE_PATH, unicode(p.download_url()),),
+            "full_url": "%s%s" % (ABSOLUTE_PATH, unicode(p.download_url()),),
+            "url": "%s" % (unicode(p.download_url()),),
             "platform": {
                 "name": unicode(p.platform.name),
                 "description": unicode(p.platform.description),
