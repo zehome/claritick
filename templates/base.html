@@ -158,7 +158,9 @@
             <p style="padding: 0; margin: 0;">Utilisateur: {{ user.username }}</p>
             {% endif %}
           {% endif %}
+          {% if user.is_authenticated %}
           Aller au ticket # <input type="text" id="id_num_ticket" size="5" /> <button dojoType="dijit.form.Button" id="id_go_ticket">Go</button>
+          {% endif %}
         </td>
       </tr>
       <tr id="ie_tr" style="display: none;"><td colspan="3" style="text-align: center; font-size: 1.4em;"><a href="{% url internet_explorer %}" style="color: red;">Internet explorer n'est pas supporte.</a></td></tr>
