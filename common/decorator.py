@@ -24,6 +24,9 @@ def render_to_json(**jsonargs):
         @wraps(f)
         def inner_json(request, *args, **kwargs):
             result = f(request, *args, **kwargs)
+            if isinstance(result, HttpResponse):
+                return result
+            
             r = HttpResponse(mimetype='application/json')
             if result:
                 indent = jsonargs.pop('indent', 4)
