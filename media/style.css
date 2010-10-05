@@ -163,13 +163,6 @@ table#menuPrincipal{
  	width: 40em;
 }
 
- 
-form {
-    /*margin:0;
-    padding:0;
-    border: 1px solid lightgrey;*/
-}
-
 .form {
     background-color: #eeeeff;
     border: 1px solid lightgrey;
@@ -178,9 +171,6 @@ form {
 .form-aligned label {
     float: left;
     margin-right: 80px;
-}
-#contenu form {
-    /*background-color: #eeeeff;*/
 }
 
 #widget_id_action-actions {
@@ -210,9 +200,6 @@ form {
 /******************* Boutons de validation ********************/
 .bouton {
     background-color:#FFFFFF;
-    /*background-image:url('/media/images/deg_bouton.png');
-    background-position:left center;
-    background-repeat:repeat-x;*/
     border:1px solid #99AFD6;
     color:#333333;
     font-size:9pt;
@@ -236,33 +223,6 @@ form {
     z-index: 0;
 }
 
-
-/*##################################################
-## BARRE DE SEPARATION FORMULAIRE/TABLEAU REPONSE ##
-##################################################*/
-
-.barre_separation{
-    background-image:url('/media/images/deg_menu.png');
-    height:30px;
-    margin-top:10px;
-}
-
-
-/*##################################################
-################## TABLEAU REPONSE #################
-##################################################*/
-
-.tableau_pt{
-    margin-left:auto;
-    margin-right:auto;
-    text-align: left;
-    border:#013368 1px solid;
-}
-
-.tableau_pt input {
-    width: 70%;
-}
-
 .tableau_center, .center {
     margin-left:auto;
     margin-right:auto;
@@ -282,19 +242,6 @@ form {
 
 .rowVisited a {
     color: grey;
-}
-
-.tableau_pt h2,.resultat th{
-    background-color:#e4eaf6;
-    background-image:url('/media/images/deg_entete.png');
-    background-repeat:repeat-x;
-    background-position:top;
-    border-bottom:#013368 1px solid;
-    color:#013368;
-    height:30px;
-    font-size: 1.5em;
-    margin:0;
-    padding:1px;
 }
 
 
