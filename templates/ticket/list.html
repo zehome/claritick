@@ -221,15 +221,15 @@
 {% for row in tickets.object_list %}
     <tr class="bigrow {% cycle 'row1' 'row2' as rowcolor %}" id="ticket_line_{{ forloop.counter }}">
         <td class="bigrow"><input type="checkbox" name="ticket_checked" id="ticket_select_{{ forloop.counter }}" value="{{ row.pk }}" /></td>
-        <td class="bigrow" style="width: 60px;{{ row.close_style }}{{ row.priority_back_style }}" rowspan="{{ row.enfants|length|add:"1" }}">
+        <td class="bigrow" style="width: 60px;{{ row.close_style }}{{ row.priority_back_style }}" rowspan="{{ row.enfants|length|add:'1' }}">
             {% if row.alarm %}<img src="{{ MEDIA_URL }}images/important.png" alt="[alarme]" />{% endif %}
             {% if row.file %}<img src="{{ MEDIA_URL }}images/attachment.png" alt="[attach]" />{% endif %}
-            <a style="{{ row.priority_text_style }}" href="{% url ticket_modify row.id %}">{{ row.id }}</a>
+            <a style="color: black;" href="{% url ticket_modify row.id %}">{{ row.id }}</a>
         </td>
         <td class="bigrow" style="width: 200px;">{% if row.client %}{{ row.client }}{% endif %}</td>
         <td class="bigrow" style="width: 100px;">{{ row.category }}</td>
         <td class="bigrow" style="width: 100px;">{% if row.project %}{{ row.project }}{% endif %}</td>
-        <td class="bigrow" style="min-width: 250px;{{ row.close_style }}"><a stle="{{ row.priority_text_style }}" href="{% url ticket_modify row.id %}">{{ row.title|truncatewords:8 }}</a></td>
+        <td class="bigrow" style="min-width: 250px;{{ row.close_style }}"><a href="{% url ticket_modify row.id %}">{{ row.title|truncatewords:8 }}</a></td>
         <td class="bigrow">{{ row.nb_comments|default:"" }}</td>
         <td class="bigrow">{{ row.nb_appels|default:"" }}</td>
         <td class="bigrow">{{ row.contact }}</td>
@@ -240,7 +240,7 @@
         </tr>
         <tr class="{{ rowcolor }}" id="ticket_child{{ forloop.parentloop.counter }}_line_{{ forloop.counter }}">
             <td><input type="checkbox" name="ticket_checked" id="ticket_child{{ forloop.parentloop.counter}}_select_{{ forloop.counter }}" value="{{ child.pk }}" /></td>
-            <td colspan="11" class="rowchild"><img src="{{ MEDIA_URL }}images/oxygen/code-class.png" alt="-->" />&nbsp;<span style="{{ child.close_style }}"><a sytle="{{ child.priority_text_style }}" href="{% url ticket_modify row.id %}#child{{ child.id }}">{{ child.title|truncatewords:8 }}</a></span></td>
+            <td colspan="11" class="rowchild"><img src="{{ MEDIA_URL }}images/oxygen/code-class.png" alt="-->" />&nbsp;<span style="{{ child.close_style }}"><a href="{% url ticket_modify row.id %}#child{{ child.id }}">{{ child.title|truncatewords:8 }}</a></span></td>
         </tr>
     {% endfor %}
     {% if not row.enfants %}</tr>{% endif %}
