@@ -3,42 +3,61 @@
 from django.contrib.auth.decorators import login_required, permission_required
 from django.views.generic import create_update
 from django.core.urlresolvers import reverse
-from django.shortcuts import render_to_response, redirect
+from django.shortcuts import render_to_response, redirect, get_object_or_404
 from django.template import RequestContext
 from django.http import HttpResponse, HttpResponseBadRequest
+from django.core.exceptions import PermissionDenied
+from django.forms.models import modelformset_factory
 
 from common.models import Client, Coordinate
 from common.forms import ClientForm, CoordinateForm
-
+from common.utils import user_has_perms_on_client
 try:
     import json
 except ImportError:
     import simplejson as json
 
 @login_required
-def modify_client(request):
+def infos_login(request):
     """
-        Vue pour modifier les coordonnées du client courant.
+    Informations sur le client (liste d'enfants, modif mot de passe, ...)
     """
     client = request.user.get_profile().client
     if not client:
         raise Exception(u"Pas de client dans le profil pour l'utilisateur %s." % request.user)
-    coordinate = client.coordinates or Coordinate()
+    
+    client_qs = Client.objects.get_childs('parent', client.pk)
+    
+    return render_to_response("common/client/infos.html", {
+        "clients": client_qs,
+    }, context_instance=RequestContext(request))
 
+@login_required
+def modify_client(request, client_id):
+    user_client = request.user.get_profile().client
+    if not user_client:
+        raise Exception(u"Pas de client dans le profil pour l'utilisateur %s." % request.user)
+    
+    client = get_object_or_404(Client, pk=client_id)
+    if not user_has_perms_on_client(request.user, client):
+        raise PermissionDenied
+    
+    coordinate = client.coordinates or Coordinate()
     if request.method == "POST":
-        form = ClientForm(request.POST, instance=client)
+        client_form = ClientForm(request.POST, instance=client)
         coordinate_form = CoordinateForm(request.POST, instance=coordinate)
-        if coordinate_form.is_valid() and form.is_valid():
+        if coordinate_form.is_valid() and client_form.is_valid():
             inst = coordinate_form.save()
             client.coordinates = inst
-            form.save()
-            return redirect(reverse("common_client_modify"))
+            client_form.save()
+            #return redirect(reverse("common.views.modify_client"))
     else:
-        form = ClientForm(instance=client)
+        client_form = ClientForm(instance=client)
         coordinate_form = CoordinateForm(instance=coordinate)
-
+    
     return render_to_response("common/client/modify.html", {
-        "form": form,
+        "client": client,
+        "client_form": client_form,
         "coordinate_form": coordinate_form,
     }, context_instance=RequestContext(request))
 

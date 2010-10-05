@@ -1,12 +1,4 @@
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ FEUILLE DE STYLE MTS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-/*##################################################
-################### STYLE GENERAL ##################
-##################################################*/
+/* CLARITICK */
 
 body { font-family:"Lucida Grande","DejaVu Sans","Bitstream Vera Sans",Verdana,Arial,sans-serif !important; }
 
@@ -59,6 +51,10 @@ ul li {
 	margin: 0;
 }
 
+#contenu ul li {
+	font-size: 1.4em;
+}
+
 table {
   font-weight: bold;
   color: #013368;
@@ -69,6 +65,10 @@ table {
 table td,th,tr {
   padding: 0;
   margin: 0;
+}
+
+.bigfont td,th,tr {
+  font-size: 1.2em !important;
 }
 
 table.resultat {
@@ -158,6 +158,12 @@ table#menuPrincipal{
     height: 14px;
 }
 
+/* Anti dojango width: 15em; */
+.bigfields .dijitTextBox {
+ 	width: 40em;
+}
+
+ 
 form {
     /*margin:0;
     padding:0;
@@ -407,7 +413,7 @@ div#gauche a:hover {
 }
 
 #contenu p {
-    font-size: 1.2em;
+    font-size: 1.3em;
 }
 
 #contenu h1 img {
@@ -427,6 +433,10 @@ div#gauche a:hover {
 
 #contenu table.search {
 	margin: 10px;
+}
+
+#contenu table.search .dijitTextBox {
+	width: 20em;
 }
 
 #contenu table tr.bigrow {

@@ -12,7 +12,6 @@ from django.db import connection, transaction
 from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required, permission_required
-from django.core.urlresolvers import reverse
 
 from dojango.decorators import json_response
 

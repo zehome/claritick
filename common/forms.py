@@ -99,13 +99,26 @@ class ModelFormTableMixin(object):
         "Returns this form rendered as HTML <tr>s -- excluding the <table></table>."
         return self.my_html_output(u'<th>%(label)s</th><td>%(errors)s%(field)s%(help_text)s</td>', u'<td colspan="2">%s</td>', '</td></tr>', u'<br />%s', False, cols=cols)
 
-class ClientForm(df.ModelForm):
+class ClientForm(df.ModelForm, ModelFormTableMixin):
+    emails = df.CharField(required=False, widget=df.TextInput(), help_text=u"Paramtétrez la liste des adresses emails utilisées pour transmettre les rapports de ticket concernant tout le laboratoire.")
     class Meta:
         model = Client
-        exclude = ["parent", "label", "coordinates", "emails"]
+        exclude = ["parent", "label", "coordinates"]
 
-class CoordinateForm(df.ModelForm):
-    more = df.CharField(required=False, widget=forms.Textarea())
-
+class CoordinateForm(df.ModelForm, ModelFormTableMixin):
+    """
+    """
+    telephone = df.CharField(required=False, widget=df.NumberTextInput())
+    gsm = df.CharField(required=False,widget=df.NumberTextInput())
+    fax = df.CharField(required=False,widget=df.NumberTextInput())
+    destinataire = df.CharField(required=False, label='Nom destinataire', widget=df.TextInput())
+    address_line1 = df.CharField(required=False, label='Ligne1', widget=df.TextInput())
+    address_line2 = df.CharField(required=False,label='Ligne2', widget=df.TextInput())
+    address_line3 = df.CharField(required=False, label='Ligne3', widget=df.TextInput())
+    postalcode = df.CharField(required=False,label='Code postal', widget=df.NumberTextInput())
+    city = df.CharField(required=False,label='Ville', widget=df.TextInput())
+    email = df.CharField(required=False, label = 'Email principal', widget=df.EmailTextInput())
+    more = df.CharField(required=False, label=u'Informations complémentaires', widget=forms.Textarea())
+    
     class Meta:
         model = Coordinate

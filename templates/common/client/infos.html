@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}Informations de l'utilisateur{% endblock %}
+{% block content_title %}Informations de l'utilisateur{% endblock %}
+{% block image %}<img src="/media/images/oxygen/kontact.png" />{% endblock %}
+
+{% block content %}
+
+<fieldset class="block form">
+    <legend>Mes paramètres</legend>
+    <ul>
+        <li><a href="{% url django.contrib.auth.views.password_change %}">Changement de mot de passe</a></li>
+        <li>Modification des informations personnelles</li>
+        <li>Suppression de compte</li>
+    </ul>
+</fieldset>
+
+<fieldset class="block form">
+    <legend>Mes laboratoires</legend>
+    <ul>{% for client in clients %}
+        <li><a href="/common/client/modify/{{ client.id }}/">{{ client }}</a></li>
+    {% endfor %}
+    </ul>
+</fieldset>
+
+{% endblock %}

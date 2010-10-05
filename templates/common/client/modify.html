@@ -1,24 +1,17 @@
 {% extends "base.html" %}
 
+{% block title %}Modification des coordonnées du laboratoire {{ client }}{% endblock %}
+{% block content_title %}Modification des coordonnées du laboratoire {{ client }}{% endblock %}
+
 {% block content %}
+<p style="text-align: left;"><a href="{% url infos_login %}">&lt;&lt; Retour aux informations</a></p>
 <form method="POST">
     {% csrf_token %}
-    <fieldset class="block form">
-        <legend>Mes coordonnées</legend>
+    <fieldset class="block form bigfields">
+        <legend>Coordonnées de {{ client }}</legend>
             <table>
-            {% for field in coordinate_form %}
-                <tr>
-                    <th class="large">{{ field.label_tag }}</th>
-                    <td class="right">{{ field }}{{ field.errors }}</td>
-                </tr>
-            {% endfor %}
-
-            {% for field in form %}
-                <tr>
-                    <th class="large">{{ field.label_tag }}</th>
-                    <td class="right">{{ field }}{{ field.errors }}</td>
-                </tr>
-            {% endfor %}
+            {{ coordinate_form.as_table }}
+            {{ client_form.as_table }}
             </table>
         <button type="submit" dojoType="dijit.form.Button">Enregistrer</button>
     </fieldset>
