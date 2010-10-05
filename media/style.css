@@ -29,6 +29,9 @@ h1.title {
     border: 1px solid black;
     border-top: 0;
 	padding: 0;
+    -webkit-box-shadow: #ddd 0px 5px 10px;
+    -moz-box-shadow:  #ddd 0px 5px 10px;
+    box-shadow:  #ddd 0px 5px 10px;
 }
 
 h2 {
@@ -67,13 +70,17 @@ table td,th,tr {
   margin: 0;
 }
 
-.bigfont td,th,tr {
+table.bigfont td{
   font-size: 1.2em !important;
 }
 
 table.resultat {
 	width: 98%;
 	text-align: left;
+}
+
+table.resultat thead {
+	border-top: 1px solid #ccc;
 }
 
 table.resultat th,table.resultat td {
@@ -177,12 +184,25 @@ table#menuPrincipal{
     width: 250px;
 }
 
+.checkbox-list {
+	max-height: 400px;
+	overflow: auto;
+	padding-right: 20px;
+	background-color: #F7FCFF;
+	border-top: 1px solid #999;
+	border-bottom: 1px solid #999;
+}
+
 .checkbox-list ul {
     text-align: left;
+	margin: 0;
+	padding: 0;
 }
 
 .checkbox-list ul li {
     list-style-type: none;
+	margin: 0;
+	padding: 0;
 }
 
 #filtres-table td, #filtres-table th {
@@ -202,12 +222,14 @@ table#menuPrincipal{
     background-color:#FFFFFF;
     border:1px solid #99AFD6;
     color:#333333;
-    font-size:9pt;
+    font-size:11pt;
     height:20px;
     line-height:20px;
     padding:5px 5px;
     margin-left: 10px;
     text-decoration:none;
+	font-family: 'Droid Sans';
+	-webkit-box-shadow: rgba(64, 64, 64, 0.1) 4px 4px 5px;
 }
 
 .bouton, .bouton input {
@@ -304,6 +326,8 @@ div#gauche h2 {
 	color: black;
 	margin: 0;
 	vertical-align: middle;
+	font-size: 1.4em;
+	text-shadow: rgba(64, 64, 64, 0.6) 2px 2px 3px;
 }
 
 div#gauche h2 img {
@@ -331,6 +355,9 @@ div#gauche a {
     font-weight:bold;
     text-decoration:none;
     border-bottom:#013368 1px solid;
+    -webkit-box-shadow: rgba(64, 64, 64, 0.2) 2px 2px 15px;
+    -moz-box-shadow: rgba(64, 64, 64, 0.2) 2px 2px 15px;
+    box-shadow: rgba(64, 64, 64, 0.2) 2px 2px 15px;
 }
 
 div#gauche a:hover {
@@ -616,10 +643,13 @@ ol#pagination-digg {
 #pagination-digg a{
 	border:solid 1px #9aafe5;
 	margin-right:2px;
+	-webkit-box-shadow: #ddd 2px 2px 10px;
+	-moz-box-shadow: #ddd 2px 2px 10px;
+	box-shadow: #ddd 2px 2px 10px;
 }
 #pagination-digg .previous-off,
 #pagination-digg .next-off {
-	border:solid 1px #DEDEDE
+	border:solid 1px #DEDEDE;
 	color:#888888;
 	font-weight:bold;
 	margin-right:2px;
@@ -659,6 +689,9 @@ ol#pagination-digg {
 	overflow: auto;
 	margin-right: 25px;
 	margin-top: 10px;
+    -webkit-box-shadow: #eee 5px 5px 10px;
+    -moz-box-shadow:  #eee 5px 5px 10px;
+    box-shadow:  #eee 5px 5px 10px;
 }
 
 #index_content .chart {
@@ -786,9 +819,23 @@ ol#pagination-digg {
     display: none;
 }
 
+/* Inverting colors for "NOT" filters */
+.inverted_colors {
+	background-color: #FEE;
+}
+
 /* Google */
 .gsc-control-cse {
     padding: 0 !important;
+}
+
+/* Dojo specific */
+#contenu .dojoxMultiSelect {
+	max-height: 400px;
+	height: auto;
+}
+#contenu .dojoxMultiSelectItem {
+	text-align: left;
 }
 
 /* EOF */
