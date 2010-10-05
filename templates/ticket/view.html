@@ -17,6 +17,12 @@
             toggleFadding("filtres-table", null, null, null, null);
         });
     });
+    
+    dojo.addOnLoad(function() {
+        dojo.connect(dojo.byId("filtres-not-title"), "onclick", function() {
+            toggleFadding("filtres-not-table", null, null, null, null);
+        });
+    });
 </script>
 {% endblock %}
 
@@ -26,24 +32,30 @@
 
 {% block list_filters %}
 <fieldset class="form">
-  <legend id="filtres-title">Filtrage</legend>
-  <div id="filtres-table" {% if view %}style="display: none;"{% endif %}>
+    <legend id="filtres-title">Filtrage</legend>
+    <div id="filtres-table" {% if view %}style="display: none;"{% endif %}>
     <table class="search" >
         <tr>
             <th>{{ form.client.label_tag }}</th>
             <td>{{ form.client }}</td>
-            <th rowspan="7">{{ form.assigned_to.label_tag }}</th>
-            <td rowspan="7" class="checkbox-list">{{ form.assigned_to }}</td>
-            <th rowspan="7">{{ form.opened_by.label_tag }}</th>
-            <td class="checkbox-list" rowspan="7">{{ form.opened_by }}</td>
-            <th rowspan="6">{{ form.category.label_tag }}</th>
-            <td class="checkbox-list" rowspan="6">{{ form.category }}</td>
-            <th rowspan="6">{{ form.project.label_tag }}</th>
-            <td class="checkbox-list" rowspan="6">{{ form.project }}</td>
+            <th style="text-align: center;">{{ form.assigned_to.label_tag }}</th>
+            <th style="text-align: center;">{{ form.opened_by.label_tag }}</th>
+            <th style="text-align: center;">{{ form.category.label_tag }}</th>
         </tr>
         <tr>
             <th>{{ form.title.label_tag }}</th>
             <td>{{ form.title }}</td>
+            <td rowspan="10"><div class="checkbox-list">{{ form.assigned_to }}</div></td>
+            <td rowspan="10"><div class="checkbox-list">{{ form.opened_by }}</div></td>
+            <td rowspan="10">
+                <table class="search">
+                    <tr><td><div class="checkbox-list">{{ form.category }}</div></td>
+                    <tr><th style="text-align: center;">{{ form.project.label_tag }}</th></tr>
+                    <tr><td><div class="checkbox-list">{{ form.project }}</div></td></tr>
+                    <tr><th style="text-align: center;">{{ form.priority.label_tag }}</th></tr>
+                    <tr><td class="checkbox-list">{{ form.priority }}</td></tr>
+                </table>
+            </td>
         </tr>
         <tr>
             <th>{{ form.text.label_tag }}</th>
@@ -59,23 +71,45 @@
         </tr>
         <tr>
             <th>{{ form.view_name.label_tag }}</th>
-            <td>{{ form.view_name }}<br />{{ form.notseen.label_tag }} {{ form.notseen }}</td>
+            <td>{{ form.view_name }}</td>
         </tr>
         <tr>
-            <th></th>
-            <td></td>
+            <th>{{ form.notseen.label_tag }}</th>
+            <td style="text-align: left;">{{ form.notseen }}</td>
+        </tr>
+        <tr>
             <th>{{ form.state.label_tag }}</th>
-            <td class="checkbox-list">{{ form.state }}</td>
-            <th>{{ form.priority.label_tag }}</th>
-            <td class="checkbox-list">{{ form.priority }}</td>
-        </tr>
-        <tr>
-            <td colspan="10">
-                 
-            </td>
+            <td><div class="checkbox-list">{{ form.state }}</div></td>
         </tr>
     </table>
-        <input id="delete_view" name="delete_view" dojoType="dijit.form.CheckBox" value="1" /><label for="delete_view">Supprimer cette vue</label><button type="submit" dojoType="dijit.form.Button" name="validate-filters" value="1">Enregistrer</button>
+    <!-- Filtre inversés -->
+    <fieldset class="inverted_colors">
+        <legend id="filtres-not-title">AND NOT</legend>
+        <table id="filtres-not-table" class="search" style="display: none;">
+            <tr>
+                <th style="text-align: center;">{{ form_inverted.not_client.label_tag }}</th>
+                <th style="text-align: center;">{{ form_inverted.not_assigned_to.label_tag }}</th>
+                <th style="text-align: center;">{{ form_inverted.not_category.label_tag }}</th>
+                <th style="text-align: center;">{{ form_inverted.not_state.label_tag }}</th>
+            </tr>
+            <tr>
+                <td rowspan="10"><div class="checkbox-list">{{ form_inverted.not_client }}</div></td>
+                <td rowspan="10"><div class="checkbox-list">{{ form_inverted.not_assigned_to }}</div></td>
+                <td rowspan="10">
+                    <table class="search">
+                        <tr><td><div class="checkbox-list">{{ form_inverted.not_category }}</div></td>
+                        <tr><th style="text-align: center;">{{ form_inverted.not_project.label_tag }}</th></tr>
+                        <tr><td><div class="checkbox-list">{{ form_inverted.not_project }}</div></td></tr>
+                        <tr><th style="text-align: center;">{{ form_inverted.not_priority.label_tag }}</th></tr>
+                        <tr><td class="checkbox-list">{{ form_inverted.not_priority }}</td></tr>
+                    </table>
+                </td>
+                <td rowspan="10"><div class="checkbox-list">{{ form_inverted.not_state }}</div></td>
+            </tr>
+        </table>
+    </fieldset>
+    
+    <input id="delete_view" name="delete_view" dojoType="dijit.form.CheckBox" value="1" /><label for="delete_view">Supprimer cette vue</label><button type="submit" dojoType="dijit.form.Button" name="validate-filters" value="1">Enregistrer</button>
     </div>
 </fieldset>
 {% endblock %}

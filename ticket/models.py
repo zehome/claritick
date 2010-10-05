@@ -38,9 +38,9 @@ class Priority(models.Model):
         ordering = ['warning_duration', 'label']
 
     label = models.CharField("Libellé", max_length=64, blank=True)
-    forecolor = ColorField("Couleur du texte", blank=True)
+    forecolor = ColorField("Couleur du texte", blank=True, null=True)
     backcolor = ColorField("Couleur de fond", blank=True)
-    alarm = models.CharField("Alarme automatique", max_length=128, null=True)
+    alarm = models.CharField("Alarme automatique", max_length=128, null=True, blank=True)
     
     good_duration = models.IntegerField("Durée en seconde => Bon", blank=True, null=True)
     warning_duration = models.IntegerField("Durée en seconde => Attention", blank=True, null=True)
@@ -157,7 +157,7 @@ class TicketQuerySet(models.query.QuerySet):
 
         return qs
 
-    def filter_queryset(self, filters, *args, **kwargs):
+    def filter_queryset(self, filters, inverted_filters={}, *args, **kwargs):
         """ Filtre un queryset de ticket a partir d'un dictionnaire de fields lookup. """
         search_mapping = {
             'title': 'icontains',
@@ -166,32 +166,58 @@ class TicketQuerySet(models.query.QuerySet):
             'keywords': 'icontains',
             'client': None,
         }
-
+        inverted_search_mapping = {
+            "not_client": None,
+        }
+        
         qs = self.all()
         d = {}
         for key, value in filters.items():
             try:
-                if value:
-                    try:
-                        lookup = search_mapping[key]
-                    except KeyError:
-                        if isinstance(value, (list, models.query.QuerySet)):
-                            lookup = "in"
-                        else:
-                            lookup = 'exact'
-                    if lookup is None:
-                        continue
-                    qs = qs.filter_or_child({"%s__%s"%(str(key), lookup): value}, *args, **kwargs)
+                if not value:
+                    continue
+                try:
+                    lookup = search_mapping[key]
+                except KeyError:
+                    if isinstance(value, (list, models.query.QuerySet)):
+                        lookup = "in"
+                    else:
+                        lookup = 'exact'
+                if lookup is None:
+                    continue
+                qs = qs.filter_or_child({"%s__%s"% (key, lookup): value}, *args, **kwargs)
             except (AttributeError, FieldError):
                 pass
-
+        
+        for key, value in inverted_filters.items():
+            realkey = key[len("not_"):] # LC: Strip not_
+            try:
+                if not value:
+                    continue
+                try:
+                    lookup = inverted_search_mapping[realkey]
+                except KeyError:
+                    if isinstance(value, (list, models.query.QuerySet)):
+                        lookup = "in"
+                    else:
+                        lookup = 'exact'
+                if lookup is None:
+                    continue
+                qs = qs.exclude(models.Q(**{"%s__%s" % (realkey, lookup): value}))
+            except (AttributeError, FieldError):
+                pass
+        
         client = filters.get("client", None)
-
         if client:
-            # Traitement des lookup None
             clients = Client.objects.get_childs("parent", int(client))
-            qs = qs.filter(client__in=[ c.id for c in clients ])
-
+            qs = qs.filter(models.Q(client__in=[ c.id for c in clients ]))
+        
+        not_client_list = inverted_filters.get("not_client", [])
+        if not_client_list:
+            for not_client in not_client_list:
+                not_clients = Client.objects.get_childs("parent", int(not_client))
+                qs = qs.exclude(models.Q(client__in=[ c.id for c in not_clients ]))
+        
         return qs
 
     def filter_or_child(self, filter, user=None):
@@ -553,11 +579,12 @@ class Ticket(models.Model):
 
 class TicketView(models.Model):
     """
-        Represente un ensemble de critere de recherches.
+    Represente un ensemble de critere de recherches.
     """
     user = models.ForeignKey(User)
     name = models.TextField(default=u"Nom de la vue")
     filters = JsonField()
+    inverted_filters = JsonField(null=True, blank=True)
     notseen = models.BooleanField(default=False)
 
     class Meta:

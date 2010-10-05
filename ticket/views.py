@@ -159,22 +159,27 @@ def list_view(request, view_id=None):
                 view.delete()
                 return redirect("ticket_list_view")
             data = request.POST.copy()
+            inverted_filters = data.copy()
+            filters = data.copy()
         else:
             data = view.filters
+            inverted_filters = view.inverted_filters
             data.update({"view_name": view.name})
+            filters = data.copy()
         context["view"] = view
-
+    
     # le form de filtres
-    form = SearchTicketViewForm(data, user=request.user)
-
+    form = SearchTicketViewForm(data, user=request.user)    
+    form_inverted = SearchTicketViewFormInverted(inverted_filters, user=request.user)
+    
     # le template a charger
-    if request.user.has_perm("ticket.can_list_all") or request.user.is_superuser:
+    if request.user.has_perm("ticket.can_list_all"): # LC: useless ? or request.user.is_superuser:
         template_name = "ticket/view.html"
     else:
         template_name = "ticket/view_small.html"
 
     # le form d'actions
-    if request.user.has_perm("ticket.can_list_all") or request.user.is_superuser:
+    if request.user.has_perm("ticket.can_list_all"): # LC: useless ? or request.user.is_superuser:
         action_form = TicketActionsForm(request.POST, user=request.user, prefix="action")
     else:
         action_form = TicketActionsSmallForm(request.POST, user=request.user, prefix="action")
@@ -190,32 +195,35 @@ def list_view(request, view_id=None):
     cqs = Ticket.tickets.filter(parent__isnull=False)
 
     # On va enregistrer les criteres actuels en tant que nouvelle liste
-    if request.method == "POST" and form.is_valid():
-        if view_id:
-            TicketView.objects.filter(pk=view_id).update(
-                name=form.cleaned_data["view_name"],
-                filters=form.cleaned_data,
-                notseen=form.cleaned_data["notseen"],
-            )
+    if request.method == "POST":
+        if form.is_valid() and form_inverted.is_valid():
+            if view_id:
+                TicketView.objects.filter(pk=view_id).update(
+                    name=form.cleaned_data["view_name"],
+                    filters=form.cleaned_data,
+                    inverted_filters=form_inverted.cleaned_data,
+                    notseen=form.cleaned_data["notseen"],
+                )
+            else:
+                t = TicketView.objects.create(
+                    user=request.user,
+                    name=form.cleaned_data["view_name"],
+                    filters=form.cleaned_data,
+                    inverted_filters=form_inverted.cleaned_data,
+                    notseen=form.cleaned_data["notseen"],
+                )
+
+            if request.POST.get("validate-filters", None):
+                return redirect("ticket_list_view", view_id=view_id or t.pk)
         else:
-            t = TicketView.objects.create(
-                user=request.user,
-                name=form.cleaned_data["view_name"],
-                filters=form.cleaned_data,
-                notseen=form.cleaned_data["notseen"],
-            )
-
-
-        if request.POST.get("validate-filters", None):
-            return redirect("ticket_list_view", view_id=view_id or t.pk)
-
+            print form.errors
+            print form_inverted.errors
     # On filtre la liste a partir des datas de la vue
-    filters = data.copy()
     if not request.user.has_perm("ticket.can_list_all") and data.get("text"):
         qs = qs.filter_or_child(models.Q(title__icontains=data["title"]) | models.Q(text__icontains=data["text"]), user=request.user)
         del filters["text"]
         cqs = cqs.filter(diffusion=True)
-    qs = qs.filter_queryset(filters, user=request.user)
+    qs = qs.filter_queryset(filters, user=request.user, inverted_filters=inverted_filters)
 
     # On va filtrer la liste des tickets en fonction de la relation user => client
     qs = qs.filter_ticket_by_user(request.user)
@@ -240,6 +248,7 @@ def list_view(request, view_id=None):
     context.update({
         "show_ticket_seen": context.get("view", False) and view.notseen or False,
         "form": form,
+        "form_inverted": form_inverted,
         "action_form": action_form,
         "tickets": pagination,
     })

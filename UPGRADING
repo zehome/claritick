@@ -1,4 +1,8 @@
-r??
+r424
+    ALTER TABLE ticket_ticketview ADD COLUMN inverted_filters TEXT;
+    -- Avoid bug present before (not using the forecolor because of typo in template)
+    ALTER TABLE ticket_priority ALTER COLUMN forecolor DROP NOT NULL;
+r423
     UPDATE django_site set domain='claritick.clarisys.fr', name='claritick' WHERE id=1;
 r413
     ALTER TABLE common_userprofile ADD COLUMN "tickets_vus" text;

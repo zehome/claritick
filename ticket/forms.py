@@ -106,23 +106,73 @@ class SearchTicketForm(df.Form, ModelFormTableMixin):
         self.base_fields["opened_by"].choices = self.base_fields["assigned_to"].choices
         super(SearchTicketForm, self).__init__(*args, **kwargs)
 
+class SearchTicketViewFormInverted(df.Form):
+    not_client = df.MultipleChoiceField(
+        label=u'Client',
+        choices=[(x.pk, x) for x in sort_queryset(Client.objects.all())],
+        required=False,
+        widget=df.CheckboxSelectMultiple()
+    )
+    not_project = df.MultipleChoiceField(
+        label=u'Projet',
+        required=False,
+        widget=df.CheckboxSelectMultiple()
+    )
+    not_category = df.MultipleChoiceField(
+        label=u'Catégorie',
+        required=False,
+        widget=df.CheckboxSelectMultiple()
+    )
+    not_priority = df.MultipleChoiceField(
+        label=u'Priorité',
+        required=False,
+        widget=df.CheckboxSelectMultiple()
+    )
+    not_state = df.MultipleChoiceField(
+        label=u'État',
+        required=False,
+        widget=df.CheckboxSelectMultiple()
+    )
+    not_assigned_to = df.MultipleChoiceField(
+        label=u'Assigné à',
+        required=False,
+        widget=df.CheckboxSelectMultiple()
+    )
+    def __init__(self, *args, **kwargs):
+        self.base_fields["not_state"].choices = State.objects.values_list("pk", "label")
+        self.base_fields["not_category"].choices = Category.objects.values_list("pk", "label")
+        self.base_fields["not_project"].choices = Project.objects.values_list("pk", "label")
+        self.base_fields["not_priority"].choices = Priority.objects.values_list("pk", "label")
+        self.base_fields["not_assigned_to"].choices = User.objects.values_list("pk", "username")
+        filter_form_for_user(self, kwargs.pop("user", None), keywords=("not_client", "not_assigned_to"))
+        
+        super(SearchTicketViewFormInverted, self).__init__(*args, **kwargs)
+        # On retire les choix vide, provenant de SearchTicketForm
+        del self.base_fields["not_assigned_to"].choices[0]
+        del self.base_fields["not_client"].choices[0]
+    
 class SearchTicketViewForm(SearchTicketForm):
-    client      = df.ChoiceField(choices=[(x.pk, x) for x in sort_queryset(Client.objects.all())],
+    client = df.ChoiceField(choices=[(x.pk, x) for x in sort_queryset(Client.objects.all())],
         widget=FilteringSelect(), required=False)
-    view_name = forms.CharField(widget=df.TextInput(), label="Nom de la vue", required=False)
-    state       = forms.MultipleChoiceField(required=False, widget=df.CheckboxSelectMultiple())
-    category = forms.MultipleChoiceField(required=False, widget=df.CheckboxSelectMultiple())
-    project  = forms.MultipleChoiceField(required=False, widget=df.CheckboxSelectMultiple())
-    priority = forms.MultipleChoiceField(required=False, widget=df.CheckboxSelectMultiple())
-    assigned_to = forms.MultipleChoiceField(required=False, widget=df.CheckboxSelectMultiple())
-    opened_by   = forms.MultipleChoiceField(required=False, widget=df.CheckboxSelectMultiple())
-    notseen = forms.BooleanField(label=u"Non consultés", widget=df.widgets.CheckboxInput(), initial=False, required=False)
-
+    view_name = df.CharField(widget=df.TextInput(), label="Nom de la vue", required=False)
+    state = df.MultipleChoiceField(label=u'État', required=False, widget=df.CheckboxSelectMultiple())
+    category = df.MultipleChoiceField(label=u'Catégorie', required=False, widget=df.CheckboxSelectMultiple())
+    project = df.MultipleChoiceField(label=u'Projet', required=False, widget=df.CheckboxSelectMultiple())
+    priority = df.MultipleChoiceField(label=u'Priorité', required=False, widget=df.CheckboxSelectMultiple())
+    assigned_to = df.MultipleChoiceField(label='Assigné à', required=False, widget=df.widgets.CheckboxSelectMultiple())
+    opened_by = df.MultipleChoiceField(label='Ouvert par', required=False, widget=df.widgets.CheckboxSelectMultiple())
+    notseen = df.BooleanField(label=u"Non consultés", widget=df.widgets.CheckboxInput(), initial=False, required=False)
+    title = df.CharField(label=u'Titre', required=False, widget = df.TextInput())
+    text = df.CharField(label=u'Texte', required=False, widget = df.TextInput())
+    keywords = df.CharField(label=u'Mots clefs', required=False, widget = df.TextInput())
+    
     def __init__(self, *args, **kwargs):
         self.base_fields["state"].choices = State.objects.values_list("pk", "label")
         self.base_fields["category"].choices = Category.objects.values_list("pk", "label")
         self.base_fields["project"].choices = Project.objects.values_list("pk", "label")
         self.base_fields["priority"].choices = Priority.objects.values_list("pk", "label")
+        
+        filter_form_for_user(self, kwargs.pop("user", None))
         super(SearchTicketViewForm, self).__init__(*args, **kwargs)
 
         # On retire les choix vide, provenant de SearchTicketForm
