@@ -188,7 +188,8 @@ class TicketQuerySet(models.query.QuerySet):
                 qs = qs.filter_or_child({"%s__%s"% (key, lookup): value}, *args, **kwargs)
             except (AttributeError, FieldError):
                 pass
-        
+        if not inverted_filters:
+            inverted_filters = {}
         for key, value in inverted_filters.items():
             realkey = key[len("not_"):] # LC: Strip not_
             try:
