@@ -42,14 +42,14 @@
             {% for item in versions %}
                 <tr>
                     <td class="align-right{% if perms.developpements.change_version %} modifiable{% endif %}" url="{% url admin:developpements_version_change item.pk %}">
-                        {% if item.content %}
+                        {% if item.required_content %}
                             <div dojoType="dijit.form.DropDownButton" class="bouton_discret">
                                 <span>{{ item.majeur }}.{{ item.mineur }}</span>
                                 <div dojoType="dijit.TooltipDialog" title="Liste complète" style="display:none;">
                                     <table>
                                         <tr><th colspan="999">Contenu requis</th></tr>
-                                        {% for dev in item.content %}
-                                            <tr><td>{{ dev.groupe }}</td><td title="{{ dev.description }}">{{ dev }}</td></tr>
+                                        {% for dev in item.required_content %}
+                                            <tr{% if dev.depasse%} class="dev_depasse_date"{% endif %}><td>{{ dev.dev.groupe }}</td><td title="{{ dev.dev.description }}">{{ dev.dev.nom }}</td></tr>
                                         {% endfor %}
                                     </table>
                                 </div>
@@ -66,7 +66,7 @@
                                     <table>
                                         <tr><th colspan="999">Contenu présent si sortie le {{ item.date_sortie|date:"d/m/Y" }}</th></tr>
                                         {% for dev in item.contenu_sortie_prevue %}
-                                            <tr><td>{{ dev.groupe }}</td><td title="{{ dev.description }}">{{ dev }}</td></tr>
+                                            <tr><td>{{ dev.groupe }}</td><td title="{{ dev.description }}">{{ dev }} | {{ dev.requis }}</td></tr>
                                         {% endfor %}
                                     </table>
                                 </div>
@@ -83,7 +83,7 @@
                                     <table>
                                         <tr><th colspan="999">Contenu supplémentaire présent si sortie retardée le {{ item.date_sortie_complete|date:"d/m/Y" }}</th></tr>
                                         {% for dev in item.contenu_sortie_retardee %}
-                                            <tr><td>{{ dev.groupe }}</td><td title="{{ dev.description }}">{{ dev }}</td></tr>
+                                            <tr><td>{{ dev.groupe }}</td><td title="{{ dev.description }}">{{ dev }} | {{ dev.requis }}</td></tr>
                                         {% endfor %}
                                     </table>
                                 </div>
