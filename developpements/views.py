@@ -86,21 +86,26 @@ def versions(request, project_id):
         if dev_contenus:
             ver.deja_sortie = True
             dev_deja_sortis.extend(dev_contenus)
+            ver.required_content = [{'dev' : d, 'depasse' : False} for d in ver.developpement_set.all()]
         elif tous_devs:
             ver.date_sortie_complete = ver.date_sortie
             ver.contenu_sortie_prevue = []
             ver.contenu_sortie_retardee = []
+            ver.required_content = ver.developpement_set.all()
             buffer = []
             for dev in tous_devs:
                 if dev not in dev_deja_sortis and dev.date_sortie and ver.date_sortie and dev.date_sortie <= ver.date_sortie:
+                    dev.requis = (dev in ver.required_content)
                     ver.contenu_sortie_prevue.append(dev)
                 buffer.append(dev)
                 if dev.version_requise == ver:# or (dev.engagement and ver.date_sortie and dev.engagement < ver.date_sortie):
                     if dev.date_sortie:
                         if (ver.date_sortie_complete and dev.date_sortie > ver.date_sortie_complete) or (ver.date_sortie_complete is None):
+                            dev.requis = (dev in ver.required_content)
                             ver.date_sortie_complete = dev.date_sortie
                             ver.contenu_sortie_retardee.extend([d for d in buffer if d not in ver.contenu_sortie_prevue and d not in dev_deja_sortis])
                             buffer = []
+            ver.required_content = [{'dev' : d, 'depasse' : (d not in ver.contenu_sortie_prevue)} for d in ver.developpement_set.all()]
 
     return render_to_response("developpements/versions.html", {'versions' : versions, 'project_id' : project_id}, context_instance = RequestContext(request))
 
