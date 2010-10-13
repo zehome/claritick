@@ -163,6 +163,7 @@ class Developpement(models.Model):
 
     objects = DeveloppementManager()
 
+    project = models.ForeignKey(Project)
     nom = models.TextField()
     description = models.TextField(null = True, blank = True)
     lien = models.TextField(null = True, blank = True)

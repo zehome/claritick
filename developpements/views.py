@@ -8,11 +8,11 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.utils.datastructures import SortedDict
 from django.utils import simplejson as json
 
-from developpements.models import Developpement, Version, Client, GroupeDev
+from developpements.models import Developpement, Version, Client, GroupeDev, Project
 from developpements.forms import DeveloppementForm
 
 from ticket.models import Ticket
-
+import sys
 import traceback
 
 @permission_required('developpements.can_access_suividev')
@@ -22,9 +22,10 @@ def home(request):
 def prepare_liste_dev(request, project_id, shortlist = False):
     devs, couleurs = Developpement.objects.populate(project_id=project_id)
     clients = Developpement.client_demandeur.\
-            through.objects.select_related("client", "client__client").filter(developpement__groupe__project__pk = project_id)
+            through.objects.select_related("developpement", "client", "client__client").filter(developpement__project__pk = project_id)
     versions = Version.contenu.through.\
-            objects.select_related("version").filter(developpement__groupe__project__pk = project_id)
+            objects.select_related("version").filter(developpement__project__pk = project_id)
+    project = Project.objects.get(pk=project_id)
 
     # join devs clients and versions
     developpements = SortedDict()
@@ -34,7 +35,9 @@ def prepare_liste_dev(request, project_id, shortlist = False):
         developpements[d.pk] = d
 
     for c in clients:
+        sys.stdout.flush()
         developpements[c.developpement.pk].clients.append(c.client)
+
     for v in versions:
         old = developpements[v.developpement.pk].dispo_version
         # overwrite ?
@@ -42,6 +45,7 @@ def prepare_liste_dev(request, project_id, shortlist = False):
             developpements[v.developpement.pk].dispo_version = v.version
             developpements[v.developpement.pk].deja_dispo = "%s" % (v.version)
             developpements[v.developpement.pk].date_sortie = "%s" % (v.version.date_sortie)
+
     if shortlist:
         filtered_devs = SortedDict()
         for key, dev in developpements.items():
@@ -52,8 +56,7 @@ def prepare_liste_dev(request, project_id, shortlist = False):
         developpements = developpements.values()
     versions_existantes = Version.objects.order_by('majeur','mineur','revision').values()
 
-    return render_to_response("developpements/liste.html", {'developpements' : developpements, 'couleurs': couleurs, 'versions_existantes' : versions_existantes, 'project_id' : project_id}, context_instance = RequestContext(request))
-    return developpements
+    return render_to_response("developpements/liste.html", {'developpements' : developpements, 'couleurs': couleurs, 'versions_existantes' : versions_existantes, 'project' : project}, context_instance = RequestContext(request))
 
 @permission_required('developpements.can_view_liste')
 def liste(request, project_id):
@@ -67,8 +70,9 @@ def shortlist(request, project_id):
 def versions(request, project_id):
     vers = Version.objects.filter(project__pk = project_id).order_by('majeur','mineur','revision')
     devs = Version.contenu.through.objects.select_related("developpement",
-            "developpement__groupe", "developpement__version_requise").filter(developpement__groupe__project__pk = project_id)
-    tous_devs, _ = Developpement.objects.populate(project_id=project_id)
+            "developpement__groupe", "developpement__version_requise").filter(developpement__project__pk = project_id)
+    tous_devs = Developpement.objects.populate(project_id=project_id)[0]
+    project = Project.objects.get(pk=project_id)
 
     versions = SortedDict()
     for v in vers:
@@ -107,7 +111,7 @@ def versions(request, project_id):
                             buffer = []
             ver.required_content = [{'dev' : d, 'depasse' : (d not in ver.contenu_sortie_prevue)} for d in ver.developpement_set.all()]
 
-    return render_to_response("developpements/versions.html", {'versions' : versions, 'project_id' : project_id}, context_instance = RequestContext(request))
+    return render_to_response("developpements/versions.html", {'versions' : versions, 'project' : project}, context_instance = RequestContext(request))
 
 @permission_required('developpements.change_developpement')
 def change_color(request):

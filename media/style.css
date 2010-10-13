@@ -472,6 +472,9 @@ div#gauche a:hover {
 #contenu input {
     height: 1.3em !important;
 }
+div#contenu.admin input {
+    height: auto !important;
+}
 
 
 #contenu form fieldset table tr {
@@ -565,6 +568,10 @@ div#contenu label {
 /* admin */
 div#contenu .aligned label {
 	width: 20em;
+}
+div.field-box label.inline {
+    width: auto !important;
+    border: 0;
 }
 
 /* admin */

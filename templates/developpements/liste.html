@@ -5,6 +5,32 @@
 {% block extrajs %}
     {{ block.super }}
     <script type="text/javascript">
+        function onClosePopup(win) {
+            win.close();
+            window.location.reload();
+        }
+        function popupModifyOpenTd(triggeringLink) {
+            href = triggeringLink
+            if (href.indexOf('?') == -1) {
+                href += '?_popup=1';
+            } else {
+                href  += '&_popup=1';
+            }
+            var win = window.open(href, 'modifypopup', 'height=500,width=1000,resizable=yes,scrollbars=yes');
+            win.focus();
+            return false;
+        }
+        function popupModifyOpen(triggeringLink) {
+            href = triggeringLink.href
+            if (href.indexOf('?') == -1) {
+                href += '?_popup=1';
+            } else {
+                href  += '&_popup=1';
+            }
+            var win = window.open(href, 'modifypopup', 'height=500,width=1000,resizable=yes,scrollbars=yes');
+            win.focus();
+            return false;
+        }
         dojo.addOnLoad(function() {
             dojo.query("td.modifiable").forEach(function(ligne)
                 {
@@ -14,7 +40,9 @@
                     });
                 contextMenu.addChild(new dijit.MenuItem({
                     label: "Modifier",
-                    onClick: function(event) { window.location = dojo.attr(ligne, 'url'); },
+                    onClick: function(event) { 
+                        popupModifyOpenTd(dojo.attr(ligne, 'url'));
+                    },
                     }));
                 if (dojo.attr(ligne, 'itempk'))
                     {
@@ -326,6 +354,8 @@
 {% endblock %}
 
 {% block content %}
+    <ul class="object-tools"><li><a href="{% url admin:developpements_developpement_add %}?project={{ project.id }}" onclick="return popupModifyOpen(this);">Ajouter</a></li>
+    </ul>
     {{ block.super }}
     <input type="text" onChange="filter_dev(this.value);"/>
     <table id="table_dev">
@@ -349,7 +379,7 @@
         <tbody>
             {% for item in developpements %}
                 <tr id="developpement_ligne_{{ item.pk }}">
-                    <td class="align-center" style="background-color: #C0C0C0;"><input type="hidden" class="poids_total" id="poids_total_{{ item.pk }}" value="{{ item.poids_total }}"/>{{ forloop.counter }}</td>
+                    <td class="align-center" style="background-color: #C0C0C0;"><input type="hidden" class="poids_total" id="poids_total_{{ item.pk }}" value="{{ item.poids_total }}"/><a href="{% url admin:developpements_developpement_change item.pk %}?project={{ project.id }}" onclick="return popupModifyOpen(this);">{{ forloop.counter }}</a></td>
                     <td class="align-right" title="{{ item.clients|join:" " }}">{{ item.clients|length }}</td>
                     <td class="align-right">
                         <span id="change_poids_{{ item.pk }}" dojoType="dijit.InlineEditBox" onChange="save_item_field({{ item.pk }}, 'poids', 'integer', this.value);" autoSave="true">{{ item.poids }}</span>
