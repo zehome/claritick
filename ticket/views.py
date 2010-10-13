@@ -149,6 +149,8 @@ def list_view(request, view_id=None):
     data = request.POST
 
     # On charge la vue de la liste
+    inverted_filters = {}
+    filters = {}
     if view_id:
         profile = request.user.get_profile()
         ticket_vus = profile.tickets_vus or {}
@@ -861,3 +863,8 @@ def ajax_reset_all_ticket_seen(request):
     profile.save()
     return http.HttpResponse("saved")
 
+
+@login_required
+def ticket_stats(request):
+    data = {}
+    return render_to_response("ticket/stats.html", data, context_instance=RequestContext(request))
