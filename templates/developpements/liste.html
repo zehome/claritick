@@ -393,7 +393,7 @@
                     <td id="poids_manuel_{{ item.pk }}" class="align-right" title="{{ item.poids_total }}">
                         <span id="change_poids_manuel_{{ item.pk }}" dojoType="dijit.InlineEditBox" onChange="save_item_field({{ item.pk }}, 'poids_manuel', 'float', this.value);" autoSave="true"> {{ item.poids_manuel }}</span>
                     </td>
-                    <td class="{% if perms.developpements.change_developpement %}modifiable{% endif %}{% if item.done %} done{% endif %}" url="{% url admin:developpements_developpement_change item.pk %}"
+                    <td class="{% if perms.developpements.change_developpement %}modifiable{% endif %}{% if item.done %} done{% endif %}" url="{% url admin:developpements_developpement_change item.pk %}?project={{ project.id }}"
                         title="{{ item.description }}"
                         itempk="{{ item.pk }}"
                         id="nom_{{ item.pk }}"

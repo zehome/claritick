@@ -32,11 +32,11 @@ class DeveloppementAdmin(admin.ModelAdmin):
         """Filter for easy add"""
         data = request.GET.copy()
         if data:
-            if db_field.name == "project" and data["project"]:
+            if db_field.name == "project" and data.get("project", None):
                 kwargs["queryset"] = Project.objects.filter(id=data["project"])
-            if db_field.name == "groupe" and data["project"]:
+            if db_field.name == "groupe" and data.get("project", None):
                 kwargs["queryset"] = GroupeDev.objects.filter(project=data["project"])
-            if db_field.name == "version_requise" and data["project"]:
+            if db_field.name == "version_requise" and data.get("project", None):
                 kwargs["queryset"] = Version.objects.filter(project=data["project"])
         return super(DeveloppementAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
