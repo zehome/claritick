@@ -11,6 +11,7 @@ from common.decorator import render_to_json
 from packaging.forms import SearchPackageForm
 from packaging.models import Package, ClientPackageAuth
 from django.db.models import Q
+import os.path
 
 @permission_required("package.can_access")
 def list(request, *args, **kwargs):
