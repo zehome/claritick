@@ -72,6 +72,11 @@ def listjson(request, *args, **kwargs):
         print "authkey not found"
         return http.HttpResponse('No permission without valid key.', status=403)
     
+    try:
+        protocol_version = data["protocol_version"]
+    except KeyError:
+        protocol_version = 1 # First version
+    
     # First determine packageAuth client
     try:
         packageauth = ClientPackageAuth.objects.get(key=authkey)
@@ -95,7 +100,7 @@ def listjson(request, *args, **kwargs):
     
     ABSOLUTE_PATH =  "%s://%s" % (request.is_secure() and "https" or "http", request.get_host(),)
     response = {
-        "client": unicode(packageauth.client),
+        "client": unicode(packageauth.client.label),
         "packages": [],
     }
     
@@ -110,6 +115,7 @@ def listjson(request, *args, **kwargs):
             "sha1": unicode(p.sha1),
             "full_url": "%s%s" % (ABSOLUTE_PATH, unicode(p.download_url()),),
             "url": "%s" % (unicode(p.download_url()),),
+            "filename": unicode(os.path.basepath(p.file.name)),
             "platform": {
                 "name": unicode(p.platform.name),
                 "description": unicode(p.platform.description),
