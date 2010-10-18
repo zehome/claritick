@@ -28,16 +28,16 @@ class PartialNewTicketForm(forms.ModelForm):
         fields = ("category",)
 
 class NewTicketForm(CustomModelForm):
-    title = forms.CharField(widget=forms.TextInput(attrs={'size': '80'}))
-    text = df.CharField(widget=forms.Textarea(attrs={'cols':'90', 'rows': '15'}))
+    title = forms.CharField(label=u'Titre', widget=forms.TextInput(attrs={'size': '80'}))
+    text = df.CharField(label=u'Texte', widget=forms.Textarea(attrs={'cols':'90', 'rows': '15'}))
     client = df.ModelChoiceField(queryset = Client.objects.all(),
             widget=FilteringSelect(attrs={'queryExpr': '${0}*', 'onChange': 'modif_ticket();'}), empty_label='', required=False)
-    keywords = forms.CharField(widget=forms.TextInput(attrs={'size': '80'}), required=False)
+    keywords = forms.CharField(label=u'Mots clefs',widget=forms.TextInput(attrs={'size': '80'}), required=False)
     calendar_start_time = df.DateTimeField(required=False)
     calendar_end_time = df.DateTimeField(required=False)
     assigned_to = df.ModelChoiceField(label=u'Assigné à', widget=FilteringSelect(attrs={'onChange': 'modif_ticket();'}), queryset=ClaritickUser.objects.all(), required=False)
     #validated_by = df.ModelChoiceField(widget=FilteringSelect(), queryset=ClaritickUser.objects.all(), required=False)
-    file = df.FileField(required=False)
+    file = df.FileField(label='Fichier joint', required=False)
     comment = df.CharField(widget=forms.Textarea(), required=False)
     internal = forms.BooleanField(widget=df.widgets.CheckboxInput(attrs={'onChange': 'modif_ticket(); toggleComment(this);'}), initial=True, required=False)
     appel = forms.BooleanField(label=u"Signaler un (r)appel du client", widget=df.widgets.CheckboxInput(attrs={'onChange': 'modif_ticket();'}), initial=False, required=False)
@@ -83,22 +83,22 @@ class ChildForm(ChildFormSmall):
         super(ChildForm, self).__init__(*args, **kwargs)
 
 class SearchTicketForm(df.Form, ModelFormTableMixin):
-    title       = df.CharField(widget=df.TextInput(attrs={'size':'64'}), required=False)
+    title       = df.CharField(label=u'Titre', widget=df.TextInput(attrs={'size':'64'}), required=False)
     client      = df.ChoiceField(choices=[(x.pk, x) for x in sort_queryset(Client.objects.all())],
         widget=FilteringSelect(), required=False)
-    category    = df.ModelChoiceField(queryset = Category.objects.all(), 
+    category    = df.ModelChoiceField(label=u'Catégorie', queryset = Category.objects.all(), 
         widget=FilteringSelect(), empty_label='', required=False)
-    project     = df.ModelChoiceField(queryset = Project.objects.all(), 
+    project     = df.ModelChoiceField(label=u'Projet', queryset = Project.objects.all(), 
         widget=FilteringSelect(), empty_label='', required=False)
-    state       = df.ModelChoiceField(queryset = State.objects.all(), 
+    state       = df.ModelChoiceField(label=u'État', queryset = State.objects.all(), 
         widget=FilteringSelect(), empty_label='', required=False)
-    priority    = df.ModelChoiceField(queryset = Priority.objects.all(), 
+    priority    = df.ModelChoiceField(label=u'Priorité', queryset = Priority.objects.all(), 
         widget=FilteringSelect(), empty_label='', required=False)
-    assigned_to = df.ChoiceField(widget=FilteringSelect(), required=False)
+    assigned_to = df.ChoiceField(label=u'Assigné a', widget=FilteringSelect(), required=False)
     
-    text = df.CharField(required=False)
-    opened_by = df.ChoiceField(widget=FilteringSelect(), required=False)
-    keywords = df.CharField(required=False)
+    text = df.CharField(label=u'Texte', required=False)
+    opened_by = df.ChoiceField(label=u'Ouvert part', widget=FilteringSelect(), required=False)
+    keywords = df.CharField(label=u'Mots clefs', required=False)
     contact = df.CharField(required=False)
 
     def __init__(self, *args, **kwargs):
