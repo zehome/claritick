@@ -49,7 +49,7 @@ class PackageTemplate(models.Model):
     name = models.CharField(max_length=256, verbose_name=u"Nom du paquet", blank=False, validators = [ packagename_validator, ])
     short_description = models.CharField(max_length=64, verbose_name=u"Description courte", blank=False)
     description = models.TextField(verbose_name=u"Description Longue", null=True, blank=True)
-    client_independant = models.BooleanField(verbose_name=u"Indépendant du client", default=True)
+    #~ client_independant = models.BooleanField(verbose_name=u"Indépendant du client", default=True)
     
     def __unicode__(self):
         return u"%s %s" % (self.kind, self.name)
