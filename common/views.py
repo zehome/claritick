@@ -17,6 +17,13 @@ try:
 except ImportError:
     import simplejson as json
 
+
+# LC: XX: crossdependency: BAD
+try:
+    from packaging.models import ClientPackageAuth
+except ImportError:
+    print "Hummf"
+
 @login_required
 def infos_login(request):
     """
@@ -26,10 +33,20 @@ def infos_login(request):
     if not client:
         raise Exception(u"Pas de client dans le profil pour l'utilisateur %s." % request.user)
     
+    # First determine packageAuth client
+    try:
+        packageauth = ClientPackageAuth.objects.get(client__pk=client.id)
+    except ClientPackageAuth.DoesNotExist:
+        packageauth = None
+    except NameError: # LC: Import failed
+        packageauth = None
+
     client_qs = Client.objects.get_childs('parent', client.pk)
     
     return render_to_response("common/client/infos.html", {
+        "client": client,
         "clients": client_qs,
+        "packageauth": packageauth,
     }, context_instance=RequestContext(request))
 
 @login_required
