@@ -12,6 +12,9 @@
         <li><a href="{% url django.contrib.auth.views.password_change %}">Changement de mot de passe</a></li>
         <li>Modification des informations personnelles</li>
         <li>Suppression de compte</li>
+        <li>Clef clariupdateur {{ client }} (<span style="color:red;">authkey</span>): 
+        {% if packageauth %}<b>{{ packageauth.key }}</b>{% else %}<b>Non disponible.</b>{% endif %}
+        </li>
     </ul>
 </fieldset>
 
