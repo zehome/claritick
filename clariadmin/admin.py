@@ -6,13 +6,13 @@ from clariadmin.models import OperatingSystem, HostType, Supplier, Host
 class HostAdmin(admin.ModelAdmin):
     fieldsets = (
         ("Client", {'fields': ('site', 'location')}),
-        ("Hote", {'fields': ('hostname', 'ip', 'serial', 'rootpw', 'type', 'os', 'automate',
+        ("Hote", {'fields': ('hostname', 'ip', 'serial', 'rootpw', 'type', 'os', #'automate',
             'supplier', 'model')}),
         ("Plus", {'fields': ('commentaire', 'date_end_prod',
             'inventory', 'status')}),
     )
     
-    search_fields = ['hostname', 'ip', 'automate', 'inventory']
+    search_fields = ['hostname', 'ip', 'inventory'] #'automate'
     list_filter = ['type', 'os', 'site']
 
 admin.site.register(OperatingSystem)

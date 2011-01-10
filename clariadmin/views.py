@@ -19,7 +19,6 @@ def list_all(request, *args, **kw):
     """
     
     search_mapping={'ip': 'istartswith',
-        'automate': 'icontains',
         'hostname': 'istartswith'}
     
     form = SearchHostForm(request.POST)

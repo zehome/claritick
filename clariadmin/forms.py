@@ -19,4 +19,4 @@ class SearchHostForm(df.Form, ModelFormTableMixin):
     hostname = df.CharField(required=False)
     
     class Meta:
-        fields = ('site', 'type', 'hostname', 'os', 'automate', 'ip')
+        fields = ('site', 'type', 'hostname', 'os', 'ip') # 'automate'

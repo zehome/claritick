@@ -11,12 +11,12 @@ def dialog_clariadmin():
     default_text_filter = ""
     
     while True:
-        ret = D.dialog_inputbox("Filtrage machine (hostname, ip, serial, automate)", default_text_filter)
+        ret = D.dialog_inputbox("Filtrage machine (hostname, ip, serial)", default_text_filter)
         if ret[0]: # Cancel:
             break
         
         default_text_filter = ret[1]
-        query = Q(hostname__istartswith=ret[1]) | Q(ip__icontains=ret[1]) | Q(serial__iexact=ret[1]) | Q(automate__icontains=ret[1])
+        query = Q(hostname__istartswith=ret[1]) | Q(ip__icontains=ret[1]) | Q(serial__iexact=ret[1])
         hosts = Host.objects.filter(query)
         if not hosts:
             D.dialog_msgbox("Aucun résultat")
