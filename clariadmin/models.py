@@ -4,7 +4,14 @@ from django.db import models
 from django.template.loader import get_template
 from django.template import Context
 
-from common.models import Client, ClientField
+from common.models import Client, ClientField, JsonField
+
+CHOICES_FIELDS_AVAILABLE = (
+   (1, u"texte"),
+   (2, u"booléen"),
+   (3, u"choix" ),
+   (4, u"nombre"))
+
 
 class OperatingSystem(models.Model):
     class Meta:
@@ -23,7 +30,6 @@ class HostType(models.Model):
         verbose_name = u"Type d'hôte"
         ordering = ['text']
     
-    depleted = models.BooleanField(u"Obsolete", default=False)
     gateway = models.BooleanField("Gateway", default=False)
     text = models.TextField("Description", blank=True)
 
@@ -35,6 +41,7 @@ class Supplier(models.Model):
         verbose_name = u"Fournisseur"
         ordering = ['name']
     
+    depleted = models.BooleanField(u"Obsolete", default=False)
     name = models.CharField(u"Nom", max_length=64)
 
     def __unicode__(self):
@@ -84,26 +91,16 @@ class Host(models.Model):
         context = Context({"host": self })
         return template.render(context)
 
-import json
 class ParamAdditionnalField(models.Model):
     class Meta:
         verbose_name = u"Définition de champs complémentaires"
         ordering = (u"host_type",u"name")
-    FIELDS_AVAILABLE = {
-       ("t", u"texte") : (lambda x: x),
-       ("b", u"booléen"):(lambda x: True if x == "True" else False ),
-       ("c", u"choix" ): (lambda x: json.loads(x)),
-       ("n", u"nombre"): (lambda x: int(x) )}
-
-    def parse(self):
-        return self.FIELDS_AVAILABLE[self.data_type](self.default_values)
-
     host_type = models.ForeignKey(HostType, verbose_name=u"Type d'hôte")
     name = models.CharField(u"Nom", max_length=32)
-    data_type = models.CharField(u"Type de donnée", max_length=8 , choices=FIELDS_AVAILABLE.keys())
+    data_type = models.CharField(u"Type de donnée", max_length=8 , choices=CHOICES_FIELDS_AVAILABLE)
     # Le champ "default_values" peut être traité par la méthode parse.
     # dans un cas de choices il sera stocké en json non indenté. ex: ["a","b","c"]
-    default_values = models.CharField(u"Valeur par défaut/choix", max_length=512)
+    default_values = JsonField(u"Valeur par défaut/choix", max_length=512)
     fast_search = models.BooleanField(u"Champ recherché par défaut", default=False)
     def __unicode__(self):
         return u"%s"%(self.name,)
