@@ -7,10 +7,10 @@ from django.template import Context
 from common.models import Client, ClientField, JsonField
 
 CHOICES_FIELDS_AVAILABLE = (
-   (1, u"texte"),
-   (2, u"booléen"),
-   (3, u"choix" ),
-   (4, u"nombre"))
+   (u'1', u"texte"),
+   (u'2', u"booléen"),
+   (u'3', u"choix" ),
+   (u'4', u"nombre"))
 
 
 class OperatingSystem(models.Model):
@@ -29,7 +29,7 @@ class HostType(models.Model):
     class Meta:
         verbose_name = u"Type d'hôte"
         ordering = ['text']
-    
+
     gateway = models.BooleanField("Gateway", default=False)
     text = models.TextField("Description", blank=True)
 
@@ -40,7 +40,7 @@ class Supplier(models.Model):
     class Meta:
         verbose_name = u"Fournisseur"
         ordering = ['name']
-    
+
     depleted = models.BooleanField(u"Obsolete", default=False)
     name = models.CharField(u"Nom", max_length=64)
 
@@ -54,7 +54,7 @@ class Host(models.Model):
         permissions = (
             ("can_access_clariadmin", "Accès CLARIADMIN"),
         )
-    
+
     site = ClientField(Client, verbose_name="Site", limit_choices_to={ 'parent__isnull': False })
     type = models.ForeignKey(HostType, verbose_name=u"Type d'hôte", blank=True, null=True)
     os = models.ForeignKey(OperatingSystem, verbose_name=u"Système d'exploitation", blank=True, null=True)
@@ -62,7 +62,7 @@ class Host(models.Model):
     rootpw = models.CharField(u"Mot de passe root", max_length=64, blank=True, null=True)
     commentaire = models.TextField(blank=True, max_length=4096)
     ip = models.CharField("Adresse IP", max_length=128, blank=True, null=True)
-    
+
     date_add = models.DateTimeField("Date d'ajout", auto_now=True, auto_now_add=True)
     date_start_prod = models.DateField("Date de mise en service", auto_now_add=True, blank=True, null=True)
     date_end_prod = models.DateField("Fin de mise en service", blank=True, null=True)
@@ -84,7 +84,7 @@ class Host(models.Model):
 
     def __unicode__(self):
         return u"%s on %s (%s)" % (self.hostname, self.site, self.ip)
-    
+
     def get_text(self):
         """ Text representation for dialog based app """
         template = get_template("clariadmin/host.txt")
@@ -112,4 +112,3 @@ class AdditionnalField(models.Model):
     field = models.ForeignKey(ParamAdditionnalField, verbose_name="Origine du champ")
     value = models.CharField(u"Valeur", max_length=128)
     host = models.ForeignKey(Host, verbose_name=u"")
-

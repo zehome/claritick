@@ -2,7 +2,7 @@
 
 from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.template import RequestContext
-from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.decorators import permission_required
 from django.conf import settings
 from django.views.generic import list_detail
 
@@ -10,22 +10,21 @@ from clariadmin.models import Host
 from clariadmin.forms import *
 from common.diggpaginator import DiggPaginator
 
-@login_required
 @permission_required("clariadmin.can_access_clariadmin")
 def list_all(request, *args, **kw):
     """
-    
+
     Liste tous les tickets sans aucun filtre
     """
-    
+
     search_mapping={'ip': 'istartswith',
         'hostname': 'istartswith'}
-    
+
     form = SearchHostForm(request.POST)
     form.is_valid()
-    
+
     qs = Host.objects.all()
-    
+
     # Form cleaned_data ?
     try:
         if form.cleaned_data:
@@ -50,13 +49,12 @@ def list_all(request, *args, **kw):
         "form": form,
     }, context_instance=RequestContext(request))
 
-@login_required
 @permission_required("clariadmin.can_access_clariadmin")
 def new(request):
     """
     Create a new host.
     """
-    
+
     form = HostForm(request.POST)
     if request.POST:
         if form.is_valid():
@@ -64,7 +62,6 @@ def new(request):
             return redirect(host.get_absolute_url())
     return render_to_response('clariadmin/host.html', {'form': form }, context_instance=RequestContext(request))
 
-@login_required
 @permission_required("clariadmin.can_access_clariadmin")
 def modify(request, host_id):
     host = get_object_or_404(Host, pk=host_id)
@@ -72,9 +69,18 @@ def modify(request, host_id):
         form = HostForm(instance=host)
     else:
         form = HostForm(request.POST, instance=host)
-    
+
     if request.POST:
         if form.is_valid():
             form.save()
     return render_to_response("clariadmin/host.html", {"form": form, "host": host}, context_instance=RequestContext(request))
 
+@permission_required("clariadmin.can_access_clariadmin")
+def new_extra_field(request):
+    form = ExtraFieldForm(request.POST)
+    return render_to_response("clariadmin/extra_field.html", {"form": form}, context_instance=RequestContext(request))
+
+@permission_required("clariadmin.can_access_clariadmin")
+def mod_extra_field(request, field_id):
+    c_field = get_object_or_404(ParamAdditionnalField, pk=field_id)
+    return render_to_response("clariadmin/host.html", {"form": form, "field": c_field}, context_instance=RequestContext(request))
