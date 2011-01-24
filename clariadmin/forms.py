@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from dojango import forms as df
-from clariadmin.models import Host, OperatingSystem, HostType, ParamAdditionnalField
+from clariadmin.models import Host, OperatingSystem, HostType, ParamAdditionnalField, CHOICES_FIELDS_AVAILABLE
 from common.models import Client
 from common.forms import ModelFormTableMixin
 
@@ -9,7 +9,13 @@ class HostForm(df.ModelForm):
     class Meta:
         model = Host
 
-class ExtraFieldForm(df.ModelForm):
+class NewExtraFieldForm(df.ModelForm):
+    data_type = df.CharField(label=u'Type de donnée',
+        widget=df.Select(choices=CHOICES_FIELDS_AVAILABLE,
+                attrs={
+                    u'onchange':u'adaptForm(this);',
+                    u'onfocus':u'this.prev = this.value;',}))
+
     class Meta:
         model = ParamAdditionnalField
 

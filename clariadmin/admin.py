@@ -12,12 +12,12 @@ class HostAdmin(admin.ModelAdmin):
             'inventory', 'status')}),
     )
 
-    search_fields = ['hostname', 'ip', 'inventory'] #'automate'
+    search_fields = ['hostname', 'ip', 'inventory']
     list_filter = ['type', 'os', 'site']
 
 admin.site.register(OperatingSystem)
 admin.site.register(HostType)
 admin.site.register(Supplier)
 admin.site.register(Host, HostAdmin)
-admin.site.register(ParamAdditionnalField)
-admin.site.register(AdditionnalField)
+#admin.site.register(ParamAdditionnalField)
+#admin.site.register(AdditionnalField)

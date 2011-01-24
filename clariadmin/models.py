@@ -7,10 +7,13 @@ from django.template import Context
 from common.models import Client, ClientField, JsonField
 
 CHOICES_FIELDS_AVAILABLE = (
-   (u'1', u"texte"),
-   (u'2', u"booléen"),
-   (u'3', u"choix" ),
-   (u'4', u"nombre"))
+   (u'1', u"texte"),            # CharField
+   (u'2', u"booléen"),          # BooleanField
+   (u'3', u"choix" ),           # ChoiceField
+   (u'4', u"nombre"),           # IntegerField
+   (u'5',u'date'),              # DateField
+   (u'6',u'choix multiple'),    # MultipleChoiceField
+   )
 
 
 class OperatingSystem(models.Model):
@@ -97,10 +100,9 @@ class ParamAdditionnalField(models.Model):
         ordering = (u"host_type",u"name")
     host_type = models.ForeignKey(HostType, verbose_name=u"Type d'hôte")
     name = models.CharField(u"Nom", max_length=32)
-    data_type = models.CharField(u"Type de donnée", max_length=8 , choices=CHOICES_FIELDS_AVAILABLE)
-    # Le champ "default_values" peut être traité par la méthode parse.
+    data_type = models.CharField(u"Type de donnée", max_length=4 , choices=CHOICES_FIELDS_AVAILABLE)
     # dans un cas de choices il sera stocké en json non indenté. ex: ["a","b","c"]
-    default_values = JsonField(u"Valeur par défaut/choix", max_length=512)
+    default_values = JsonField(u"Valeur par défaut/choix", max_length=8192)
     fast_search = models.BooleanField(u"Champ recherché par défaut", default=False)
     def __unicode__(self):
         return u"%s"%(self.name,)
@@ -110,5 +112,5 @@ class AdditionnalField(models.Model):
         verbose_name = u"Champs complémentaires"
         ordering = (u"field",u"value")
     field = models.ForeignKey(ParamAdditionnalField, verbose_name="Origine du champ")
-    value = models.CharField(u"Valeur", max_length=128)
+    value = models.CharField(u"Valeur", max_length=512)
     host = models.ForeignKey(Host, verbose_name=u"")

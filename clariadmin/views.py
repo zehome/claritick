@@ -6,7 +6,8 @@ from django.contrib.auth.decorators import permission_required
 from django.conf import settings
 from django.views.generic import list_detail
 
-from clariadmin.models import Host
+import json
+from clariadmin.models import Host, CHOICES_FIELDS_AVAILABLE
 from clariadmin.forms import *
 from common.diggpaginator import DiggPaginator
 
@@ -77,10 +78,14 @@ def modify(request, host_id):
 
 @permission_required("clariadmin.can_access_clariadmin")
 def new_extra_field(request):
-    form = ExtraFieldForm(request.POST)
-    return render_to_response("clariadmin/extra_field.html", {"form": form}, context_instance=RequestContext(request))
+    form = NewExtraFieldForm(request.POST)
+    return render_to_response("clariadmin/extra_field.html",
+            {u"form" : form,
+            u"choices" : json.dumps(dict(CHOICES_FIELDS_AVAILABLE), indent=2)},
+            context_instance=RequestContext(request))
 
 @permission_required("clariadmin.can_access_clariadmin")
 def mod_extra_field(request, field_id):
     c_field = get_object_or_404(ParamAdditionnalField, pk=field_id)
-    return render_to_response("clariadmin/host.html", {"form": form, "field": c_field}, context_instance=RequestContext(request))
+    return render_to_response("clariadmin/host.html",
+        {"form": form, "field": c_field}, context_instance=RequestContext(request))

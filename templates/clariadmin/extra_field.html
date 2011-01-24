@@ -1,34 +1,119 @@
-<?xml version='1.0' encoding='utf-8'?>
+<!-- <?xml version='1.0' encoding='utf-8'?> -->
 {% extends "base.html" %}
+{% block extrajs %}
+<script type="text/javascript" src="{{ MEDIA_URL }}javascript/modify.js"></script>
+<script type="text/javascript">
+    last_host_type = 1;
+    /*fields={{ choices|safe }};*/
+    function adaptForm(arg)
+    {
+        if(arg && arg.value)
+        {
+            dojo.byId("fieldset_"+last_host_type).classList.add("dijitHidden");
+            dojo.byId("fieldset_"+arg.value).classList.remove("dijitHidden");
+            if( arg.value == 2 )
+            {
+                dijit.byId("id_fast_search").disabled=true;
+            }
+            else if(last_host_type == 2)
+            {
+                dijit.byId("id_fast_search").disabled=false;
+            }
+        }
+        last_host_type=arg.value
+    }
+</script>
+{% endblock %}
 
-{% block title %}{% if field %}Champ {{ field }}{% else %}Création d'un champ complémentaire{% endif %}{% endblock %}
-{% block content_title %}{% if field %}Champ {{ field }}{% else %}Création d'un champ complémentaire{% endif %}{% endblock %}
-{% block image %}<img src="/media/images/oxygen/folder-open.png" />{% endblock %}
+{% block title %} {{ form.instance.id }}{% endblock %}
+{% block content_title %}Champ numéro {{ form.instance.id }}{% endblock %}
+{% block image %}<img src="{{ MEDIA_URL }}images/oxygen/folder-open.png" />{% endblock %}
 
 {% block content %}
+{{ form.non_field_errors }}
+<form enctype="multipart/form-data" action="{% url clariadmin.views.new_extra_field %}" method="post" id="extra_field_form">
+{% csrf_token %}
+<div id="parent">
+<fieldset id="fieldset_general" class="block form">
+  <legend>Général</legend>
+  <div>{{ form.name.label_tag }} {{ form.name }}</div>
+  <div>{{ form.host_type.label_tag }} {{ form.host_type }}</div>
+  <div>{{ form.data_type.label_tag }} {{ form.data_type }}</div>
+  <div>{{ form.fast_search.label_tag }} {{ form.fast_search }}</div>
+</fieldset>
 
-<form method="POST">
-    {% csrf_token %}
-    <fieldset>
-        <legend>Champ complémentaire</legend>
-        <table>
-            {{ form }}
-        </table>
-    </fieldset>
+<!-- Texte -->
+<fieldset id="fieldset_1" class="block form">
+  <legend>Contenu</legend>
+      <table>
+          <tr>
+              <td>Valeur par défaut</td>
+              <td>{{ form.default_values }}</td>
+          </tr>
+      </table>
+</fieldset>
 
-    <hr />
-    <button type="submit" dojoType="dijit.form.Button">Modifier/Valider</button>
+<!-- Bool -->
+<fieldset id="fieldset_2" class="block form dijitHidden">
+  <legend>Contenu</legend>
+  <table></table>
+</fieldset>
+
+<!-- Choice -->
+<fieldset id="fieldset_3" class="block form dijitHidden">
+  <legend>Contenu</legend>
+  <table></table>
+</fieldset>
+
+<!-- Int -->
+<fieldset id="fieldset_4" class="block form dijitHidden">
+  <legend>Contenu</legend>
+  <table></table>
+</fieldset>
+
+<!-- Date -->
+<fieldset id="fieldset_5" class="block form dijitHidden">
+  <legend>Contenu</legend>
+  <table></table>
+</fieldset>
+
+<!-- Choix multiple -->
+<fieldset id="fieldset_6" class="block form dijitHidden">
+  <legend>Contenu</legend>
+  <table></table>
+</fieldset>
+</div>
+
+</div>
+
 </form>
 
-{% block comment %}
-    {% if host %}
-    {% load comments %}
-    {% render_comment_form for host %}
-    {% get_comment_list for host as comment_list %}
-    {% for comment in comment_list %}
-        {{ comment }}
-    {% endfor %}
-    {% endif %}
-{% endblock %}
+{% endblock content %}
 
-{% endblock %}
+
+{% comment %}
+<!--
+    {% extends "base.html" %}
+
+    {% block title %}{% if field %}Champ {{ field }}{% else %}Création d'un champ complémentaire{% endif %}{% endblock %}
+    {% block content_title %}{% if field %}Champ {{ field }}{% else %}Création d'un champ complémentaire{% endif %}{% endblock %}
+    {% block image %}<img src="/media/images/oxygen/folder-open.png" />{% endblock %}
+
+    {% block content %}
+
+    <form method="POST">
+        {% csrf_token %}
+        <fieldset>
+            <legend>Champ complémentaire</legend>
+            <table>
+
+            </table>
+        </fieldset>
+
+        <hr />
+        <button type="submit" dojoType="dijit.form.Button">Modifier/Valider</button>
+    </form>
+
+    {% endblock %}
+-->
+{% endcomment %}
