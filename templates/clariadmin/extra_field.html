@@ -3,25 +3,50 @@
 {% block extrajs %}
 <script type="text/javascript" src="{{ MEDIA_URL }}javascript/modify.js"></script>
 <script type="text/javascript">
-    last_host_type = 1;
-    /*fields={{ choices|safe }};*/
-    function adaptForm(arg)
-    {
-        if(arg && arg.value)
-        {
-            dojo.byId("fieldset_"+last_host_type).classList.add("dijitHidden");
-            dojo.byId("fieldset_"+arg.value).classList.remove("dijitHidden");
-            if( arg.value == 2 )
-            {
-                dijit.byId("id_fast_search").disabled=true;
-            }
-            else if(last_host_type == 2)
-            {
-                dijit.byId("id_fast_search").disabled=false;
-            }
-        }
-        last_host_type=arg.value
+    dojo.require("dijit.form.NumberTextBox");
+    dojo.require("dijit.form.DateTextBox");
+    dojo.require("dijit.form.Button");
+    dojo.require("dijit.form.TextBox");
+
+    last_host_type = false;
+    choice_list_txt_id=0;
+
+    function addChoiceTextField(){
+        choice_list_txt_id+=1;
+
+        txt=document.createElement('input');
+        txt.id="id_txt_choice_"+choice_list_txt_id;
+        txt.type="textbox";
+
+        dojo.byId("choice_list")
+                .appendChild(document.createElement('tr'))
+                .appendChild(document.createElement('td'))
+                .appendChild(txt);
+
+        dijit.form.TextBox(
+            {placeHoder:"nouvelle entrée" },"id_txt_choice_"+choice_list_txt_id );
     }
+
+    function showTypedField(){
+        arg=dijit.byId("id_data_type")
+        if (last_host_type != false){
+            dojo.byId("fieldset_"+last_host_type).classList.add("dijitHidden");
+        }
+        dojo.byId("fieldset_"+arg.value).classList.remove("dijitHidden");
+        if( arg.value==2 ){
+            dijit.byId("id_fast_search").setDisabled(true);
+            dijit.byId("id_fast_search").setChecked(false);
+        }
+        else if(arg.value==3 && choice_list_txt_id==0){
+            dojo.addOnLoad(addChoiceTextField());;
+        }
+        if(last_host_type==2){
+            dijit.byId("id_fast_search").setDisabled(false);
+        }
+        last_host_type=arg.value;
+    }
+
+    dojo.addOnLoad(showTypedField);
 </script>
 {% endblock %}
 
@@ -34,86 +59,93 @@
 <form enctype="multipart/form-data" action="{% url clariadmin.views.new_extra_field %}" method="post" id="extra_field_form">
 {% csrf_token %}
 <div id="parent">
-<fieldset id="fieldset_general" class="block form">
-  <legend>Général</legend>
-  <div>{{ form.name.label_tag }} {{ form.name }}</div>
-  <div>{{ form.host_type.label_tag }} {{ form.host_type }}</div>
-  <div>{{ form.data_type.label_tag }} {{ form.data_type }}</div>
-  <div>{{ form.fast_search.label_tag }} {{ form.fast_search }}</div>
-</fieldset>
+    <fieldset id="fieldset_general" class="block form">
+      <legend>Général</legend>
+      <div>{{ form.name.label_tag }} {{ form.name }}</div>
+      <div>{{ form.host_type.label_tag }} {{ form.host_type }}</div>
+      <div>{{ form.data_type.label_tag }} {{ form.data_type }}</div>
+      <div>{{ form.fast_search.label_tag }} {{ form.fast_search }}</div>
+    </fieldset>
 
-<!-- Texte -->
-<fieldset id="fieldset_1" class="block form">
-  <legend>Contenu</legend>
+    <!-- Texte -->
+    <fieldset id="fieldset_1" class="block form dijitHidden">
+      <legend>Contenu</legend>
+          <table>
+              <tr>
+                  <td><label for="id_default_values"> Valeur par défaut </label></td>
+                  <td>{{ form.default_values }}</td>
+              </tr>
+          </table>
+    </fieldset>
+
+    <!-- Bool -->
+    <fieldset id="fieldset_2" class="block form dijitHidden">
+      <legend>Contenu</legend>
       <table>
-          <tr>
-              <td>Valeur par défaut</td>
-              <td>{{ form.default_values }}</td>
-          </tr>
+        <tr><td><label for="input_2">Valeur par défaut</label></td>
+            <td>
+                <input id="input_2" dojoType="dijit.form.CheckBox">
+            </td>
+        </tr>
       </table>
-</fieldset>
+    </fieldset>
 
-<!-- Bool -->
-<fieldset id="fieldset_2" class="block form dijitHidden">
-  <legend>Contenu</legend>
-  <table></table>
-</fieldset>
+    <!-- Choice -->
+    <fieldset id="fieldset_3" class="block form dijitHidden">
+      <legend>Contenu</legend>
+      <table>
+        <tbody id="choice_list">
+            <tr><td><label>Valeurs à proposer:</label></td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr><td>
+                <button id="input_3_add_field" dojoType="dijit.form.Button" type="button">
+                    Add Field
+                    <script type="dojo/method" event="onClick" args="evt">
+                        // Do something:
+                        addChoiceTextField()
+                    </script>
+                </button>
+            </td></tr>
+        </tfoot>
+    </table>
+    </fieldset>
 
-<!-- Choice -->
-<fieldset id="fieldset_3" class="block form dijitHidden">
-  <legend>Contenu</legend>
-  <table></table>
-</fieldset>
+    <!-- Int -->
+    <fieldset id="fieldset_4" class="block form dijitHidden">
+      <legend>Contenu</legend>
+      <table>
+        <tr><td><label for="input_4">Valeur par défaut</label></td>
+            <td>
+                <input id="input_4" type="text" dojoType="dijit.form.NumberTextBox"
+                name="elevation" value="0" constraints="{min:0,places:0}"
+                invalidMessage="Proposition non valide!">
+            </td>
+        </tr>
+      </table>
+    </fieldset>
 
-<!-- Int -->
-<fieldset id="fieldset_4" class="block form dijitHidden">
-  <legend>Contenu</legend>
-  <table></table>
-</fieldset>
+    <!-- Date -->
+    <fieldset id="fieldset_5" class="block form dijitHidden">
+      <legend>Contenu</legend>
+      <table>
+      <tr> <td><label for="input_5">Valeur par défaut</label></td>
+           <td>
+               <input type="text" id="input_5" dojoType="dijit.form.DateTextBox"/>
+            </td>
+      </tr>
+      </table>
+    </fieldset>
 
-<!-- Date -->
-<fieldset id="fieldset_5" class="block form dijitHidden">
-  <legend>Contenu</legend>
-  <table></table>
-</fieldset>
-
-<!-- Choix multiple -->
-<fieldset id="fieldset_6" class="block form dijitHidden">
-  <legend>Contenu</legend>
-  <table></table>
-</fieldset>
+    <!-- Choix multiple -->
+    <fieldset id="fieldset_6" class="block form dijitHidden">
+      <legend>Contenu</legend>
+      <table>
+      </table>
+    </fieldset>
+    </div>
+    <button type="submit" dojoType="dijit.form.Button">Modifier/Valider</button>
 </div>
-
-</div>
-
 </form>
-
 {% endblock content %}
-
-
-{% comment %}
-<!--
-    {% extends "base.html" %}
-
-    {% block title %}{% if field %}Champ {{ field }}{% else %}Création d'un champ complémentaire{% endif %}{% endblock %}
-    {% block content_title %}{% if field %}Champ {{ field }}{% else %}Création d'un champ complémentaire{% endif %}{% endblock %}
-    {% block image %}<img src="/media/images/oxygen/folder-open.png" />{% endblock %}
-
-    {% block content %}
-
-    <form method="POST">
-        {% csrf_token %}
-        <fieldset>
-            <legend>Champ complémentaire</legend>
-            <table>
-
-            </table>
-        </fieldset>
-
-        <hr />
-        <button type="submit" dojoType="dijit.form.Button">Modifier/Valider</button>
-    </form>
-
-    {% endblock %}
--->
-{% endcomment %}

@@ -12,9 +12,7 @@ class HostForm(df.ModelForm):
 class NewExtraFieldForm(df.ModelForm):
     data_type = df.CharField(label=u'Type de donnée',
         widget=df.Select(choices=CHOICES_FIELDS_AVAILABLE,
-                attrs={
-                    u'onchange':u'adaptForm(this);',
-                    u'onfocus':u'this.prev = this.value;',}))
+                attrs={u'onchange':u'showTypedField();',}))
 
     class Meta:
         model = ParamAdditionnalField
