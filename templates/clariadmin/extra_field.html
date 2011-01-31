@@ -9,20 +9,20 @@
     dojo.require("dijit.form.TextBox");
 
     last_host_type = false;
-    choice_list_txt_id=0;
+    choice_list_txt_id={};
 
-    function addChoiceTextField(){
-        choice_list_txt_id+=1;
+    function addChoiceTextField(choice_list){
+        choice_list_txt_id[choice_list.id]+=1;
 
         txt=document.createElement('input');
         txt.id="id_txt_choice_"+choice_list_txt_id;
         txt.type="textbox";
 
-        dojo.byId("choice_list")
+        //dojo.byId("choice_list")
+        choice_list
                 .appendChild(document.createElement('tr'))
                 .appendChild(document.createElement('td'))
                 .appendChild(txt);
-
         dijit.form.TextBox(
             {placeHoder:"nouvelle entrée" },"id_txt_choice_"+choice_list_txt_id );
     }
@@ -37,8 +37,13 @@
             dijit.byId("id_fast_search").setDisabled(true);
             dijit.byId("id_fast_search").setChecked(false);
         }
-        else if(arg.value==3 && choice_list_txt_id==0){
-            dojo.addOnLoad(addChoiceTextField());;
+        else if(arg.value==3 && choice_list_txt_id['choice_list_3']==undefined){
+            choice_list_txt_id['choice_list_3']=0;
+            dojo.addOnLoad(addChoiceTextField(dojo.byId("choice_list_3")));
+        }
+        else if(arg.value==6 && choice_list_txt_id['choice_list_6']==undefined){
+            choice_list_txt_id['choice_list_6']=0;
+            dojo.addOnLoad(addChoiceTextField(dojo.byId("choice_list_6")));
         }
         if(last_host_type==2){
             dijit.byId("id_fast_search").setDisabled(false);
@@ -94,7 +99,7 @@
     <fieldset id="fieldset_3" class="block form dijitHidden">
       <legend>Contenu</legend>
       <table>
-        <tbody id="choice_list">
+        <tbody id="choice_list_3">
             <tr><td><label>Valeurs à proposer:</label></td>
             </tr>
         </tbody>
@@ -104,7 +109,7 @@
                     Add Field
                     <script type="dojo/method" event="onClick" args="evt">
                         // Do something:
-                        addChoiceTextField()
+                        addChoiceTextField(dojo.byId("choice_list_3"));
                     </script>
                 </button>
             </td></tr>
@@ -119,7 +124,7 @@
         <tr><td><label for="input_4">Valeur par défaut</label></td>
             <td>
                 <input id="input_4" type="text" dojoType="dijit.form.NumberTextBox"
-                name="elevation" value="0" constraints="{min:0,places:0}"
+                value="0" constraints="{min:0,places:0}"
                 invalidMessage="Proposition non valide!">
             </td>
         </tr>
@@ -142,7 +147,22 @@
     <fieldset id="fieldset_6" class="block form dijitHidden">
       <legend>Contenu</legend>
       <table>
-      </table>
+        <tbody id="choice_list_6">
+            <tr><td><label>Valeurs à proposer:</label></td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr><td>
+                <button id="input_6_add_field" dojoType="dijit.form.Button" type="button">
+                    Add Field
+                    <script type="dojo/method" event="onClick" args="evt">
+                        // Do something:
+                        addChoiceTextField(dojo.byId("choice_list_6"));
+                    </script>
+                </button>
+            </td></tr>
+        </tfoot>
+    </table>
     </fieldset>
     </div>
     <button type="submit" dojoType="dijit.form.Button">Modifier/Valider</button>
