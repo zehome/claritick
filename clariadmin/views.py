@@ -79,13 +79,47 @@ def modify(request, host_id):
 @permission_required("clariadmin.can_access_clariadmin")
 def new_extra_field(request):
     form = NewExtraFieldForm(request.POST)
+    print form.is_valid()
+    if form.is_valid():
+        cd=form.cleaned_data
+        ParamAdditionnalField(name=cd["name"], host_type=cd["host_type"],
+                data_type=cd["data_type"], fast_search=cd["fast_search"],
+                default_values=form.get_default_values()).save()
     return render_to_response("clariadmin/extra_field.html",
             {u"form" : form,
-            u"choices" : json.dumps(dict(CHOICES_FIELDS_AVAILABLE), indent=2)},
-            context_instance=RequestContext(request))
+            }, context_instance=RequestContext(request))
 
 @permission_required("clariadmin.can_access_clariadmin")
 def mod_extra_field(request, field_id):
     c_field = get_object_or_404(ParamAdditionnalField, pk=field_id)
-    return render_to_response("clariadmin/host.html",
-        {"form": form, "field": c_field}, context_instance=RequestContext(request))
+    if request.POST:
+        form = NewExtraFieldForm(request.POST)
+    else:
+        data = {"name":c_field.name,
+                "host_type":c_field.host_type.id,
+                "data_type":c_field.data_type,
+                "fast_search":c_field.fast_search}
+        if c_field.data_type=="1":
+            data['text_val']=c_field.default_values
+        elif c_field.data_type=="2":
+            data['bool_val']=c_field.default_values
+        elif c_field.data_type=="3" or c_field.data_type=="6":
+            data.update(dict(
+                [("choice%s_val"%(str(i+1).rjust(2,'0'),),val)
+                    for i, val in enumerate(c_field.default_values) ]))
+        elif c_field.data_type=="4":
+            data['int_val']=c_field.default_values
+        elif c_field.data_type=="5":
+            data['date_val']=c_field.default_values
+        form = NewExtraFieldForm(data)
+    if form.is_valid():
+        cd=form.cleaned_data
+        c_field.name=cd["name"]
+        c_field.host_type=cd["host_type"]
+        c_field.data_type=cd["data_type"]
+        c_field.fast_search=cd["fast_search"]
+        c_field.default_values=form.get_default_values()
+        c_field.save()
+    return render_to_response("clariadmin/extra_field.html",
+        {"form": form, "field": c_field,
+        }, context_instance=RequestContext(request))

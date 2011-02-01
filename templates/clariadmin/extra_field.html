@@ -9,48 +9,27 @@
     dojo.require("dijit.form.TextBox");
 
     last_host_type = false;
-    choice_list_txt_id={};
-
-    function addChoiceTextField(choice_list){
-        choice_list_txt_id[choice_list.id]+=1;
-
-        txt=document.createElement('input');
-        txt.id="id_txt_choice_"+choice_list_txt_id;
-        txt.type="textbox";
-
-        //dojo.byId("choice_list")
-        choice_list
-                .appendChild(document.createElement('tr'))
-                .appendChild(document.createElement('td'))
-                .appendChild(txt);
-        dijit.form.TextBox(
-            {placeHoder:"nouvelle entrée" },"id_txt_choice_"+choice_list_txt_id );
-    }
-
     function showTypedField(){
         arg=dijit.byId("id_data_type")
-        if (last_host_type != false){
-            dojo.byId("fieldset_"+last_host_type).classList.add("dijitHidden");
-        }
-        dojo.byId("fieldset_"+arg.value).classList.remove("dijitHidden");
         if( arg.value==2 ){
             dijit.byId("id_fast_search").setDisabled(true);
             dijit.byId("id_fast_search").setChecked(false);
         }
-        else if(arg.value==3 && choice_list_txt_id['choice_list_3']==undefined){
-            choice_list_txt_id['choice_list_3']=0;
-            dojo.addOnLoad(addChoiceTextField(dojo.byId("choice_list_3")));
-        }
-        else if(arg.value==6 && choice_list_txt_id['choice_list_6']==undefined){
-            choice_list_txt_id['choice_list_6']=0;
-            dojo.addOnLoad(addChoiceTextField(dojo.byId("choice_list_6")));
-        }
         if(last_host_type==2){
             dijit.byId("id_fast_search").setDisabled(false);
         }
-        last_host_type=arg.value;
+        if (last_host_type != false){
+            dojo.byId("fieldset_"+last_host_type).classList.add("dijitHidden");
+        }
+        if(arg.value==6){
+            dojo.byId("fieldset_"+3).classList.remove("dijitHidden");
+            last_host_type=3;
+        }
+        else{
+            dojo.byId("fieldset_"+arg.value).classList.remove("dijitHidden");
+            last_host_type=arg.value;
+        }
     }
-
     dojo.addOnLoad(showTypedField);
 </script>
 {% endblock %}
@@ -61,7 +40,7 @@
 
 {% block content %}
 {{ form.non_field_errors }}
-<form enctype="multipart/form-data" action="{% url clariadmin.views.new_extra_field %}" method="post" id="extra_field_form">
+<form onSubmit="return setHidden();" method="POST" id="extra_field_form">
 {% csrf_token %}
 <div id="parent">
     <fieldset id="fieldset_general" class="block form">
@@ -72,13 +51,15 @@
       <div>{{ form.fast_search.label_tag }} {{ form.fast_search }}</div>
     </fieldset>
 
+    <input type="hidden" id="default_val" name="default_val" value="" />
+
     <!-- Texte -->
     <fieldset id="fieldset_1" class="block form dijitHidden">
       <legend>Contenu</legend>
           <table>
               <tr>
-                  <td><label for="id_default_values"> Valeur par défaut </label></td>
-                  <td>{{ form.default_values }}</td>
+                  <td>{{ form.text_val.label_tag }}</td>
+                  <td>{{ form.text_val }}</td>
               </tr>
           </table>
     </fieldset>
@@ -87,9 +68,9 @@
     <fieldset id="fieldset_2" class="block form dijitHidden">
       <legend>Contenu</legend>
       <table>
-        <tr><td><label for="input_2">Valeur par défaut</label></td>
+        <tr><td>{{form.bool_val.label_tag}}</td>
             <td>
-                <input id="input_2" dojoType="dijit.form.CheckBox">
+                {{form.bool_val}}
             </td>
         </tr>
       </table>
@@ -99,21 +80,22 @@
     <fieldset id="fieldset_3" class="block form dijitHidden">
       <legend>Contenu</legend>
       <table>
-        <tbody id="choice_list_3">
-            <tr><td><label>Valeurs à proposer:</label></td>
-            </tr>
-        </tbody>
-        <tfoot>
-            <tr><td>
-                <button id="input_3_add_field" dojoType="dijit.form.Button" type="button">
-                    Add Field
-                    <script type="dojo/method" event="onClick" args="evt">
-                        // Do something:
-                        addChoiceTextField(dojo.byId("choice_list_3"));
-                    </script>
-                </button>
-            </td></tr>
-        </tfoot>
+        <tr><td>{{form.choice01_val.label_tag}}</td><td>{{form.choice01_val}}</td></tr>
+        <tr><td>{{form.choice02_val.label_tag}}</td><td>{{form.choice02_val}}</td></tr>
+        <tr><td>{{form.choice03_val.label_tag}}</td><td>{{form.choice03_val}}</td></tr>
+        <tr><td>{{form.choice04_val.label_tag}}</td><td>{{form.choice04_val}}</td></tr>
+        <tr><td>{{form.choice05_val.label_tag}}</td><td>{{form.choice05_val}}</td></tr>
+        <tr><td>{{form.choice06_val.label_tag}}</td><td>{{form.choice06_val}}</td></tr>
+        <tr><td>{{form.choice07_val.label_tag}}</td><td>{{form.choice07_val}}</td></tr>
+        <tr><td>{{form.choice08_val.label_tag}}</td><td>{{form.choice08_val}}</td></tr>
+        <tr><td>{{form.choice09_val.label_tag}}</td><td>{{form.choice09_val}}</td></tr>
+        <tr><td>{{form.choice10_val.label_tag}}</td><td>{{form.choice10_val}}</td></tr>
+        <tr><td>{{form.choice11_val.label_tag}}</td><td>{{form.choice11_val}}</td></tr>
+        <tr><td>{{form.choice12_val.label_tag}}</td><td>{{form.choice12_val}}</td></tr>
+        <tr><td>{{form.choice13_val.label_tag}}</td><td>{{form.choice13_val}}</td></tr>
+        <tr><td>{{form.choice14_val.label_tag}}</td><td>{{form.choice14_val}}</td></tr>
+        <tr><td>{{form.choice15_val.label_tag}}</td><td>{{form.choice15_val}}</td></tr>
+      </table>
     </table>
     </fieldset>
 
@@ -121,11 +103,9 @@
     <fieldset id="fieldset_4" class="block form dijitHidden">
       <legend>Contenu</legend>
       <table>
-        <tr><td><label for="input_4">Valeur par défaut</label></td>
+        <tr><td>{{form.int_val.label_tag}}</td>
             <td>
-                <input id="input_4" type="text" dojoType="dijit.form.NumberTextBox"
-                value="0" constraints="{min:0,places:0}"
-                invalidMessage="Proposition non valide!">
+                {{form.int_val}}
             </td>
         </tr>
       </table>
@@ -135,34 +115,12 @@
     <fieldset id="fieldset_5" class="block form dijitHidden">
       <legend>Contenu</legend>
       <table>
-      <tr> <td><label for="input_5">Valeur par défaut</label></td>
+      <tr> <td>{{form.date_val.label_tag}}</td>
            <td>
-               <input type="text" id="input_5" dojoType="dijit.form.DateTextBox"/>
+               {{form.date_val}}
             </td>
       </tr>
       </table>
-    </fieldset>
-
-    <!-- Choix multiple -->
-    <fieldset id="fieldset_6" class="block form dijitHidden">
-      <legend>Contenu</legend>
-      <table>
-        <tbody id="choice_list_6">
-            <tr><td><label>Valeurs à proposer:</label></td>
-            </tr>
-        </tbody>
-        <tfoot>
-            <tr><td>
-                <button id="input_6_add_field" dojoType="dijit.form.Button" type="button">
-                    Add Field
-                    <script type="dojo/method" event="onClick" args="evt">
-                        // Do something:
-                        addChoiceTextField(dojo.byId("choice_list_6"));
-                    </script>
-                </button>
-            </td></tr>
-        </tfoot>
-    </table>
     </fieldset>
     </div>
     <button type="submit" dojoType="dijit.form.Button">Modifier/Valider</button>
