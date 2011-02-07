@@ -3,11 +3,6 @@
 {% block extrajs %}
 <script type="text/javascript" src="{{ MEDIA_URL }}javascript/modify.js"></script>
 <script type="text/javascript">
-    dojo.require("dijit.form.NumberTextBox");
-    dojo.require("dijit.form.DateTextBox");
-    dojo.require("dijit.form.Button");
-    dojo.require("dijit.form.TextBox");
-
     last_host_type = false;
     function showTypedField(){
         arg=dijit.byId("id_data_type")
@@ -24,8 +19,7 @@
         if(arg.value==6){
             dojo.byId("fieldset_"+3).classList.remove("dijitHidden");
             last_host_type=3;
-        }
-        else{
+        }else{
             dojo.byId("fieldset_"+arg.value).classList.remove("dijitHidden");
             last_host_type=arg.value;
         }
@@ -79,6 +73,8 @@
     <!-- Choice -->
     <fieldset id="fieldset_3" class="block form dijitHidden">
       <legend>Contenu</legend>
+      ! ATTENTION ! une fois des champs sont enregistrées, les modifications ne
+      sont pas gérées, seul l'ajout de nouvelles propositions ne devraient pas poser de problèmes.
       <table>
         <tr><td>{{form.choice01_val.label_tag}}</td><td>{{form.choice01_val}}</td></tr>
         <tr><td>{{form.choice02_val.label_tag}}</td><td>{{form.choice02_val}}</td></tr>

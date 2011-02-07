@@ -61,11 +61,13 @@ def new(request):
         if form.is_valid():
             host = form.save()
             return redirect(host.get_absolute_url())
-    return render_to_response('clariadmin/host.html', {'form': form }, context_instance=RequestContext(request))
+    return render_to_response('clariadmin/host.html', {'form': form, 'additionnal_fields':None }, context_instance=RequestContext(request))
 
 @permission_required("clariadmin.can_access_clariadmin")
 def modify(request, host_id):
     host = get_object_or_404(Host, pk=host_id)
+    import pdb
+    pdb.set_trace()
     if not request.POST:
         form = HostForm(instance=host)
     else:
@@ -74,7 +76,9 @@ def modify(request, host_id):
     if request.POST:
         if form.is_valid():
             form.save()
-    return render_to_response("clariadmin/host.html", {"form": form, "host": host}, context_instance=RequestContext(request))
+
+    return render_to_response("clariadmin/host.html", {"form": form,
+        'additionnal_fields':ExtraFieldForm.get_forms(host), "host": host}, context_instance=RequestContext(request))
 
 @permission_required("clariadmin.can_access_clariadmin")
 def new_extra_field(request):

@@ -15,17 +15,23 @@
             {{ form }}
         </table>
     </fieldset>
-
+    {% if additionnal_fields %}
+    <fieldset>
+        <legend>Champs complémentaires</legend>
+        <table>
+        {% for field in additionnal_fields %}
+            {{ field }}
+        {% endfor %}
+        </table>
+    </fieldset>
+    {% endif %}
     <hr />
     <button type="submit" dojoType="dijit.form.Button">Modifier/Valider</button>
 </form>
 
 {% if host %}
-{% load comments %}
-{% render_comment_form for host %}
-{% get_comment_list for host as comment_list %}
-{% for comment in comment_list %}
-    {{ comment }}
-{% endfor %}
+    {% load comments %}
+    {% render_comment_form for host %}
+    {% render_comment_list for host %}
 {% endif %}
 {% endblock %}
