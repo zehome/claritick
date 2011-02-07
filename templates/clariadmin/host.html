@@ -19,9 +19,7 @@
     <fieldset>
         <legend>Champs complémentaires</legend>
         <table>
-        {% for field in additionnal_fields %}
-            {{ field }}
-        {% endfor %}
+        {{ additionnal_fields }}
         </table>
     </fieldset>
     {% endif %}

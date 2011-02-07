@@ -6,43 +6,52 @@ from clariadmin.models import (Host, OperatingSystem, HostType, AdditionnalField
 from common.models import Client
 from common.forms import ModelFormTableMixin
 from django.utils import simplejson as json
+from itertools import repeat
 
 class HostForm(df.ModelForm):
     class Meta:
         model = Host
 
 class ExtraFieldForm(df.Form):
-    def _complete(self, field, index):
-        if isinstance(field, AdditionnalField):
-            content = field.value
-            field = field.field
+    def _complete(self, host=None):
+        if isinstance(host,Host):
+            host_type=host.type
+            self.host=host
         else:
-            content = field.default_values
-        print "datatype:\t%s\ncontent:\t%s\n"%(field.data_type ,content)
-        self.val = (df.CharField(label=field.name,initial=content,required=False) if field.data_type == '1'
-            else df.BooleanField(label=field.name,initial=content,required=False) if field.data_type == '2'
-            else df.IntegerField(label=field.name,initial=content,required=False) if field.data_type == '4'
-            else df.DateField(label=field.name,initial=content,required=False) if field.data_type == '5'
-            else df.ChoiceField(label=field.name,choices=enumerate(field.default_values)) if field.data_type == '3'
-            else df.MultipleChoiceField(label=field.name,choices=enumerate(field.default_values)))
-        self.fields['val%s'%(index,)]=self.val
+            host_type = host
+            host=False
+        self.avail_fields=ParamAdditionnalField.objects.filter(host_type=host_type.id)[:]
+        c_fields = dict(((v.id, v.default_values ) for v in (self.avail_fields)))
+        for addf in host.additionnalfield_set.all():
+            c_fields[addf.field.id]=addf.value
+        for field in self.avail_fields:
+             self.fields['val_%s'%(field.id,)] = (
+                df.CharField(label=field.name, initial=c_fields[field.id], required=False)
+                    if field.data_type == '1' else
+                df.BooleanField(label=field.name, initial=c_fields[field.id], required=False)
+                    if field.data_type == '2' else
+                df.IntegerField(label=field.name, initial=c_fields[field.id], required=False)
+                    if field.data_type == '4' else
+                df.DateField(label=field.name, initial=c_fields[field.id], required=False)
+                    if field.data_type == '5' else
+                df.ChoiceField(label=field.name, choices=enumerate(field.default_values))
+                    if field.data_type == '3' else
+                df.MultipleChoiceField(label=field.name, choices=enumerate(field.default_values)))
         return self
+    def save(self):
+        for f in self.avail_fields:
+            cur=self.host.additionnalfield_set.filter(field=f.id)
+            if not cur:
+                cur = AdditionnalField(host=self.host,field=f)
+            cur.value = self.cleaned_data['val_%s'%(f.id)]
+            cur.save()
+        #self.host.save()
 
     @staticmethod
-    def get_forms(host_type=None, host=None):
-        if host:
-            host_type = host.host_type
-            return [ ExtraFieldForm()._complete(f,i)
-                   for i,f in enumerate(
-                   host.additionnal_field_set)]
-        else:
-            return [ ExtraFieldForm()._complete(f,i)
-                   for i,f in enumerate(
-                   ParamAdditionnalField.objects.filter(host_type=host_type.id))]
+    def get_form(*args, **kwargs):
+        h=kwargs.pop('host')
+        return ExtraFieldForm(*args,**kwargs)._complete(h)
 
-    @staticmethod
-    def set_forms(forms, host):
-        pass
 
 
 class NewExtraFieldForm(df.Form):
