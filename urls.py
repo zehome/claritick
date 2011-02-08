@@ -4,6 +4,7 @@ from django.conf.urls.defaults import *
 from django.shortcuts import render_to_response
 from django.contrib import admin
 from ticket.views import get_ticket_text_statistics, get_critical_tickets, get_ticket_alarm
+from django.http import HttpResponse
 
 import reporting
 
@@ -53,6 +54,9 @@ def agenda(request, data={}):
     
     return render_to_response(template, data, context_instance=RequestContext(request))
 
+def ovh_cert(request, data={}):
+    return HttpResponse("knqvrjirhctwex")
+
 def raise_trial_exception(*kw, **args):
     raise Exception("Trial exception")
 
@@ -87,4 +91,8 @@ urlpatterns = patterns('',
     
     ## Web services
     (r'^ws/', include(ws.urls)),
+
+    ## Ovh cert
+    (r'^ovh-cert.txt', ovh_cert),
 )
+
