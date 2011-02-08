@@ -11,38 +11,60 @@ from itertools import repeat
 class HostForm(df.ModelForm):
     class Meta:
         model = Host
+        widgets = {
+            'os':df.FilteringSelect(),
+            'type':df.FilteringSelect(),
+            'site':df.FilteringSelect(),
+            'supplier':df.FilteringSelect(),
+        }
 
 class ExtraFieldForm(df.Form):
     def _complete(self, host=None):
+        """ peuple fonction du contexte le formulaire. """
+        # Rapide controle des arguments
         if isinstance(host,Host):
             host_type=host.type
             self.host=host
         else:
             host_type = host
             host=False
+        if not host_type:
+            return self
+        # Récupère la liste des champs propre au type d'hote
         self.avail_fields=ParamAdditionnalField.objects.filter(host_type=host_type.id)[:]
+        # Détermine la liste des champs et leurs valeurs courrante (défaut puis établi si existant)
         c_fields = dict(((v.id, v.default_values ) for v in (self.avail_fields)))
-        for addf in host.additionnalfield_set.all():
-            c_fields[addf.field.id]=addf.value
-        for field in self.avail_fields:
-             self.fields['val_%s'%(field.id,)] = (
-                df.CharField(label=field.name, initial=c_fields[field.id], required=False)
+        if host:
+            c_fields.update(dict((addf.field.id,addf.value)
+                for addf in host.additionnalfield_set.all()))
+        # Ajoute les champs dojango au formulaire
+        args = lambda x,y:{'label':x.name,'initial':y[x.id],'required':False}
+        self.fields.update(dict(
+            (   'val_%s'%(field.id,),
+                (df.CharField(**args(field,c_fields))
                     if field.data_type == '1' else
-                df.BooleanField(label=field.name, initial=c_fields[field.id], required=False)
+                 df.BooleanField(**args(field,c_fields))
                     if field.data_type == '2' else
-                df.IntegerField(label=field.name, initial=c_fields[field.id], required=False)
+                 df.IntegerField(**args(field,c_fields))
                     if field.data_type == '4' else
-                df.DateField(label=field.name, initial=c_fields[field.id], required=False)
+                 df.DateField(**args(field,c_fields))
                     if field.data_type == '5' else
-                df.ChoiceField(label=field.name, choices=enumerate(field.default_values))
+                 df.ChoiceField(widget=df.FilteringSelect(), choices=enumerate(field.default_values), **args(field,c_fields))
                     if field.data_type == '3' else
-                df.MultipleChoiceField(label=field.name, choices=enumerate(field.default_values)))
+                 df.MultipleChoiceField(choices=enumerate(field.default_values), **args(field,c_fields)))
+            )for field in self.avail_fields))
+        # renvoie son adresse
         return self
+
     def save(self):
+        if not self.host.type:
+            return false
         for f in self.avail_fields:
             cur=self.host.additionnalfield_set.filter(field=f.id)
             if not cur:
                 cur = AdditionnalField(host=self.host,field=f)
+            else:
+                cur=cur[0]
             cur.value = self.cleaned_data['val_%s'%(f.id)]
             cur.save()
         #self.host.save()
@@ -52,15 +74,13 @@ class ExtraFieldForm(df.Form):
         h=kwargs.pop('host')
         return ExtraFieldForm(*args,**kwargs)._complete(h)
 
-
-
 class NewExtraFieldForm(df.Form):
     data_type = df.CharField(label=u'Type de donnée',
-        widget=df.Select(choices=CHOICES_FIELDS_AVAILABLE,
+        widget=df.FilteringSelect(choices=CHOICES_FIELDS_AVAILABLE,
         attrs={u'onchange':u'showTypedField();',}))
     host_type = df.ModelChoiceField(label=u'Type de machine',
         queryset=HostType.objects.all(), empty_label=None)
-    fast_search = df.BooleanField(label="")
+    fast_search = df.BooleanField(label="",required=False)
     name = df.CharField()
     text_val = df.CharField(required=False)
     bool_val = df.BooleanField(required=False)
@@ -83,7 +103,7 @@ class NewExtraFieldForm(df.Form):
     choice15_val = df.CharField(label=u'Proposition:', required=False)
 
     def get_default_values(self):
-        dv=""
+        """ extrait du formulaire la valeur json des prop/defaults"""
         cd=self.cleaned_data
         if cd['data_type']=='1':
             dv = cd['text_val']

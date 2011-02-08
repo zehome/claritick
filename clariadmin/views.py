@@ -6,7 +6,6 @@ from django.contrib.auth.decorators import permission_required
 from django.conf import settings
 from django.views.generic import list_detail
 
-import json
 from clariadmin.models import Host, CHOICES_FIELDS_AVAILABLE
 from clariadmin.forms import *
 from common.diggpaginator import DiggPaginator
@@ -14,13 +13,10 @@ from common.diggpaginator import DiggPaginator
 @permission_required("clariadmin.can_access_clariadmin")
 def list_all(request, *args, **kw):
     """
-
-    Liste tous les tickets sans aucun filtre
+    Liste toutes les machines sans aucun filtre
     """
-
     search_mapping={'ip': 'istartswith',
         'hostname': 'istartswith'}
-
     form = SearchHostForm(request.POST)
     form.is_valid()
 
@@ -39,15 +35,16 @@ def list_all(request, *args, **kw):
                     qs = qs.filter(**{"%s__%s"%(key,lookup):value})
     except AttributeError:
         pass
-
-    columns = [""]
+    columns = ["id", "hostname", "site", "type", "inventory", "status"]
     qs = qs.order_by(request.GET.get('sort', '-id'))
     paginator = DiggPaginator(qs, settings.TICKETS_PER_PAGE, body=5, tail=2, padding=2)
     page = paginator.page(request.GET.get("page", 1))
-
+    import pdb
     return render_to_response("clariadmin/list.html", {
         "page": page,
         "form": form,
+        "columns": columns,
+        "sorting": request.GET.get('sort', '-id'),
     }, context_instance=RequestContext(request))
 
 @permission_required("clariadmin.can_access_clariadmin")
@@ -66,8 +63,6 @@ def new(request):
 @permission_required("clariadmin.can_access_clariadmin")
 def modify(request, host_id):
     host = get_object_or_404(Host, pk=host_id)
-    form_comp = ExtraFieldForm.get_form(host=host)
-
     if not request.POST:
         form = HostForm(instance=host)
         form_comp = ExtraFieldForm.get_form(host=host)

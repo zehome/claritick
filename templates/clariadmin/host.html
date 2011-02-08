@@ -1,6 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 {% extends "base.html" %}
-
+    {% block extrastyle %}
+    {% endblock %}
 {% block title %}{% if host %}Machine {{ host }}{% else %}Création d'une machine{% endif %}{% endblock %}
 {% block content_title %}{% if host %}Machine {{ host }}{% else %}Création d'une machine{% endif %}{% endblock %}
 {% block image %}<img src="/media/images/oxygen/folder-open.png" />{% endblock %}
@@ -11,14 +12,14 @@
     {% csrf_token %}
     <fieldset>
         <legend>Machine</legend>
-        <table>
+        <table class="search">
             {{ form }}
         </table>
     </fieldset>
-    {% if additionnal_fields %}
+    {% if additionnal_fields.fields %}
     <fieldset>
         <legend>Champs complémentaires</legend>
-        <table>
+        <table class="search">
         {{ additionnal_fields }}
         </table>
     </fieldset>
@@ -26,10 +27,11 @@
     <hr />
     <button type="submit" dojoType="dijit.form.Button">Modifier/Valider</button>
 </form>
-
+{% spaceless %}
 {% if host %}
     {% load comments %}
     {% render_comment_form for host %}
     {% render_comment_list for host %}
 {% endif %}
+{% endspaceless %}
 {% endblock %}

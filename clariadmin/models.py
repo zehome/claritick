@@ -78,6 +78,7 @@ class Host(models.Model):
     inventory = models.CharField(u"Numéro d'inventaire", blank=True, max_length=128, null=True)
 
     status = models.CharField(u"Statut", max_length=32, blank=True, null=True)
+
 #    automate = models.CharField(u"Automate", max_length=64, blank=True, null=True)
 
     # LC: TODO: handle documents

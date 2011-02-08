@@ -19,7 +19,7 @@ img {
 
 h1.title {
     font-size: 2em;
-    text-align:center; 
+    text-align:center;
     font-weight:bold;
     margin:3px;
     margin-bottom:15px;
@@ -28,7 +28,7 @@ h1.title {
     background-color: #eeeeff;
     border: 1px solid black;
     border-top: 0;
-	padding: 0;
+    padding: 0;
     -webkit-box-shadow: #ddd 0px 5px 10px;
     -moz-box-shadow:  #ddd 0px 5px 10px;
     box-shadow:  #ddd 0px 5px 10px;
@@ -45,17 +45,17 @@ h2 {
 }
 
 #menuPrincipal ul {
-	padding: 0;
-	margin: 0;
+    padding: 0;
+    margin: 0;
 }
 
 ul li {
-	padding: 0;
-	margin: 0;
+    padding: 0;
+    margin: 0;
 }
 
 #contenu ul li {
-	font-size: 1.4em;
+    font-size: 1.4em;
 }
 
 table {
@@ -75,12 +75,12 @@ table.bigfont td{
 }
 
 table.resultat {
-	width: 98%;
-	text-align: left;
+    width: 98%;
+    text-align: left;
 }
 
 table.resultat thead {
-	border-top: 1px solid #ccc;
+    border-top: 1px solid #ccc;
 }
 
 table.resultat th,table.resultat td {
@@ -104,12 +104,12 @@ table.search tr {
   font-weight: bold;
 }
 table.search td {
-	padding: 2px;
-	padding-right: 30px;
+    padding: 2px;
+    padding-right: 30px;
 }
 table.search th {
-	padding-right: 5px;
-	vertical-align: middle;
+    padding-right: 5px;
+    vertical-align: middle;
 }
 
 table a {
@@ -134,8 +134,8 @@ table a:hover {
 table#menuPrincipal{
     background:white;
     color:black;
-	padding-left: 15px;
-	border-collapse: separate;
+    padding-left: 15px;
+    border-collapse: separate;
     border-bottom:gray solid 1px;
     width: 100%;
 }
@@ -152,13 +152,13 @@ table#menuPrincipal{
 #contenu textarea {
     /*border: 1px solid #99afd6;*/
     /*padding: 2px 3px !important;*/
-	font-family: monospace !important;
+    font-family: monospace !important;
 }
 
 .claritick #contenu input[type="button"], .claritick #contenu input[type="submit"] {
-	background: transparent;
-	border: 0;
-	padding: 0;
+    background: transparent;
+    border: 0;
+    padding: 0;
 }
 
 .claritick #contenu input[type="text"] {
@@ -167,7 +167,7 @@ table#menuPrincipal{
 
 /* Anti dojango width: 15em; */
 .bigfields .dijitTextBox {
- 	width: 40em;
+    width: 40em;
 }
 
 .form {
@@ -185,24 +185,24 @@ table#menuPrincipal{
 }
 
 .checkbox-list {
-	max-height: 400px;
-	overflow: auto;
-	padding-right: 20px;
-	background-color: #F7FCFF;
-	border-top: 1px solid #999;
-	border-bottom: 1px solid #999;
+    max-height: 400px;
+    overflow: auto;
+    padding-right: 20px;
+    background-color: #F7FCFF;
+    border-top: 1px solid #999;
+    border-bottom: 1px solid #999;
 }
 
 .checkbox-list ul {
     text-align: left;
-	margin: 0;
-	padding: 0;
+    margin: 0;
+    padding: 0;
 }
 
 .checkbox-list ul li {
     list-style-type: none;
-	margin: 0;
-	padding: 0;
+    margin: 0;
+    padding: 0;
 }
 
 #filtres-table td, #filtres-table th {
@@ -228,8 +228,8 @@ table#menuPrincipal{
     padding:5px 5px;
     margin-left: 10px;
     text-decoration:none;
-	font-family: 'Droid Sans';
-	-webkit-box-shadow: rgba(64, 64, 64, 0.1) 4px 4px 5px;
+    font-family: 'Droid Sans';
+    -webkit-box-shadow: rgba(64, 64, 64, 0.1) 4px 4px 5px;
 }
 
 .bouton, .bouton input {
@@ -251,7 +251,7 @@ table#menuPrincipal{
     text-align: left;
 }
 
-.row1 { 
+.row1 {
     background-color: white;
 }
 .row1 {
@@ -313,31 +313,31 @@ table#menuPrincipal{
 }
 
 div#gauche ul.menu {
-	margin-bottom: 5px;
+    margin-bottom: 5px;
 }
 
 div#gauche ul li {
-	padding: 0;
+    padding: 0;
     list-style-type : none;
     list-style-position : outside;
 }
 
 div#gauche h2 {
-	color: black;
-	margin: 0;
-	vertical-align: middle;
-	font-size: 1.4em;
-	text-shadow: rgba(64, 64, 64, 0.6) 2px 2px 3px;
+    color: black;
+    margin: 0;
+    vertical-align: middle;
+    font-size: 1.4em;
+    text-shadow: rgba(64, 64, 64, 0.6) 2px 2px 3px;
 }
 
 div#gauche h2 img {
-	position: relative;
-	left: -15px;
-	z-index: 150;
+    position: relative;
+    left: -15px;
+    z-index: 150;
 }
 
 
-div#gauche a { 
+div#gauche a {
     margin:0;
     margin-top:5px;
     margin-left:2px;
@@ -383,7 +383,7 @@ div#gauche a:hover {
 #contenu {
     text-align: center;
     margin-left: 30px;
-	margin-bottom: 40px; /* for fixed stuff */
+    margin-bottom: 40px; /* for fixed stuff */
 }
 
 #contenu p {
@@ -402,19 +402,23 @@ div#gauche a:hover {
 
 #contenu table {
     margin-top: 20px;
-	font-weight: normal;
+    font-weight: normal;
 }
 
 #contenu table.search {
-	margin: 10px;
+    margin: 10px;
 }
 
 #contenu table.search .dijitTextBox {
-	width: 20em;
+    width: 20em;
+}
+
+#contenu table.search .dijitTextArea {
+    width: 15.55em;
 }
 
 #contenu table tr.bigrow {
-	height: 45px;
+    height: 45px;
 }
 
 #contenu table td.bigrow {
@@ -436,34 +440,34 @@ div#gauche a:hover {
 }
 
 #contenu fieldset {
-	margin-bottom: 20px;
+    margin-bottom: 20px;
 }
 
 #contenu fieldset p label {
-	vertical-align: top;
+    vertical-align: top;
 }
 
 #contenu fieldset legend {
     white-space: normal;
-	font-weight: bold;
-	font-size: 2em;
-	color: #777;
+    font-weight: bold;
+    font-size: 2em;
+    color: #777;
 }
 
 #contenu fieldset table .large {
-	width: 150px;
+    width: 150px;
     vertical-align: middle;
     font-weight: bold;
 }
 
 #contenu fieldset table .right {
-	padding-left: 50px;
+    padding-left: 50px;
 }
 
 #contenu fieldset table {
-	margin: 0;
-	padding: 0;
-	color: black;
+    margin: 0;
+    padding: 0;
+    color: black;
 }
 
 #contenu textarea, #contenu input {
@@ -478,96 +482,96 @@ div#contenu.admin input {
 
 
 #contenu form fieldset table tr {
-	height: 25px;
+    height: 25px;
 }
 #contenu form fieldset table td {
-	vertical-align: middle;
+    vertical-align: middle;
 }
 
 
 #contenu div.breadcrumbs {
-	background: transparent;
-	text-decoration: none;
+    background: transparent;
+    text-decoration: none;
 }
 
 .block, .inline {
-	padding: 5px;
-	text-align: left;
-	padding-top: 15px;
-	border: 1px solid #999;
-	/*background-color: #dedede;*/
+    padding: 5px;
+    text-align: left;
+    padding-top: 15px;
+    border: 1px solid #999;
+    /*background-color: #dedede;*/
 }
 
 .inline div {
-	display: inline;
+    display: inline;
 }
 
 .block label,.inline label {
-	font-weight: bold;
+    font-weight: bold;
 }
 
 table#menuPrincipal p img {
-	position: relative;
-	top: -5px;
+    position: relative;
+    top: -5px;
 }
 table#menuPrincipal a {
-	color: #555;
+    color: #555;
 }
 
 body.claritick fieldset {
-	margin: 5px;
+    margin: 5px;
 }
 
 .claritick td {
-	border: 0;
+    border: 0;
 }
 
 /* Admin hack */
 
 div#contenu.admin {
-	text-align: left;
+    text-align: left;
 }
 
 div#contenu.admin div#content-related {
-	float: left;
-	margin-left: 50px;
+    float: left;
+    margin-left: 50px;
 }
 
 div#contenu.admin div#content-main {
-	float: left;
-	min-width: 800px;
-	width: auto;
+    float: left;
+    min-width: 800px;
+    width: auto;
 }
 div#contenu.admin table td {
-	min-width: 150px;
-	padding: 5px;
-	white-space: nowrap;
+    min-width: 150px;
+    padding: 5px;
+    white-space: nowrap;
 }
 div#contenu.admin table tr {
-	height: 22px;
+    height: 22px;
 }
 div#contenu.admin table th {
-	vertical-align: middle;
+    vertical-align: middle;
 }
 div#contenu.admin .object-tools {
-	float: none;
-	position: absolute;
-	right: 10px;
-	margin: 0;
-	top: 85px;
+    float: none;
+    position: absolute;
+    right: 10px;
+    margin: 0;
+    top: 85px;
 }
 
 div#contenu.errorlist {
-	background-color: black;
+    background-color: black;
 }
 
 div#contenu label {
-	white-space: nowrap;
+    white-space: nowrap;
 }
 
 /* admin */
 div#contenu .aligned label {
-	width: 20em;
+    width: 20em;
 }
 div.field-box label.inline {
     width: auto !important;
@@ -576,16 +580,16 @@ div.field-box label.inline {
 
 /* admin */
 div#contenu .form-row {
-	vertical-align: middle;
+    vertical-align: middle;
 }
 div#contenu .selector {
-	width: 1200px;
+    width: 1200px;
 }
 div#contenu .selector-available, div#contenu .selector-chosen {
-	width: 500px;
+    width: 500px;
 }
 div#contenu .selector select {
-	width: 500px;
+    width: 500px;
 }
 
 .comment_table {
@@ -593,139 +597,139 @@ div#contenu .selector select {
 }
 
 .comment_table td {
-	vertical-align: top !important;
+    vertical-align: top !important;
     width: 48%;
 }
 
 .comment_table th {
-	font-size: 2em;
-	font-weight: bold;
-	color: black;
-	text-align: center;
+    font-size: 2em;
+    font-weight: bold;
+    color: black;
+    text-align: center;
 }
 .comment h3 {
-	padding: 0; 
-	margin: 0;
-	margin-top: 15px;
-	font-weight: normal;
-	vertical-align: top;
-	background-color: white;
+    padding: 0;
+    margin: 0;
+    margin-top: 15px;
+    font-weight: normal;
+    vertical-align: top;
+    background-color: white;
 }
 
 .comment pre {
-	margin: 0;
-	background-color: #efefef;
-	border: 0;
-	padding: 2px;
-	border-top: 1px solid black;
-	margin-bottom: 5px;
-	color: black;
-	line-height: 25px;
-	font-family: monospace !important;
+    margin: 0;
+    background-color: #efefef;
+    border: 0;
+    padding: 2px;
+    border-top: 1px solid black;
+    margin-bottom: 5px;
+    color: black;
+    line-height: 25px;
+    font-family: monospace !important;
     white-space: normal;
 }
 
 .comment p.row1 {
-	background-color: #ffffff;
+    background-color: #ffffff;
 }
 .comment p.row2 {
-	background-color: #eeffff;
+    background-color: #eeffff;
 }
 
 
 ol#pagination-digg {
-	text-align: center;
-	padding: 0;
-	margin: 0;
-	margin-top: 15px;
+    text-align: center;
+    padding: 0;
+    margin: 0;
+    margin-top: 15px;
 }
 
 #pagination-digg li{
-	border:0; margin:0; padding:0;
-	font-size:11px;
-	list-style:none;
-	margin-right:2px;
-	display:inline;
+    border:0; margin:0; padding:0;
+    font-size:11px;
+    list-style:none;
+    margin-right:2px;
+    display:inline;
 }
 #pagination-digg a{
-	border:solid 1px #9aafe5;
-	margin-right:2px;
-	-webkit-box-shadow: #ddd 2px 2px 10px;
-	-moz-box-shadow: #ddd 2px 2px 10px;
-	box-shadow: #ddd 2px 2px 10px;
+    border:solid 1px #9aafe5;
+    margin-right:2px;
+    -webkit-box-shadow: #ddd 2px 2px 10px;
+    -moz-box-shadow: #ddd 2px 2px 10px;
+    box-shadow: #ddd 2px 2px 10px;
 }
 #pagination-digg .previous-off,
 #pagination-digg .next-off {
-	border:solid 1px #DEDEDE;
-	color:#888888;
-	font-weight:bold;
-	margin-right:2px;
-	padding:3px 4px;
+    border:solid 1px #DEDEDE;
+    color:#888888;
+    font-weight:bold;
+    margin-right:2px;
+    padding:3px 4px;
 }
 #pagination-digg .next a,
 #pagination-digg .previous a {
-	font-weight:bold;
-} 
+    font-weight:bold;
+}
 #pagination-digg .active{
-	background:#2e6ab1;
-	color:#FFFFFF;
-	font-weight:bold;
-	padding:4px 6px;
+    background:#2e6ab1;
+    color:#FFFFFF;
+    font-weight:bold;
+    padding:4px 6px;
 }
 #pagination-digg a:link,
 #pagination-digg a:visited {
-	color:#0e509e;
-	display:inline;
-	padding:3px 6px;
-	text-decoration:none;
+    color:#0e509e;
+    display:inline;
+    padding:3px 6px;
+    text-decoration:none;
 }
 #pagination-digg a:hover {
-	border:solid 1px #0e509e;
+    border:solid 1px #0e509e;
 }
 
 #index_content {
-	text-align: left;
+    text-align: left;
 }
 
 #index_content .container {
-	border: 1px solid #D2D9EB;
-	width: 350px;
-	float: left;
-	background: #F7F7FA none repeat scroll 0 0;
-	height: 350px;
-	overflow: auto;
-	margin-right: 25px;
-	margin-top: 10px;
+    border: 1px solid #D2D9EB;
+    width: 350px;
+    float: left;
+    background: #F7F7FA none repeat scroll 0 0;
+    height: 350px;
+    overflow: auto;
+    margin-right: 25px;
+    margin-top: 10px;
     -webkit-box-shadow: #eee 5px 5px 10px;
     -moz-box-shadow:  #eee 5px 5px 10px;
     box-shadow:  #eee 5px 5px 10px;
 }
 
 #index_content .chart {
-	width: 480px;
-	height: 200px;
-	overflow: visible !important;
+    width: 480px;
+    height: 200px;
+    overflow: visible !important;
 }
 
 #index_content div h2 {
-	padding: 2px;
-	padding-left: 20px;
-	margin: 0;
-	background: url('/media/images/bg_header.jpg');
-	background-repeat: no-repeat;
-	height: 34px;
-	color: black;
-	font-weight: bold;
-	font-size: 1.8em;
+    padding: 2px;
+    padding-left: 20px;
+    margin: 0;
+    background: url('/media/images/bg_header.jpg');
+    background-repeat: no-repeat;
+    height: 34px;
+    color: black;
+    font-weight: bold;
+    font-size: 1.8em;
 }
 
 #index_content ul {
-	margin: 0;
-	padding: 5px;
+    margin: 0;
+    padding: 5px;
 }
 
 #index_content ul li {
-	padding: 0;
+    padding: 0;
     list-style-type: none;
 }
 
@@ -734,14 +738,14 @@ ol#pagination-digg {
 }
 
 #save_buttons {
-	border-top: 1px solid black;
-	background: white;
+    border-top: 1px solid black;
+    background: white;
     /* Ie sucks */
-	position: fixed;
-	bottom: 0;
-	min-height: 40px;
-	z-index: 20; /* over evrything */
-	width: 100%;
+    position: fixed;
+    bottom: 0;
+    min-height: 40px;
+    z-index: 20; /* over evrything */
+    width: 100%;
 }
 
 #contenu .childs {
@@ -828,7 +832,7 @@ ol#pagination-digg {
 
 /* Inverting colors for "NOT" filters */
 .inverted_colors {
-	background-color: #FEE;
+    background-color: #FEE;
 }
 
 /* Google */
@@ -838,9 +842,9 @@ ol#pagination-digg {
 
 /* Dojo specific */
 #contenu .dojoxMultiSelect {
-	max-height: 400px;
-	height: auto;
+    max-height: 400px;
+    height: auto;
 }
 #contenu .dojoxMultiSelectItem {
-	text-align: left;
+    text-align: left;
 }

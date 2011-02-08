@@ -30,7 +30,8 @@
 <thead>
 <tr>
     {% for column in columns %}
-    <th field="test"><a href="?sort={{ column.name_toggled }}">{{ column }}</a> 
+    <th field="test"><a href="?sort={{ column }}">{{ column }}</a></th>
+{%comment%}
     {% if column.is_ordered %}
       {% if column.is_ordered_straight %}
       <img src="/media/images/oxygen/arrow-up.png" alt="up" />
@@ -38,14 +39,19 @@
       <img src="/media/images/oxygen/arrow-down.png" alt="down" />
       {% endif %}
     {% endif %}
-    </th>
+{%endcomment%}
     {% endfor %}
 </tr>
 </thead>
 <tbody>
 {% for row in page.object_list %}
     <tr>
-        <td><a href="/admin/clariadmin/host/{{ row.id }}/">{{ row }}</a></td>
+        <td>{{ row.id }}</td>
+        <td><a href="/clariadmin/modify/{{ row.id }}/">{{ row }}</a></td>
+        <td>{{ row.type }}</td>
+        <td>{{ row.site }}</td>
+        <td>{{ row.inventory }}</td>
+        <td>{{ row.status }}</td>
     </tr>
 {% endfor %}
 </tbody>

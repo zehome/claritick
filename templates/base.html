@@ -49,7 +49,7 @@
             {
             dojo.forEach(dojo.query("table.trafiquable"), function(table, index)
                 {
-                  if (table.id) { 
+                  if (table.id) {
                     new Trafiquable(table.id,'{% url common.views.trafiquable %}');
                   }
                 });
@@ -91,12 +91,12 @@
             {% endif %}
             <li><a href="{% url infos_login %}">Identification</a></li>
         </ul>
-        
+
         <h2><img src="{{ MEDIA_URL }}images/icon-new.png" alt="+" />Création</h2>
         <ul class="menu">
             <li><a href="/ticket/partial_new/">Ticket</a></li>
         </ul>
-        
+
         <h2><img src="{{ MEDIA_URL }}images/icon-list.png" alt="/" />Tickets</h2>
         <ul class="menu">
             <li><a href="{% url ticket_list_all %}?reset=1">Tous</a></li>
@@ -113,7 +113,9 @@
         {% if perms.clariadmin.can_access_clariadmin %}
         <h2><img src="{{ MEDIA_URL }}images/oxygen/computer.png" alt="/" />Clariadmin</h2>
         <ul class="menu">
-            <li><a href="/clariadmin/list/all">Toute machine</a></li>
+            <li><a href="/clariadmin/list/all">Toutes les machines</a></li>
+            <li><a href="/clariadmin/new">Nouvelle machine</a></li>
+
         {% endif %}
         {% if perms.developpements.can_access_suividev %}
         <h2><img src="{{ MEDIA_URL }}images/oxygen/suividev.png" alt="/" />SuiviDev</h2>
@@ -185,8 +187,8 @@
         {% for require in DOJANGO.COLLECTOR %}
             dojo.require("{{ require }}");
         {% endfor %}
-    </script>  
-    <!-- End Dojo -->  
+    </script>
+    <!-- End Dojo -->
   </body>
 </html>
 
