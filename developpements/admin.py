@@ -43,21 +43,21 @@ class DeveloppementAdmin(admin.ModelAdmin):
     def response_add(self, request, obj):
         if request.POST.has_key("_popup"):
             return HttpResponse('<script type="text/javascript">opener.onClosePopup(window);</script>' )
-        return super(DeveloppementAdmin, self).response_add(self, request, obj)
+        return super(DeveloppementAdmin, self).response_add(request, obj)
     def response_change(self, request, obj):
         if request.POST.has_key("_popup"):
             return HttpResponse('<script type="text/javascript">opener.onClosePopup(window);</script>' )
-        return super(DeveloppementAdmin, self).response_change(self, request, obj)
+        return super(DeveloppementAdmin, self).response_change(request, obj)
 
 class GroupeDevAdmin(admin.ModelAdmin):
     def response_add(self, request, obj):
         if request.POST.has_key("_popup"):
             return HttpResponse('<script type="text/javascript">opener.onClosePopup(window);</script>' )
-        return super(GroupeDevAdmin, self).response_add(self, request, obj)
+        return super(GroupeDevAdmin, self).response_add(request, obj)
     def response_change(self, request, obj):
         if request.POST.has_key("_popup"):
             return HttpResponse('<script type="text/javascript">opener.onClosePopup(window);</script>' )
-        return super(GroupeDevAdmin, self).response_change(self, request, obj)
+        return super(GroupeDevAdmin, self).response_change(request, obj)
 
 admin.site.register(GroupeDev, GroupeDevAdmin)
 admin.site.register(Developpement, DeveloppementAdmin)
