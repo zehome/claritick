@@ -26,42 +26,32 @@
 
 {% if page.object_list %}
 <h2>Résultats</h2>
-<table class="resultat {%if columns|length <= 4 %}trafiquable{%endif%} exportable" id="clariadmin_result_all">
+<table class="resultat exportable" id="clariadmin_result_all">
 <thead>
-<tr>
-    {% for column in columns %}
-    <th field="test"><a href="?sort={% if sorting == column %}-{% endif %}{{ column }}">
-    {% if sorting == column %}
-      <img src="/media/images/oxygen/arrow-down.png" class="state_image" alt="down" />
-    {% else %}{% if sorting == '-'|add:column %}
-      <img src="/media/images/oxygen/arrow-up.png" class="state_image" alt="up" />
-    {% endif %}{% endif %}
-    {{ column }}
-    </a></th>
-    {% endfor %}
+<tr>{%for column in columns %}
+    <th><a href="?sort={% if sorting == column %}-{% endif %}{{ column }}">{% if sorting == column %}<img src="/media/images/oxygen/arrow-down.png" class="state_image" alt="down" />{% else %}{% if sorting == '-'|add:column %}<img src="/media/images/oxygen/arrow-up.png" class="state_image" alt="up" />{% endif %}{% endif %}{{ column }}</a></th>{% endfor %}
 </tr>
 </thead>
 <tbody>
 {% for row in page.object_list %}
     <tr>
         <td><a href="/clariadmin/modify/{{ row.id }}/">{{ row.id }}</a></td>
-        <td>{{ row }}</td>
-        <td>{{ row.type }}</td>
+        <td><a href="/clariadmin/modify/{{ row.id }}/">{{ row.hostname }}</a></td>
+        <td>{{ row.ip }}</td>
         <td>{{ row.site }}</td>
+        <td>{{ row.type }}</td>
+        <td>{{ row.os }}</td>
+        <td>{{ row.supplier.name}} - {{row.model }}</td>
         <td>{{ row.inventory }}</td>
         <td>{{ row.status }}</td>
-    </tr>
-{% endfor %}
+    </tr>{% endfor %}
 </tbody>
 </table>
-
 {% load diggpaginator %}
 {% if page.paginator.num_pages > 1 %}
 {% diggpaginator page %}
 {% endif %}
-
 {% else %}
 <h3>Aucun résultat</h3>
 {% endif %}
-
 {% endblock %}

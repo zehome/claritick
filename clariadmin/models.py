@@ -58,7 +58,7 @@ class Host(models.Model):
             ("can_access_clariadmin", "Accès CLARIADMIN"),
         )
 
-    site = ClientField(Client, verbose_name="Site", limit_choices_to={ 'parent__isnull': False })
+    site = ClientField(Client, verbose_name="Client", limit_choices_to={ 'parent__isnull': False })
     type = models.ForeignKey(HostType, verbose_name=u"Type d'hôte", blank=True, null=True)
     os = models.ForeignKey(OperatingSystem, verbose_name=u"Système d'exploitation", blank=True, null=True)
     hostname = models.CharField(u"Nom d'hôte", max_length=64)

@@ -10,7 +10,7 @@
 
 <form method="POST">
     {% csrf_token %}
-    <fieldset>
+    <fieldset style="float:left;">
         <legend>Machine</legend>
         <table class="search">
             {{ form }}
@@ -25,7 +25,8 @@
     </fieldset>
     {% endif %}
     <hr />
-    <button type="submit" dojoType="dijit.form.Button">Modifier/Valider</button>
+    <button type="submit" name="save" dojoType="dijit.form.Button">Modifier/Valider</button>
+    {%if host%}<button type="submit" value="true" name="delete" dojoType="dijit.form.Button">Suprimer</button>{%endif%}
 </form>
 {% spaceless %}
 {% if host %}

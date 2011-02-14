@@ -35,12 +35,11 @@ def list_all(request, *args, **kw):
                     qs = qs.filter(**{"%s__%s"%(key,lookup):value})
     except AttributeError:
         pass
-    columns = ["id", "hostname", "site", "type", "inventory", "status"]
+    columns = ["id", "hostname","ip", "site", "type", "os", "model", "inventory", "status"]
     sorting=request.GET.get('sort', '-id')
     qs = qs.order_by(sorting)
     paginator = DiggPaginator(qs, settings.TICKETS_PER_PAGE, body=5, tail=2, padding=2)
     page = paginator.page(request.GET.get("page", 1))
-    import pdb
     return render_to_response("clariadmin/list.html", {
         "page": page,
         "form": form,
@@ -53,12 +52,14 @@ def new(request):
     """
     Create a new host.
     """
-
-    form = HostForm(request.POST)
     if request.POST:
+        form = HostForm(request.POST)
         if form.is_valid():
             host = form.save()
-            return redirect(host.get_absolute_url())
+            return redirect(host)
+    else:
+        form = HostForm()
+
     return render_to_response('clariadmin/host.html', {'form': form, 'additionnal_fields':None }, context_instance=RequestContext(request))
 
 @permission_required("clariadmin.can_access_clariadmin")
@@ -68,21 +69,24 @@ def modify(request, host_id):
         form = HostForm(instance=host)
         form_comp = ExtraFieldForm.get_form(host=host)
     else:
+        if request.POST.get("delete",False):
+            host.delete()
+            return redirect("/clariadmin/list/all")
         form = HostForm(request.POST, instance=host)
         form_comp = ExtraFieldForm.get_form(data=request.POST, host=host)
 
     if request.POST:
-        if form.is_valid():
-            form.save()
         if form_comp.is_valid():
             form_comp.save()
+        if form.is_valid():
+            form.save()
+
     return render_to_response("clariadmin/host.html", {"form": form,
         'additionnal_fields':form_comp, "host": host}, context_instance=RequestContext(request))
 
 @permission_required("clariadmin.can_access_clariadmin")
 def new_extra_field(request):
     form = NewExtraFieldForm(request.POST)
-    print form.is_valid()
     if form.is_valid():
         cd=form.cleaned_data
         ParamAdditionnalField(name=cd["name"], host_type=cd["host_type"],

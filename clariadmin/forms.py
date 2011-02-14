@@ -16,7 +16,9 @@ class HostForm(df.ModelForm):
             'type':df.FilteringSelect(),
             'site':df.FilteringSelect(),
             'supplier':df.FilteringSelect(),
+            'ip':df.IPAddressTextInput(),
         }
+        fields=("site","hostname","ip","os","rootpw","supplier", "model", "type","location","serial","inventory","date_end_prod","status","commentaire")
 
 class ExtraFieldForm(df.Form):
     def _complete(self, host=None):
@@ -58,7 +60,7 @@ class ExtraFieldForm(df.Form):
 
     def save(self):
         if not self.host.type:
-            return false
+            return False
         for f in self.avail_fields:
             cur=self.host.additionnalfield_set.filter(field=f.id)
             if not cur:
@@ -66,8 +68,9 @@ class ExtraFieldForm(df.Form):
             else:
                 cur=cur[0]
             cur.value = self.cleaned_data['val_%s'%(f.id)]
+            if cur.value == None:
+                cur.value = "null"
             cur.save()
-        #self.host.save()
 
     @staticmethod
     def get_form(*args, **kwargs):
