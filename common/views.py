@@ -8,15 +8,17 @@ from django.template import RequestContext
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.core.exceptions import PermissionDenied
 from django.forms.models import modelformset_factory
+from django.views.decorators.csrf import csrf_exempt
 
 from common.models import Client, Coordinate
 from common.forms import ClientForm, CoordinateForm
 from common.utils import user_has_perms_on_client
-try:
-    import json
-except ImportError:
-    import simplejson as json
+from django.utils import simplejson as json
 
+try:
+    from chuser.forms import ChuserForm
+except ImportError:
+    ChuserForm = None
 
 # LC: XX: crossdependency: BAD
 try:
@@ -43,10 +45,15 @@ def infos_login(request):
 
     client_qs = Client.objects.get_childs('parent', client.pk)
     
+    chuserform = None
+    if request.user.is_superuser or request.session.get('was_superuser', False) and ChuserForm:
+        chuserform = ChuserForm(initial={'user': request.user.pk})
+
     return render_to_response("common/client/infos.html", {
         "client": client,
         "clients": client_qs,
         "packageauth": packageauth,
+        "chuserform": chuserform,
     }, context_instance=RequestContext(request))
 
 @login_required
@@ -78,6 +85,7 @@ def modify_client(request, client_id):
         "coordinate_form": coordinate_form,
     }, context_instance=RequestContext(request))
 
+@csrf_exempt
 @login_required
 def trafiquable(request):
     if not request.is_ajax():
@@ -101,6 +109,7 @@ def trafiquable(request):
         return HttpResponseBadRequest(json.dumps(data))
     return HttpResponse(json.dumps(data))
 
+@csrf_exempt
 @login_required
 def exportable(request):
     data = None
