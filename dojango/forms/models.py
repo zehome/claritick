@@ -104,25 +104,22 @@ def formfield_function(field, **kwargs):
     """
     for field_map in MODEL_TO_FORM_FIELD_MAP:
         if isinstance(field, field_map[0]):
-            used_widget = None
+            defaults = {}
             if field.choices:
                 # the normal django field forms.TypedChoiceField is wired hard
                 # within the original db/models/fields.py.
                 # If we use our custom Select widget, we also have to pass in
                 # some additional validation field attributes.
-                used_widget = Select(attrs={
+                defaults['widget'] = Select(attrs={
                     'extra_field_attrs':{
                         'required':not field.blank,
                         'help_text':field.help_text,
                     }
                 })
-            elif kwargs.has_key('widget'):
-                used_widget=kwargs['widget']
             elif len(field_map) == 3:
-                used_widget=field_map[2]
-            if used_widget:
-                return field.formfield(form_class=field_map[1], widget=used_widget)
-            return field.formfield(form_class=field_map[1])
+                defaults['widget']=field_map[2]
+            defaults.update(kwargs)
+            return field.formfield(form_class=field_map[1], **defaults)
     # return the default formfield, if there is no equivalent
     return field.formfield(**kwargs)
 
@@ -152,7 +149,7 @@ class ModelForm(models.ModelForm):
 def modelform_factory(*args, **kwargs):
     """Changed modelform_factory function, where we use our own formfield_callback"""
     kwargs["formfield_callback"] = formfield_function
-    kwargs["formset"] = BaseModelForm
+    kwargs["form"] = ModelForm
     return models.modelform_factory(*args, **kwargs)
 
 # ModelFormSets ##############################################################
@@ -162,21 +159,28 @@ class BaseModelFormSet(BaseModelFormSet, BaseFormSet):
     def add_fields(self, form, index):
         """Overwritten BaseModelFormSet using the dojango BaseFormSet and
         the ModelChoiceField. 
-        NOTE: This method was copied from django 1.1"""
+        NOTE: This method was copied from django 1.3 beta 1"""
         from django.db.models import AutoField, OneToOneField, ForeignKey
         self._pk_field = pk = self.model._meta.pk
         def pk_is_not_editable(pk):
             return ((not pk.editable) or (pk.auto_created or isinstance(pk, AutoField))
                 or (pk.rel and pk.rel.parent_link and pk_is_not_editable(pk.rel.to._meta.pk)))
         if pk_is_not_editable(pk) or pk.name not in form.fields:
-            try:
-                pk_value = self.get_queryset()[index].pk
-            except IndexError:
-                pk_value = None
+            if form.is_bound:
+                pk_value = form.instance.pk
+            else:
+                try:
+                    if index is not None:
+                        pk_value = self.get_queryset()[index].pk
+                    else:
+                        pk_value = None
+                except IndexError:
+                    pk_value = None
             if isinstance(pk, OneToOneField) or isinstance(pk, ForeignKey):
                 qs = pk.rel.to._default_manager.get_query_set()
             else:
                 qs = self.model._default_manager.get_query_set()
+            qs = qs.using(form.instance._state.db)
             form.fields[self._pk_field.name] = ModelChoiceField(qs, initial=pk_value, required=False, widget=HiddenInput)
         BaseFormSet.add_fields(self, form, index)
 
