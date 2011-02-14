@@ -15,6 +15,11 @@
         <li>Clef clariupdateur {{ client }} (<span style="color:red;">authkey</span>): 
         {% if packageauth %}<b>{{ packageauth.key }}</b>{% else %}<b>Non disponible.</b>{% endif %}
         </li>
+        {% if chuserform %}<li>
+        <form action="{% url chuser_change_user %}" method="post">{% csrf_token %}
+          <div><button dojoType="dijit.form.Button" type="submit">Changer d'utilisateur</button><span>{{ chuserform.user }}</span></div>
+        </form>
+        </li>{% endif %}
     </ul>
 </fieldset>
 
