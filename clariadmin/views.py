@@ -36,7 +36,8 @@ def list_all(request, *args, **kw):
     except AttributeError:
         pass
     columns = ["id", "hostname", "site", "type", "inventory", "status"]
-    qs = qs.order_by(request.GET.get('sort', '-id'))
+    sorting=request.GET.get('sort', '-id')
+    qs = qs.order_by(sorting)
     paginator = DiggPaginator(qs, settings.TICKETS_PER_PAGE, body=5, tail=2, padding=2)
     page = paginator.page(request.GET.get("page", 1))
     import pdb
@@ -44,7 +45,7 @@ def list_all(request, *args, **kw):
         "page": page,
         "form": form,
         "columns": columns,
-        "sorting": request.GET.get('sort', '-id'),
+        "sorting": sorting,
     }, context_instance=RequestContext(request))
 
 @permission_required("clariadmin.can_access_clariadmin")

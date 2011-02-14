@@ -26,28 +26,26 @@
 
 {% if page.object_list %}
 <h2>Résultats</h2>
-<table class="resultat trafiquable exportable" id="clariadmin_result_all">
+<table class="resultat {%if columns|length <= 4 %}trafiquable{%endif%} exportable" id="clariadmin_result_all">
 <thead>
 <tr>
     {% for column in columns %}
-    <th field="test"><a href="?sort={{ column }}">{{ column }}</a></th>
-{%comment%}
-    {% if column.is_ordered %}
-      {% if column.is_ordered_straight %}
-      <img src="/media/images/oxygen/arrow-up.png" alt="up" />
-      {% else %}
-      <img src="/media/images/oxygen/arrow-down.png" alt="down" />
-      {% endif %}
-    {% endif %}
-{%endcomment%}
+    <th field="test"><a href="?sort={% if sorting == column %}-{% endif %}{{ column }}">
+    {% if sorting == column %}
+      <img src="/media/images/oxygen/arrow-down.png" class="state_image" alt="down" />
+    {% else %}{% if sorting == '-'|add:column %}
+      <img src="/media/images/oxygen/arrow-up.png" class="state_image" alt="up" />
+    {% endif %}{% endif %}
+    {{ column }}
+    </a></th>
     {% endfor %}
 </tr>
 </thead>
 <tbody>
 {% for row in page.object_list %}
     <tr>
-        <td>{{ row.id }}</td>
-        <td><a href="/clariadmin/modify/{{ row.id }}/">{{ row }}</a></td>
+        <td><a href="/clariadmin/modify/{{ row.id }}/">{{ row.id }}</a></td>
+        <td>{{ row }}</td>
         <td>{{ row.type }}</td>
         <td>{{ row.site }}</td>
         <td>{{ row.inventory }}</td>
