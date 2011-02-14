@@ -11,12 +11,7 @@ except ImportError:
 
 from django.contrib.auth.models import User, Group
 from django.db import models
-from django.utils import simplejson
-
-try:
-    import json
-except ImportError:
-    import simplejson as json
+from django.utils import simplejson as json
 
 # On charge psycopg2 pour ByteaField
 try:
@@ -92,14 +87,14 @@ class JsonField(models.TextField):
 
     def to_python(self, value):
         if isinstance(value, (str, unicode)) and value != "":
-            return simplejson.loads(value)
+            return json.loads(value)
         return value
 
     def get_db_prep_value(self, value):
         return self.get_prep_value(value)
 
     def get_prep_value(self, value):
-        return simplejson.dumps(value)
+        return json.dumps(value)
 
 class TelephoneField(models.CharField):
     def __init__(self, *args, **kw):
