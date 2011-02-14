@@ -21,7 +21,10 @@ def list_all(request, *args, **kw):
     form.is_valid()
 
     qs = Host.objects.all()
-
+    if request.GET.get('sort', False):
+        request.session["sort_adm_list"]=request.GET.get('sort', False)
+    if request.GET.get('page', False):
+        request.session["page_adm_list"]=request.GET.get('page', False)
     # Form cleaned_data ?
     try:
         if form.cleaned_data:
@@ -36,10 +39,10 @@ def list_all(request, *args, **kw):
     except AttributeError:
         pass
     columns = ["id", "hostname","ip", "site", "type", "os", "model", "inventory", "status"]
-    sorting=request.GET.get('sort', '-id')
+    sorting=request.session.get("sort_adm_list","-id")
     qs = qs.order_by(sorting)
     paginator = DiggPaginator(qs, settings.TICKETS_PER_PAGE, body=5, tail=2, padding=2)
-    page = paginator.page(request.GET.get("page", 1))
+    page = paginator.page(request.session.get("page_adm_list", 1))
     return render_to_response("clariadmin/list.html", {
         "page": page,
         "form": form,
