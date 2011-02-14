@@ -11,12 +11,6 @@ ADMINS = (
 )
 
 MANAGERS = ADMINS
-
-#~ DATABASE_ENGINE = 'sqlite3'           # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-#~ DATABASE_NAME = 'claritick.db'             # Or path to database file if using sqlite3.
-#~ DATABASE_USER = ''             # Not used with sqlite3.
-#~ DATABASE_PASSWORD = ''         # Not used with sqlite3.
-#~ DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
 #~ DATABASE_PORT = ''             # Set to empty string for default. Not used with sqlite3.
 DATABASE_ENGINE = 'postgresql_psycopg2' # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
 DATABASE_NAME = 'claritick'    # Or path to database file if using sqlite3.
@@ -85,6 +79,8 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.http.ConditionalGetMiddleware',
     'ticket.middleware.PopulateUserMiddleware',
     'django.middleware.gzip.GZipMiddleware',
+    #'debug_toolbar.middleware.DebugToolbarMiddleware',
+    'common.middleware.profiling.ProfileMiddleware',
     'common.middleware.autologout.AutoLogout',
 )
 
@@ -97,7 +93,6 @@ TEMPLATE_CONTEXT_PROCESSORS = ("django.core.context_processors.auth",
     'django.core.context_processors.csrf',
     'django.core.context_processors.request',
     'ticket.context_processors.ticket_views',
-    'chuser.context_processors.chuser',
     'lock.context_processors.lock_settings',
     'developpements.context_processors.projects',
 )
@@ -128,6 +123,7 @@ INSTALLED_APPS = (
     'chuser',                  # Switch user
     'lock',                    # Lock objects by users
     'packaging',               # Clarideploy tools
+#    'debug_toolbar',
 )
 
 COMMENTS_APP = 'ticket_comments'
@@ -145,7 +141,6 @@ DATETIME_FORMAT = "d/m/Y H\hi"
 TIME_FORMAT = "H\hi"
 
 # Dojango config
-#DOJANGO_DOJO_PROFILE = "google"
 DOJANGO_DOJO_PROFILE = "local_release"
 DOJANGO_DOJO_VERSION = "custom_build_150"
 DOJANGO_DOJO_THEME = "claro"
@@ -198,8 +193,12 @@ SVNDOC_CONFIG = {
 
 # Where package files are stored
 PACKAGING_ROOT = os.path.join(basepath, 'packaging', 'filestorage')
+INTERNAL_IPS = ('127.0.0.1',)
 
 try:
     from local_settings import *
 except ImportError:
     pass
+
+PROFILE_MIDDLEWARE_SORT = ('time', 'calls')
+#PROFILE_MIDDLEWARE_STRIP_DIRS=True
