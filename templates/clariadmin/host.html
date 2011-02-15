@@ -5,10 +5,22 @@
 {% block title %}{% if host %}Machine {{ host }}{% else %}Création d'une machine{% endif %}{% endblock %}
 {% block content_title %}{% if host %}Machine {{ host }}{% else %}Création d'une machine{% endif %}{% endblock %}
 {% block image %}<img src="/media/images/oxygen/folder-open.png" />{% endblock %}
+{% block extrajs %}
+<script type="text/javascript" src="{{ MEDIA_URL }}js/clariadmin.js"></script>
+<script type="text/javascript" charset="utf-8">
+    function typeChanged(select_box){}
 
+function confirmation_callback(myBool, form_id){
+    if(myBool){
+        postwith(
+        {delete:"true"},dojo.byId(form_id));
+        }
+}
+</script>
+{%endblock%}
 {% block content %}
 
-<form method="POST">
+<form id="the_form" method="POST">
     {% csrf_token %}
     <fieldset style="float:left;">
         <legend>Machine</legend>
@@ -25,8 +37,8 @@
     </fieldset>
     {% endif %}
     <hr />
+    {%if host%}<button type="button" onclick='confirmDialog("Supression de l hote", "Êtes vous sûr de vouloir supprimer cette machine de la base?", confirmation_callback, "the_form")' value="true" dojoType="dijit.form.Button">Suprimer</button>{%endif%}
     <button type="submit" name="save" dojoType="dijit.form.Button">Modifier/Valider</button>
-    {%if host%}<button type="submit" value="true" name="delete" dojoType="dijit.form.Button">Suprimer</button>{%endif%}
 </form>
 {% spaceless %}
 {% if host %}

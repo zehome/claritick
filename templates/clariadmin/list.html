@@ -6,56 +6,53 @@
 
 {% block extrajs %}
 {{ block.super }}
+<script type="text/javascript" src="{{ MEDIA_URL }}js/clariadmin.js"></script>
 <script type="text/javascript" charset="utf-8">
     dojo.require("dojox.grid.DataGrid");
     dojo.require("dijit.Menu");
-
-    function postwith (id,inputs) {
-        var f = document.createElement("form");
-        f.method="POST" ;
-        f.action = "/clariadmin/modify/"+id ;
-        inputs["csrfmiddlewaretoken"]=document.getElementsByName("csrfmiddlewaretoken")[0].value;
-        for (var k in inputs){
-            var i = document.createElement("input") ;
-            i.setAttribute("name", k) ;
-            i.setAttribute("value", inputs[k]);
-            f.appendChild(i) ;
-        }
-        document.body.appendChild(f) ;
-        f.submit() ;
-        document.body.removeChild(f) ;
-    }
-
     var pMenu;
-    create_menu = function(target_id, host_name) {
+    function create_menu(target_id, host_name) {
         pMenu = new dijit.Menu({
-            targetNodeIds: ["comp_"+target_id,],
+            targetNodeIds: [target_id,],
         });
+        target_id=target_id.replace("comp_","");
         pMenu.addChild(new dijit.MenuItem({
             label: "Éditer "+host_name,
             iconClass: "dijitEditorIcon dijitEditorIconSave",
             onClick: function() {
-                document.location.href = "/clariadmin/modify/"+target_id+"?from_list=true";},
+                document.location.href = "{% url clariadmin.views.modify -1 %}".replace("-1", target_id);},
         }));
         pMenu.addChild(new dijit.MenuItem({
             label: "Suprimer "+host_name,
             iconClass: "dijitEditorIcon dijitEditorIconDelete",
             onClick: function() {
-                postwith(
-                    target_id,
-                    {delete:"true"}
+                confirmDialog("Supression de l hote", "Êtes vous sûr de vouloir supprimer cette machine de la base?",
+                    function(arg,url){
+                        if(arg){
+                            postwith(
+                            {delete:"true"},
+                            url)
+                        }
+                    },
+                    "{% url clariadmin.views.modify -1 %}".replace("-1", target_id)
                 )},
         }));
         pMenu.addChild(new dijit.MenuItem({
             label: "Éditer une copie de "+host_name,
             iconClass: "dijitEditorIcon dijitEditorIconCopy",
             onClick: function() {
-                document.location.href = "/clariadmin/new?auto_fill="+target_id;
-            }
+                document.location.href = "{% url clariadmin.views.new -1 %}".replace("-1", target_id);
+            },
         }));
         pMenu.startup();
     }
-    dojo.addOnLoad();
+
+    dojo.addOnLoad(function()
+            {dojo.forEach(dojo.query("#context_lines tr"), function(row, index)
+                {
+                    create_menu(row.id, row.children[1].textContent);
+                });
+            });
 </script>
 
 {% endblock %}
@@ -84,8 +81,8 @@
 <tbody id="context_lines">
 {% for row in page.object_list %}
     <tr id="comp_{{ row.id }}">
-        <td><a href="/clariadmin/modify/{{ row.id }}?from_list=true">{{ row.id }}</a></td>
-        <td><a href="/clariadmin/modify/{{ row.id }}?from_list=true">{{ row.hostname }}</a></td>
+        <td><a href="{% url clariadmin.views.modify row.id %}">{{ row.id }}</a></td>
+        <td><a href="{% url clariadmin.views.modify row.id %}">{{ row.hostname }}</a></td>
         <td>{{ row.ip }}</td>
         <td>{{ row.site }}</td>
         <td>{{ row.type }}</td>
@@ -93,7 +90,6 @@
         <td>{{ row.supplier.name}} - {{row.model }}</td>
         <td>{{ row.inventory }}</td>
         <td>{{ row.status }}</td>
-        <script type="text/javascript" charset="utf-8">create_menu("{{row.id}}", "{{row.hostname|force_escape}}");</script>
     </tr>{% endfor %}
 </tbody>
 </table>

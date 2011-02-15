@@ -16,7 +16,10 @@ def list_all(request, *args, **kw):
     Liste toutes les machines sans aucun filtre
     """
     search_mapping={'ip': 'istartswith',
-        'hostname': 'istartswith'}
+        'hostname': 'icontains',
+        'commentaire': 'icontains',
+        'status': 'icontains'
+        }
     form = SearchHostForm(request.POST)
     form.is_valid()
 
@@ -51,13 +54,12 @@ def list_all(request, *args, **kw):
     }, context_instance=RequestContext(request))
 
 @permission_required("clariadmin.can_access_clariadmin")
-def new(request):
+def new(request, from_host=False):
     """
     Create a new host.
     """
-    if request.GET.get("auto_fill",False):
-        n = Host.objects.filter(pk=request.GET.get("auto_fill",False))[0].copy_instance()
-        n.save()
+    if from_host:
+        n = get_object_or_404(Host, pk=from_host).copy_instance()
         return redirect(n)
     if request.POST:
         form = HostForm(request.POST)
