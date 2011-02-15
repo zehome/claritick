@@ -55,6 +55,10 @@ def new(request):
     """
     Create a new host.
     """
+    if request.GET.get("auto_fill",False):
+        n = Host.objects.filter(pk=request.GET.get("auto_fill",False))[0].copy_instance()
+        n.save()
+        return redirect(n)
     if request.POST:
         form = HostForm(request.POST)
         if form.is_valid():
@@ -83,6 +87,8 @@ def modify(request, host_id):
             form_comp.save()
         if form.is_valid():
             form.save()
+        if request.GET.get("from_list",False):
+            return redirect("/clariadmin/list/all")
 
     return render_to_response("clariadmin/host.html", {"form": form,
         'additionnal_fields':form_comp, "host": host}, context_instance=RequestContext(request))

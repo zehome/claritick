@@ -95,6 +95,11 @@ class Host(models.Model):
         context = Context({"host": self })
         return template.render(context)
 
+    def copy_instance(self):
+        return Host(site=self.site, type=self.type, os=self.os, status=self.status,
+            commentaire=self.commentaire, date_end_prod=self.date_end_prod,
+            supplier=self.supplier, model=self.model, location=self.location)
+
 class ParamAdditionnalField(models.Model):
     class Meta:
         verbose_name = u"Définition de champs complémentaires"

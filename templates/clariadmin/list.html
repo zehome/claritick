@@ -8,7 +8,56 @@
 {{ block.super }}
 <script type="text/javascript" charset="utf-8">
     dojo.require("dojox.grid.DataGrid");
+    dojo.require("dijit.Menu");
+
+    function postwith (id,inputs) {
+        var f = document.createElement("form");
+        f.method="POST" ;
+        f.action = "/clariadmin/modify/"+id ;
+        inputs["csrfmiddlewaretoken"]=document.getElementsByName("csrfmiddlewaretoken")[0].value;
+        for (var k in inputs){
+            var i = document.createElement("input") ;
+            i.setAttribute("name", k) ;
+            i.setAttribute("value", inputs[k]);
+            f.appendChild(i) ;
+        }
+        document.body.appendChild(f) ;
+        f.submit() ;
+        document.body.removeChild(f) ;
+    }
+
+    var pMenu;
+    create_menu = function(target_id, host_name) {
+        pMenu = new dijit.Menu({
+            targetNodeIds: ["comp_"+target_id,],
+        });
+        pMenu.addChild(new dijit.MenuItem({
+            label: "Éditer "+host_name,
+            iconClass: "dijitEditorIcon dijitEditorIconSave",
+            onClick: function() {
+                document.location.href = "/clariadmin/modify/"+target_id+"?from_list=true";},
+        }));
+        pMenu.addChild(new dijit.MenuItem({
+            label: "Suprimer "+host_name,
+            iconClass: "dijitEditorIcon dijitEditorIconDelete",
+            onClick: function() {
+                postwith(
+                    target_id,
+                    {delete:"true"}
+                )},
+        }));
+        pMenu.addChild(new dijit.MenuItem({
+            label: "Éditer une copie de "+host_name,
+            iconClass: "dijitEditorIcon dijitEditorIconCopy",
+            onClick: function() {
+                document.location.href = "/clariadmin/new?auto_fill="+target_id;
+            }
+        }));
+        pMenu.startup();
+    }
+    dojo.addOnLoad();
 </script>
+
 {% endblock %}
 {% block content %}
 
@@ -32,11 +81,11 @@
     <th><a href="?sort={% if sorting == column %}-{% endif %}{{ column }}">{% if sorting == column %}<img src="/media/images/oxygen/arrow-down.png" class="state_image" alt="down" />{% else %}{% if sorting == '-'|add:column %}<img src="/media/images/oxygen/arrow-up.png" class="state_image" alt="up" />{% endif %}{% endif %}{{ column }}</a></th>{% endfor %}
 </tr>
 </thead>
-<tbody>
+<tbody id="context_lines">
 {% for row in page.object_list %}
-    <tr>
-        <td><a href="/clariadmin/modify/{{ row.id }}">{{ row.id }}</a></td>
-        <td><a href="/clariadmin/modify/{{ row.id }}">{{ row.hostname }}</a></td>
+    <tr id="comp_{{ row.id }}">
+        <td><a href="/clariadmin/modify/{{ row.id }}?from_list=true">{{ row.id }}</a></td>
+        <td><a href="/clariadmin/modify/{{ row.id }}?from_list=true">{{ row.hostname }}</a></td>
         <td>{{ row.ip }}</td>
         <td>{{ row.site }}</td>
         <td>{{ row.type }}</td>
@@ -44,6 +93,7 @@
         <td>{{ row.supplier.name}} - {{row.model }}</td>
         <td>{{ row.inventory }}</td>
         <td>{{ row.status }}</td>
+        <script type="text/javascript" charset="utf-8">create_menu("{{row.id}}", "{{row.hostname|force_escape}}");</script>
     </tr>{% endfor %}
 </tbody>
 </table>
