@@ -2,7 +2,8 @@
 
 from dojango import forms as df
 from clariadmin.models import (Host, OperatingSystem, HostType, AdditionnalField,
-                               ParamAdditionnalField, CHOICES_FIELDS_AVAILABLE)
+                               ParamAdditionnalField, CHOICES_FIELDS_AVAILABLE,
+                               Supplier)
 from common.models import Client
 from common.forms import ModelFormTableMixin
 from django.utils import simplejson as json
@@ -13,7 +14,7 @@ class HostForm(df.ModelForm):
         model = Host
         widgets = {
             'os':df.FilteringSelect(),
-            'type':df.FilteringSelect(),
+            'type':df.FilteringSelect(attrs={'onchange':'typeChanged(this);'}),
             'site':df.FilteringSelect(),
             'supplier':df.FilteringSelect(),
             'ip':df.IPAddressTextInput(),
@@ -129,7 +130,13 @@ class SearchHostForm(df.Form, ModelFormTableMixin):
         widget=df.FilteringSelect(), empty_label='', required=False)
     os = df.ModelChoiceField(queryset = OperatingSystem.objects.all(),
         widget=df.FilteringSelect(), empty_label='', required=False)
+    supplier = df.ModelChoiceField(queryset = Supplier.objects.all(),
+        widget=df.FilteringSelect(), empty_label='', required=False)
     hostname = df.CharField(required=False)
+    ip = df.CharField(required=False)
+    status = df.CharField(required=False)
+    inventory = df.CharField(required=False)
+    commentaire = df.CharField(required=False)
 
     class Meta:
-        fields = ('site', 'type', 'hostname', 'os', 'ip')
+        fields = ('site', 'type', 'os','supplier','hostname',  'ip', 'status','inventory', 'commentaire')
