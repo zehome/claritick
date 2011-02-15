@@ -96,9 +96,13 @@ class Host(models.Model):
         return template.render(context)
 
     def copy_instance(self):
-        return Host(site=self.site, type=self.type, os=self.os, status=self.status,
+        h = Host(site=self.site, type=self.type, os=self.os, status=self.status,
             commentaire=self.commentaire, date_end_prod=self.date_end_prod,
             supplier=self.supplier, model=self.model, location=self.location)
+        h.save()
+        for af in self.additionnalfield_set.all():
+            AdditionnalField(field=af.field, host=h, value=af.value).save()
+        return h
 
 class ParamAdditionnalField(models.Model):
     class Meta:
