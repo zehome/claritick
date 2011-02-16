@@ -25,9 +25,10 @@ def list_all(request, *args, **kw):
     if request.POST:
         form = SearchHostForm(request.POST)
         if form.is_valid():
-            if request.session.get('filter_adm_list',{})!=request.POST:
+            post_filters=dict([(k,v) for k,v in request.POST.iteritems() if k in form.Meta.fields])
+            if request.session.get('filter_adm_list',{})!=post_filters:
                 new_search=True
-                request.session['filter_adm_list']=request.POST
+                request.session['filter_adm_list']=post_filters
     else:
         form = SearchHostForm(request.session.get('filter_adm_list',{}))
         form.is_valid()

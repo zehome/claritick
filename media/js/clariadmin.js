@@ -5,7 +5,7 @@ function confirmDialog(title, question, callbackFn, e) {
         errorDialog.destroyRecursive();
         if (window.event) e = window.event;
         var srcEl = mouseEvent.srcElement? mouseEvent.srcElement : mouseEvent.target; //IE or Firefox
-        if(srcEl.id == "yes_label"){
+        if(srcEl.id == "yes_label" || srcEl.id == "yes" || srcEl.children[0].id == "yes"){
             callbackFn(true, e);
         } else {
             callbackFn(false, e);}
