@@ -10,6 +10,23 @@
 <script type="text/javascript" charset="utf-8">
     dojo.require("dojox.grid.DataGrid");
     dojo.require("dijit.Menu");
+    dojo.require('dijit.form.MultiSelect');
+    dojo.require('dijit.form.CheckBox');
+
+    function handle_data(data){
+        tab=dojo.byId("extra_fields");
+        tab.innerHTML=data;
+        dojo.parser.parse(tab);
+    }
+    function typeChanged(select_box)
+    {
+        //dojo.byId("extra_fieldset").classList.remove("dijitHidden");
+        dojo.xhrGet({
+            url:"{% url clariadmin.views.ajax_extra_fields_form -1 '/b' %}".replace('-1',select_box.item.value?select_box.item.value:-1),
+            load:handle_data
+            });
+
+    }
     var pMenu;
     function create_menu(target_id, host_name) {
         pMenu = new dijit.Menu({
@@ -65,6 +82,7 @@
     <table class="search">
 {{ form.as_column_table }}
     </table>
+    <table id="extra_fields" class="search">{%if form_extra%}{{form_extra.as_table}}{%else%}<td></td>{%endif%}</table>
     <button type="reset" dojoType="dijit.form.Button">Annuler</button>
     <button type="submit" dojoType="dijit.form.Button">Rechercher</button>
   </form>

@@ -22,7 +22,7 @@ class HostForm(df.ModelForm):
         fields=("site","hostname","ip","os","rootpw","supplier", "model", "type","location","serial","inventory","date_end_prod","status","commentaire")
 
 class ExtraFieldForm(df.Form):
-    def _complete(self, host=None):
+    def _complete(self, host=None, blank=False):
         """ peuple fonction du contexte le formulaire. """
         # Rapide controle des arguments
         if isinstance(host,Host):
@@ -39,9 +39,12 @@ class ExtraFieldForm(df.Form):
         c_fields = dict(((v.id, v.default_values ) for v in (self.avail_fields)))
         if host:
             c_fields.update(dict((addf.field.id,addf.value)
-                for addf in host.additionnalfield_set.all()))
+                for addf in host.additionnalfield_set.all() if addf.field.id in c_fields.keys()))
         # Ajoute les champs dojango au formulaire
-        args = lambda x,y:{'label':x.name,'initial':y[x.id],'required':False}
+        if blank :
+            args = lambda x,y:{'label':x.name,'initial':None,'required':False}
+        else:
+            args = lambda x,y:{'label':x.name,'initial':y[x.id],'required':False}
         self.fields.update(dict(
             (   'val_%s'%(field.id,),
                 (df.CharField(**args(field,c_fields))
@@ -76,7 +79,8 @@ class ExtraFieldForm(df.Form):
     @staticmethod
     def get_form(*args, **kwargs):
         h=kwargs.pop('host')
-        return ExtraFieldForm(*args,**kwargs)._complete(h)
+        b=kwargs.pop('blank',False)
+        return ExtraFieldForm(*args,**kwargs)._complete(h,b)
 
 class NewExtraFieldForm(df.Form):
     data_type = df.CharField(label=u'Type de donnée',
@@ -127,7 +131,8 @@ class SearchHostForm(df.Form, ModelFormTableMixin):
     site = df.ModelChoiceField(queryset = Client.objects.all(),
         widget=df.FilteringSelect(), empty_label='', required=False)
     type = df.ModelChoiceField(queryset = HostType.objects.all(),
-        widget=df.FilteringSelect(), empty_label='', required=False)
+        widget=df.FilteringSelect(attrs={'onchange':'typeChanged(this);'})
+        , empty_label='', required=False)
     os = df.ModelChoiceField(queryset = OperatingSystem.objects.all(),
         widget=df.FilteringSelect(), empty_label='', required=False)
     supplier = df.ModelChoiceField(queryset = Supplier.objects.all(),

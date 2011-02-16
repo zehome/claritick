@@ -8,9 +8,12 @@
 {% block extrajs %}
 <script type="text/javascript" src="{{ MEDIA_URL }}js/clariadmin.js"></script>
 <script type="text/javascript" charset="utf-8">
+    dojo.require('dijit.form.MultiSelect');
+    dojo.require('dijit.form.CheckBox');
     function handle_data(data){
         tab=dojo.byId("extra_fields");
         tab.innerHTML=data;
+        dojo.parser.parse(tab);
     }
     function typeChanged(select_box)
     {

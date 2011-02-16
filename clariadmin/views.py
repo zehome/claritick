@@ -6,35 +6,19 @@ from django.contrib.auth.decorators import permission_required
 from django.conf import settings
 from django.views.generic import list_detail
 from django.http import HttpResponse
+from django.db.models import Q
 
 from clariadmin.models import Host, HostType
 from clariadmin.forms import *
 from common.diggpaginator import DiggPaginator
 
-@permission_required("clariadmin.can_access_clariadmin")
-def list_all(request, *args, **kw):
-    """
-    Liste toutes les machines sans aucun filtre
-    """
-    new_search=False
+def filter_hosts(form, sorting, form_extra=False):
     search_mapping={'ip': 'istartswith',
         'hostname': 'icontains',
         'commentaire': 'icontains',
         'status': 'icontains'
         }
-    if request.POST:
-        form = SearchHostForm(request.POST)
-        if form.is_valid():
-            post_filters=dict([(k,v) for k,v in request.POST.iteritems() if k in form.Meta.fields])
-            if request.session.get('filter_adm_list',{})!=post_filters:
-                new_search=True
-                request.session['filter_adm_list']=post_filters
-    else:
-        form = SearchHostForm(request.session.get('filter_adm_list',{}))
-        form.is_valid()
-
     qs = Host.objects.all()
-
     # Form cleaned_data ?
     try:
         if form.cleaned_data:
@@ -48,10 +32,48 @@ def list_all(request, *args, **kw):
                     qs = qs.filter(**{"%s__%s"%(key,lookup):value})
     except AttributeError:
         pass
+    try:
+        if form_extra and form_extra.cleaned_data:
+            cd = form_extra.cleaned_data
+            for key, value in cd.iteritems():
+                if value:
+                    qs = qs.filter(Q(additionnalfield__field__id__exact=key.replace('val_','')) &
+                                   Q(additionnalfield__value__icontains=value))
+    except AttributeError:
+        pass
+    return qs.order_by(sorting)
+
+@permission_required("clariadmin.can_access_clariadmin")
+def list_all(request, *args, **kw):
+    """
+    Liste toutes les machines sans aucun filtre
+    """
+    new_search=False
+    form_extra=False
+    if request.POST:
+        form = SearchHostForm(request.POST)
+        if form.is_valid():
+            post_filters=dict([(k,v) for k,v in request.POST.iteritems() if k in form.Meta.fields])
+            if request.session.get('filter_adm_list',{})!=post_filters:
+                new_search=True
+                request.session['filter_adm_list']=post_filters
+            host_type = request.session.get('filter_adm_list',{}).get('type', False)
+            if host_type:
+                form_extra = ExtraFieldForm.get_form(request.POST, host=HostType.objects.get(pk=host_type))
+                request.session['filter_extra_adm_list']=dict([(k,v) for k,v in request.POST.iteritems() if k in form_extra.fields.keys()])
+                form_extra.is_valid()
+    else:
+        form = SearchHostForm(request.session.get('filter_adm_list',{}))
+        host_type = request.session.get('filter_adm_list',{}).get('type', False)
+        if host_type:
+            form_extra = ExtraFieldForm.get_form((request.session.get('filter_extra_adm_list',{})),host=HostType.objects.get(pk=host_type))
+            form_extra.is_valid()
+        form.is_valid()
+
     columns = ["id", "hostname","ip", "site", "type", "os", "model", "inventory", "status"]
     sorting=request.session.get("sort_adm_list","-id")
-    qs = qs.order_by(sorting)
-    paginator = DiggPaginator(qs, settings.TICKETS_PER_PAGE, body=5, tail=2, padding=2)
+
+    paginator = DiggPaginator(filter_hosts(form, sorting, form_extra), settings.TICKETS_PER_PAGE, body=5, tail=2, padding=2)
     if request.GET.get('sort', False):
         request.session["sort_adm_list"]=request.GET.get('sort', False)
     if request.GET.get('page', False):
@@ -64,6 +86,7 @@ def list_all(request, *args, **kw):
         "form": form,
         "columns": columns,
         "sorting": sorting,
+        "form_extra":form_extra
     }, context_instance=RequestContext(request))
 
 @permission_required("clariadmin.can_access_clariadmin")
@@ -121,11 +144,11 @@ def new_extra_field(request):
             }, context_instance=RequestContext(request))
 
 @permission_required("clariadmin.can_access_clariadmin")
-def ajax_extra_fields_form(request, host_id):
+def ajax_extra_fields_form(request, host_id, blank=False):
     if int(host_id) < 0:
         return HttpResponse("<tr></tr>")
     host_type = get_object_or_404(HostType, pk=host_id)
-    form=ExtraFieldForm.get_form(host=host_type)
+    form=ExtraFieldForm.get_form(host=host_type, blank=bool(blank))
     return HttpResponse(form.as_table())
 
 @permission_required("clariadmin.can_access_clariadmin")
