@@ -15,19 +15,24 @@ def list_all(request, *args, **kw):
     """
     Liste toutes les machines sans aucun filtre
     """
+    new_search=False
     search_mapping={'ip': 'istartswith',
         'hostname': 'icontains',
         'commentaire': 'icontains',
         'status': 'icontains'
         }
-    form = SearchHostForm(request.POST)
-    form.is_valid()
+    if request.POST:
+        form = SearchHostForm(request.POST)
+        if form.is_valid():
+            if request.session.get('filter_adm_list',{})!=request.POST:
+                new_search=True
+                request.session['filter_adm_list']=request.POST
+    else:
+        form = SearchHostForm(request.session.get('filter_adm_list',{}))
+        form.is_valid()
 
     qs = Host.objects.all()
-    if request.GET.get('sort', False):
-        request.session["sort_adm_list"]=request.GET.get('sort', False)
-    if request.GET.get('page', False):
-        request.session["page_adm_list"]=request.GET.get('page', False)
+
     # Form cleaned_data ?
     try:
         if form.cleaned_data:
@@ -45,7 +50,13 @@ def list_all(request, *args, **kw):
     sorting=request.session.get("sort_adm_list","-id")
     qs = qs.order_by(sorting)
     paginator = DiggPaginator(qs, settings.TICKETS_PER_PAGE, body=5, tail=2, padding=2)
-    page = paginator.page(request.session.get("page_adm_list", 1))
+    if request.GET.get('sort', False):
+        request.session["sort_adm_list"]=request.GET.get('sort', False)
+    if request.GET.get('page', False):
+        request.session["page_adm_list"]=request.GET.get('page', False)
+    current_page_num = (1 if new_search else request.session.get('page_adm_list', 1)
+            if int(request.session.get('page_adm_list', 1)) <= paginator.num_pages else 1)
+    page = paginator.page(current_page_num)
     return render_to_response("clariadmin/list.html", {
         "page": page,
         "form": form,
