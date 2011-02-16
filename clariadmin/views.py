@@ -121,6 +121,8 @@ def new_extra_field(request):
 
 @permission_required("clariadmin.can_access_clariadmin")
 def ajax_extra_fields_form(request, host_id):
+    if int(host_id) < 0:
+        return HttpResponse("<tr></tr>")
     host_type = get_object_or_404(HostType, pk=host_id)
     form=ExtraFieldForm.get_form(host=host_type)
     return HttpResponse(form.as_table())

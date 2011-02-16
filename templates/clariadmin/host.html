@@ -8,9 +8,17 @@
 {% block extrajs %}
 <script type="text/javascript" src="{{ MEDIA_URL }}js/clariadmin.js"></script>
 <script type="text/javascript" charset="utf-8">
+    function handle_data(data){
+        tab=dojo.byId("extra_fields");
+        tab.innerHTML=data;
+    }
     function typeChanged(select_box)
     {
-        alert("need to load an ExtraFieldsFrom");
+        dojo.byId("extra_fieldset").classList.remove("dijitHidden");
+        dojo.xhrGet({
+            url:"{% url clariadmin.views.ajax_extra_fields_form -1 %}".replace('-1',select_box.item.value?select_box.item.value:-1),
+            load:handle_data
+            });
     }
 
 function confirmation_callback(myBool, form_id){
@@ -31,14 +39,16 @@ function confirmation_callback(myBool, form_id){
             {{ form }}
         </table>
     </fieldset>
-    {% if additionnal_fields.fields %}
-    <fieldset>
+
+    <fieldset id="extra_fieldset" {% if not additionnal_fields.fields %}class="dijitHidden"{% endif %}>
         <legend>Champs complémentaires</legend>
-        <table class="search">
-        {{ additionnal_fields }}
+        <table id="extra_fields" class="search">
+        {% if additionnal_fields.fields %}
+            {{ additionnal_fields }}
+        {% endif %}
         </table>
     </fieldset>
-    {% endif %}
+
     <hr />
     {%if host%}<button type="button" onclick='confirmDialog("Supression de l hote", "Êtes vous sûr de vouloir supprimer cette machine de la base?", confirmation_callback, "the_form")' value="true" dojoType="dijit.form.Button">Suprimer</button>{%endif%}
     <button type="submit" name="save" dojoType="dijit.form.Button">Modifier/Valider</button>
