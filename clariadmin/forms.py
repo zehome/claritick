@@ -143,23 +143,23 @@ class NewExtraFieldForm(df.Form):
         return json.dumps(dv)
 
 class SearchHostForm(df.Form, ModelFormTableMixin):
-    site = df.ModelChoiceField(queryset = Client.objects.none(),
-            widget=df.FilteringSelect(attrs=attrs_filtering), empty_label='', required=False)
-    type = df.ModelChoiceField(queryset = HostType.objects.all(),
-        widget=df.FilteringSelect(attrs=attrs_filtering_and({'onchange':'typeChanged(this);'}))
-        , empty_label='', required=False)
-    os = df.ModelChoiceField(queryset = OperatingSystem.objects.all(),
-        widget=df.FilteringSelect(attrs=attrs_filtering), empty_label='', required=False)
-    supplier = df.ModelChoiceField(queryset = Supplier.objects.all(),
-        widget=df.FilteringSelect(attrs=attrs_filtering), empty_label='', required=False)
-    hostname = df.CharField(required=False)
     ip = df.CharField(required=False)
+    hostname = df.CharField(required=False, label=u'Nom')
+    site = df.ModelChoiceField(queryset = Client.objects.none(),
+            widget=df.FilteringSelect(attrs=attrs_filtering), empty_label='', required=False, label=u'Client')
+    type = df.ModelChoiceField(queryset = HostType.objects.all(),
+        widget=df.FilteringSelect(attrs=attrs_filtering_and({'onchange':'typeChanged(this);'})),
+        empty_label='', required=False, label = u'Type')
+    os = df.ModelChoiceField(queryset = OperatingSystem.objects.all(),
+        widget=df.FilteringSelect(attrs=attrs_filtering), empty_label='', required=False, label=u'OS')
+    supplier = df.ModelChoiceField(queryset = Supplier.objects.all(),
+        widget=df.FilteringSelect(attrs=attrs_filtering), empty_label='', required=False, label=u'Fournisseur')
     status = df.CharField(required=False)
-    inventory = df.CharField(required=False)
+    inventory = df.CharField(required=False, label=u'Inventaire')
     commentaire = df.CharField(required=False)
     def __init__(self, user, *args, **kwargs):
         super(SearchHostForm, self).__init__(*args, **kwargs)
         self.fields['site'].queryset=Client.objects.filter(id__in=(c.id for c in user.clients))
 
     class Meta:
-        fields = ('site', 'type', 'os','supplier','hostname',  'ip', 'status','inventory', 'commentaire')
+        fields = ('ip', 'hostname', 'site', 'type', 'os', 'supplier', 'status', 'inventory', 'commentaire')

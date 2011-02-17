@@ -417,6 +417,11 @@ div#gauche a:hover {
     width: 15.55em;
 }
 
+#contenu table.clariadmin_form .dijitTextBox,.dijitTextArea {
+    width: 300px;
+    margin-right: 10px;
+}
+
 #contenu table tr.bigrow {
     height: 45px;
 }
