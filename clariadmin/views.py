@@ -95,7 +95,7 @@ def list_all(request, *args, **kw):
             form_extra = ExtraFieldForm.get_form((request.session.get('filter_extra_adm_list',{})),host=HostType.objects.get(pk=host_type))
             form_extra.is_valid()
 
-    columns = ["id", "hostname","ip", "site", "type", "os", "model", "inventory", "status"]
+    columns = ["hostname","ip", "site", "type", "os", "model", "status"]
     sorting=request.session.get("sort_adm_list","-id")
     paginator = DiggPaginator(
         filter_hosts(qs, sorting, form.is_valid() and form.cleaned_data,

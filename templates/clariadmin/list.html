@@ -99,15 +99,13 @@
 <tbody id="context_lines">
 {% for row in page.object_list %}
     <tr id="comp_{{ row.id }}" class="{% cycle 'row1' 'row2'%}">
-        <td><a href="{% url clariadmin.views.modify row.id %}">{{ row.id }}</a></td>
         <td><a href="{% url clariadmin.views.modify row.id %}">{{ row.hostname }}</a></td>
         <td>{{ row.ip }}</td>
         <td>{{ row.site }}</td>
         <td>{{ row.type }}</td>
         <td>{{ row.os }}</td>
-        <td>{{ row.supplier.name}} - {{row.model }}</td>
-        <td>{{ row.inventory }}</td>
-        <td>{{ row.status }}</td>
+        <td>{{ row.supplier.name }}{% if row.model %} - {{ row.model }}{% endif %}</td>
+        <td>{% if row.status %}{{ row.status }}{% endif %}</td>
     </tr>{% endfor %}
 </tbody>
 </table>
