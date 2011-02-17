@@ -56,11 +56,4 @@ function confirmation_callback(myBool, form_id){
     {%if host%}<button type="button" onclick='confirmDialog("Supression de l hote", "Êtes vous sûr de vouloir supprimer cette machine de la base?", confirmation_callback, "the_form")' value="true" dojoType="dijit.form.Button">Suprimer</button>{%endif%}
     <button type="submit" name="save" dojoType="dijit.form.Button">Modifier/Valider</button>
 </form>
-{% spaceless %}
-{% if host %}
-    {% load comments %}
-    {% render_comment_form for host %}
-    {% render_comment_list for host %}
-{% endif %}
-{% endspaceless %}
 {% endblock %}
