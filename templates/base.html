@@ -40,6 +40,17 @@
                 go_to_ticket(dojo.byId("id_num_ticket").value);
             });
         });
+       function go_to_host(num) {
+            dojo.doc.location = '/clariadmin/modify/' + num;
+        }
+        dojo.addOnLoad(function() {
+            dojo.connect(dojo.byId("id_num_host"), "onchange", function() {
+                go_to_host(dojo.byId("id_num_host").value);
+            });
+            dojo.connect(dijit.byId("id_go_host"), "onClick", function() {
+                go_to_host(dojo.byId("id_num_host").value);
+            });
+        });
     </script>
     {% block extrajs %}{% endblock %}
     <script type="text/javascript" src="{{ MEDIA_URL }}javascript/claritick.js"></script>
@@ -155,6 +166,9 @@
           {% endif %}
           {% if user.is_authenticated %}
           Aller au ticket # <input type="text" id="id_num_ticket" size="5" /> <button dojoType="dijit.form.Button" id="id_go_ticket">Go</button>
+            {% if perms.clariadmin.can_access_clariadmin %}
+              <br/>Aller à l'hote # <input type="text" id="id_num_host" size="5" /> <button dojoType="dijit.form.Button" id="id_go_host">Go</button>
+            {%endif%}
           {% endif %}
         </td>
       </tr>
