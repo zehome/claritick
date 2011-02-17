@@ -78,9 +78,9 @@ MIDDLEWARE_CLASSES = (
     'backlinks.middleware.BacklinksMiddleware',
     'django.middleware.http.ConditionalGetMiddleware',
     'ticket.middleware.PopulateUserMiddleware',
-    'django.middleware.gzip.GZipMiddleware',
-    #'debug_toolbar.middleware.DebugToolbarMiddleware',
-    'common.middleware.profiling.ProfileMiddleware',
+    #'django.middleware.gzip.GZipMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
+    #'common.middleware.profiling.ProfileMiddleware',
     'common.middleware.autologout.AutoLogout',
 )
 
@@ -123,7 +123,8 @@ INSTALLED_APPS = (
     'chuser',                  # Switch user
     'lock',                    # Lock objects by users
     'packaging',               # Clarideploy tools
-#    'debug_toolbar',
+    'importv1',
+    'debug_toolbar',
 )
 
 COMMENTS_APP = 'ticket_comments'
