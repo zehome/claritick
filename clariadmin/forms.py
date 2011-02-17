@@ -7,16 +7,23 @@ from clariadmin.models import (Host, OperatingSystem, HostType, AdditionnalField
 from common.models import Client
 from common.forms import ModelFormTableMixin
 from django.utils import simplejson as json
-from itertools import repeat
+from itertools import repeat, chain
+
+attrs_filtering={'queryExpr':'*${0}*','highlightMatch':'all','autoComplete':'False'}
+def attrs_filtering_and(a):
+    d=attrs_filtering.copy()
+    d.update(a)
+    return d
+
 
 class HostForm(df.ModelForm):
     class Meta:
         model = Host
         widgets = {
-            'os':df.FilteringSelect(),
-            'type':df.FilteringSelect(attrs={'onchange':'typeChanged(this);'}),
-            'site':df.FilteringSelect(),
-            'supplier':df.FilteringSelect(),
+            'os':df.FilteringSelect(attrs_filtering),
+            'type':df.FilteringSelect(attrs=attrs_filtering_and({'onchange':'typeChanged(this);'})),
+            'site':df.FilteringSelect(attrs=attrs_filtering),
+            'supplier':df.FilteringSelect(attrs=attrs_filtering),
             'ip':df.IPAddressTextInput(),
         }
         fields=("site","hostname","ip","os","rootpw","supplier", "model", "type","location","serial","inventory","date_end_prod","status","commentaire")
@@ -55,7 +62,7 @@ class ExtraFieldForm(df.Form):
                     if field.data_type == '4' else
                  df.DateField(**args(field,c_fields))
                     if field.data_type == '5' else
-                 df.ChoiceField(widget=df.FilteringSelect(), choices=enumerate(field.default_values), **args(field,c_fields))
+                 df.ChoiceField(widget=df.FilteringSelect(attrs=attrs_filtering), choices=chain(((-1,''),),enumerate(field.default_values)), **args(field,c_fields))
                     if field.data_type == '3' else
                  df.MultipleChoiceField(choices=enumerate(field.default_values), **args(field,c_fields)))
             )for field in self.avail_fields))
@@ -85,7 +92,7 @@ class ExtraFieldForm(df.Form):
 class NewExtraFieldForm(df.Form):
     data_type = df.CharField(label=u'Type de donnée',
         widget=df.FilteringSelect(choices=CHOICES_FIELDS_AVAILABLE,
-        attrs={u'onchange':u'showTypedField();',}))
+        attrs=attrs_filtering_and({u'onchange':u'showTypedField();'})))
     host_type = df.ModelChoiceField(label=u'Type de machine',
         queryset=HostType.objects.all(), empty_label=None)
     fast_search = df.BooleanField(label="",required=False)
@@ -129,14 +136,14 @@ class NewExtraFieldForm(df.Form):
 
 class SearchHostForm(df.Form, ModelFormTableMixin):
     site = df.ModelChoiceField(queryset = Client.objects.all(),
-        widget=df.FilteringSelect(), empty_label='', required=False)
+        widget=df.FilteringSelect(attrs=attrs_filtering), empty_label='', required=False)
     type = df.ModelChoiceField(queryset = HostType.objects.all(),
-        widget=df.FilteringSelect(attrs={'onchange':'typeChanged(this);'})
+        widget=df.FilteringSelect(attrs=attrs_filtering_and({'onchange':'typeChanged(this);'}))
         , empty_label='', required=False)
     os = df.ModelChoiceField(queryset = OperatingSystem.objects.all(),
-        widget=df.FilteringSelect(), empty_label='', required=False)
+        widget=df.FilteringSelect(attrs=attrs_filtering), empty_label='', required=False)
     supplier = df.ModelChoiceField(queryset = Supplier.objects.all(),
-        widget=df.FilteringSelect(), empty_label='', required=False)
+        widget=df.FilteringSelect(attrs=attrs_filtering), empty_label='', required=False)
     hostname = df.CharField(required=False)
     ip = df.CharField(required=False)
     status = df.CharField(required=False)
