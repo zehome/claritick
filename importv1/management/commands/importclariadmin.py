@@ -72,7 +72,7 @@ class Command(BaseCommand):
                     print "[FAIL]: Client id=%s not found in claritick! (refering to clariadmin: Site %s groupe=%s id=%s)" % (mapping_row, row[2], row[1], row[0])
                 else:
                     print "[OK]: %s - %s => %s" % (row[1], row[2], site)
-                    clariadmin_claritick_site_mapping[mapping_row] = site
+                    clariadmin_claritick_site_mapping[int(row[0])] = site
         
         print "Mapping/Génération HostType..."
         clariadmin_claritick_hosttype_mapping = {}
@@ -116,7 +116,7 @@ class Command(BaseCommand):
                 supplier.save()
             
             clariadmin_claritick_marque_mapping[row[1]] = supplier
-        
+        #~ return
         print "Migration Host..."
         rows = self._clariadmin_select(db, """SELECT site, hosttype, os, 
             id_marque, hostname, rootpw, 
