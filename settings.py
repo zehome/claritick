@@ -175,6 +175,11 @@ POSTGRESQL_VERSION = 8.4
 # Autologout default in minutes
 AUTO_LOGOUT_DELAY = 10
 
+# Paramettres de la django-debug-toolbar
+# plus d'infos: https://github.com/robhudson/django-debug-toolbar
+DEBUG_TOOLBAR_CONFIG={
+    'INTERCEPT_REDIRECTS' : False,
+}
 
 SVNDOC_CONFIG = {
     'OPENED_BY' : 75,
