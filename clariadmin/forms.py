@@ -26,6 +26,10 @@ class HostForm(df.ModelForm):
             'ip':df.IPAddressTextInput(),
         }
         fields=("site","hostname","ip","os","rootpw","supplier", "model", "type","location","serial","inventory","date_end_prod","status","commentaire")
+    def __init__(self, user, *args, **kwargs):
+        super(HostForm, self).__init__(*args, **kwargs)
+        self.fields['site'].queryset=Client.objects.filter(id__in=(c.id for c in user.clients))
+
 
 class ExtraFieldForm(df.Form):
     def _complete(self, host=None, blank=False):
@@ -134,8 +138,8 @@ class NewExtraFieldForm(df.Form):
         return json.dumps(dv)
 
 class SearchHostForm(df.Form, ModelFormTableMixin):
-    site = df.ModelChoiceField(queryset = Client.objects.all(),
-        widget=df.FilteringSelect(attrs=attrs_filtering), empty_label='', required=False)
+    site = df.ModelChoiceField(queryset = Client.objects.none(),
+            widget=df.FilteringSelect(attrs=attrs_filtering), empty_label='', required=False)
     type = df.ModelChoiceField(queryset = HostType.objects.all(),
         widget=df.FilteringSelect(attrs=attrs_filtering_and({'onchange':'typeChanged(this);'}))
         , empty_label='', required=False)
@@ -148,6 +152,9 @@ class SearchHostForm(df.Form, ModelFormTableMixin):
     status = df.CharField(required=False)
     inventory = df.CharField(required=False)
     commentaire = df.CharField(required=False)
+    def __init__(self, user, *args, **kwargs):
+        super(SearchHostForm, self).__init__(*args, **kwargs)
+        self.fields['site'].queryset=Client.objects.filter(id__in=(c.id for c in user.clients))
 
     class Meta:
         fields = ('site', 'type', 'os','supplier','hostname',  'ip', 'status','inventory', 'commentaire')

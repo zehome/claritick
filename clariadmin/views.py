@@ -77,7 +77,7 @@ def list_all(request, *args, **kw):
         else:
             request.session["global_search_adm_list"]=search
     if request.POST:
-        form = SearchHostForm(request.POST)
+        form = SearchHostForm(request.user,request.POST)
         if form.is_valid():
             post_filtred=dict((k,v)for k,v in request.POST.iteritems() if k in form.Meta.fields)
             if request.session.get('filter_adm_list',{})!=post_filtred:
@@ -89,7 +89,7 @@ def list_all(request, *args, **kw):
                 request.session['filter_extra_adm_list']=dict([(k,v) for k,v in request.POST.iteritems() if k in form_extra.fields.keys()])
                 form_extra.is_valid()
     else:
-        form = SearchHostForm(request.session.get('filter_adm_list',{}))
+        form = SearchHostForm(request.user,request.session.get('filter_adm_list',{}))
         host_type = request.session.get('filter_adm_list',{}).get('type', False)
         if host_type:
             form_extra = ExtraFieldForm.get_form((request.session.get('filter_extra_adm_list',{})),host=HostType.objects.get(pk=host_type))
@@ -124,12 +124,12 @@ def new(request, from_host=False):
         n = get_host_or_404(request.user, pk=from_host).copy_instance()
         return redirect(n)
     if request.POST:
-        form = HostForm(request.POST)
+        form = HostForm(request.user,request.POST)
         if form.is_valid():
             host = form.save()
             return redirect(host)
     else:
-        form = HostForm()
+        form = HostForm(request.user)
 
     return render_to_response('clariadmin/host.html', {
             'form': form,
@@ -138,16 +138,14 @@ def new(request, from_host=False):
 @permission_required("clariadmin.can_access_clariadmin")
 def modify(request, host_id):
     host = get_host_or_404(request.user, pk=host_id)
-    if request.user.site not in (host.site, host.site.parent, host.site.parent.parent):
-        a
     if not request.POST:
-        form = HostForm(instance=host)
+        form = HostForm(request.user,instance=host)
         form_comp = ExtraFieldForm.get_form(host=host)
     else:
         if request.POST.get("delete",False):
             host.delete()
             return redirect("/clariadmin/list/all")
-        form = HostForm(request.POST, instance=host)
+        form = HostForm(request.user,request.POST, instance=host)
         form_comp = ExtraFieldForm.get_form(data=request.POST, host=host)
 
     if request.POST:
