@@ -78,9 +78,10 @@ def list_all(request, *args, **kw):
         request.session["sort_adm_list"]=request.GET.get('sort', False)
     if request.GET.get('page', False):
         request.session["page_adm_list"]=request.GET.get('page', False)
+    # LC: Remove this code, triggers count() useless
     current_page_num = (1 if new_search else request.session.get('page_adm_list', 1)
             if int(request.session.get('page_adm_list', 1)) <= paginator.num_pages else 1)
-    page = paginator.page(current_page_num)
+    page = paginator.page(request.session.get('page_adm_list', 1))
     return render_to_response("clariadmin/list.html", {
         "page": page,
         "form": form,

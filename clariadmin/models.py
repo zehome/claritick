@@ -50,6 +50,14 @@ class Supplier(models.Model):
     def __unicode__(self):
         return u"%s" % (self.name,)
 
+
+class HostManager(models.Manager):
+    def get_query_set(self):
+        qs = super(HostManager, self).get_query_set().\
+            select_related("site", "site__parent", "site__parent__parent",
+		"type", "os", "type", "supplier")
+        return qs
+
 class Host(models.Model):
     class Meta:
         verbose_name = u"Machine"
@@ -57,6 +65,8 @@ class Host(models.Model):
         permissions = (
             ("can_access_clariadmin", "Accès CLARIADMIN"),
         )
+
+    objects = HostManager()
 
     site = ClientField(Client, verbose_name="Client", limit_choices_to={ 'parent__isnull': False })
     type = models.ForeignKey(HostType, verbose_name=u"Type d'hôte", blank=True, null=True)
