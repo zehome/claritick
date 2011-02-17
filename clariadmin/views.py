@@ -11,19 +11,17 @@ from django.db.models import Q
 from clariadmin.models import Host, HostType
 from clariadmin.forms import *
 from common.diggpaginator import DiggPaginator
+from operator import ior
 
-def filter_hosts(form, sorting, form_extra=False):
+def filter_hosts(qs, sorting, search, search_extra=False):
     search_mapping={'ip': 'istartswith',
         'hostname': 'icontains',
         'commentaire': 'icontains',
         'status': 'icontains'
         }
-    qs = Host.objects.all()
-    # Form cleaned_data ?
     try:
-        if form.cleaned_data:
-            cd = form.cleaned_data
-            for key, value in cd.items():
+        if search:
+            for key, value in search.iteritems():
                 if value:
                     try:
                         lookup = search_mapping[key]
@@ -33,15 +31,21 @@ def filter_hosts(form, sorting, form_extra=False):
     except AttributeError:
         pass
     try:
-        if form_extra and form_extra.cleaned_data:
-            cd = form_extra.cleaned_data
-            for key, value in cd.iteritems():
+        if search_extra:
+            for key, value in search_extra.iteritems():
                 if value:
-                    qs = qs.filter(Q(additionnalfield__field__id__exact=key.replace('val_','')) &
+                    qs = qs.filter(Q(additionnalfield__field__id__exact=key) &
                                    Q(additionnalfield__value__icontains=value))
     except AttributeError:
         pass
     return qs.order_by(sorting)
+
+def global_search(search):
+    fks={'os':'name','site':'label','supplier':'name','type':'text'}
+    return Host.objects.filter((Q(additionnalfield__field__fast_search__exact=True)
+            & Q(additionnalfield__value__icontains=search))
+            | reduce(ior,(Q(**{key+"__icontains":search}) for key in SearchHostForm.Meta.fields if key not in fks.keys()))
+            | reduce(ior,(Q(**{"%s__%s__icontains"%(key,value):search}) for key,value in  fks.iteritems()))).distinct()
 
 @permission_required("clariadmin.can_access_clariadmin")
 def list_all(request, *args, **kw):
@@ -50,6 +54,16 @@ def list_all(request, *args, **kw):
     """
     new_search=False
     form_extra=False
+    search = kw.pop('global_search',False)
+    if search:
+        try:
+            int(search)
+            return redirect(Host.objects.get(pk=search))
+        except:
+            qs = global_search(search)
+    else:
+        qs = Host.objects.all()
+
     if request.POST:
         form = SearchHostForm(request.POST)
         if form.is_valid():
@@ -68,12 +82,14 @@ def list_all(request, *args, **kw):
         if host_type:
             form_extra = ExtraFieldForm.get_form((request.session.get('filter_extra_adm_list',{})),host=HostType.objects.get(pk=host_type))
             form_extra.is_valid()
-        form.is_valid()
 
     columns = ["id", "hostname","ip", "site", "type", "os", "model", "inventory", "status"]
     sorting=request.session.get("sort_adm_list","-id")
-
-    paginator = DiggPaginator(filter_hosts(form, sorting, form_extra), settings.TICKETS_PER_PAGE, body=5, tail=2, padding=2)
+    paginator = DiggPaginator(
+        filter_hosts(qs, sorting,
+            form.is_valid() and form.cleaned_data,
+            form_extra and dict(((k, v.replace("val_","")) for k,v in form_extra.cleaned_data.iteritems()))),
+        settings.TICKETS_PER_PAGE, body=5, tail=2, padding=2)
     if request.GET.get('sort', False):
         request.session["sort_adm_list"]=request.GET.get('sort', False)
     if request.GET.get('page', False):

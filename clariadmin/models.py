@@ -55,7 +55,7 @@ class HostManager(models.Manager):
     def get_query_set(self):
         qs = super(HostManager, self).get_query_set().\
             select_related("site", "site__parent", "site__parent__parent",
-		"type", "os", "type", "supplier")
+            "type", "os", "supplier")
         return qs
 
 class Host(models.Model):

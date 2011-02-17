@@ -41,7 +41,7 @@
             });
         });
        function go_to_host(num) {
-            dojo.doc.location = '/clariadmin/modify/' + num;
+            dojo.doc.location = '/clariadmin/list/search/' + num;
         }
         dojo.addOnLoad(function() {
             dojo.connect(dojo.byId("id_num_host"), "onchange", function() {
