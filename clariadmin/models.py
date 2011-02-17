@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
 from django.db import models
+from django.db.models import Q
 from django.template.loader import get_template
 from django.template import Context
-
 from common.models import Client, ClientField, JsonField
 
 CHOICES_FIELDS_AVAILABLE = (
@@ -50,13 +50,22 @@ class Supplier(models.Model):
     def __unicode__(self):
         return u"%s" % (self.name,)
 
+class HostQuerySet(models.query.QuerySet):
+    def filter_by_site(self, site):
+        return self.filter(Q(site__exact=site)
+                        |Q(site__parent__exact=site)
+                        |Q(site__parent__parent__exact=site))
+
+    def filter_by_user(self, user):
+        return self.filter(site__in=user.clients)
 
 class HostManager(models.Manager):
     def get_query_set(self):
-        qs = super(HostManager, self).get_query_set().\
+        return HostQuerySet(self.model).\
             select_related("site", "site__parent", "site__parent__parent",
-            "type", "os", "supplier")
-        return qs
+                "type", "os", "supplier")
+    def filter_by_user(self, user):
+        return self.all().filter_by_user(user)
 
 class Host(models.Model):
     class Meta:
@@ -113,6 +122,9 @@ class Host(models.Model):
         for af in self.additionnalfield_set.all():
             AdditionnalField(field=af.field, host=h, value=af.value).save()
         return h
+
+    def available_for(self,user):
+        return (self.site in user.clients)
 
 class ParamAdditionnalField(models.Model):
     class Meta:

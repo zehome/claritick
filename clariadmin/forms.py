@@ -15,7 +15,6 @@ def attrs_filtering_and(a):
     d.update(a)
     return d
 
-
 class HostForm(df.ModelForm):
     class Meta:
         model = Host
