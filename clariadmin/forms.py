@@ -86,9 +86,14 @@ class ExtraFieldForm(df.Form):
                 cur.value = "null"
             cur.save()
 
+    def get_data(self):
+        return dict((k, self.cleaned_data[k])
+                for k, v in self.fields.iteritems()
+                if not((isinstance(v,df.ChoiceField) and self.cleaned_data[k]=='-1')))
+
     @staticmethod
     def get_form(*args, **kwargs):
-        h=kwargs.pop('host')
+        h=kwargs.pop('host',False)
         b=kwargs.pop('blank',False)
         return ExtraFieldForm(*args,**kwargs)._complete(h,b)
 

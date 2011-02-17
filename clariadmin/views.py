@@ -99,7 +99,7 @@ def list_all(request, *args, **kw):
     sorting=request.session.get("sort_adm_list","-id")
     paginator = DiggPaginator(
         filter_hosts(qs, sorting, form.is_valid() and form.cleaned_data,
-            form_extra and form_extra.cleaned_data),
+            form_extra and form_extra.get_data()),
         settings.TICKETS_PER_PAGE, body=5, tail=2, padding=2)
     if request.GET.get('sort', False):
         request.session["sort_adm_list"]=request.GET.get('sort', False)
