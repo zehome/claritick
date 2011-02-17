@@ -102,7 +102,7 @@ class Command(BaseCommand):
         for row in rows:
             # On essaye de trouver un mapping dans le premap
             try:
-                premap = clariadmin_claritick_marque_mapping[row[1]]
+                premap = pre_mapping_marque[row[1]]
             except KeyError:
                 premap = None
             supplier = None
@@ -146,6 +146,12 @@ class Command(BaseCommand):
                     host.ip = row[7]
                     if row[8]:
                         host.date_add = row[8]
+                    try:
+                        premap_marque = pre_mapping_marque[row[3]]
+                        if premap_marque:
+                            host.model = premap_marque
+                    except KeyError:
+                        pass
                     host.model = row[9]
                     host.location = row[10]
                     host.serial = row[11]
