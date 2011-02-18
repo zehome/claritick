@@ -1,11 +1,16 @@
-function graph_opentickets_init(renderTo, tickIntervalDays) {
+function graph_opentickets_init(renderTo, tickIntervalDays, title, defaultSeriesType) {
+    if (! defaultSeriesType)
+        defaultSeriesType = 'area';
+    if (! title)
+        title = 'Inconnu';
+
     var options = {
         chart: {
             renderTo: renderTo,
-            defaultSeriesType: 'area'
+            defaultSeriesType: defaultSeriesType
         },
         title: {
-            text: 'Tickets ouverts'
+            text: title
         },
         xAxis: {
             type: 'datetime',
@@ -53,7 +58,7 @@ function graph_opentickets_load(options, dataget_url, interval) {
         handleAs:"json",
         load: function(data)
         {
-            if (! data.hs_charts) { 
+            if (! data.hs_charts || ! data.hs_charts.length) { 
                 dojo.byId(options.chart.renderTo).innerHTML = "<p>" + options.title.text +  ": no data.</p>";
             } else {
                 dojo.forEach(data.hs_charts, function(chart_data, index) {

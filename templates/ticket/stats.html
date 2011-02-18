@@ -13,12 +13,16 @@
 <script type="text/javascript">
 dojo.addOnLoad(function() {
     var options;
-    options = graph_opentickets_init('graph_opentickets', 7);
+    options = graph_opentickets_init('graph_opentickets', 7, 'Tickets ouverts', 'area');
     graph_opentickets_load(options, '{% url ajax_graph_opentickets %}', 'weeks');
 });
 dojo.addOnLoad(function() {
     options = graph_recall_init('graph_recall', 7);
     graph_recall_load(options, '{% url ajax_graph_recall %}', 'weeks');
+});
+dojo.addOnLoad(function() {
+    options = graph_opentickets_init('graph_closetickets', 7, 'Tickets fermes', 'area');
+    graph_opentickets_load(options, '{% url ajax_graph_closetickets %}', 'weeks');
 });
 </script>
 {% endblock extrajs %}
@@ -26,5 +30,6 @@ dojo.addOnLoad(function() {
 {% block content %}
 <p>Stats...</p>
 <div id="graph_opentickets" style="width: 100%; height: 400px"></div>
+<div id="graph_closetickets" style="width: 100%; height: 400px"></div>
 <div id="graph_recall" style="width: 100%; height: 400px"></div>
 {% endblock content %}

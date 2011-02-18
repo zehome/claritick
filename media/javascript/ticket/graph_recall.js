@@ -53,7 +53,7 @@ function graph_recall_load(options, dataget_url, interval) {
         handleAs:"json",
         load: function(data)
         {
-            if (! data.hs_charts) { 
+            if (! data.hs_charts || ! data.hs_charts.length) { 
                 dojo.byId(options.chart.renderTo).innerHTML = "<p>" + options.title.text +  ": no data.</p>";
             } else {
                 dojo.forEach(data.hs_charts, function(chart_data, index) {

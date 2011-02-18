@@ -22,6 +22,7 @@ urlpatterns = patterns('ticket.views',
     url(r'^ajax_set_alarm/(?P<ticket_id>\d+)/$', 'ajax_set_alarm', name='ajax_set_alarm'),
     url(r'^ajax_load_telephone/', 'ajax_load_telephone', name='ajax_load_telephone'),
     url(r'^ajax_graph_opentickets/', 'ajax_graph_opentickets', name='ajax_graph_opentickets'),
+    url(r'^ajax_graph_closetickets/', 'ajax_graph_closetickets', name='ajax_graph_closetickets'),
     url(r'^ajax_graph_recall/', 'ajax_graph_recall', name='ajax_graph_recall'),
     url(r'^ajax_graph_average_close_time/', 'ajax_graph_average_close_time', name='ajax_graph_average_close_time'),
 

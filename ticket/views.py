@@ -713,10 +713,30 @@ def ajax_graph_opentickets(request):
 
 @login_required
 @json_response
+def ajax_graph_closetickets(request):
+    """ Returns data for high charts """
+    interval = request.POST.get("interval", "weeks")
+    ret = { "hs_charts": [] }
+    today = datetime.datetime.now()
+    def get_hc_serie(tss, properties):
+        return { 
+            "name": properties.get("name", "Unknown"),
+            "data": [ (encode_datetime(i[0]), i[1]) for i in tss ],
+        }
+    for priority in Priority.objects.all().order_by('good_duration'):
+        qs = Ticket.objects.filter(priority=priority, state=settings.TICKET_STATE_CLOSED).filter_ticket_by_user(request.user)
+        if qs:
+            qss = qsstats.QuerySetStats(qs, 'date_close')
+            tss = qss.time_series(today-datetime.timedelta(days=365), today, interval=interval)
+            ret["hs_charts"].append(get_hc_serie(tss, {'name': 'Priority %s' % (priority.label,)}))
+    return ret
+
+@login_required
+@json_response
 def ajax_graph_recall(request):
     """ Returns data for high charts """
     interval = request.POST.get("interval", "weeks")
-    ret = { "hs_charts": None }
+    ret = { "hs_charts": [] }
     today = datetime.datetime.now()
     def get_hc_serie(tss, properties):
         return { 

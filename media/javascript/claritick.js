@@ -38,6 +38,7 @@ dojo.addOnLoad(function() {
          // Quand une requete AJAX reviens en erreur
          dojo.subscribe("/dojo/io/error", 
 function(/*dojo.Deferrred*/dfd, /*Object*/response){
+             console.log(response);
              if (response.error) {
                 SaveStatusDivStatestatus_div.style.backgroundColor = "red";
                 SaveStatusDivStatestatus_div.style.color = "white";
