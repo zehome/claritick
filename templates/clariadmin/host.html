@@ -4,7 +4,6 @@
     {% endblock %}
 {% block title %}{% if host %}Machine {{ host }}{% else %}Création d'une machine{% endif %}{% endblock %}
 {% block content_title %}{% if host %}Machine {{ host }}{% else %}Création d'une machine{% endif %}{% endblock %}
-{% block image %}<img src="/media/images/oxygen/folder-open.png" />{% endblock %}
 {% block extrajs %}
 <script type="text/javascript" src="{{ MEDIA_URL }}js/clariadmin.js"></script>
 <script type="text/javascript" charset="utf-8">
@@ -38,14 +37,14 @@ function confirmation_callback(myBool, form_id){
     {% csrf_token %}
     <fieldset style="float:left;">
         <legend>Machine</legend>
-        <table class="search">
+        <table class="clariadmin_form">
             {{ form }}
         </table>
     </fieldset>
 
     <fieldset id="extra_fieldset" {% if not additionnal_fields.fields %}class="dijitHidden"{% endif %}>
         <legend>Champs complémentaires</legend>
-        <table id="extra_fields" class="search">
+        <table id="extra_fields" class="clariadmin_form">
         {% if additionnal_fields.fields %}
             {{ additionnal_fields }}
         {% endif %}
