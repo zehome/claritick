@@ -14,7 +14,7 @@ from common.diggpaginator import DiggPaginator
 from operator import ior
 
 def filter_hosts(qs, sorting, search, search_extra=False):
-    search_mapping={'ip': 'istartswith',
+    search_mapping={'ip': 'icontains',
         'hostname': 'icontains',
         'commentaire': 'icontains',
         'status': 'icontains'
@@ -66,8 +66,8 @@ def list_all(request, *args, **kw):
             filter_extra_adm_list : dernier formulaire de recherche (extra_fields)
             sort_adm_list : dernier tri
     """
-    new_search=False
-    form_extra=False
+    new_search = False
+    form_extra = False
     search = kw.pop('global_search',False)
     qs = Host.objects.filter_by_user(request.user)
     if search:
@@ -79,14 +79,17 @@ def list_all(request, *args, **kw):
     if request.POST:
         form = SearchHostForm(request.user,request.POST)
         if form.is_valid():
-            post_filtred=dict((k,v)for k,v in request.POST.iteritems() if k in form.Meta.fields)
+            post_filtred = dict((k,v) for k,v in request.POST.iteritems()
+                                if k in form.Meta.fields)
             if request.session.get('filter_adm_list',{})!=post_filtred:
                 new_search=True
                 request.session['filter_adm_list']=post_filtred
             host_type = request.session.get('filter_adm_list',{}).get('type', False)
             if host_type:
                 form_extra = ExtraFieldForm.get_form(request.POST, host=HostType.objects.get(pk=host_type))
-                request.session['filter_extra_adm_list']=dict([(k,v) for k,v in request.POST.iteritems() if k in form_extra.fields.keys()])
+                request.session['filter_extra_adm_list'] = dict(
+                    [(k,v) for k,v in request.POST.iteritems()
+                        if k in form_extra.fields.keys()])
                 form_extra.is_valid()
     else:
         form = SearchHostForm(request.user,request.session.get('filter_adm_list',{}))

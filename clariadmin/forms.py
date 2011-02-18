@@ -5,6 +5,7 @@ from clariadmin.models import (Host, OperatingSystem, HostType, AdditionnalField
                                ParamAdditionnalField, CHOICES_FIELDS_AVAILABLE,
                                Supplier)
 from common.models import Client
+from common.utils import sort_queryset
 from common.forms import ModelFormTableMixin
 from django.utils import simplejson as json
 from itertools import repeat, chain
@@ -145,8 +146,8 @@ class NewExtraFieldForm(df.Form):
 class SearchHostForm(df.Form, ModelFormTableMixin):
     ip = df.CharField(required=False)
     hostname = df.CharField(required=False, label=u'Nom')
-    site = df.ModelChoiceField(queryset = Client.objects.none(),
-            widget=df.FilteringSelect(attrs=attrs_filtering), empty_label='', required=False, label=u'Client')
+    site = df.ChoiceField(choices = (('',''),),
+            widget=df.FilteringSelect(attrs=attrs_filtering),  required=False, label=u'Client')
     type = df.ModelChoiceField(queryset = HostType.objects.all(),
         widget=df.FilteringSelect(attrs=attrs_filtering_and({'onchange':'typeChanged(this);'})),
         empty_label='', required=False, label = u'Type')
@@ -159,7 +160,7 @@ class SearchHostForm(df.Form, ModelFormTableMixin):
     commentaire = df.CharField(required=False)
     def __init__(self, user, *args, **kwargs):
         super(SearchHostForm, self).__init__(*args, **kwargs)
-        self.fields['site'].queryset=Client.objects.filter(id__in=(c.id for c in user.clients))
+        self.fields['site'].choices=chain((('',''),),((c.id, str(c)) for c in sort_queryset(Client.objects.filter(id__in=(c.id for c in user.clients)))))
 
     class Meta:
         fields = ('ip', 'hostname', 'site', 'type', 'os', 'supplier', 'status', 'inventory', 'commentaire')
