@@ -7,18 +7,18 @@ import datetime
 from django import http
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
-from django.db import models
-from django.db import connection, transaction
+from django.db import models, connection, transaction
 from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.template import RequestContext
+from django.forms.models import modelformset_factory
+from django.utils import simplejson as json
 from django.contrib.auth.decorators import login_required, permission_required
 
 from dojango.decorators import json_response
 
-from ticket.models import Ticket, TicketView, TicketFile
+from ticket.models import Ticket, TicketView, TicketFile, Priority
 from ticket_comments.views import post_comment
 from ticket.forms import *
-from django.forms.models import modelformset_factory
 
 from common.diggpaginator import DiggPaginator
 from common.models import Client, UserProfile, ClaritickUser
@@ -686,46 +686,51 @@ def ajax_load_telephone(request):
     ret["telephones"] = telephones.values()
     return ret
 
+def encode_datetime(obj):
+    if isinstance(obj, datetime.datetime):
+        return time.strftime('%Y-%m-%dT%H:%M:%SZ', obj.utctimetuple())
+    raise TypeError(repr(obj) + " is not JSON serializable")
+
 @login_required
 @json_response
-def ajax_graph_permonth(request):
-    """
-    
-    """
-    ret = {}
-    
+def ajax_graph_opentickets(request):
+    """ Returns data for high charts """
+    interval = request.POST.get("interval", "weeks")
+    ret = { "hs_charts": [] }
     today = datetime.datetime.now()
-    qs = Ticket.objects.all().filter_ticket_by_user(request.user)
-    if not qs:
-        return ret
-    
-    ret["charts"] = []
-    
-    def get_chart(tss, series_properties):
-        chart = {}
-        chart["y_values"] = [ t[1] for t in tss ]
-        chart["x_labels"] = [
-            {'value': idx+1, 'text': t[0].strftime("%b")} \
-            for idx, t in enumerate(tss)
-        ]
-        chart["series_properties"] = series_properties
-        return chart
-    
-    ## Opened ticket chart
-    qss = qsstats.QuerySetStats(qs, 'date_open')
-    tss = qss.time_series(today-datetime.timedelta(days=360), today, interval='months')
-    ret["charts"].append(get_chart(tss, series_properties = {'legend': 'Tickets ouverts'}))
-    
-    ## Critical tickets chart
-    chart = {}
-    qs = qs.filter(priority__gt=3)
-    if not qs:
-        return {}
-    qss = qsstats.QuerySetStats(qs, 'date_open')
-    tss = qss.time_series(today-datetime.timedelta(days=360), today, interval='months')
-    ret["charts"].append(get_chart(tss, series_properties = {'legend': 'Tickets critiques', 'stroke': 'red'}))
-
+    def get_hc_serie(tss, properties):
+        return { 
+            "name": properties.get("name", "Unknown"),
+            "data": [ (encode_datetime(i[0]), i[1]) for i in tss ],
+        }
+    for priority in Priority.objects.all().order_by('good_duration'):
+        qs = Ticket.objects.filter(priority=priority).filter_ticket_by_user(request.user)
+        if qs:
+            qss = qsstats.QuerySetStats(qs, 'date_open')
+            tss = qss.time_series(today-datetime.timedelta(days=365), today, interval=interval)
+            ret["hs_charts"].append(get_hc_serie(tss, {'name': 'Priority %s' % (priority.label,)}))
     return ret
+
+@login_required
+@json_response
+def ajax_graph_recall(request):
+    """ Returns data for high charts """
+    interval = request.POST.get("interval", "weeks")
+    ret = { "hs_charts": None }
+    today = datetime.datetime.now()
+    def get_hc_serie(tss, properties):
+        return { 
+            "name": properties.get("name", "Unknown"),
+            "data": [ (encode_datetime(i[0]), i[1]) for i in tss ],
+        }
+    for priority in Priority.objects.all().order_by('good_duration'):
+        qs = TicketAppel.objects.filter(ticket__priority=priority, ticket__client__in = request.user.clients)
+        if qs:
+            qss = qsstats.QuerySetStats(qs, 'date')
+            tss = qss.time_series(today-datetime.timedelta(days=365), today, interval=interval)
+            ret["hs_charts"].append(get_hc_serie(tss, {'name': 'Priority %s' % (priority.label,)}))
+    return ret
+
 
 @login_required
 @json_response

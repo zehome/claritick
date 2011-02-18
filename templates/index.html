@@ -9,13 +9,22 @@
         dojo.style("contenu", "marginLeft", "210px"); 
     });
 </script>
+
+<!-- Graphing -->
+<script src="{{ MEDIA_URL }}js/jquery-1.5.min.js" type="text/javascript"></script>
+<script src="{{ MEDIA_URL }}js/highcharts.js" type="text/javascript"></script>
+<script src="{{ MEDIA_URL }}js/themes/grid.js" type="text/javascript"></script>
+<script src="{{ MEDIA_URL }}javascript/ticket/graph_opentickets.js" type="text/javascript"></script>
+<script src="{{ MEDIA_URL }}javascript/ticket/graph_recall.js" type="text/javascript"></script>
+<!-- End Graphing -->
+
 {% endblock %}
 
 {% block content %}
 {% if not user.is_authenticated %}
 <p style="margin-bottom: 0;">Merci de vous <a href="/accounts/login/">IDENTIFIER</a></p>
 <h1 style="text-align: left; color: black; padding: 0; margin: 0;">Rechercher sur Google:</h1>
-<!-- GOogle search -->
+<!-- Google search -->
 <div id="cse" style="text-align: left; padding: 0 !important;">Chargement...</div>
 <script src="https://www.google.com/jsapi" type="text/javascript"></script>
 <script type="text/javascript">
@@ -27,7 +36,7 @@
   }, true);
 </script>
 <link rel="stylesheet" href="https://www.google.com/cse/style/look/default.css" type="text/css" /> 
-<!-- End GOogle search -->
+<!-- End Google search -->
 
 {% else %}
 <div id="index_content">
@@ -62,85 +71,21 @@
         </ul>
     </div>
     {% endif %}
-    <div id="stats_graph" class="container" style="width: 500px; height: auto;">
-        <h2>Graphiques</h2>
-        <p id="stats_graph_loading">Chargement...</p>
+    <div id="stats_graph" class="container" style="width: 700px; height: auto;">
         <script type="text/javascript">
-        
-        /* Helper to generate dojox chart */
-        function generate_graph(name, chart_data)
-        {
-            var chart1 = new dojox.charting.Chart2D("chart_"+name);
-            chart1.setTheme(dojox.charting.themes.Harmony);
-            chart1.addPlot("default", {
-                type: "Lines", 
-                shadows: {dx: 2, dy: 2, dw: 2},
-                tension: 4,
-                markers: true
-            });
-            chart1.addAxis("x", {labels: chart_data.x_labels});
-            chart1.addAxis("y", {
-                vertical: true, majorTicks: true, 
-                majorLabels: true, minorTicks: false, 
-                minorLabels: false, microTicks: false
-            });
-            chart1.addSeries("line", chart_data.y_values, chart_data.series_properties);
-            chart1.render();
-            var legend = new dojox.charting.widget.Legend({chart: chart1, horizontal: true}, "chart_legend_"+name);
-        } /* Chart helper */
-        
-        /* Helper to generate dojox chart */
-        function generate_graph_average_delay(name, series, x_labels)
-        {
-            var chart2 = new dojox.charting.Chart2D("chart_"+name);
-            chart2.setTheme(dojox.charting.themes.Shrooms);
-            chart2.addPlot("default", {
-                type: "Lines", 
-                shadows: {dx: 2, dy: 2, dw: 2},
-                tension: 4,
-                markers: true
-            });
-            chart2.addAxis("x", {labels: x_labels});
-            chart2.addAxis("y", {
-                vertical: true, majorTicks: true, 
-                majorLabels: true, minorTicks: false, 
-                minorLabels: false, microTicks: false
-            });
-            
-            dojo.forEach(series, function(serie, idx) {
-                chart2.addSeries("line"+idx, serie.values, serie.properties);
-            });
-            
-            chart2.render();
-            var legend2 = new dojox.charting.widget.Legend({chart: chart2, horizontal: true}, "chart_legend_"+name);
-        } /* Chart helper */
-    
-        setTimeout(function(){
-            dojo.destroy("stats_graph_loading");
-            dojo.require("dojox.charting.Chart2D");
-            dojo.require("dojox.charting.themes.Harmony");
-            dojo.require("dojox.charting.themes.Shrooms");
-            dojo.require("dojox.charting.widget.Legend");
-            SimpleAjax('{% url ajax_graph_permonth %}', '', function(ajax_response)
-            {
-                if (! ajax_response.charts) { return; }
-                dojo.forEach(ajax_response.charts, function(chart_data, index) {
-                    var name="permonth_"+index;
-                    dojo.create('div', {'id': 'chart_legend_'+name, 'style': {'padding': 0, 'margin': 0}}, "stats_graph");
-                    dojo.create('div', {'id': 'chart_'+name, 'class': 'chart'}, "stats_graph");
-                    generate_graph(name, chart_data);
-                });
-            });
-            SimpleAjax('{% url ajax_graph_average_close_time %}', '', function(ajax_response)
-            {
-                if (! ajax_response.series) { return; }
-                var name = "average_delay";
-                dojo.create('div', {'id': 'chart_legend_'+name, 'style': {'padding': 0, 'margin': 0}}, "stats_graph");
-                dojo.create('div', {'id': 'chart_'+name, 'class': 'chart'}, "stats_graph");
-                generate_graph_average_delay(name, ajax_response.series, ajax_response.x_labels);
-            });
-        }, 5000);
+        dojo.addOnLoad(function() {
+            var options;
+            options = graph_opentickets_init('graph_opentickets', 31);
+            graph_opentickets_load(options, '{% url ajax_graph_opentickets %}', 'month');
+        });
+        dojo.addOnLoad(function() {
+            options = graph_recall_init('graph_recall', 7);
+            graph_recall_load(options, '{% url ajax_graph_recall %}', 'weeks');
+        });
         </script>
+        <h2>Graphiques</h2>
+        <div id="graph_opentickets"></div>
+        <div id="graph_recall"></div>
     </div>
 </div>
 {% endif %}

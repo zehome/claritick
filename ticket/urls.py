@@ -21,7 +21,8 @@ urlpatterns = patterns('ticket.views',
     url(r'^ajax_load_ticketmailtrace/(?P<ticket_id>\d+)/$', 'ajax_load_ticketmailtrace', name='ajax_load_ticketmailtrace'),
     url(r'^ajax_set_alarm/(?P<ticket_id>\d+)/$', 'ajax_set_alarm', name='ajax_set_alarm'),
     url(r'^ajax_load_telephone/', 'ajax_load_telephone', name='ajax_load_telephone'),
-    url(r'^ajax_graph_permonth/', 'ajax_graph_permonth', name='ajax_graph_permonth'),
+    url(r'^ajax_graph_opentickets/', 'ajax_graph_opentickets', name='ajax_graph_opentickets'),
+    url(r'^ajax_graph_recall/', 'ajax_graph_recall', name='ajax_graph_recall'),
     url(r'^ajax_graph_average_close_time/', 'ajax_graph_average_close_time', name='ajax_graph_average_close_time'),
 
     url(r'^ajax_mark_all_ticket_seen/$', 'ajax_mark_all_ticket_seen', name='ajax_mark_all_ticket_seen'),
@@ -29,4 +30,7 @@ urlpatterns = patterns('ticket.views',
 
     ## Chrome extension / feeds
     url(r'^feed/', 'ticket_feed', name='ticket_feed'),
+
+    # Stats
+    url(r'^stats/', 'ticket_stats', name='ticket_stats'),
 )
