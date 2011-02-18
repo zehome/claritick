@@ -39,7 +39,11 @@ function changeClassOnScroll(yoffset, id, before_class, after_class)
  */
 function ajaxMenu2D(url, query_string, container, id_menu, json_key, id_input0, id_input1) {
     var menu;
-    SimpleAjax(url, query_string, function (res) {
+    dojo.xhrPost({
+        url: url, 
+        handleAs:"json",
+        postData: query_string, 
+        load: function (res) {
             if (!res)
                 return;
             if ((menu = dojo.byId(id_menu)))
@@ -60,6 +64,7 @@ function ajaxMenu2D(url, query_string, container, id_menu, json_key, id_input0, 
                 dojo.byId(container).appendChild(menu.domNode);
                 menu.focus();
             }
+        }
     });
 }
 

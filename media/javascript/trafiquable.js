@@ -42,11 +42,16 @@ function Trafiquable(id_table, service_url)
         title : "Aide sur la manipulation des tableaux",
         content : "<p><h5Certains tableaux comme celui-ci peuvent être personnalisés par l'utilisateur.</h5></p><p>Celui-ci peut décider de masquer certaines colonnes et peut choisir également l'ordre dans lequel les colonnes doivent s'afficher.</p><p><ul><li>Pour modifier l'ordre des colonnes, il suffit de déplacer celles-ci par 'glisser-déposer' (cliquer sur le titre d'une colonne, laisser le bouton de la souris enfoncé, déplacer la souris au nouvel emplacement et relacher le bouton).</li><li>En faisant un clic-droit sur le titre d'une colonne, un menu contextuel apparaît permettant de masquer cette colonne, de réafficher toutes les colonnes, de rétablir l'ordre par défaut des colonnes et de trier le tableau.</li></ul></p><button dojoType=\"dijit.form.Button\" type=\"submit\">OK</button>"
         });
-    SimpleAjax(service_url,'action=get&id_table=' + id_table,function(ajax_response)
-        {
-        le_trafiquable.set_ordre_colonnes(ajax_response.ordre_colonnes);
-        dojo.style(matable,"display","table");
-        });
+    dojo.xhrPost({
+        handleAs:"json",
+        url: service_url,
+        postData: 'action=get&id_table=' + id_table,
+        load: function(ajax_response)
+            {
+                le_trafiquable.set_ordre_colonnes(ajax_response.ordre_colonnes);
+                dojo.style(matable,"display","table");
+            }
+    });
     dojo.forEach(titres, function(titre, index)
         {
         dndSource.insertNodes(false,[titre]);
@@ -222,7 +227,11 @@ function Trafiquable(id_table, service_url)
     this.ajaxer_ordre_colonnes = function(liste_colonnes)
         {
         dojo.removeClass(ligne_titres,"save-in-progess");
-        SimpleAjax(service_url, 'action=save&id_table=' + id_table + '&liste_colonnes=' + encodeURIComponent(dojo.toJson(liste_colonnes)), function() {});
+        dojo.xhrPost({
+                url: service_url, 
+                postData: 'action=save&id_table=' + id_table + '&liste_colonnes=' + encodeURIComponent(dojo.toJson(liste_colonnes)), 
+                load: function() {}
+            });
         }
 
     this.masquer_colonne = function(num_colonne)
