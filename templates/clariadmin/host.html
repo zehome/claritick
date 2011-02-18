@@ -2,8 +2,6 @@
 {% extends "base.html" %}
     {% block extrastyle %}
     {% endblock %}
-{% block title %}{% if host %}Machine {{ host }}{% else %}Création d'une machine{% endif %}{% endblock %}
-{% block content_title %}{% if host %}Machine {{ host }}{% else %}Création d'une machine{% endif %}{% endblock %}
 {% block extrajs %}
 <script type="text/javascript" src="{{ MEDIA_URL }}js/clariadmin.js"></script>
 <script type="text/javascript" charset="utf-8">
@@ -36,14 +34,12 @@ function confirmation_callback(myBool, form_id){
 <form id="the_form" method="POST">
     {% csrf_token %}
     <fieldset style="float:left;">
-        <legend>Machine</legend>
         <table class="clariadmin_form">
             {{ form }}
         </table>
     </fieldset>
 
     <fieldset id="extra_fieldset" {% if not additionnal_fields.fields %}class="dijitHidden"{% endif %}>
-        <legend>Champs complémentaires</legend>
         <table id="extra_fields" class="clariadmin_form">
         {% if additionnal_fields.fields %}
             {{ additionnal_fields }}
@@ -52,7 +48,12 @@ function confirmation_callback(myBool, form_id){
     </fieldset>
 
     <hr />
-    {%if host%}<button type="button" onclick='confirmDialog("Supression de l hote", "Êtes vous sûr de vouloir supprimer cette machine de la base?", confirmation_callback, "the_form")' value="true" dojoType="dijit.form.Button">Suprimer</button>{%endif%}
-    <button type="submit" name="save" dojoType="dijit.form.Button">Modifier/Valider</button>
+    <div id="save_buttons">
+        <button dojoType="dijit.form.Button" iconClass="dijitEditorIcon dijitEditorIconSave" type="submit" name="submit_button" value="save">Enregistrer</button>
+        <button dojoType="dijit.form.Button" iconClass="dijitEditorIcon dijitEditorIconSave" type="submit" name="submit_button" value="new">Enregistrer et ajouter un nouveau</button>
+        <button dojoType="dijit.form.Button" iconClass="dijitEditorIcon dijitEditorIconSave" type="submit" name="submit_button" value="return">Enregistrer et retourner à la liste</button>
+        {%if host%}<button dojoType="dijit.form.Button" onclick='confirmDialog("Supression de l hote", "Êtes vous sûr de vouloir supprimer cette machine de la base?", confirmation_callback, "the_form")' iconClass="dijitEditorIcon dijitEditorIconDelete" type="action" value="true" class="default">Suprimer</button>{%endif%}
+    </div>
+</div>
 </form>
 {% endblock %}

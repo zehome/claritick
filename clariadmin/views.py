@@ -12,6 +12,7 @@ from clariadmin.models import Host, HostType
 from clariadmin.forms import *
 from common.diggpaginator import DiggPaginator
 from operator import ior
+from itertools import chain
 
 def filter_hosts(qs, sorting, search, search_extra=False):
     search_mapping={'ip': 'icontains',
@@ -63,30 +64,27 @@ def list_all(request, *args, **kw):
         variables de session utilisées:
             global_search_adm_list : dernier mot clef de recherche globale
             filter_adm_list : dernier formulaire de rechere
-            filter_extra_adm_list : dernier formulaire de recherche (extra_fields)
             sort_adm_list : dernier tri
     """
+    #declare
     new_search = False
     form_extra = False
-    search = kw.pop('global_search',False)
+    reset=False
     qs = Host.objects.filter_by_user(request.user)
-    if search:
-        qs = global_search(search, qs)
-        if request.session.get("global_search_adm_list",False)!=search:
-            new_search=True
-        else:
-            request.session["global_search_adm_list"]=search
+
+    #instanciate forms
     if request.POST:
-        form = SearchHostForm(request.user,request.POST)
+        reset = request.POST.get('filter_reset',False)
+        form = SearchHostForm(request.user,request.POST if not reset else {})
         if form.is_valid():
             post_filtred = dict((k,v) for k,v in request.POST.iteritems()
-                                if k in form.Meta.fields)
+                                if k in chain(form.Meta.fields,("global_search",)))
             if request.session.get('filter_adm_list',{})!=post_filtred:
                 new_search=True
                 request.session['filter_adm_list']=post_filtred
             host_type = request.session.get('filter_adm_list',{}).get('type', False)
             if host_type:
-                form_extra = ExtraFieldForm.get_form(request.POST, host=HostType.objects.get(pk=host_type))
+                form_extra = ExtraFieldForm.get_form(request.POST if not reset else {}, host=HostType.objects.get(pk=host_type))
                 request.session['filter_extra_adm_list'] = dict(
                     [(k,v) for k,v in request.POST.iteritems()
                         if k in form_extra.fields.keys()])
@@ -98,22 +96,29 @@ def list_all(request, *args, **kw):
             form_extra = ExtraFieldForm.get_form((request.session.get('filter_extra_adm_list',{})),host=HostType.objects.get(pk=host_type))
             form_extra.is_valid()
 
-    columns = ["hostname","ip", "site", "type", "os", "model", "status"]
-    sorting=request.session.get("sort_adm_list","-id")
-    paginator = DiggPaginator(
-        filter_hosts(qs, sorting, form.is_valid() and form.cleaned_data,
-            form_extra and form_extra.get_data()),
-        settings.TICKETS_PER_PAGE, body=5, tail=2, padding=2)
+    #global_search
+    search = form.cleaned_data.pop('global_search',False) if form.is_valid() else False
+    if search:
+        qs = global_search(search, qs)
+
+    #get session/GET parametters
+    sorting=request.GET.get('sort',request.session.get("sort_adm_list", '-id'))
     if request.GET.get('sort', False):
         request.session["sort_adm_list"]=request.GET.get('sort', False)
     if request.GET.get('page', False):
         request.session["page_adm_list"]=request.GET.get('page', False)
+
+    #fill paginator
+    paginator = DiggPaginator(
+        filter_hosts(qs, sorting, form.is_valid() and form.cleaned_data,
+            form_extra and form_extra.get_data()),
+        settings.TICKETS_PER_PAGE, body=5, tail=2, padding=2)
     page = paginator.page(1 if new_search else request.session.get('page_adm_list', 1)
         if int(request.session.get('page_adm_list', 1)) <= paginator.num_pages else 1)
     return render_to_response("clariadmin/list.html", {
         "page": page,
         "form": form,
-        "columns": columns,
+        "columns": ("hostname","ip", "site", "type", "os", "model", "status"),
         "sorting": sorting,
         "form_extra":form_extra
     }, context_instance=RequestContext(request))
@@ -130,10 +135,17 @@ def new(request, from_host=False):
         form = HostForm(request.user,request.POST)
         if form.is_valid():
             host = form.save()
-            return redirect(host)
-    else:
-        form = HostForm(request.user)
-
+            form_comp = ExtraFieldForm.get_form(data=request.POST, host=host)
+            if form_comp.is_valid():
+                form_comp.save()
+            redir=request.POST.get('submit_button',False)
+            if redir == 'new':
+                pass
+            elif redir == 'save':
+                return redirect(host)
+            elif redir == 'return':
+                return redirect('list_hosts')
+    form = HostForm(request.user)
     return render_to_response('clariadmin/host.html', {
             'form': form,
             'additionnal_fields':None }, context_instance=RequestContext(request))
@@ -147,16 +159,20 @@ def modify(request, host_id):
     else:
         if request.POST.get("delete",False):
             host.delete()
-            return redirect("/clariadmin/list/all")
+            return redirect('list_hosts')
         form = HostForm(request.user,request.POST, instance=host)
         form_comp = ExtraFieldForm.get_form(data=request.POST, host=host)
-
-    if request.POST:
         if form_comp.is_valid():
             form_comp.save()
         if form.is_valid():
             form.save()
-            return redirect("/clariadmin/list/all")
+        redir=request.POST.get('submit_button',False)
+        if redir == 'new':
+            return redirect('new_host')
+        elif redir == 'save':
+            pass
+        elif redir == 'return':
+            return redirect('list_hosts')
     return render_to_response("clariadmin/host.html", {
         "form": form,
         'additionnal_fields':form_comp,
@@ -166,10 +182,7 @@ def modify(request, host_id):
 def new_extra_field(request):
     form = NewExtraFieldForm(request.POST)
     if form.is_valid():
-        cd=form.cleaned_data
-        ParamAdditionnalField(name=cd["name"], host_type=cd["host_type"],
-                data_type=cd["data_type"], fast_search=cd["fast_search"],
-                default_values=form.get_default_values()).save()
+        form.save()
     return render_to_response("clariadmin/extra_field.html", {
         u"form" : form,
         }, context_instance=RequestContext(request))
@@ -186,7 +199,7 @@ def ajax_extra_fields_form(request, host_id, blank=False):
 def mod_extra_field(request, field_id):
     c_field = get_object_or_404(ParamAdditionnalField, pk=field_id)
     if request.POST:
-        form = NewExtraFieldForm(request.POST)
+        form = NewExtraFieldForm(request.POST, instance=c_field)
     else:
         data = {"name":c_field.name,
                 "host_type":c_field.host_type.id,
@@ -204,15 +217,9 @@ def mod_extra_field(request, field_id):
             data['int_val']=c_field.default_values
         elif c_field.data_type=="5":
             data['date_val']=c_field.default_values
-        form = NewExtraFieldForm(data)
+        form = NewExtraFieldForm(data,instance=c_field)
     if form.is_valid():
-        cd=form.cleaned_data
-        c_field.name=cd["name"]
-        c_field.host_type=cd["host_type"]
-        c_field.data_type=cd["data_type"]
-        c_field.fast_search=cd["fast_search"]
-        c_field.default_values=form.get_default_values()
-        c_field.save()
+        form.save()
     return render_to_response("clariadmin/extra_field.html",{
         "form": form,
         "field": c_field,}, context_instance=RequestContext(request))

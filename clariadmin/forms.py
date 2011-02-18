@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from dojango import forms as df
+import  dojango.forms as df
 from clariadmin.models import (Host, OperatingSystem, HostType, AdditionnalField,
                                ParamAdditionnalField, CHOICES_FIELDS_AVAILABLE,
                                Supplier)
@@ -98,18 +98,60 @@ class ExtraFieldForm(df.Form):
         b=kwargs.pop('blank',False)
         return ExtraFieldForm(*args,**kwargs)._complete(h,b)
 
+class ExtraFieldAdminForm(df.ModelForm):
+    text_val = df.CharField(label=u'Défaut', required=False)
+    bool_val = df.BooleanField(label=u'Défaut', required=True)
+    int_val  = df.IntegerField(label=u'Défaut', required=False)
+    date_val = df.DateField(label=u'Défaut', required=False)
+    choice01_val = df.CharField(label=u'Proposition', required=False)
+    choice02_val = df.CharField(label=u'Proposition', required=False)
+    choice03_val = df.CharField(label=u'Proposition', required=False)
+    choice04_val = df.CharField(label=u'Proposition', required=False)
+    choice05_val = df.CharField(label=u'Proposition', required=False)
+    choice06_val = df.CharField(label=u'Proposition', required=False)
+    choice07_val = df.CharField(label=u'Proposition', required=False)
+    choice08_val = df.CharField(label=u'Proposition', required=False)
+    choice09_val = df.CharField(label=u'Proposition', required=False)
+    choice10_val = df.CharField(label=u'Proposition', required=False)
+    choice11_val = df.CharField(label=u'Proposition', required=False)
+    choice12_val = df.CharField(label=u'Proposition', required=False)
+    choice13_val = df.CharField(label=u'Proposition', required=False)
+    choice14_val = df.CharField(label=u'Proposition', required=False)
+    choice15_val = df.CharField(label=u'Proposition', required=False)
+    class Meta:
+        model=ParamAdditionnalField
+        widgets={
+            'data_type':df.FilteringSelect(attrs=attrs_filtering_and({'onchange':'typeChanged(this);'}))
+            }
+    def __init__(self, *args, **kwargs):
+        super(ExtraFieldAdminForm, self).__init__(*args, **kwargs)
+        if kwargs.has_key('instance'):
+            i= kwargs['instance']
+            d=i.data_type
+            ###
+            ### To Be Continued
+            ###
+            self.initial['text_val']=i.default_values
+            self.initial['bool_val']=i.default_values
+    def save(self, commit=True):
+        f = super(ExtraFieldAdminForm, self).save(commit=False)
+        if commit:
+            f.save()
+        return f
+
+# Depleted
 class NewExtraFieldForm(df.Form):
     data_type = df.CharField(label=u'Type de donnée',
         widget=df.FilteringSelect(choices=CHOICES_FIELDS_AVAILABLE,
         attrs=attrs_filtering_and({u'onchange':u'showTypedField();'})))
     host_type = df.ModelChoiceField(label=u'Type de machine',
         queryset=HostType.objects.all(), empty_label=None)
-    fast_search = df.BooleanField(label="",required=False)
+    fast_search = df.BooleanField(label="Recherche rapide",required=False)
     name = df.CharField()
-    text_val = df.CharField(required=False)
-    bool_val = df.BooleanField(required=False)
-    int_val = df.IntegerField(required=False)
-    date_val = df.DateField(required=False)
+    text_val = df.CharField(label=u'Défaut:', required=False)
+    bool_val = df.BooleanField(label=u'Défaut:', required=True)
+    int_val = df.IntegerField(label=u'Défaut:', required=False)
+    date_val = df.DateField(label=u'Défaut:', required=False)
     choice01_val = df.CharField(label=u'Proposition:', required=False)
     choice02_val = df.CharField(label=u'Proposition:', required=False)
     choice03_val = df.CharField(label=u'Proposition:', required=False)
@@ -125,6 +167,13 @@ class NewExtraFieldForm(df.Form):
     choice13_val = df.CharField(label=u'Proposition:', required=False)
     choice14_val = df.CharField(label=u'Proposition:', required=False)
     choice15_val = df.CharField(label=u'Proposition:', required=False)
+
+    def __init__(self, *args, **kwargs):
+        i=kwargs.pop('instance',False)
+        if isinstance(i,ParamAdditionnalField):
+            self.model=i
+        super(NewExtraFieldForm, self).__init__(*args, **kwargs)
+
 
     def get_default_values(self):
         """ extrait du formulaire la valeur json des prop/defaults"""
@@ -143,7 +192,24 @@ class NewExtraFieldForm(df.Form):
             dv = cd['date_val']
         return json.dumps(dv)
 
+    def save(self):
+        cd = self.cleaned_data
+        if self.model:
+            self.model.name=cd["name"]
+            self.model.host_type=cd["host_type"]
+            self.model.data_type=cd["data_type"]
+            self.model.fast_search=cd["fast_search"]
+            self.model.default_values = self.get_default_values()
+            return self.model.save()
+        else:
+            return ParamAdditionnalField(name=cd["name"], host_type=cd["host_type"],
+                data_type=cd["data_type"], fast_search=cd["fast_search"],
+                default_values=form.get_default_values()).save()
+
 class SearchHostForm(df.Form, ModelFormTableMixin):
+    global_search = df.CharField(label="Recherche globale",required=False)
+    cheat_1 = df.CharField(max_length=1, label='', widget=df.TextInput(attrs={'class':'dijitHidden'}),required=False)
+    cheat_2 = df.CharField(max_length=1, label='', widget=df.TextInput(attrs={'class':'dijitHidden'}),required=False)
     ip = df.CharField(required=False)
     hostname = df.CharField(required=False, label=u'Nom')
     site = df.ChoiceField(choices = (('',''),),

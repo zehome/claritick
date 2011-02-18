@@ -69,6 +69,7 @@
                 {
                     create_menu(row.id, row.children[1].textContent);
                 });
+                dojo.byId("id_global_search").focus()
             });
 </script>
 
@@ -85,6 +86,7 @@
     <table id="extra_fields" class="search">{%if form_extra%}{{form_extra.as_table}}{%else%}<td></td>{%endif%}</table>
     <button type="reset" dojoType="dijit.form.Button">Annuler</button>
     <button type="submit" dojoType="dijit.form.Button">Rechercher</button>
+    <button type="action" name="reset_button" onclick="postwith({filter_reset:'true'},'.')" dojoType="dijit.form.Button">Reset</button>
   </form>
 </fieldset>
 
@@ -93,7 +95,7 @@
 <table class="resultat exportable" id="clariadmin_result_all">
 <thead>
 <tr>{%for column in columns %}
-    <th><a href="?sort={% if sorting == column %}-{% endif %}{{ column }}">{% if sorting == column %}<img src="/media/images/oxygen/arrow-down.png" class="state_image" alt="down" />{% else %}{% if sorting == '-'|add:column %}<img src="/media/images/oxygen/arrow-up.png" class="state_image" alt="up" />{% endif %}{% endif %}{{ column }}</a></th>{% endfor %}
+    <th><a href="?sort={% if sorting == column %}-{% endif %}{{ column }}">{% if sorting == column %}<img src="/media/images/oxygen/arrow-up.png" class="state_image" alt="down" />{% else %}{% if sorting == '-'|add:column %}<img src="/media/images/oxygen/arrow-down.png" class="state_image" alt="up" />{% endif %}{% endif %}{{ column }}</a></th>{% endfor %}
 </tr>
 </thead>
 <tbody id="context_lines">

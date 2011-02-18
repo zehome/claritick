@@ -25,7 +25,7 @@
     <script type="text/javascript" charset="utf-8">
         dojo.config['ioPublish'] = true;
     </script>
-
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/clariadmin.js"></script>
     <script type="text/javascript" charset="utf-8">
         var MENU_CAN_HIDE = true;
 
@@ -40,14 +40,11 @@
                 go_to_ticket(dojo.byId("id_num_ticket").value);
             });
         });
-       function go_to_host(num) {
-            dojo.doc.location = '/clariadmin/list/search/' + num;
+       function go_to_host(arg) {
+            postwith({global_search:arg},"{% url clariadmin.views.list_all %}" );
         }
         dojo.addOnLoad(function() {
             dojo.connect(dojo.byId("id_num_host"), "onchange", function() {
-                go_to_host(dojo.byId("id_num_host").value);
-            });
-            dojo.connect(dijit.byId("id_go_host"), "onClick", function() {
                 go_to_host(dojo.byId("id_num_host").value);
             });
         });
@@ -167,7 +164,7 @@
           {% if user.is_authenticated %}
           Aller au ticket # <input type="text" id="id_num_ticket" size="5" /> <button dojoType="dijit.form.Button" id="id_go_ticket">Go</button>
             {% if perms.clariadmin.can_access_clariadmin %}
-              <br/>Aller à l'hote # <input type="text" id="id_num_host" size="5" /> <button dojoType="dijit.form.Button" id="id_go_host">Go</button>
+              <br/>Rechercher l'hote <input type="text" id="id_num_host" size="5" /> {% csrf_token %}
             {%endif%}
           {% endif %}
         </td>
