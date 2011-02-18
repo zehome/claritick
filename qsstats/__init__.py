@@ -55,6 +55,18 @@ class QuerySetStats(object):
     def this_day(self, date_field=None, aggregate_field=None, aggregate_class=None):
         return self.for_day(self.today, date_field, aggregate_field, aggregate_class)
 
+    def for_week(self, dt, date_field=None, aggregate_field=None, aggregate_class=None):
+        date_field = date_field or self.date_field
+        aggregate_class = aggregate_class or self.aggregate_class
+        aggregate_field = aggregate_field or self.aggregate_field
+
+        self.check_date_field(date_field)
+        self.check_qs()
+
+        first_day = datetime.date(year=dt.year, month=dt.month, day=dt.day)
+        last_day = first_day + relativedelta(weeks=1)
+        return self.get_aggregate(first_day, last_day, date_field, aggregate_field, aggregate_class)
+
     def for_month(self, dt, date_field=None, aggregate_field=None, aggregate_class=None):
         date_field = date_field or self.date_field
         aggregate_class = aggregate_class or self.aggregate_class
@@ -104,7 +116,7 @@ class QuerySetStats(object):
             # MC_TODO: Less hacky way of doing this?
             method = getattr(self, 'for_%s' % interval.rstrip('s'))
             stat_list.append((dt, method(dt, date_field=date_field, aggregate_field=aggregate_field, aggregate_class=aggregate_class)))
-            dt = dt + relativedelta(**{interval : 1})
+            dt += relativedelta(**{interval : 1})
         return stat_list
 
     # Aggregate totals using a date or datetime as a pivot
