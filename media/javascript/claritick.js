@@ -30,19 +30,21 @@ dojo.addOnLoad(function() {
          // Quand une requete AJAX s'est terminée avec succes
          dojo.subscribe("/dojo/io/load", function(/*dojo.Deferrred*/dfd, 
 /*Object*/response){
-                        SaveStatusDivStatestatus_div.style.backgroundColor = SaveStatusDivStateMybgColor;
-                        SaveStatusDivStatestatus_div.style.color = SaveStatusDivStateMyColor;
-                        SaveStatusDivStatestatus_div.innerHTML = SaveStatusDivStateMyText;
+            SaveStatusDivStatestatus_div.style.backgroundColor = SaveStatusDivStateMybgColor;
+            SaveStatusDivStatestatus_div.style.color = SaveStatusDivStateMyColor;
+            SaveStatusDivStatestatus_div.innerHTML = SaveStatusDivStateMyText;
          });
 
          // Quand une requete AJAX reviens en erreur
          dojo.subscribe("/dojo/io/error", 
 function(/*dojo.Deferrred*/dfd, /*Object*/response){
-                    SaveStatusDivStatestatus_div.style.backgroundColor = "red";
-                    SaveStatusDivStatestatus_div.style.color = "white";
-                    SaveStatusDivStatestatus_div.innerHTML = "Impossible d'executer la requete distante (Ajax). Message d'erreur : " + response.error;
-             var w = window.open();
-             w.document.write(dfd.ioArgs.xhr.responseText);
-             w.document.close()
+             if (response.error) {
+                SaveStatusDivStatestatus_div.style.backgroundColor = "red";
+                SaveStatusDivStatestatus_div.style.color = "white";
+                SaveStatusDivStatestatus_div.innerHTML = "Impossible d'executer la requete distante (Ajax). Message d'erreur : " + response.error;
+                var w = window.open();
+                w.document.write(dfd.ioArgs.xhr.responseText);
+                w.document.close()
+            }
          });
      });
