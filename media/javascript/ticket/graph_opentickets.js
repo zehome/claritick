@@ -7,7 +7,11 @@ function graph_opentickets_init(renderTo, tickIntervalDays, title, defaultSeries
     var options = {
         chart: {
             renderTo: renderTo,
-            defaultSeriesType: defaultSeriesType
+            defaultSeriesType: defaultSeriesType,
+            zoomType: 'x'
+        },
+        credits: {
+            enabled: false
         },
         title: {
             text: title
@@ -17,6 +21,10 @@ function graph_opentickets_init(renderTo, tickIntervalDays, title, defaultSeries
             tickInterval: tickIntervalDays * 24 * 3600 * 1000,
             tickWidth: 0,
             gridLineWidth: 1,
+            labels: {
+                y: 25,
+                rotation: 90
+            }
         },
         yAxis: {
             title: {
@@ -28,7 +36,7 @@ function graph_opentickets_init(renderTo, tickIntervalDays, title, defaultSeries
                 y: 16,
                 formatter: function() {
                     return Highcharts.numberFormat(this.value, 0);
-                }
+                },
             },
             showFirstLabel: false
         },
@@ -43,6 +51,9 @@ function graph_opentickets_init(renderTo, tickIntervalDays, title, defaultSeries
                 stacking: 'normal',
                 lineWidth: 2
             }
+        },
+        exporting: {
+            enabled: true
         },
 
         series: []
