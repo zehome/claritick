@@ -16,7 +16,7 @@ class ExtraFieldAdmin(admin.ModelAdmin):
             (None,{
                 'fields':('host_type','name','data_type','fast_search')}),
             ('Choix',{
-                'classes': ('dijitHidden',),
+                'classes': ('dijitHidden','dj_admin_Choix'),
                 'fields':(
                     'choice01_val', 'choice02_val',
                     'choice03_val', 'choice04_val',
@@ -27,22 +27,18 @@ class ExtraFieldAdmin(admin.ModelAdmin):
                     'choice13_val', 'choice14_val',
                     'choice15_val')}),
             ('Texte',{
-                'classes': ('dijitHidden',),
+                'classes': ('dijitHidden','dj_admin_Text'),
                 'fields':('text_val',)}),
             ('Numérique',{
-                'classes': ('dijitHidden',),
+                'classes': ('dijitHidden','dj_admin_Num'),
                 'fields':('int_val',)}),
             ('Date',{
-                'classes': ('dijitHidden',),
+                'classes': ('dijitHidden','dj_admin_Date'),
                 'fields':('date_val',)}),
             ('Booleen',{
-                'classes': ('dijitHidden',),
+                'classes': ('dijitHidden','dj_admin_Bool'),
                 'fields':('bool_val',)}),
         )
-    def save_model(self, request, obj, form, change):
-        o = super(ExtraFieldAdmin, self).save_model(request, obj, form, change)
-        data = request.POST
-        obj.save()
 
 admin.site.register(ParamAdditionnalField,ExtraFieldAdmin)
 admin.site.register(OperatingSystem)
