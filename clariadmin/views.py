@@ -84,7 +84,7 @@ def list_all(request, *args, **kw):
                 request.session['filter_adm_list']=post_filtred
             host_type = request.session.get('filter_adm_list',{}).get('type', False)
             if host_type:
-                form_extra = ExtraFieldForm.get_form(request.POST if not reset else {}, host=HostType.objects.get(pk=host_type))
+                form_extra = AdditionnalFieldForm.get_form(request.POST if not reset else {}, host=HostType.objects.get(pk=host_type))
                 request.session['filter_extra_adm_list'] = dict(
                     [(k,v) for k,v in request.POST.iteritems()
                         if k in form_extra.fields.keys()])
@@ -93,7 +93,7 @@ def list_all(request, *args, **kw):
         form = SearchHostForm(request.user,request.session.get('filter_adm_list',{}))
         host_type = request.session.get('filter_adm_list',{}).get('type', False)
         if host_type:
-            form_extra = ExtraFieldForm.get_form((request.session.get('filter_extra_adm_list',{})),host=HostType.objects.get(pk=host_type))
+            form_extra = AdditionnalFieldForm.get_form((request.session.get('filter_extra_adm_list',{})),host=HostType.objects.get(pk=host_type))
             form_extra.is_valid()
 
     #global_search
@@ -135,7 +135,7 @@ def new(request, from_host=False):
         form = HostForm(request.user,request.POST)
         if form.is_valid():
             host = form.save()
-            form_comp = ExtraFieldForm.get_form(data=request.POST, host=host)
+            form_comp = AdditionnalFieldForm.get_form(data=request.POST, host=host)
             if form_comp.is_valid():
                 form_comp.save()
             redir=request.POST.get('submit_button',False)
@@ -155,13 +155,13 @@ def modify(request, host_id):
     host = get_host_or_404(request.user, pk=host_id)
     if not request.POST:
         form = HostForm(request.user,instance=host)
-        form_comp = ExtraFieldForm.get_form(host=host)
+        form_comp = AdditionnalFieldForm.get_form(host=host)
     else:
         if request.POST.get("delete",False):
             host.delete()
             return redirect('list_hosts')
         form = HostForm(request.user,request.POST, instance=host)
-        form_comp = ExtraFieldForm.get_form(data=request.POST, host=host)
+        form_comp = AdditionnalFieldForm.get_form(data=request.POST, host=host)
         if form_comp.is_valid():
             form_comp.save()
         if form.is_valid():
@@ -179,47 +179,9 @@ def modify(request, host_id):
         "host": host}, context_instance=RequestContext(request))
 
 @permission_required("clariadmin.can_access_clariadmin")
-def new_extra_field(request):
-    form = NewExtraFieldForm(request.POST)
-    if form.is_valid():
-        form.save()
-    return render_to_response("clariadmin/extra_field.html", {
-        u"form" : form,
-        }, context_instance=RequestContext(request))
-
-@permission_required("clariadmin.can_access_clariadmin")
 def ajax_extra_fields_form(request, host_id, blank=False):
     if int(host_id) < 0:
         return HttpResponse("<tr></tr>")
     host_type = get_object_or_404(HostType, pk=host_id)
-    form=ExtraFieldForm.get_form(host=host_type, blank=bool(blank))
+    form=AdditionnalFieldForm.get_form(host=host_type, blank=bool(blank))
     return HttpResponse(form.as_table())
-
-@permission_required("clariadmin.can_access_clariadmin")
-def mod_extra_field(request, field_id):
-    c_field = get_object_or_404(ParamAdditionnalField, pk=field_id)
-    if request.POST:
-        form = NewExtraFieldForm(request.POST, instance=c_field)
-    else:
-        data = {"name":c_field.name,
-                "host_type":c_field.host_type.id,
-                "data_type":c_field.data_type,
-                "fast_search":c_field.fast_search}
-        if c_field.data_type=="1":
-            data['text_val']=c_field.default_values
-        elif c_field.data_type=="2":
-            data['bool_val']=c_field.default_values
-        elif c_field.data_type=="3" or c_field.data_type=="6":
-            data.update(dict(
-                [("choice%s_val"%(str(i+1).rjust(2,'0'),),val)
-                    for i, val in enumerate(c_field.default_values) ]))
-        elif c_field.data_type=="4":
-            data['int_val']=c_field.default_values
-        elif c_field.data_type=="5":
-            data['date_val']=c_field.default_values
-        form = NewExtraFieldForm(data,instance=c_field)
-    if form.is_valid():
-        form.save()
-    return render_to_response("clariadmin/extra_field.html",{
-        "form": form,
-        "field": c_field,}, context_instance=RequestContext(request))

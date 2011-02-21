@@ -3,6 +3,7 @@
 from django.conf.urls.defaults import *
 
 urlpatterns = patterns('clariadmin.views',
+    url(r'^$',          'list_all', name='list_hosts'),
     url(r'^new/$',                 'new', name='new_host'),
     url(r'^new/from/(-?\d+)$', 'new'),
     url(r'^modify/(-?\d+)$',          'modify'),

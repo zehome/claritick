@@ -9,6 +9,7 @@ from common.utils import sort_queryset
 from common.forms import ModelFormTableMixin
 from django.utils import simplejson as json
 from itertools import repeat, chain
+import datetime
 
 attrs_filtering={'queryExpr':'*${0}*','highlightMatch':'all','autoComplete':'False'}
 def attrs_filtering_and(a):
@@ -17,22 +18,28 @@ def attrs_filtering_and(a):
     return d
 
 class HostForm(df.ModelForm):
+    date_start_prod=df.DateField(initial=datetime.date.today)
     class Meta:
         model = Host
         widgets = {
-            'os':df.FilteringSelect(attrs_filtering),
-            'type':df.FilteringSelect(attrs=attrs_filtering_and({'onchange':'typeChanged(this);'})),
-            'site':df.FilteringSelect(attrs=attrs_filtering),
-            'supplier':df.FilteringSelect(attrs=attrs_filtering),
+            'os':df.FilteringSelect(attrs_filtering_and({'real_name':'clariadmin/operatingsystem'})),
+            'type':df.FilteringSelect(attrs_filtering_and({'real_name':'clariadmin/hosttype','onchange':'typeChanged(this);'})),
+            'site':df.FilteringSelect(attrs_filtering_and({'real_name':'common/client'})),
+            'supplier':df.FilteringSelect(attrs_filtering_and({'real_name':'clariadmin/supplier'})),
             'ip':df.IPAddressTextInput(),
+
+            #df.DateInput(default=)
+
         }
-        fields=("site","hostname","ip","os","rootpw","supplier", "model", "type","location","serial","inventory","date_end_prod","status","commentaire")
+        fields = ("site","hostname","ip","os","rootpw","supplier", "model",
+            "type","location","serial","inventory", "date_start_prod","date_end_prod",
+            "status","commentaire")
     def __init__(self, user, *args, **kwargs):
         super(HostForm, self).__init__(*args, **kwargs)
         self.fields['site'].queryset=Client.objects.filter(id__in=(c.id for c in user.clients))
 
 
-class ExtraFieldForm(df.Form):
+class AdditionnalFieldForm(df.Form):
     def _complete(self, host=None, blank=False):
         """ peuple fonction du contexte le formulaire. """
         # Rapide controle des arguments
@@ -96,9 +103,9 @@ class ExtraFieldForm(df.Form):
     def get_form(*args, **kwargs):
         h=kwargs.pop('host',False)
         b=kwargs.pop('blank',False)
-        return ExtraFieldForm(*args,**kwargs)._complete(h,b)
+        return AdditionnalFieldForm(*args,**kwargs)._complete(h,b)
 
-class ExtraFieldAdminForm(df.ModelForm):
+class ParamAdditionnalFieldAdminForm(df.ModelForm):
     text_val = df.CharField(label=u'Défaut', required=False)
     bool_val = df.BooleanField(label=u'Défaut', required=True)
     int_val  = df.IntegerField(label=u'Défaut', required=False)
@@ -124,7 +131,7 @@ class ExtraFieldAdminForm(df.ModelForm):
             'data_type':df.FilteringSelect(attrs=attrs_filtering_and({'onchange':'typeChanged(this);'}))
             }
     def __init__(self, *args, **kwargs):
-        super(ExtraFieldAdminForm, self).__init__(*args, **kwargs)
+        super(ParamAdditionnalFieldAdminForm, self).__init__(*args, **kwargs)
         if kwargs.has_key('instance'):
             inst= kwargs['instance']
             if inst.data_type in ('1','2','4','5'):
@@ -137,7 +144,7 @@ class ExtraFieldAdminForm(df.ModelForm):
                     if json.dumps(inst.default_values).get(i-1,False):
                         self.initial[e]=json.dumps(inst.default_values)[i-1]
     def save(self, commit=True):
-        inst = super(ExtraFieldAdminForm, self).save(commit=False)
+        inst = super(ParamAdditionnalFieldAdminForm, self).save(commit=False)
         cd=self.cleaned_data
         normal_fields={'1':'text_val', '2':'bool_val', '4':'int_val', '5':'date_val'}
         if normal_fields.get(cd['data_type'],False):
