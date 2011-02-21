@@ -1,3 +1,5 @@
+r515
+    ALTER TABLE clariadmin_paramadditionnalfield ADD COLUMN "sorting_priority" integer NOT NULL DEFAULT 100;
 r444
     ALTER TABLE clariadmin_operatingsystem ADD COLUMN "depleted" boolean NOT NULL DEFAULT false;
     ALTER TABLE clariadmin_supplier ADD COLUMN "depleted" boolean NOT NULL DEFAULT false;

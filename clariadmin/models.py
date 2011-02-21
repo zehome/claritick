@@ -129,20 +129,27 @@ class Host(models.Model):
 class ParamAdditionnalField(models.Model):
     class Meta:
         verbose_name = u"Définition de champs complémentaires"
-        ordering = (u"host_type",u"name")
+        ordering = (u"host_type",u"sorting_priority")
     host_type = models.ForeignKey(HostType, verbose_name=u"Type d'hôte")
     name = models.CharField(u"Nom", max_length=32)
     data_type = models.CharField(u"Type de donnée", max_length=4 , choices=CHOICES_FIELDS_AVAILABLE)
     # dans un cas de choices il sera stocké en json non indenté. ex: ["a","b","c"]
     default_values = JsonField(u"Valeur par défaut/choix", max_length=8192)
     fast_search = models.BooleanField(u"Champ recherché par défaut", default=False)
+    sorting_priority = models.IntegerField(u"Priorité d'affichage", default=100)
     def __unicode__(self):
         return u"%s"%(self.name,)
 
+class AdditionnalFieldManager(models.Manager):
+    def get_query_set(self):
+        return super(AdditionnalFieldManager,self).get_query_set().\
+            select_related("field")
+
 class AdditionnalField(models.Model):
+    objects = AdditionnalFieldManager()
     class Meta:
         verbose_name = u"Champs complémentaires"
-        ordering = (u"field",u"value")
+        ordering = (u"field__sorting_priority",u"field__name")
     field = models.ForeignKey(ParamAdditionnalField, verbose_name="Origine du champ")
     value = models.CharField(u"Valeur", max_length=512)
     host = models.ForeignKey(Host, verbose_name=u"")
