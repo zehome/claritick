@@ -20,6 +20,7 @@ class ClientAdmin(admin.ModelAdmin):
 
 class UserProfileInline(admin.TabularInline):
     model = UserProfile
+    exclude = ("trafiquables", "tickets_vus")
 
 class UserAdmin(DjangoUserAdmin):
     inlines = [UserProfileInline]
