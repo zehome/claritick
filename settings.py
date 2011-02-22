@@ -66,8 +66,8 @@ SECRET_KEY = '9hart)zyl_0=u7$xj@+!d@6(^8&nmvni5r@898ko!rrp5spj-e'
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
-    'django.template.loaders.filesystem.load_template_source',
-    'django.template.loaders.app_directories.load_template_source',
+    'django.template.loaders.filesystem.Loader',
+    'django.template.loaders.app_directories.Loader',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -87,7 +87,8 @@ MIDDLEWARE_CLASSES = (
     'common.middleware.autologout.AutoLogout',
 )
 
-TEMPLATE_CONTEXT_PROCESSORS = ("django.core.context_processors.auth",
+TEMPLATE_CONTEXT_PROCESSORS = (
+    "django.contrib.auth.context_processors.auth",
     "django.core.context_processors.debug",
     "django.core.context_processors.i18n",
     "django.core.context_processors.media",
@@ -211,3 +212,10 @@ except ImportError:
 
 PROFILE_MIDDLEWARE_SORT = ('time', 'calls')
 #PROFILE_MIDDLEWARE_STRIP_DIRS=True
+
+try:
+    from clariadmin.settings import SECURITY
+except ImportError:
+    print "Unable to load clariadmin settings."
+    raise
+
