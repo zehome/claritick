@@ -21,22 +21,28 @@
             load:handle_data
             });
     }
-
-function confirmation_callback(myBool, form_id){
-    if(myBool){
-        postwith(
-        {delete:"true"},dojo.byId(form_id));
+    function confirmation_callback(myBool, form_id){
+        if(myBool){
+            postwith(
+            {delete:"true"},dojo.byId(form_id));
         }
-}
+    }
+    dojo.addOnLoad(function(){
+        dojo.byId("id_commentaire").style.width='90%'
+        dojo.byId("id_commentaire").cols = 100
+        dojo.byId("id_commentaire").rows = 50
+        })
 </script>
 {%endblock%}
 {% block content %}
 
 <form id="the_form" method="POST">
     {% csrf_token %}
-    <fieldset style="float:left;">
-        <table class="clariadmin_form">
+<div>
+    <fieldset style="float:left;" >
+        <table  class="clariadmin_form">
             {% for field in form %}
+                {%if field.name != 'commentaire'%}
                 <tr>
                     <th>{{ field.label_tag }}</th>
                     <td>{{ field }}</td>
@@ -46,24 +52,33 @@ function confirmation_callback(myBool, form_id){
                             <img width="10" height="10" alt="Ajouter un autre" src="/adm_media/img/admin/icon_addlink.gif"></a>
                         {%endif%}</td>
                 </tr>
+                {%endif%}
             {%endfor%}
         </table>
     </fieldset>
 
-    <fieldset id="extra_fieldset" {% if not additionnal_fields.fields %}class="dijitHidden"{% endif %}>
+    <fieldset  id="extra_fieldset" {% if not additionnal_fields.fields %}class="dijitHidden"{% endif %}>
         <table id="extra_fields" class="clariadmin_form">
         {% if additionnal_fields.fields %}
             {{ additionnal_fields }}
         {% endif %}
         </table>
     </fieldset>
+    <div style="clear:both;"></div>
+</div>
 
+<fieldset >
+    <table class="clariadmin_form" style="width:auto;"><th>{{ form.commentaire.label_tag }}</th><td>
+    {{form.commentaire}}</td><td>{{form.commentaire.errors}}</td></table>
+</fieldset>
     <hr />
     <div id="save_buttons">
-        <button dojoType="dijit.form.Button" iconClass="dijitEditorIcon dijitEditorIconSave" type="submit" name="submit_button" value="save">Enregistrer</button>
-        <button dojoType="dijit.form.Button" iconClass="dijitEditorIcon dijitEditorIconSave" type="submit" name="submit_button" value="new">Enregistrer et ajouter un nouveau</button>
-        <button dojoType="dijit.form.Button" iconClass="dijitEditorIcon dijitEditorIconSave" type="submit" name="submit_button" value="return">Enregistrer et retourner à la liste</button>
         {%if host%}<button dojoType="dijit.form.Button" onclick='confirmDialog("Supression de l hote", "Êtes vous sûr de vouloir supprimer cette machine de la base?", confirmation_callback, "the_form")' iconClass="dijitEditorIcon dijitEditorIconDelete" type="action" value="true" class="default">Suprimer</button>{%endif%}
+        <button dojoType="dijit.form.Button" iconClass="dijitEditorIcon dijitEditorIconUndo" type="action" onclick='window.location = ".."'>Retourner à la liste</button>
+        <button dojoType="dijit.form.Button" iconClass="dijitEditorIcon dijitEditorIconSave" type="submit" name="submit_button" value="save">Enregistrer</button>
+        <button dojoType="dijit.form.Button" iconClass="dijitEditorIcon dijitEditorIconNewPage" type="submit" name="submit_button" value="new">Enregistrer et ajouter un nouveau</button>
+        <button dojoType="dijit.form.Button" iconClass="dijitEditorIcon dijitEditorIconRightToLeft" type="submit" name="submit_button" value="return">Enregistrer et retourner à la liste</button>
+
     </div>
 </div>
 </form>

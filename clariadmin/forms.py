@@ -28,9 +28,6 @@ class HostForm(df.ModelForm):
             'site':df.FilteringSelect(attrs_filtering),
             'supplier':df.FilteringSelect(attrs_filtering),
             'ip':df.IPAddressTextInput(),
-
-            #df.DateInput(default=)
-
         }
         fields = ("site","hostname","ip","os","rootpw","supplier", "model",
             "type","location","serial","inventory", "date_start_prod","date_end_prod",
