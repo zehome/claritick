@@ -158,13 +158,13 @@ def modify(request, host_id):
     host = get_host_or_404(request.user, pk=host_id)
     if not request.POST:
         form = HostForm(request.user,instance=host)
-        form_comp = AdditionnalFieldForm.get_form(host=host)
+        form_2 = AdditionnalFieldForm.get_form(host=host)
     else:
         if request.POST.get("delete",False):
             host.delete()
             return redirect('list_hosts')
         form = HostForm(request.user,request.POST, instance=host)
-        form_comp = AdditionnalFieldForm.get_form(data=request.POST, host=host)
+        form_comp = AdditionnalFieldForm.get_form(request.POST, host=host)
         if form_comp.is_valid() and form.is_valid():
             form_comp.save()
             form.save()
@@ -175,9 +175,10 @@ def modify(request, host_id):
                 pass
             elif redir == 'return':
                 return redirect('list_hosts')
+        form_2 = AdditionnalFieldForm.get_form(request.POST, host=host)
     return render_to_response("clariadmin/host.html", {
         "form": form,
-        'additionnal_fields':form_comp,
+        'additionnal_fields':form_2,
         "host": host}, context_instance=RequestContext(request))
 
 @permission_required("clariadmin.can_access_clariadmin")
