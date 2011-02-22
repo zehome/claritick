@@ -9,7 +9,7 @@ from django.http import HttpResponse, Http404
 from django.db.models import Q
 
 from clariadmin.models import Host, HostType
-from clariadmin.forms import *
+from clariadmin.forms import HostForm, SearchHostForm, AdditionnalFieldForm
 from common.diggpaginator import DiggPaginator
 from operator import ior
 from itertools import chain
