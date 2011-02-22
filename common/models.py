@@ -30,16 +30,16 @@ class ByteaField(models.TextField):
     """    
     description = "A field to handle postgres bytea fields"
     
-    def db_type(self):
+    def db_type(self, connection):
         return 'bytea'
     
-    def get_db_prep_lookup(self, lookup_type, value):
+    def get_db_prep_lookup(self, lookup_type, value, connection, prepared=False):
         raise TypeError('Lookup type %r not supported.' % lookup_type)
 
-    def get_db_prep_value(self, value):
+    def get_db_prep_value(self, value, connection, prepared=False):
         return self.get_prep_value(value)
 
-    def get_prep_value(self, value):
+    def get_prep_value(self, value, connection):
         return buffer(value)
 
 class PickleField(models.TextField):
@@ -49,16 +49,16 @@ class PickleField(models.TextField):
     
     __metaclass__ = models.SubfieldBase
     
-    def db_type(self):
+    def db_type(self, connection):
         return 'bytea'
     
-    def get_db_prep_lookup(self, lookup_type, value):
+    def get_db_prep_lookup(self, lookup_type, value, connection, prepared=False):
         raise TypeError('Lookup type %r not supported.' % lookup_type)
 
-    def get_prep_value(self, value):
+    def get_prep_value(self, value, connection):
         return buffer(pickle.dumps(value, 2))
 
-    def get_db_prep_value(self, value):
+    def get_db_prep_value(self, value, connection, prepared=False):
         return self.get_prep_value(value)
 
     def to_python(self, value):
@@ -90,7 +90,7 @@ class JsonField(models.TextField):
             return json.loads(value)
         return value
 
-    def get_db_prep_value(self, value):
+    def get_db_prep_value(self, value, connection, prepared=False):
         return self.get_prep_value(value)
 
     def get_prep_value(self, value):
