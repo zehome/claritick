@@ -8,6 +8,7 @@ from common.models import Client
 from common.utils import sort_queryset
 from common.forms import ModelFormTableMixin
 from django.utils import simplejson as json
+from django.utils.datastructures import SortedDict
 from itertools import repeat, chain
 import datetime
 
@@ -38,7 +39,6 @@ class HostForm(df.ModelForm):
         super(HostForm, self).__init__(*args, **kwargs)
         self.fields['site'].queryset=Client.objects.filter(id__in=(c.id for c in user.clients))
 
-
 class AdditionnalFieldForm(df.Form):
     def _complete(self, host=None, blank=False):
         """ peuple fonction du contexte le formulaire. """
@@ -54,7 +54,7 @@ class AdditionnalFieldForm(df.Form):
         # Récupère la liste des champs propre au type d'hote
         self.avail_fields=ParamAdditionnalField.objects.filter(host_type=host_type.id)[:]
         # Détermine la liste des champs et leurs valeurs courrante (défaut puis établi si existant)
-        c_fields = dict(((v.id, v.default_values ) for v in (self.avail_fields)))
+        c_fields = dict((v.id, v.default_values ) for v in (self.avail_fields))
         if host:
             c_fields.update(dict((addf.field.id,addf.value)
                 for addf in host.additionnalfield_set.all() if addf.field.id in c_fields.keys()))
@@ -63,7 +63,7 @@ class AdditionnalFieldForm(df.Form):
             args = lambda x,y:{'label':x.name,'initial':None,'required':False}
         else:
             args = lambda x,y:{'label':x.name,'initial':y[x.id],'required':False}
-        self.fields.update(dict(
+        self.fields.update(SortedDict(
             (   'val_%s'%(field.id,),
                 (df.CharField(**args(field,c_fields))
                     if field.data_type == '1' else
@@ -138,11 +138,12 @@ class ParamAdditionnalFieldAdminForm(df.ModelForm):
                 for key in ('text_val','bool_val','date_val','int_val'):
                     self.initial[key] = inst.default_values
             else:
-                import pdb
-                pdb.pdb.set_trace()
-                for i,e in ((i,"choice%s_val"%(str(i).rjust(2,'0'))) for i in range(1,16)):
-                    if json.dumps(inst.default_values).get(i-1,False):
-                        self.initial[e]=json.dumps(inst.default_values)[i-1]
+                for i,e in ((i,"choice%s_val"%(str(i+1).rjust(2,'0'))) for i in range(16)):
+                    try:
+                        if inst.default_values[i]:
+                            self.initial[e]=inst.default_values[i]
+                    except IndexError:
+                        pass
     def save(self, commit=True):
         inst = super(ParamAdditionnalFieldAdminForm, self).save(commit=False)
         cd=self.cleaned_data
