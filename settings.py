@@ -11,13 +11,15 @@ ADMINS = (
 )
 
 MANAGERS = ADMINS
-#~ DATABASE_PORT = ''             # Set to empty string for default. Not used with sqlite3.
-DATABASE_ENGINE = 'postgresql_psycopg2' # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-DATABASE_NAME = 'claritick'    # Or path to database file if using sqlite3.
-DATABASE_USER = 'claritick'    # Not used with sqlite3.
-DATABASE_PASSWORD = ''         # Not used with sqlite3.
-DATABASE_HOST = 'database.local.zehome.com'  # Set to empty string for localhost. Not used with sqlite3.
-DATABASE_PORT = '5432'         # Set to empty string for default. Not used with sqlite3.
+DATABASES = {
+    "default": {
+        "ENGINE": 'django.db.backends.postgresql_psycopg2',
+        "NAME": 'claritick',
+        "PASSWORD": '',
+        "HOST": "localhost",
+        "PORT": "5432"
+    }
+}
 
 DEFAULT_FROM_EMAIL = 'claritick@clarisys.fr'
 SERVER_EMAIL = DEFAULT_FROM_EMAIL
