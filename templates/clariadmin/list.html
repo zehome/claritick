@@ -84,9 +84,13 @@
 {{ form.as_column_table }}
     </table>
     <table id="extra_fields" class="search">{%if form_extra%}{{form_extra.as_table}}{%else%}<td></td>{%endif%}</table>
-    <button type="reset" dojoType="dijit.form.Button">Annuler</button>
-    <button type="submit" dojoType="dijit.form.Button">Rechercher</button>
-    <button type="action" name="reset_button" onclick="postwith({filter_reset:'true'},'.')" dojoType="dijit.form.Button">Reset</button>
+    <div class="left_buttons">
+        <button type="reset" iconClass="dijitrtl dijitIconClear" dojoType="dijit.form.Button">Annuler</button>
+        <button type="action" iconClass="dijitrtl dijitIconDelete" name="reset_button" onclick="postwith({filter_reset:'true'},'.')" dojoType="dijit.form.Button">Reset</button>
+    </div>
+    <div align='center'>
+        <button type="submit"  dojoType="dijit.form.Button" iconClass="dijitrtl dijitIconSearch">Rechercher</button>
+    </div>
   </form>
 </fieldset>
 
