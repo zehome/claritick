@@ -41,8 +41,8 @@ function confirmation_callback(myBool, form_id){
                     <th>{{ field.label_tag }}</th>
                     <td>{{ field }}</td>
                     <td>{{field.errors}}</td>
-                    <td>{%if perms.common.add_client and field.name == 'site' or perms.clariadmin.add_supplier and field.name == 'supplier' or perms.clariadmin.add_operatingsystem and field.name == 'os' or perms.clariadmin.add_hosttype and field.name == 'type' %}
-                        <a id='add_id_{{field.name}}' class="add-another" href="/admin/clariadmin/{{field.name}}/add/"onclick="return showAddAnotherPopup(this);">
+                    <td>{% if perms.common.add_client and field.name == 'site' or perms.clariadmin.add_supplier and field.name == 'supplier' or perms.clariadmin.add_operatingsystem and field.name == 'os' or perms.clariadmin.add_hosttype and field.name == 'type' %}
+                        <a id='add_id_{{field.name}}' class="add-another" href="/admin/{% cycle "common/client" "clariadmin/operatingsystem" "clariadmin/supplier" "clariadmin/hosttype"%}/add/" onclick="return showAddAnotherPopup(this);">
                             <img width="10" height="10" alt="Ajouter un autre" src="/adm_media/img/admin/icon_addlink.gif"></a>
                         {%endif%}</td>
                 </tr>
