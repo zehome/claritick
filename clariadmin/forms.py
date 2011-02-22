@@ -1,15 +1,16 @@
 # -*- coding: utf-8 -*-
 
-import  dojango.forms as df
-from clariadmin.models import (Host, OperatingSystem, HostType, AdditionnalField,
-                               ParamAdditionnalField, CHOICES_FIELDS_AVAILABLE,
-                               Supplier)
+import dojango.forms as df
+from clariadmin.models import Host, OperatingSystem, HostType
+from clariadmin.models import AdditionnalField, ParamAdditionnalField, Supplier
+from clariadmin.models import CHOICES_FIELDS_AVAILABLE
 from common.models import Client
 from common.utils import sort_queryset
 from common.forms import ModelFormTableMixin
 from django.utils import simplejson as json
 from django.utils.datastructures import SortedDict
-from itertools import repeat, chain
+from django.conf import settings
+from itertools import chain
 import datetime
 
 attrs_filtering={'queryExpr':'*${0}*','highlightMatch':'all','autoComplete':'False'}
@@ -18,7 +19,84 @@ def attrs_filtering_and(a):
     d.update(a)
     return d
 
-class HostForm(df.ModelForm):
+class FormSecurityChecker(object):
+    """
+    This mixin permits to check security aspects regarding to a form.
+
+    Will remove items user when user has a security level higher
+    than the configured security level.
+    """
+    
+    # This flags is set to False if a required field
+    # is removed by the mixin.
+    _security_can_save = True
+    # This flag is True if at least 1 field is visible.
+    _security_can_view = False
+    # Store deleted fields if needed by the programmer.
+    _security_deleted_fields = []
+    # Loaded in the init from django.conf.settings.
+    _security_settings = {}
+    # Default security level of fields.
+    _security_default_level = 99
+    # Cache the user_profile security_level in the instance of the form.
+    _security_userlevel = None
+
+    def _security_filter(self, user, formName, security = {}):
+        """
+        Will delete fields from the form if user has no access to them.
+        deleted fields are placed in _security_deleted_fields.
+        
+        If required fields are removed, the _security_can_save flag is 
+        switched to False.
+        """
+        self._security_userlevel = user.get_profile().get_security_level()
+        if not security:
+            self._security_settings = settings.SECURITY.get(formName, {})
+        else:
+            self._security_settings = security
+        self._security_default_level = self._security_settings.get("__default__", settings.SECURITY["DEFAULT_LEVEL"])
+        for fname in self.fields.keys():
+            required_level = self._security_settings.get(fname, self._security_default_level)
+            # LC: TODO: Debug: remove this
+            print "User level %d required %s for %s" % (self._security_userlevel, required_level, fname)
+            if required_level < self._security_userlevel:
+                field = self.fields[fname]
+                if field.required:
+                    self._security_can_save = False
+                self._security_deleted_fields.append(field)
+                del(self.fields[fname])
+        if self._security_can_save and self.fields:
+            self._security_can_view = True
+
+    @staticmethod
+    def filter_querydict(user, formName, querydict):
+        """
+        This method will filter querydict, not letting user pass invalid data to the view.
+        """
+        userlevel = user.get_profile().get_security_level()
+        security_settings = settings.SECURITY.get(formName, {})
+        security_default_level = security_settings.get("__default__", settings.SECURITY["DEFAULT_LEVEL"])
+        original_querydict = querydict.copy()
+        for key in querydict.keys():
+            required_level = security_settings.get(key, security_default_level)
+            if required_level < userlevel:
+                # LC: TODO: Debug: remove this
+                print "Deleted querydict key %s" % (key,)
+                del(querydict[key])
+        return original_querydict
+
+    # Proxy accessor
+    def security_can_view(self):
+        return self._security_can_view
+
+    # Proxy accessor
+    def security_can_save(self):
+        return self._security_can_view and self._security_can_save
+
+    def has_deleted_fields(self):
+        return bool(self._security_deleted_fields)
+
+class HostForm(df.ModelForm, FormSecurityChecker):
     date_start_prod=df.DateField(initial=datetime.date.today)
     class Meta:
         model = Host
@@ -36,9 +114,22 @@ class HostForm(df.ModelForm):
         super(HostForm, self).__init__(*args, **kwargs)
         self.fields['site'].queryset=Client.objects.filter(id__in=(c.id for c in user.clients))
 
+        self._security_filter(user = user, formName = 'Host')
+
+    def save(self):
+        assert(self.security_can_save())
+        return super(HostForm, self).save()
+
+    def is_valid(self):
+        if not self.security_can_save():
+            print "return False!"
+            return False
+        return super(HostForm, self).is_valid()
+
 class AdditionnalFieldForm(df.Form):
     def _complete(self, host=None, blank=False):
         """ peuple fonction du contexte le formulaire. """
+        # LC: TODO: Delete this!
         # Rapide controle des arguments
         if isinstance(host,Host):
             host_type=host.type
@@ -156,7 +247,7 @@ class ParamAdditionnalFieldAdminForm(df.ModelForm):
             inst.save()
         return inst
 
-class SearchHostForm(df.Form, ModelFormTableMixin):
+class SearchHostForm(df.Form, ModelFormTableMixin, FormSecurityChecker):
     global_search = df.CharField(label="Recherche globale",required=False)
     cheat_1 = df.CharField(max_length=1, label='', widget=df.TextInput(attrs={'class':'dijitHidden'}),required=False)
     cheat_2 = df.CharField(max_length=1, label='', widget=df.TextInput(attrs={'class':'dijitHidden'}),required=False)
@@ -176,7 +267,9 @@ class SearchHostForm(df.Form, ModelFormTableMixin):
     commentaire = df.CharField(required=False)
     def __init__(self, user, *args, **kwargs):
         super(SearchHostForm, self).__init__(*args, **kwargs)
-        self.fields['site'].choices=chain((('',''),),((c.id, str(c)) for c in sort_queryset(Client.objects.filter(id__in=(c.id for c in user.clients)))))
+        # LC: Simplify this expression
+        self.fields['site'].choices=chain((('',''),),((c.id, unicode(c)) for c in sort_queryset(Client.objects.filter(id__in=(c.id for c in user.clients)))))
+        self._security_filter(user = user, formName = 'SearchHost')
 
     class Meta:
         fields = ('ip', 'hostname', 'site', 'type', 'os', 'supplier', 'status', 'inventory', 'commentaire')

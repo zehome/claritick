@@ -27,59 +27,63 @@
             {delete:"true"},dojo.byId(form_id));
         }
     }
-    dojo.addOnLoad(function(){
-        dojo.byId("id_commentaire").style.width='90%'
-        dojo.byId("id_commentaire").cols = 100
-        dojo.byId("id_commentaire").rows = 50
-        })
 </script>
-{%endblock%}
+{% endblock %}
 {% block content %}
 
+{% if form.security_can_view %}
+
 <form id="the_form" method="POST">
-    {% csrf_token %}
-<div>
-    <fieldset style="float:left;" >
+  {% csrf_token %}
+  <div>
+    <fieldset style="float:left;">
         <table  class="clariadmin_form">
             {% for field in form %}
-                {%if field.name != 'commentaire'%}
+                {% if field.name != 'commentaire' %}
                 <tr>
                     <th>{{ field.label_tag }}</th>
                     <td>{{ field }}</td>
-                    <td>{{field.errors}}</td>
+                    <td>{{ field.errors }}</td>
+                    {# TODO: UGGY CODE !!! => Formulaire "a la main" nécessaire ici. #}
                     <td>{% if perms.common.add_client and field.name == 'site' or perms.clariadmin.add_supplier and field.name == 'supplier' or perms.clariadmin.add_operatingsystem and field.name == 'os' or perms.clariadmin.add_hosttype and field.name == 'type' %}
-                        <a id='add_id_{{field.name}}' class="add-another" href="/admin/{% cycle "common/client" "clariadmin/operatingsystem" "clariadmin/supplier" "clariadmin/hosttype"%}/add/" onclick="return showAddAnotherPopup(this);">
+                        <a id='add_id_{{ field.name }}' class="add-another" href="/admin/{% cycle "common/client" "clariadmin/operatingsystem" "clariadmin/supplier" "clariadmin/hosttype"%}/add/" onclick="return showAddAnotherPopup(this);">
                             <img width="10" height="10" alt="Ajouter un autre" src="/adm_media/img/admin/icon_addlink.gif"></a>
-                        {%endif%}</td>
+                        {% endif %}</td>
                 </tr>
-                {%endif%}
-            {%endfor%}
+                {% endif %}
+            {% endfor %}
         </table>
     </fieldset>
 
-    <fieldset  id="extra_fieldset" {% if not additionnal_fields.fields %}class="dijitHidden"{% endif %}>
+    <fieldset id="extra_fieldset"{% if not additionnal_fields.fields %} class="dijitHidden"{% endif %}>
         <table id="extra_fields" class="clariadmin_form">
         {% if additionnal_fields.fields %}
             {{ additionnal_fields }}
         {% endif %}
         </table>
     </fieldset>
-    <div style="clear:both;"></div>
-</div>
+    <br class="clear" />
 
-<fieldset >
-    <table class="clariadmin_form" style="width:auto;"><th>{{ form.commentaire.label_tag }}</th><td>
-    {{form.commentaire}}</td><td>{{form.commentaire.errors}}</td></table>
-</fieldset>
+    {% if form.commentaire %}
+    <table class="clariadmin_form" style="width:auto;">
+        <th>{{ form.commentaire.label_tag }}</th>
+        <td>{{ form.commentaire }}</td>
+        {% if form.commentaire.errors %}<td>{{ form.commentaire.errors }}</td>{% endif %}
+    </table>
+    {% endif %}
+
     <hr />
     <div id="save_buttons">
-        {%if host%}<button dojoType="dijit.form.Button" onclick='confirmDialog("Supression de l hote", "Êtes vous sûr de vouloir supprimer cette machine de la base?", confirmation_callback, "the_form")' iconClass="dijitEditorIcon dijitEditorIconDelete" type="action" value="true" class="default">Suprimer</button>{%endif%}
+        {% if host %}<button dojoType="dijit.form.Button" onclick='confirmDialog("Supression de l hote", "Êtes vous sûr de vouloir supprimer cette machine de la base?", confirmation_callback, "the_form")' iconClass="dijitEditorIcon dijitEditorIconDelete" type="action" value="true" class="default">Suprimer</button>{% endif %}
         <button dojoType="dijit.form.Button" iconClass="dijitEditorIcon dijitEditorIconUndo" type="action" onclick='window.location = ".."'>Retourner à la liste</button>
         <button dojoType="dijit.form.Button" iconClass="dijitEditorIcon dijitEditorIconSave" type="submit" name="submit_button" value="save">Enregistrer</button>
         <button dojoType="dijit.form.Button" iconClass="dijitEditorIcon dijitEditorIconNewPage" type="submit" name="submit_button" value="new">Enregistrer et ajouter un nouveau</button>
         <button dojoType="dijit.form.Button" iconClass="dijitEditorIcon dijitEditorIconRightToLeft" type="submit" name="submit_button" value="return">Enregistrer et retourner à la liste</button>
-
     </div>
-</div>
+  </div>
 </form>
+
+{% else %}{# if security_can_view #}
+<p>Aucune permission.</p>
+{% endif %}
 {% endblock %}

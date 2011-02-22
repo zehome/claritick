@@ -134,7 +134,8 @@ def new(request, from_host=False):
         form = HostForm(request.user, instance=inst)
         add_fields = AdditionnalFieldForm.get_form(comp, host=inst)
     elif request.POST:
-        form = HostForm(request.user,request.POST)
+        filtered_POST = HostForm.filter_querydict(request.user, 'HostForm', request.POST)
+        form = HostForm(request.user, filtered_POST)
         if form.is_valid():
             host = form.save()
             form_comp = AdditionnalFieldForm.get_form(data=request.POST, host=host)

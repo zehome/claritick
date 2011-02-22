@@ -69,13 +69,16 @@
                 {
                     create_menu(row.id, row.children[1].textContent);
                 });
-                dojo.byId("id_global_search").focus()
+                var global_search = dojo.byId("id_global_search");
+                if (global_search)
+                    global_search.focus();
             });
 </script>
 
 {% endblock %}
 {% block content %}
 
+{% if form.security_can_view %}
 <fieldset class="block form">
   <legend>Filtrage</legend>
   <form method="POST">
@@ -93,6 +96,9 @@
     </div>
   </form>
 </fieldset>
+{% else %}
+<p>Vous n'avez aucune permission de recherche.</p>
+{% endif %}
 
 {% if page.object_list %}
 <h2>Résultats</h2>
@@ -119,7 +125,5 @@
 {% if page.paginator.num_pages > 1 %}
 {% diggpaginator page %}
 {% endif %}
-{% else %}
-<h3>Aucun résultat</h3>
 {% endif %}
 {% endblock %}
