@@ -3,6 +3,8 @@
 from django.contrib import admin
 from clariadmin.models import OperatingSystem, HostType, Supplier, ParamAdditionnalField
 from clariadmin.forms import ParamAdditionnalFieldAdminForm
+from common.widgets import ColorPickerWidget
+from common.models import ColorField
 # Procédure en cour d'implémentation inspirée de:
 # http://www.hindsightlabs.com/blog/2010/02/11/adding-extra-fields-to-a-model-form-in-djangos-admin/
 
@@ -38,7 +40,10 @@ class ExtraFieldAdmin(admin.ModelAdmin):
             'fields':('bool_val',)}),)
 
 class HostTypeAdmin(admin.ModelAdmin):
-    fields=("gateway","text")
+    formfield_overrides = {
+        ColorField: {'widget': ColorPickerWidget},
+    }
+    fields=("gateway","text",'color_fg', 'color_bg')
 
 admin.site.register(ParamAdditionnalField,ExtraFieldAdmin)
 admin.site.register(OperatingSystem)

@@ -14,7 +14,7 @@ class ColorPickerWidget(forms.TextInput):
             )
         }
         js = (
-            settings.MEDIA_URL + 'js/jquery-1.3.2.js',
+            settings.MEDIA_URL + 'js/jquery-1.5.min.js',
             settings.MEDIA_URL + 'js/jquery.colorPicker.js',
         )
 

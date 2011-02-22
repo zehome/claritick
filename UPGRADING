@@ -1,3 +1,6 @@
+r518
+    ALTER TABLE clariadmin_hosttype ADD COLUMN "color_fg" varchar(10);
+    ALTER TABLE clariadmin_hosttype ADD COLUMN "color_bg" varchar(10);
 r515
     ALTER TABLE clariadmin_paramadditionnalfield ADD COLUMN "sorting_priority" integer NOT NULL DEFAULT 100;
 r444

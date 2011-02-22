@@ -4,7 +4,7 @@ from django.db import models
 from django.db.models import Q
 from django.template.loader import get_template
 from django.template import Context
-from common.models import Client, ClientField, JsonField
+from common.models import Client, ClientField, JsonField, ColorField
 
 CHOICES_FIELDS_AVAILABLE = (
    (u'1', u"texte"),            # CharField
@@ -32,10 +32,10 @@ class HostType(models.Model):
     class Meta:
         verbose_name = u"Type d'hôte"
         ordering = ['text']
-
     gateway = models.BooleanField("Gateway", default=False)
     text = models.TextField("Description", blank=True)
-
+    color_fg = ColorField(name="Couleur texte", blank=True, null=True)
+    color_bg = ColorField(name="Couleur fond", blank=True, null=True)
     def __unicode__(self):
         return u"%s" % (self.text,)
 

@@ -104,7 +104,7 @@
         <td><a href="{% url clariadmin.views.modify row.id %}">{{ row.hostname }}</a></td>
         <td>{{ row.ip }}</td>
         <td>{{ row.site }}</td>
-        <td>{{ row.type }}</td>
+        <td style="color:{{row.type.color_fg}};background-color:{{row.type.color_bg}}">{{ row.type }}</td>
         <td>{{ row.os }}</td>
         <td>{{ row.supplier.name }}{% if row.model %} - {{ row.model }}{% endif %}</td>
         <td>{% if row.status %}{{ row.status }}{% endif %}</td>

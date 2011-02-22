@@ -22,10 +22,10 @@ class HostForm(df.ModelForm):
     class Meta:
         model = Host
         widgets = {
-            'os':df.FilteringSelect(attrs_filtering_and({'real_name':'clariadmin/operatingsystem'})),
-            'type':df.FilteringSelect(attrs_filtering_and({'real_name':'clariadmin/hosttype','onchange':'typeChanged(this);'})),
-            'site':df.FilteringSelect(attrs_filtering_and({'real_name':'common/client'})),
-            'supplier':df.FilteringSelect(attrs_filtering_and({'real_name':'clariadmin/supplier'})),
+            'os':df.FilteringSelect(attrs_filtering),
+            'type':df.FilteringSelect(attrs_filtering_and({'onchange':'typeChanged(this);'})),
+            'site':df.FilteringSelect(attrs_filtering),
+            'supplier':df.FilteringSelect(attrs_filtering),
             'ip':df.IPAddressTextInput(),
 
             #df.DateInput(default=)
