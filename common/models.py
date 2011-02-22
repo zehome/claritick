@@ -2,7 +2,7 @@
 
 import base64
 import random, string
-import settings
+from django.conf import settings
 
 try:
     import cPickle as pickle
@@ -323,6 +323,10 @@ class UserProfile(models.Model):
     # Liste des tickets vus / date dernière modif ticket
     tickets_vus = JsonField(null=True, blank=True)
 
+    # Niveau de sécurité
+    # null = default level (from settings)
+    security_level = models.IntegerField(null=True)
+
     def __unicode__(self):
         if self.client:
             return u"%s (%s)" % (self.user, self.client.label)
@@ -334,6 +338,25 @@ class UserProfile(models.Model):
         if self.client:
             return sort_queryset(Client.objects.get_childs("parent", self.client.pk))
         return Client.objects.none()
+
+    def get_security_level(self):
+        """
+        Returns the user security level.
+        
+        Lower level is higher security level.
+        If the user has no security level defined,
+        then it gets the DEFAULT_USER_SECURITY_LEVEL from settings.
+        
+        If settings is not defined, then it gains security level 99
+        """
+
+        if self.security_level is None:
+            try:
+                return settings.SECURITY["DEFAULT_USER_LEVEL"]
+            except (AttributeError, KeyError):
+                return 99
+        else:
+            return self.security_level
 
     # Trafiquables
     def _get_trafiquables(self):
@@ -356,7 +379,7 @@ class UserProfile(models.Model):
         if not traf.has_key(id_table):
             return []
         return traf[id_table]
-    
+
     def clear_trafiquable(self, id_table):
         traf = self._get_trafiquables()
         traf.pop(id_table)

@@ -1,3 +1,5 @@
+r523
+    ALTER TABLE common_userprofile ADD COLUMN "security_level" integer NOT NULL DEFAULT 99;
 r518
     ALTER TABLE clariadmin_hosttype ADD COLUMN "color_fg" varchar(10);
     ALTER TABLE clariadmin_hosttype ADD COLUMN "color_bg" varchar(10);
