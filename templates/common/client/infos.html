@@ -20,6 +20,7 @@
           <div><button dojoType="dijit.form.Button" type="submit">Changer d'utilisateur</button><span>{{ chuserform.user }}</span></div>
         </form>
         </li>{% endif %}
+        {% if perms.clariadmin.can_access_clariadmin %}<li>Niveau de sécurité appliqué: {{ user.security_level }}</li>{% endif %}
     </ul>
 </fieldset>
 
