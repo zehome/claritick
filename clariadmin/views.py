@@ -128,10 +128,12 @@ def new(request, from_host=False):
     """
     Create a new host.
     """
-    if from_host:
-        n = get_host_or_404(request.user, pk=from_host).copy_instance()
-        return redirect(n)
-    if request.POST:
+    add_fields=None
+    if from_host and not request.POST:
+        inst, comp = get_host_or_404(request.user, pk=from_host).copy_instance()
+        form = HostForm(request.user, instance=inst)
+        add_fields = AdditionnalFieldForm.get_form(comp, host=inst)
+    elif request.POST:
         form = HostForm(request.user,request.POST)
         if form.is_valid():
             host = form.save()
@@ -145,10 +147,11 @@ def new(request, from_host=False):
                 return redirect(host)
             elif redir == 'return':
                 return redirect('list_hosts')
-    form = HostForm(request.user)
+    else:
+        form = HostForm(request.user)
     return render_to_response('clariadmin/host.html', {
             'form': form,
-            'additionnal_fields':None }, context_instance=RequestContext(request))
+            'additionnal_fields':add_fields }, context_instance=RequestContext(request))
 
 @permission_required("clariadmin.can_access_clariadmin")
 def modify(request, host_id):
@@ -162,17 +165,16 @@ def modify(request, host_id):
             return redirect('list_hosts')
         form = HostForm(request.user,request.POST, instance=host)
         form_comp = AdditionnalFieldForm.get_form(data=request.POST, host=host)
-        if form_comp.is_valid():
+        if form_comp.is_valid() and form.is_valid():
             form_comp.save()
-        if form.is_valid():
             form.save()
-        redir=request.POST.get('submit_button',False)
-        if redir == 'new':
-            return redirect('new_host')
-        elif redir == 'save':
-            pass
-        elif redir == 'return':
-            return redirect('list_hosts')
+            redir=request.POST.get('submit_button',False)
+            if redir == 'new':
+                return redirect('new_host')
+            elif redir == 'save':
+                pass
+            elif redir == 'return':
+                return redirect('list_hosts')
     return render_to_response("clariadmin/host.html", {
         "form": form,
         'additionnal_fields':form_comp,

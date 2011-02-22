@@ -5,6 +5,8 @@ from django.db.models import Q
 from django.template.loader import get_template
 from django.template import Context
 from common.models import Client, ClientField, JsonField, ColorField
+from datetime import date
+from django.utils.datastructures import SortedDict
 
 CHOICES_FIELDS_AVAILABLE = (
    (u'1', u"texte"),            # CharField
@@ -115,13 +117,18 @@ class Host(models.Model):
         return template.render(context)
 
     def copy_instance(self):
-        h = Host(site=self.site, type=self.type, os=self.os, status=self.status,
-            commentaire=self.commentaire, date_end_prod=self.date_end_prod,
-            supplier=self.supplier, model=self.model, location=self.location)
-        h.save()
+        h = Host(site=self.site, type=self.type, hostname=self.hostname+'_copy',
+            os=self.os, status=self.status, date_end_prod=self.date_end_prod,
+            supplier=self.supplier, commentaire=self.commentaire +
+            u"\n -> Copie de la machine %s(ip:%s, le:%s)"%(self.hostname, self.ip, date.today()),
+             date_start_prod=self.date_start_prod
+             , model=self.model, location=self.location)
+        #h.save(commit=False)
+        afs=SortedDict()
         for af in self.additionnalfield_set.all():
-            AdditionnalField(field=af.field, host=h, value=af.value).save()
-        return h
+            AdditionnalField(field=af.field, host=h, value=af.value)#.save()
+            afs['val_'+str(af.field.id)]=af.value
+        return (h, afs)
 
     def available_for(self,user):
         return (self.site in user.clients)
