@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
-
 from django.contrib import admin
 from clariadmin.models import OperatingSystem, HostType, Supplier, ParamAdditionnalField
 from clariadmin.forms import ParamAdditionnalFieldAdminForm
 from common.widgets import ColorPickerWidget
-from common.models import ColorField
+from common.models import ColorField, JsonField
 # Procédure en cour d'implémentation inspirée de:
 # http://www.hindsightlabs.com/blog/2010/02/11/adding-extra-fields-to-a-model-form-in-djangos-admin/
 
@@ -14,7 +13,7 @@ class ExtraFieldAdmin(admin.ModelAdmin):
         js = ("js/clariadmin_extra_field_admin.js",)
     fieldsets = (
         (None,{
-            'fields':('host_type','name','data_type','fast_search')}),
+            'fields':('host_type','name','sorting_priority','data_type','fast_search')}),
         ('Choix',{
             'classes': ('dj_admin_Choix',),
             'fields':(
@@ -39,11 +38,22 @@ class ExtraFieldAdmin(admin.ModelAdmin):
             'classes': ('dj_admin_Bool',),
             'fields':('bool_val',)}),)
 
+class ExtraFieldAdminInLine(admin.TabularInline):
+    class Media:
+        css =  {"all":("admin_hosttype/admin_hosttype.css",)}
+        js =  ("admin_hosttype/admin_hosttype.js",)
+    extra=0
+    model=ParamAdditionnalField
+    readonly_fields=('host_type','data_type','default_values')
+    fields=('name','sorting_priority','fast_search','host_type','data_type','default_values')
+
 class HostTypeAdmin(admin.ModelAdmin):
+    inlines = [
+        ExtraFieldAdminInLine,
+    ]
     formfield_overrides = {
         ColorField: {'widget': ColorPickerWidget},
     }
-    fields=("gateway","text",'color_fg', 'color_bg')
 
 admin.site.register(ParamAdditionnalField,ExtraFieldAdmin)
 admin.site.register(OperatingSystem)

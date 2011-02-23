@@ -74,21 +74,14 @@ function dismissAddAnotherPopup(win, newId, newRepr) {
     var name = windowname_to_id(win.name);
     var elem = document.getElementById(name);
     if (elem) {
-        if (elem.nodeName == 'SELECT') {
-            var o = new Option(newRepr, newId);
-            elem.options[elem.options.length] = o;
-            o.selected = true;
-        } else if (elem.nodeName == 'INPUT') {
-            elem = dijit.byId(name);
-            var o = new Option(newRepr, newId);
-            elem.store.root.options[elem.store.root.options.length] = o;
-            elem.set('value',newId);
-//            if (elem.className.indexOf('vManyToManyRawIdAdminField') != -1 && elem.value) {
-//                elem.value += ',' + newId;
-//            } else {
-//                elem.value = newId;
-//            }
-        }
+        // /////////////////////////////////////////////////////////////////////
+        // theses 4 lines are the ones who were modified from original file:
+        // adm_media/js/admin/RelatedObjectLookup.js
+        elem = dijit.byId(name);
+        var o = new Option(newRepr, newId);
+        elem.store.root.options[elem.store.root.options.length] = o;
+        elem.set('value',newId);
+        // /////////////////////////////////////////////////////////////////////
     } else {
         var toId = name + "_to";
         elem = document.getElementById(toId);
