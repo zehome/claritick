@@ -263,19 +263,24 @@ class SearchHostForm(df.Form, ModelFormTableMixin, FormSecurityChecker):
     status = df.CharField(required=False)
     inventory = df.CharField(required=False, label=u'Inventaire')
     commentaire = df.CharField(required=False)
+
     def __init__(self, user, *args, **kwargs):
         super(SearchHostForm, self).__init__(*args, **kwargs)
-        # LC: Simplify this expression
-        self.fields['site'].choices=chain((('',''),),((c.id, unicode(c)) for c in sort_queryset(Client.objects.filter(id__in=(c.id for c in user.clients)))))
+        ordered_clients = sort_queryset(Client.objects.filter(id__in=(c.id for c in user.clients)))
+        self.fields['site'].choices=[('','')]+[(c.id, unicode(c)) for c in ordered_clients]
         self._security_filter(user = user, formName = 'SearchHost')
 
     def update(self, hosts):
-        self.fields['os'].queryset = OperatingSystem.objects.filter(host__in=hosts).distinct()
-        self.fields['supplier'].queryset = Supplier.objects.filter(host__in=hosts).distinct()
-        self.fields['type'].queryset = HostType.objects.filter(host__in=hosts).distinct()
+        if self.fields.has_key('os'):
+            self.fields['os'].queryset = OperatingSystem.objects.filter(host__in=hosts).distinct()
+        if self.fields.has_key('supplier'):
+            self.fields['supplier'].queryset = Supplier.objects.filter(host__in=hosts).distinct()
+        if self.fields.has_key('type'):
+            self.fields['type'].queryset = HostType.objects.filter(host__in=hosts).distinct()
         # filter Clients fields. Comment or uncomment if you prefer:
-        self.fields['site'].choices = chain((('',''),),((c.id, str(c))
-            for c in sort_queryset(Client.objects.filter(host__in=hosts).distinct())))
+        if self.fields.has_key('site'):
+            self.fields['site'].choices = chain((('',''),),((c.id, str(c))
+                for c in sort_queryset(Client.objects.filter(host__in=hosts).distinct())))
 
     class Meta:
         fields = ('ip', 'hostname', 'site', 'type', 'os', 'supplier', 'status', 'inventory', 'commentaire')
