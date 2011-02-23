@@ -33,7 +33,7 @@
 
 {% if form.security_can_view %}
 
-<form id="the_form" method="POST">
+<form id="the_form" method="post">
   {% csrf_token %}
   <div>
     <fieldset style="float:left;">
@@ -47,7 +47,7 @@
                     {# TODO: UGGY CODE !!! => Formulaire "a la main" nécessaire ici. #}
                     <td>{% if perms.common.add_client and field.name == 'site' or perms.clariadmin.add_supplier and field.name == 'supplier' or perms.clariadmin.add_operatingsystem and field.name == 'os' or perms.clariadmin.add_hosttype and field.name == 'type' %}
                         <a id='add_id_{{ field.name }}' class="add-another" href="/admin/{% cycle "common/client" "clariadmin/operatingsystem" "clariadmin/supplier" "clariadmin/hosttype"%}/add/" onclick="return showAddAnotherPopup(this);">
-                            <img width="10" height="10" alt="Ajouter un autre" src="/adm_media/img/admin/icon_addlink.gif"></a>
+                            <img width="10" height="10" alt="Ajouter un autre" src="/adm_media/img/admin/icon_addlink.gif" /></a>
                         {% endif %}</td>
                 </tr>
                 {% endif %}
@@ -59,6 +59,8 @@
         <table id="extra_fields" class="clariadmin_form">
         {% if additionnal_fields.fields %}
             {{ additionnal_fields }}
+        {% else %}
+            <tr><td></td></tr>
         {% endif %}
         </table>
     </fieldset>
@@ -66,16 +68,18 @@
 
     {% if form.commentaire %}
     <table class="clariadmin_form" style="width:auto;">
-        <th>{{ form.commentaire.label_tag }}</th>
-        <td>{{ form.commentaire }}</td>
-        {% if form.commentaire.errors %}<td>{{ form.commentaire.errors }}</td>{% endif %}
+        <tr>
+            <th>{{ form.commentaire.label_tag }}</th>
+            <td>{{ form.commentaire }}</td>
+            {% if form.commentaire.errors %}<td>{{ form.commentaire.errors }}</td>{% endif %}
+        </tr>
     </table>
     {% endif %}
 
     <hr />
     <div id="save_buttons">
-        {% if host %}<button dojoType="dijit.form.Button" onclick='confirmDialog("Supression de l hote", "Êtes vous sûr de vouloir supprimer cette machine de la base?", confirmation_callback, "the_form")' iconClass="dijitEditorIcon dijitEditorIconDelete" type="action" value="true" class="default">Suprimer</button>{% endif %}
-        <button dojoType="dijit.form.Button" iconClass="dijitEditorIcon dijitEditorIconUndo" type="action" onclick='window.location = ".."'>Retourner à la liste</button>
+        {% if host %}<button dojoType="dijit.form.Button" onclick='confirmDialog("Supression de l hote", "Êtes vous sûr de vouloir supprimer cette machine de la base?", confirmation_callback, "the_form")' iconClass="dijitEditorIcon dijitEditorIconDelete" type="button" value="true" class="default">Suprimer</button>{% endif %}
+        <button dojoType="dijit.form.Button" iconClass="dijitEditorIcon dijitEditorIconUndo" type="button" onclick='window.location = ".."'>Retourner à la liste</button>
         <button dojoType="dijit.form.Button" iconClass="dijitEditorIcon dijitEditorIconSave" type="submit" name="submit_button" value="save">Enregistrer</button>
         <button dojoType="dijit.form.Button" iconClass="dijitEditorIcon dijitEditorIconNewPage" type="submit" name="submit_button" value="new">Enregistrer et ajouter un nouveau</button>
         <button dojoType="dijit.form.Button" iconClass="dijitEditorIcon dijitEditorIconRightToLeft" type="submit" name="submit_button" value="return">Enregistrer et retourner à la liste</button>
