@@ -66,6 +66,8 @@ def list_all(request, *args, **kw):
             filter_adm_list : dernier formulaire de rechere
             sort_adm_list : dernier tri
     """
+    HostForm.filter_querydict(request.user, 'HostForm', request.POST)
+    HostForm.filter_querydict(request.user, 'SearchHostForm', request.POST)
     #declare
     new_search = False
     form_extra = False
@@ -128,9 +130,8 @@ def new(request, from_host=False):
     """
     Create a new host.
     """
-    add_fields=None
-
     HostForm.filter_querydict(request.user, 'HostForm', request.POST)
+    add_fields=None
 
     if from_host and not request.POST:
         inst, comp = get_host_or_404(request.user, pk=from_host).copy_instance()
@@ -159,6 +160,8 @@ def new(request, from_host=False):
 
 @permission_required("clariadmin.can_access_clariadmin")
 def modify(request, host_id):
+    HostForm.filter_querydict(request.user, 'HostForm', request.POST)
+
     host = get_host_or_404(request.user, pk=host_id)
     if not request.POST:
         form = HostForm(request.user,instance=host)

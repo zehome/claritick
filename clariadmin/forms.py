@@ -277,7 +277,6 @@ class SearchHostForm(df.Form, ModelFormTableMixin, FormSecurityChecker):
             self.fields['supplier'].queryset = Supplier.objects.filter(host__in=hosts).distinct()
         if self.fields.has_key('type'):
             self.fields['type'].queryset = HostType.objects.filter(host__in=hosts).distinct()
-        # filter Clients fields. Comment or uncomment if you prefer:
         if self.fields.has_key('site'):
             self.fields['site'].choices = chain((('',''),),((c.id, str(c))
                 for c in sort_queryset(Client.objects.filter(host__in=hosts).distinct())))
