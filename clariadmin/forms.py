@@ -271,5 +271,13 @@ class SearchHostForm(df.Form, ModelFormTableMixin, FormSecurityChecker):
         self.fields['site'].choices=chain((('',''),),((c.id, unicode(c)) for c in sort_queryset(Client.objects.filter(id__in=(c.id for c in user.clients)))))
         self._security_filter(user = user, formName = 'SearchHost')
 
+    def update (self, hosts):
+        self.fields['os'].queryset = OperatingSystem.objects.filter(host__in=hosts).distinct()
+        self.fields['supplier'].queryset = Supplier.objects.filter(host__in=hosts).distinct()
+        self.fields['type'].queryset = HostType.objects.filter(host__in=hosts).distinct()
+        # filter Clients fields. Comment or uncomment if you prefer:
+        self.fields['site'].choices = chain((('',''),),((c.id, str(c))
+            for c in sort_queryset(Client.objects.filter(host__in=hosts).distinct())))
+
     class Meta:
         fields = ('ip', 'hostname', 'site', 'type', 'os', 'supplier', 'status', 'inventory', 'commentaire')

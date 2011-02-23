@@ -96,11 +96,6 @@ def list_all(request, *args, **kw):
             form_extra = AdditionnalFieldForm.get_form((request.session.get('filter_extra_adm_list',{})),host=HostType.objects.get(pk=host_type))
             form_extra.is_valid()
 
-    #global_search
-    search = form.cleaned_data.pop('global_search',False) if form.is_valid() else False
-    if search:
-        qs = global_search(search, qs)
-
     #get session/GET parametters
     sorting=request.GET.get('sort',request.session.get("sort_adm_list", '-id'))
     if request.GET.get('sort', False):
@@ -108,11 +103,16 @@ def list_all(request, *args, **kw):
     if request.GET.get('page', False):
         request.session["page_adm_list"]=request.GET.get('page', False)
 
+    #apply searchs
+    search = form.cleaned_data.pop('global_search',False) if form.is_valid() else False
+    if search:
+        qs = global_search(search, qs)
+    qs = filter_hosts(qs, sorting, form.is_valid() and form.cleaned_data,
+        form_extra and form_extra.get_data())
+    form.update(qs)
+
     #fill paginator
-    paginator = DiggPaginator(
-        filter_hosts(qs, sorting, form.is_valid() and form.cleaned_data,
-            form_extra and form_extra.get_data()),
-        settings.TICKETS_PER_PAGE, body=5, tail=2, padding=2)
+    paginator = DiggPaginator(qs, settings.TICKETS_PER_PAGE, body=5, tail=2, padding=2)
     page = paginator.page(1 if new_search else request.session.get('page_adm_list', 1)
         if int(request.session.get('page_adm_list', 1)) <= paginator.num_pages else 1)
     return render_to_response("clariadmin/list.html", {
