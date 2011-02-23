@@ -1,6 +1,24 @@
 <?xml version='1.0' encoding='utf-8'?>
 {% extends "base.html" %}
     {% block extrastyle %}
+    <style type="text/css">
+        .comment_field {
+             width: 100% ! important;
+        }
+        #comment_table {
+             width: 99% ! important;
+        }
+        #comment_table th {
+             width: 5%;
+             padding-right:10px;
+        }
+        .better td {
+             padding: 2px 2px;
+        }
+        .better th {
+             vertical-align: middle;
+        }
+    </style>
     {% endblock %}
 {% block extrajs %}
 <script type="text/javascript" src="/adm_media/js/admin/RelatedObjectLookups.js"></script>
@@ -37,26 +55,88 @@
   {% csrf_token %}
   <div>
     <fieldset style="float:left;">
-        <table  class="clariadmin_form">
-            {% for field in form %}
-                {% if field.name != 'commentaire' %}
-                <tr>
-                    <th>{{ field.label_tag }}</th>
-                    <td>{{ field }}</td>
-                    <td>{{ field.errors }}</td>
-                    {# TODO: UGGY CODE !!! => Formulaire "a la main" nécessaire ici. #}
-                    <td>{% if perms.common.add_client and field.name == 'site' or perms.clariadmin.add_supplier and field.name == 'supplier' or perms.clariadmin.add_operatingsystem and field.name == 'os' or perms.clariadmin.add_hosttype and field.name == 'type' %}
-                        <a id='add_id_{{ field.name }}' class="add-another" href="/admin/{% cycle "common/client" "clariadmin/operatingsystem" "clariadmin/supplier" "clariadmin/hosttype"%}/add/" onclick="return showAddAnotherPopup(this);">
-                            <img width="10" height="10" alt="Ajouter un autre" src="/adm_media/img/admin/icon_addlink.gif" /></a>
-                        {% endif %}</td>
-                </tr>
-                {% endif %}
-            {% endfor %}
+        <table  class="clariadmin_form better">
+            <tr>
+                <th>{{ form.site.label_tag }}</th><td>{{ form.site }}</td><td>{{ form.site.errors }}</td>
+                <td>
+                    {% if perms.common.add_client %}
+                    <a id='add_id_{{form.site.name}}' class="add-another" href="/admin/common/client/add" onclick="return showAddAnotherPopup(this);">
+                        <img width="10" height="10" alt="Ajouter un autre" src="/adm_media/img/admin/icon_addlink.gif" />
+                    </a>{% endif %}
+                </td>
+            </tr>
+            <tr>
+                <th>{{ form.hostname.label_tag }}</th><td>{{ form.hostname }}</td><td>{{ form.hostname.errors }}</td>
+                <td></td>
+            </tr>
+            <tr>
+                <th>{{ form.ip.label_tag }}</th><td>{{ form.ip }}</td><td>{{ form.ip.errors }}</td>
+                <td></td>
+            </tr>
+            <tr>
+                <th>{{ form.os.label_tag }}</th><td>{{ form.os }}</td><td>{{ form.os.errors }}</td>
+                <td>
+                    {% if perms.clariadmin.add_supplier %}
+                    <a id='add_id_{{form.os.name}}' class="add-another" href="/admin/clariadmin/operatingsystem/add" onclick="return showAddAnotherPopup(this);">
+                        <img width="10" height="10" alt="Ajouter un autre" src="/adm_media/img/admin/icon_addlink.gif" />
+                    </a>{% endif %}
+                </td>
+            </tr>
+            <tr>
+                <th>{{ form.rootpw.label_tag }}</th><td>{{ form.rootpw }}</td><td>{{ form.rootpw.errors }}</td>
+                <td></td>
+            </tr>
+            <tr>
+                <th>{{ form.supplier.label_tag }}</th><td>{{ form.supplier }}</td><td>{{ form.supplier.errors }}</td>
+                <td>
+                    {% if perms.clariadmin.add_supplier %}
+                    <a id='add_id_{{form.supplier.name}}' class="add-another" href="/admin/clariadmin/supplier/add" onclick="return showAddAnotherPopup(this);">
+                        <img width="10" height="10" alt="Ajouter un autre" src="/adm_media/img/admin/icon_addlink.gif" />
+                    </a>{% endif %}
+                </td>
+            </tr>
+            <tr>
+                <th>{{ form.model.label_tag }}</th><td>{{ form.model }}</td><td>{{ form.model.errors }}</td>
+                <td></td>
+            </tr>
+            <tr>
+                <th>{{ form.type.label_tag }}</th><td>{{ form.type }}</td><td>{{ form.type.errors }}</td>
+                <td>
+                    {% if perms.clariadmin.add_hosttype %}
+                    <a id='add_id_{{form.type.name}}' class="add-another" href="/admin/clariadmin/hosttype/add" onclick="return showAddAnotherPopup(this);">
+                        <img width="10" height="10" alt="Ajouter un autre" src="/adm_media/img/admin/icon_addlink.gif" />
+                    </a>{% endif %}
+                </td>
+            </tr>
+            <tr>
+                <th>{{ form.location.label_tag }}</th><td>{{ form.location }}</td><td>{{ form.location.errors }}</td>
+                <td></td>
+            </tr>
+            <tr>
+                <th>{{ form.serial.label_tag }}</th><td>{{ form.serial }}</td><td>{{ form.serial.errors }}</td>
+                <td></td>
+            </tr>
+            <tr>
+                <th>{{ form.inventory.label_tag }}</th><td>{{ form.inventory }}</td><td>{{ form.inventory.errors }}</td>
+                <td></td>
+            </tr>
+            <tr>
+                <th>{{ form.date_start_prod.label_tag }}</th><td>{{ form.date_start_prod }}</td><td>{{ form.date_start_prod.errors }}</td>
+                <td></td>
+            </tr>
+            <tr>
+                <th>{{ form.date_end_prod.label_tag }}</th><td>{{ form.date_end_prod }}</td><td>{{ form.date_end_prod.errors }}</td>
+                <td></td>
+            </tr>
+            <tr>
+                <th>{{ form.status.label_tag }}</th><td>{{ form.status }}</td><td>{{ form.status.errors }}</td>
+                <td></td>
+            </tr>
         </table>
     </fieldset>
 
     <fieldset id="extra_fieldset"{% if not additionnal_fields.fields %} class="dijitHidden"{% endif %}>
-        <table id="extra_fields" class="clariadmin_form">
+        <table id="extra_fields" class="clariadmin_form better">
         {% if additionnal_fields.fields %}
             {{ additionnal_fields }}
         {% else %}
@@ -67,9 +147,9 @@
     <br class="clear" />
 
     {% if form.commentaire %}
-    <table class="clariadmin_form" style="width:auto;">
+    <table id="comment_table" class="clariadmin_form better">
         <tr>
-            <th>{{ form.commentaire.label_tag }}</th>
+            <th>{{ form.commentaire.label_tag }}:</th>
             <td>{{ form.commentaire }}</td>
             {% if form.commentaire.errors %}<td>{{ form.commentaire.errors }}</td>{% endif %}
         </tr>
