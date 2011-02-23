@@ -26,7 +26,7 @@ class FormSecurityChecker(object):
     Will remove items user when user has a security level higher
     than the configured security level.
     """
-    
+
     # This flags is set to False if a required field
     # is removed by the mixin.
     _security_can_save = True
@@ -45,8 +45,8 @@ class FormSecurityChecker(object):
         """
         Will delete fields from the form if user has no access to them.
         deleted fields are placed in _security_deleted_fields.
-        
-        If required fields are removed, the _security_can_save flag is 
+
+        If required fields are removed, the _security_can_save flag is
         switched to False.
         """
         self._security_userlevel = user.get_profile().get_security_level()
@@ -65,8 +65,8 @@ class FormSecurityChecker(object):
                     self._security_can_save = False
                 self._security_deleted_fields.append(field)
                 del(self.fields[fname])
-        if self._security_can_save and self.fields:
-            self._security_can_view = True
+
+        self._security_can_view = bool(self.fields)
 
     @staticmethod
     def filter_querydict(user, formName, querydict):
@@ -106,6 +106,7 @@ class HostForm(df.ModelForm, FormSecurityChecker):
             'site':df.FilteringSelect(attrs_filtering),
             'supplier':df.FilteringSelect(attrs_filtering),
             'ip':df.IPAddressTextInput(),
+            'commentaire':df.Textarea({"class":'comment_field'})
         }
         fields = ("site","hostname","ip","os","rootpw","supplier", "model",
             "type","location","serial","inventory", "date_start_prod","date_end_prod",
@@ -127,16 +128,12 @@ class HostForm(df.ModelForm, FormSecurityChecker):
         return super(HostForm, self).is_valid()
 
 class AdditionnalFieldForm(df.Form):
-    def _complete(self, host=None, blank=False):
+    def _complete(self, host=None, host_type=None, blank=False):
         """ peuple fonction du contexte le formulaire. """
-        # LC: TODO: Delete this!
         # Rapide controle des arguments
-        if isinstance(host,Host):
+        if host:
             host_type=host.type
             self.host=host
-        else:
-            host_type = host
-            host=False
         if not host_type:
             return self
         # Récupère la liste des champs propre au type d'hote
@@ -190,8 +187,9 @@ class AdditionnalFieldForm(df.Form):
     @staticmethod
     def get_form(*args, **kwargs):
         h=kwargs.pop('host',False)
+        ht=kwargs.pop('host_type',False)
         b=kwargs.pop('blank',False)
-        return AdditionnalFieldForm(*args,**kwargs)._complete(h,b)
+        return AdditionnalFieldForm(*args,**kwargs)._complete(h,ht,b)
 
 class ParamAdditionnalFieldAdminForm(df.ModelForm):
     text_val = df.CharField(label=u'Défaut', required=False)
@@ -271,7 +269,7 @@ class SearchHostForm(df.Form, ModelFormTableMixin, FormSecurityChecker):
         self.fields['site'].choices=chain((('',''),),((c.id, unicode(c)) for c in sort_queryset(Client.objects.filter(id__in=(c.id for c in user.clients)))))
         self._security_filter(user = user, formName = 'SearchHost')
 
-    def update (self, hosts):
+    def update(self, hosts):
         self.fields['os'].queryset = OperatingSystem.objects.filter(host__in=hosts).distinct()
         self.fields['supplier'].queryset = Supplier.objects.filter(host__in=hosts).distinct()
         self.fields['type'].queryset = HostType.objects.filter(host__in=hosts).distinct()

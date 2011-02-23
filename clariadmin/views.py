@@ -84,7 +84,7 @@ def list_all(request, *args, **kw):
                 request.session['filter_adm_list']=post_filtred
             host_type = request.session.get('filter_adm_list',{}).get('type', False)
             if host_type:
-                form_extra = AdditionnalFieldForm.get_form(request.POST if not reset else {}, host=HostType.objects.get(pk=host_type))
+                form_extra = AdditionnalFieldForm.get_form(request.POST if not reset else {}, host_type=HostType.objects.get(pk=host_type))
                 request.session['filter_extra_adm_list'] = dict(
                     [(k,v) for k,v in request.POST.iteritems()
                         if k in form_extra.fields.keys()])
@@ -93,7 +93,7 @@ def list_all(request, *args, **kw):
         form = SearchHostForm(request.user,request.session.get('filter_adm_list',{}))
         host_type = request.session.get('filter_adm_list',{}).get('type', False)
         if host_type:
-            form_extra = AdditionnalFieldForm.get_form((request.session.get('filter_extra_adm_list',{})),host=HostType.objects.get(pk=host_type))
+            form_extra = AdditionnalFieldForm.get_form((request.session.get('filter_extra_adm_list',{})),host_type=HostType.objects.get(pk=host_type))
             form_extra.is_valid()
 
     #get session/GET parametters
@@ -129,12 +129,15 @@ def new(request, from_host=False):
     Create a new host.
     """
     add_fields=None
+
+    HostForm.filter_querydict(request.user, 'HostForm', request.POST)
+
     if from_host and not request.POST:
         inst, comp = get_host_or_404(request.user, pk=from_host).copy_instance()
         form = HostForm(request.user, instance=inst)
         add_fields = AdditionnalFieldForm.get_form(comp, host=inst)
     elif request.POST:
-        filtered_POST = HostForm.filter_querydict(request.user, 'HostForm', request.POST)
+
         form = HostForm(request.user, filtered_POST)
         if form.is_valid():
             host = form.save()
@@ -187,5 +190,5 @@ def ajax_extra_fields_form(request, host_id, blank=False):
     if int(host_id) < 0:
         return HttpResponse("<tr></tr>")
     host_type = get_object_or_404(HostType, pk=host_id)
-    form=AdditionnalFieldForm.get_form(host=host_type, blank=bool(blank))
+    form=AdditionnalFieldForm.get_form(host_type=host_type, blank=bool(blank))
     return HttpResponse(form.as_table())
