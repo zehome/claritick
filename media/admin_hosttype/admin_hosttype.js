@@ -5,7 +5,7 @@ dojo.addOnLoad(function(){
     for( i in list)
     {
         if(! isNaN(parseInt(i))){
-            list[i].innerHTML="<a href='/admin/clariadmin/paramadditionnalfield/"+list[i].parentNode.children[0].children[1].value+"'>"+list[i].innerHTML+"</a>";
+            list[i].innerHTML="<a href='javascript:void(0)' onclick='return showPopup(\"/admin/clariadmin/paramadditionnalfield/"+list[i].parentNode.children[0].children[1].value+"\")'>"+list[i].innerHTML+"</a>";
         }
     }
     dojo.connect(dojo.byId("#paramadditionnalfield_set-group"),"onmouseover",function(){
@@ -15,7 +15,8 @@ dojo.addOnLoad(function(){
             normal_text = "<span><img src='/adm_media/img/admin/icon_addlink.gif' alt='Add'>Cliquez ici pour ajouter une entrée.</span>";
             over_text = "<span>﻿</span>"
             add_row.innerHTML = normal_text ;
-            dojo.connect(dojo.byId('TexteClickable'), "onclick",addParameterField);
+            dojo.connect(add_row, "onclick",function(){
+                addParameterField("/admin/clariadmin/paramadditionnalfield/add/?host_type="+dojo.byId('id_paramadditionnalfield_set-__prefix__-host_type').value);});
             dojo.connect(add_row, "onmouseover",function(){
                 add_row.innerHTML = over_text;
                 add_row.style.background="#E1FFE1 url(/adm_media/img/admin/icon_addlink.gif) center center no-repeat";
@@ -29,8 +30,8 @@ dojo.addOnLoad(function(){
 
 
 });
-function addParameterField(){
-        var win = window.open( "/admin/clariadmin/paramadditionnalfield/add/?host_type="+dojo.byId('id_paramadditionnalfield_set-__prefix__-host_type').value , name, 'height=500,width=800,resizable=yes,scrollbars=yes');
+function showPopup(url){
+        var win = window.open( url , name, 'height=500,width=800,resizable=yes,scrollbars=yes');
         win.focus();
         return false;
 }
