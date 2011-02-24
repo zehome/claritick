@@ -5,11 +5,6 @@
 .delete{
     width:0px;
 }
-/*
-.original *{
-    visibility:hidden;
-    width:0px;
-}*/
 .default_values textarea{
     height:23px;
     width:230px

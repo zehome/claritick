@@ -1,6 +1,7 @@
+var add_row = null;
 dojo.addOnLoad(function(){
     dojo.query('#paramadditionnalfield_set-group .module table>thead>tr>th')[0].attributes.removeNamedItem('colspan');
-    list = dojo.query('.module table>tbody>tr .data_type');
+    list = dojo.query('#paramadditionnalfield_set-group .module table>tbody>tr .data_type');
     for( i in list)
     {
         if(! isNaN(parseInt(i))){
@@ -8,8 +9,29 @@ dojo.addOnLoad(function(){
         }
     }
     dojo.connect(dojo.byId("#paramadditionnalfield_set-group"),"onmouseover",function(){
-            dojo.query('#paramadditionnalfield_set-group .module .add-row>td')[0].innerHTML = "<a id='id='add_id_truc' class='add-another' onclick='return showAddAnotherPopup(this);' href='/admin/clariadmin/paramadditionnalfield/add/?host_type="+dojo.byId('id_paramadditionnalfield_set-__prefix__-host_type').value+"'>Ajouter un objet Définition De Champs Complémentaires supplémentaire</a>";}
-        )
+        if (add_row == null){
+            add_row = dojo.query('#paramadditionnalfield_set-group .module .add-row>td')[0]
+            add_row.style.textAlign="center";
+            normal_text = "<span><img src='/adm_media/img/admin/icon_addlink.gif' alt='Add'>Cliquez ici pour ajouter une entrée.</span>";
+            over_text = "<span>﻿</span>"
+            add_row.innerHTML = normal_text ;
+            dojo.connect(dojo.byId('TexteClickable'), "onclick",addParameterField);
+            dojo.connect(add_row, "onmouseover",function(){
+                add_row.innerHTML = over_text;
+                add_row.style.background="#E1FFE1 url(/adm_media/img/admin/icon_addlink.gif) center center no-repeat";
+            });
+            dojo.connect(add_row, "onmouseout",function(){
+                add_row.innerHTML = normal_text;
+                add_row.style.background="#E1E1E1 url(/adm_media/img/admin/nav-bg.gif) center center repeat-x";
+            });
+        }
+    })
+
 
 });
+function addParameterField(){
+        var win = window.open( "/admin/clariadmin/paramadditionnalfield/add/?host_type="+dojo.byId('id_paramadditionnalfield_set-__prefix__-host_type').value , name, 'height=500,width=800,resizable=yes,scrollbars=yes');
+        win.focus();
+        return false;
+}
 
