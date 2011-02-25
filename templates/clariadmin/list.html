@@ -105,19 +105,22 @@
 <table class="resultat exportable" id="clariadmin_result_all">
 <thead>
 <tr>{%for column in columns %}
-    <th><a href="?sort={% if sorting == column %}-{% endif %}{{ column }}">{% if sorting == column %}<img src="/media/images/oxygen/arrow-up.png" class="state_image" alt="down" />{% else %}{% if sorting == '-'|add:column %}<img src="/media/images/oxygen/arrow-down.png" class="state_image" alt="up" />{% endif %}{% endif %}{{ column }}</a></th>{% endfor %}
+    <th><a href="?sort={% if sorting == column %}-{% endif %}{{ column }}">{% if sorting == column %}
+        <img src="/media/images/oxygen/arrow-up.png" class="state_image" alt="down" />{% else %} {% if sorting == '-'|add:column %}
+        <img src="/media/images/oxygen/arrow-down.png" class="state_image" alt="up" />{% endif %}{% endif %}
+        {{ column }}</a></th>{% endfor %}
 </tr>
 </thead>
 <tbody id="context_lines">
 {% for row in page.object_list %}
     <tr id="comp_{{ row.id }}" class="{% cycle 'row1' 'row2'%}">
-        <td><a href="{% url clariadmin.views.modify row.id %}">{{ row.hostname }}</a></td>
-        <td>{{ row.ip }}</td>
-        <td>{{ row.site }}</td>
-        <td style="color:{{row.type.color_fg}};background-color:{{row.type.color_bg}}">{{ row.type }}</td>
-        <td>{{ row.os }}</td>
-        <td>{{ row.supplier.name }}{% if row.model %} - {{ row.model }}{% endif %}</td>
-        <td>{% if row.status %}{{ row.status }}{% endif %}</td>
+        {% if 'hostname' in columns %}<td><a href="{% url clariadmin.views.modify row.id %}">{{ row.hostname }}</a></td>{% endif %}
+        {% if 'ip' in columns %}<td>{{ row.ip }}</td>{% endif %}
+        {% if 'site' in columns %}<td>{{ row.site }}</td>{% endif %}
+        {% if 'type' in columns %}<td style="color:{{row.type.color_fg}};background-color:{{row.type.color_bg}}">{{ row.type }}</td>{% endif %}
+        {% if 'os' in columns %}<td>{{ row.os }}</td>{% endif %}
+        {% if 'model' in columns %}<td>{{ row.supplier.name }}{% if row.model %} - {{ row.model }}{% endif %}</td>{% endif %}
+        {% if 'status' in columns %}<td>{% if row.status %}{{ row.status }}{% endif %}</td>{% endif %}
     </tr>{% endfor %}
 </tbody>
 </table>

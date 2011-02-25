@@ -66,13 +66,11 @@ def list_all(request, *args, **kw):
             filter_adm_list : dernier formulaire de rechere
             sort_adm_list : dernier tri
     """
-    HostForm.filter_querydict(request.user, 'HostForm', request.POST)
-    HostForm.filter_querydict(request.user, 'SearchHostForm', request.POST)
+    HostForm.filter_querydict(request.user, 'SearchHost', request.POST)
     #declare
     new_search = False
     form_extra = False
     reset=False
-    qs = Host.objects.filter_by_user(request.user)
 
     #instanciate forms
     if request.POST:
@@ -105,13 +103,17 @@ def list_all(request, *args, **kw):
     if request.GET.get('page', False):
         request.session["page_adm_list"]=request.GET.get('page', False)
 
-    #apply searchs
+    #apply searchs if any.
     search = form.cleaned_data.pop('global_search',False) if form.is_valid() else False
-    if search:
-        qs = global_search(search, qs)
-    qs = filter_hosts(qs, sorting, form.is_valid() and form.cleaned_data,
-        form_extra and form_extra.get_data())
-    form.update(qs)
+    if search or form.is_valid() and [e for e in form.cleaned_data.values() if e]:
+        qs = Host.objects.filter_by_user(request.user)
+        if search:
+            qs = global_search(search, qs)
+        qs = filter_hosts(qs, sorting, form.is_valid() and form.cleaned_data,
+            form_extra and form_extra.get_data())
+        form.update(qs)
+    else:
+        qs = Host.objects.none()
 
     #fill paginator
     paginator = DiggPaginator(qs, settings.TICKETS_PER_PAGE, body=5, tail=2, padding=2)
@@ -120,7 +122,8 @@ def list_all(request, *args, **kw):
     return render_to_response("clariadmin/list.html", {
         "page": page,
         "form": form,
-        "columns": ("hostname","ip", "site", "type", "os", "model", "status"),
+        "columns": HostForm.filter_list(request.user,"Host",
+                ("hostname","ip", "site", "type", "os", "model", "status")),
         "sorting": sorting,
         "form_extra":form_extra
     }, context_instance=RequestContext(request))
@@ -130,7 +133,7 @@ def new(request, from_host=False):
     """
     Create a new host.
     """
-    HostForm.filter_querydict(request.user, 'HostForm', request.POST)
+    HostForm.filter_querydict(request.user, 'Host', request.POST)
     add_fields=None
 
     if from_host and not request.POST:
@@ -138,7 +141,6 @@ def new(request, from_host=False):
         form = HostForm(request.user, instance=inst)
         add_fields = AdditionnalFieldForm.get_form(comp, host=inst)
     elif request.POST:
-
         form = HostForm(request.user, filtered_POST)
         if form.is_valid():
             host = form.save()
@@ -160,7 +162,7 @@ def new(request, from_host=False):
 
 @permission_required("clariadmin.can_access_clariadmin")
 def modify(request, host_id):
-    HostForm.filter_querydict(request.user, 'HostForm', request.POST)
+    HostForm.filter_querydict(request.user, 'Host', request.POST)
 
     host = get_host_or_404(request.user, pk=host_id)
     if not request.POST:
