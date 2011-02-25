@@ -95,6 +95,7 @@ def list_all(request, *args, **kw):
         if host_type:
             form_extra = AdditionnalFieldForm.get_form((request.session.get('filter_extra_adm_list',{})),host_type=HostType.objects.get(pk=host_type))
             form_extra.is_valid()
+    HostForm.filter_querydict(request.user,"SearchHost",form.fields)
 
     #get session/GET parametters
     sorting=request.GET.get('sort',request.session.get("sort_adm_list", '-id'))

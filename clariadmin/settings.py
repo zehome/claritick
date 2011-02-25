@@ -18,7 +18,7 @@ SECURITY = {
         "rootpw": 2,
         "os":-1,
     },
-    "Search": {
+    "SearchHost": {
         # Security level 10 needed for any field
         "__default__": 10,
         "os":-1
