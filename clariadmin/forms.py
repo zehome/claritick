@@ -65,7 +65,6 @@ class FormSecurityChecker(object):
                     self._security_can_save = False
                 self._security_deleted_fields.append(field)
                 del(self.fields[fname])
-
         self._security_can_view = bool(self.fields)
 
     @staticmethod
@@ -82,8 +81,21 @@ class FormSecurityChecker(object):
             if required_level < userlevel:
                 # LC: TODO: Debug: remove this
                 print "Deleted querydict key %s" % (key,)
-                del(querydict[key])
+                try:
+                    del(querydict[key])
+                except AttributeError:
+                    print "querydict is immutable"
+                    #querydict._mutable=True
         return original_querydict
+
+    @staticmethod
+    def filter_list(user, form_name, tup):
+        userlevel = user.get_profile().get_security_level()
+        security_settings = settings.SECURITY.get(form_name, {})
+        security_default_level = security_settings.get("__default__", settings.SECURITY["DEFAULT_LEVEL"])
+        return [e for e in tup
+            if userlevel < security_settings.get(e, security_default_level)]
+
 
     # Proxy accessor
     def security_can_view(self):
