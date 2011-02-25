@@ -39,21 +39,25 @@ class ExtraFieldAdmin(admin.ModelAdmin):
             'fields':('bool_val',)}),)
 
 class ExtraFieldAdminInLine(admin.TabularInline):
-    class Media:
-        css =  {"all":("admin_hosttype/admin_hosttype.css",)}
-        js =  ("admin_hosttype/admin_hosttype.js",)
+
     extra=0
     model=ParamAdditionnalField
     readonly_fields=('host_type','data_type','default_values')
     fields=('name','sorting_priority','fast_search','host_type','data_type','default_values')
 
+
 class HostTypeAdmin(admin.ModelAdmin):
-    inlines = [
-        ExtraFieldAdminInLine,
-    ]
+    class Media:
+        css = {"all":("admin_hosttype/admin_hosttype.css",)}
     formfield_overrides = {
         ColorField: {'widget': ColorPickerWidget},
     }
+    inlines = [
+        ExtraFieldAdminInLine,
+    ]
+    change_form_template = 'admin/clariadmin/hosttype/hosttype_change_form.html'
+    def change_view(self, request, object_id, extra_context=None):
+        return super(HostTypeAdmin, self).change_view(request, object_id, extra_context)
 
 admin.site.register(ParamAdditionnalField,ExtraFieldAdmin)
 admin.site.register(OperatingSystem)
