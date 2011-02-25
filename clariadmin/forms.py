@@ -75,25 +75,28 @@ class FormSecurityChecker(object):
         userlevel = user.get_profile().get_security_level()
         security_settings = settings.SECURITY.get(formName, {})
         security_default_level = security_settings.get("__default__", settings.SECURITY["DEFAULT_LEVEL"])
-        original_querydict = querydict.copy()
-        for key in querydict.keys():
+        filtred_querydict = querydict.copy()
+        #filtred_querydict._mutable=True
+        for key in filtred_querydict.keys():
             required_level = security_settings.get(key, security_default_level)
             if required_level < userlevel:
                 # LC: TODO: Debug: remove this
                 print "Deleted querydict key %s" % (key,)
-                try:
-                    del(querydict[key])
-                except AttributeError:
-                    print "querydict is immutable"
-                    #querydict._mutable=True
-        return original_querydict
+                del(filtred_querydict[key])
+        return filtred_querydict
 
     @staticmethod
-    def filter_list(user, form_name, tup):
+    def filter_list(user, form_name, fields):
+        """
+        user -- request.user: reference security level for this filtering
+        form_name -- name of the used key in settings SECURITY dict.
+        fileds -- list or iterable of keys to filter.
+        returns the `list` with only authorized filed names.
+        """
         userlevel = user.get_profile().get_security_level()
         security_settings = settings.SECURITY.get(form_name, {})
         security_default_level = security_settings.get("__default__", settings.SECURITY["DEFAULT_LEVEL"])
-        return [e for e in tup
+        return [e for e in fields
             if userlevel < security_settings.get(e, security_default_level)]
 
 
@@ -141,7 +144,7 @@ class HostForm(df.ModelForm, FormSecurityChecker):
 
 class AdditionnalFieldForm(df.Form):
     def _complete(self, host=None, host_type=None, blank=False):
-        """ peuple fonction du contexte le formulaire. """
+        """Adapt and fill the form. Called by `AdditionnalFieldForm.get_form`"""
         # Rapide controle des arguments
         if host:
             host_type=host.type
@@ -192,12 +195,20 @@ class AdditionnalFieldForm(df.Form):
             cur.save()
 
     def get_data(self):
+        """returns a `self.cleaned_data` copy without empty ChoiceFields"""
         return dict((k, self.cleaned_data[k])
                 for k, v in self.fields.iteritems()
                 if not((isinstance(v,df.ChoiceField) and self.cleaned_data[k]=='-1')))
 
     @staticmethod
     def get_form(*args, **kwargs):
+        """
+        Used to wrap `Form.__init__` method and returns a new instance.
+        It uses normal `Form.__init__` args and these named args:
+            host: host's host type as host_type and form with host's values.
+            host_type: host_type specific fields and default values.
+            blank: provide a form with no values
+        """
         h=kwargs.pop('host',False)
         ht=kwargs.pop('host_type',False)
         b=kwargs.pop('blank',False)
@@ -283,6 +294,7 @@ class SearchHostForm(df.Form, ModelFormTableMixin, FormSecurityChecker):
         self._security_filter(user = user, formName = 'SearchHost')
 
     def update(self, hosts):
+        """Restrict `ModelChoiceFields` to values existing in hosts queryset"""
         if self.fields.has_key('os'):
             self.fields['os'].queryset = OperatingSystem.objects.filter(host__in=hosts).distinct()
         if self.fields.has_key('supplier'):
