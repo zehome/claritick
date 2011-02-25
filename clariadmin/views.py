@@ -102,7 +102,7 @@ def list_all(request, *args, **kw):
             form_extra = AdditionnalFieldForm.get_form((request.session.get('filter_extra_adm_list',{})),host_type=HostType.objects.get(pk=host_type))
             form_extra.is_valid()
     # use polymorphism and filter SearchHostFrom as a HostFrom
-    HostForm.filter_querydict(request.user,"Host",form.fields)
+    form.fields = HostForm.filter_querydict(request.user, form.fields)
 
     #get session/GET parametters
     sorting=request.GET.get('sort',request.session.get("sort_adm_list", '-id'))
