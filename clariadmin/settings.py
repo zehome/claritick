@@ -11,7 +11,7 @@ SECURITY = {
     "DEFAULT_LEVEL": 50,
     # Permits to chose which field in the clariadmin/models.py Host
     # needs which security level at the minimum.
-    "Host": {
+    "HostForm": {
         # Security level 10 needed for any field
         "__default__": 10,
         # Root password needs level 2 or lower

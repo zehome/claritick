@@ -117,6 +117,7 @@ class Host(models.Model):
         return template.render(context)
 
     def copy_instance(self):
+        """Return an unsaved copy of self and self's `AdditionnalFlied`s"""
         h = Host(site=self.site, type=self.type, hostname=self.hostname+'_copy',
             os=self.os, status=self.status, date_end_prod=self.date_end_prod,
             supplier=self.supplier, commentaire=self.commentaire +

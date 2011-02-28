@@ -45,12 +45,12 @@ def filter_hosts(qs, sorting, search, search_extra=False):
     return qs.order_by(sorting)
 
 def global_search(user, search,qs):
-    fks = HostForm.filter_querydict(user, 'Host', {
+    fks = HostForm.filter_querydict(user, {
         'os':'name',
         'site':'label',
         'supplier':'name',
         'type':'text'})
-    fields = HostForm.filter_list(user, 'Host',SearchHostForm.Meta.fields)
+    fields = HostForm.filter_list(user, SearchHostForm.Meta.fields)
     return qs.filter((Q(additionnalfield__field__fast_search__exact=True)
             & Q(additionnalfield__value__icontains=search))
             | reduce(ior,(Q(**{key+"__icontains":search}) for key in fields if key not in fks.keys()))
@@ -72,7 +72,7 @@ def list_all(request, *args, **kw):
         filter_adm_list : dernier formulaire de rechere
         sort_adm_list : dernier tri
     """
-    POST = HostForm.filter_querydict(request.user, 'Host', request.POST)
+    POST = HostForm.filter_querydict(request.user, request.POST)
     #declare
     new_search = False
     form_extra = False
@@ -130,7 +130,7 @@ def list_all(request, *args, **kw):
     return render_to_response("clariadmin/list.html", {
         "page": page,
         "form": form,
-        "columns": HostForm.filter_list(request.user,"Host",
+        "columns": HostForm.filter_list(request.user,
                 ("hostname","ip", "site", "type", "os", "model", "status")),
         "sorting": sorting,
         "form_extra":form_extra
@@ -141,7 +141,7 @@ def new(request, from_host=False):
     """
     View to Create a new host. (eventualy copied from an existing one)
     """
-    POST = HostForm.filter_querydict(request.user, 'Host', request.POST)
+    POST = HostForm.filter_querydict(request.user, request.POST)
     add_fields=None
 
     if from_host and not POST:
@@ -170,7 +170,10 @@ def new(request, from_host=False):
 
 @permission_required("clariadmin.can_access_clariadmin")
 def modify(request, host_id):
-    POST = HostForm.filter_querydict(request.user, 'Host', request.POST)
+    """
+    View to modify a Host.
+    """
+    POST = HostForm.filter_querydict(request.user, request.POST)
 
     host = get_host_or_404(request.user, pk=host_id)
     if not POST:

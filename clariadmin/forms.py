@@ -67,13 +67,13 @@ class FormSecurityChecker(object):
                 del(self.fields[fname])
         self._security_can_view = bool(self.fields)
 
-    @staticmethod
-    def filter_querydict(user, formName, querydict):
+    @classmethod
+    def filter_querydict(cls, user, querydict):
         """
         This method will filter querydict, not letting user pass invalid data to the view.
         """
         userlevel = user.get_profile().get_security_level()
-        security_settings = settings.SECURITY.get(formName, {})
+        security_settings = settings.SECURITY.get(cls.__name__, {})
         security_default_level = security_settings.get("__default__", settings.SECURITY["DEFAULT_LEVEL"])
         filtred_querydict = querydict.copy()
         #filtred_querydict._mutable=True
@@ -85,16 +85,15 @@ class FormSecurityChecker(object):
                 del(filtred_querydict[key])
         return filtred_querydict
 
-    @staticmethod
-    def filter_list(user, form_name, fields):
+    @classmethod
+    def filter_list(cls, user, fields):
         """
-        user -- request.user: reference security level for this filtering
-        form_name -- name of the used key in settings SECURITY dict.
+        user -- request.user: reference security level for this filtering.
         fileds -- list or iterable of keys to filter.
         returns the `list` with only authorized filed names.
         """
         userlevel = user.get_profile().get_security_level()
-        security_settings = settings.SECURITY.get(form_name, {})
+        security_settings = settings.SECURITY.get(cls.__name__, {})
         security_default_level = security_settings.get("__default__", settings.SECURITY["DEFAULT_LEVEL"])
         return [e for e in fields
             if userlevel < security_settings.get(e, security_default_level)]
@@ -128,7 +127,7 @@ class HostForm(df.ModelForm, FormSecurityChecker):
             "status","commentaire")
     def __init__(self, user, *args, **kwargs):
         super(HostForm, self).__init__(*args, **kwargs)
-        self.fields['site'].queryset=Client.objects.filter(id__in=(c.id for c in user.clients))
+        self.fields['site'].queryset = Client.objects.filter(id__in=(c.id for c in user.clients))
 
         self._security_filter(user = user, formName = 'Host')
 
@@ -173,7 +172,8 @@ class AdditionnalFieldForm(df.Form):
                     if field.data_type == '4' else
                  df.DateField(**args(field,c_fields))
                     if field.data_type == '5' else
-                 df.ChoiceField(widget=df.FilteringSelect(attrs=attrs_filtering), choices=chain(((-1,''),),enumerate(field.default_values)), **args(field,c_fields))
+                 df.ChoiceField(widget=df.FilteringSelect(attrs=attrs_filtering),
+                    choices=[(-1,'')]+list(enumerate(field.default_values)), **args(field,c_fields))
                     if field.data_type == '3' else
                  df.MultipleChoiceField(choices=enumerate(field.default_values), **args(field,c_fields)))
             )for field in self.avail_fields))
