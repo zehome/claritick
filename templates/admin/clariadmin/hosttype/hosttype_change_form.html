@@ -19,8 +19,17 @@ django.jQuery.fn.formset = function (opts){
     }
 }
 
+old_dismiss = dismissAddAnotherPopup;
+dismissAddAnotherPopup = function(win, newId, newRepr) {
+    old_dismiss(win, newId, newRepr);
+    var elem = document.getElementById(windowname_to_id(win.name));
+    elem.onchange();
+}
+
+function handle_window(widget){console.log("manual onchange");};
+
 function showPopup(url){
-        var win = window.open( url + "&host_type="+ host_type_id, name, 'height=500,width=850,resizable=yes,scrollbars=yes');
+        var win = window.open( url + "&host_type="+ host_type_id, "id_extern_window_handler", 'height=500,width=850,resizable=yes,scrollbars=yes');
         win.focus();
         return false;
 }
@@ -69,7 +78,9 @@ function showPopup(url){
     {% block after_field_sets %}{% endblock %}
 
     {% for inline_admin_formset in inline_admin_formsets %}
-        <input type="button" value="Ajouter un champ complémentaire" onclick="showPopup('/admin/clariadmin/paramadditionnalfield/add/?_popup=1')" />        {% include inline_admin_formset.opts.template %}
+      <input type="button" value="Ajouter un champ complémentaire" onclick="showPopup('/admin/clariadmin/paramadditionnalfield/add/?_popup=1')" />
+      <input id="id_extern_window_handler" type="hidden" onchange="return handle_window(this)" />
+      {% include inline_admin_formset.opts.template %}
     {% endfor %}
 
     {% block after_related_objects %}{% endblock %}
