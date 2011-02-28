@@ -9,4 +9,5 @@ urlpatterns = patterns('clariadmin.views',
     url(r'^modify/(-?\d+)$',          'modify'),
     url(r'^list/(all)?$',          'list_all', name='list_hosts'),
     url(r'^getExtrafieldsForm/(-?\d+)(/b)?', 'ajax_extra_fields_form'),
+    url(r'^getParamExtrafield/(-?\d+)$', 'ajax_param_extra_fields' ,name='get_param_field')
 )

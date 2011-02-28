@@ -9,10 +9,11 @@ from django.http import HttpResponse, Http404
 from django.db.models import Q
 
 from clariadmin.models import Host, HostType
-from clariadmin.forms import HostForm, SearchHostForm, AdditionnalFieldForm
+from clariadmin.forms import HostForm, SearchHostForm, AdditionnalFieldForm, ParamAdditionnalField
 from common.diggpaginator import DiggPaginator
 from operator import ior
 from itertools import chain
+from django.utils import simplejson as json
 
 def filter_hosts(qs, sorting, search, search_extra=False):
     search_mapping={'ip': 'icontains',
@@ -208,3 +209,14 @@ def ajax_extra_fields_form(request, host_id, blank=False):
     host_type = get_object_or_404(HostType, pk=host_id)
     form=AdditionnalFieldForm.get_form(host_type=host_type, blank=bool(blank))
     return HttpResponse(form.as_table())
+
+@permission_required("clariadmin.can_access_clariadmin")
+def ajax_param_extra_fields(request, field_id):
+    v = get_object_or_404(ParamAdditionnalField, pk=field_id)
+    return HttpResponse(json.dumps({'id':v.id,
+                                    'name':v.name,
+                                    'fast_search':v.fast_search,
+                                    'sorting_priority':v.sorting_priority,
+                                    'host_type':v.host_type.id,
+                                    'data_type':v.data_type,
+                                    'default_values':v.default_values}))
