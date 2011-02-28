@@ -8,8 +8,9 @@ from django.views.generic import list_detail
 from django.http import HttpResponse, Http404
 from django.db.models import Q
 
-from clariadmin.models import Host, HostType
-from clariadmin.forms import HostForm, SearchHostForm, AdditionnalFieldForm, ParamAdditionnalField
+from clariadmin.models import Host, HostType, ParamAdditionnalField 
+from clariadmin.models import CHOICES_FIELDS_AVAILABLE
+from clariadmin.forms import HostForm, SearchHostForm, AdditionnalFieldForm
 from common.diggpaginator import DiggPaginator
 from operator import ior
 from itertools import chain
@@ -218,5 +219,6 @@ def ajax_param_extra_fields(request, field_id):
                                     'fast_search':v.fast_search,
                                     'sorting_priority':v.sorting_priority,
                                     'host_type':v.host_type.id,
-                                    'data_type':v.data_type,
+                                    'data_type':dict(CHOICES_FIELDS_AVAILABLE)
+                                                [str(v.data_type)],
                                     'default_values':v.default_values}))
