@@ -131,9 +131,9 @@ class HostForm(df.ModelForm, FormSecurityChecker):
 
         self._security_filter(user = user, formName = 'Host')
 
-    def save(self):
+    def save(self, force_insert=False, force_update=False, commit=True):
         assert(self.security_can_save())
-        return super(HostForm, self).save()
+        return super(HostForm, self).save(commit)
 
     def is_valid(self):
         if not self.security_can_save():
@@ -180,7 +180,8 @@ class AdditionnalFieldForm(df.Form):
         # renvoie son adresse
         return self
 
-    def save(self):
+    def save(self, force_insert=False, force_update=False, commit=True):
+        """To use used like the ModelFrom save method"""
         if not self.host.type:
             return False
         for f in self.avail_fields:
@@ -192,7 +193,7 @@ class AdditionnalFieldForm(df.Form):
             cur.value = self.cleaned_data['val_%s'%(f.id)]
             if cur.value == None:
                 cur.value = "null"
-            cur.save()
+            cur.save(commit)
 
     def get_data(self):
         """returns a `self.cleaned_data` copy without empty ChoiceFields"""
