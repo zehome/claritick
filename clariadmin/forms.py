@@ -217,7 +217,7 @@ class AdditionnalFieldForm(df.Form):
 
 class ParamAdditionnalFieldAdminForm(df.ModelForm):
     text_val = df.CharField(label=u'Défaut', required=False)
-    bool_val = df.BooleanField(label=u'Défaut', required=True)
+    bool_val = df.BooleanField(label=u'Défaut', required=False)
     int_val  = df.IntegerField(label=u'Défaut', required=False)
     date_val = df.DateField(label=u'Défaut', required=False)
     choice01_val = df.CharField(label=u'Proposition', required=False)
