@@ -77,7 +77,9 @@ def list_all(request, *args, **kw):
     #declare
     new_search = False
     form_extra = False
-    reset=False
+    reset = False
+    columns = HostForm.filter_list(request.user,(
+		"hostname","ip", "site", "type", "os", "model", "status"))
 
     #instanciate forms
     if POST:
@@ -107,8 +109,10 @@ def list_all(request, *args, **kw):
 
     #get session/GET parametters
     sorting=request.GET.get('sort',request.session.get("sort_adm_list", '-id'))
+    if not (sorting in columns or sorting.startswith('-') and sorting[1:] in columns):
+        sorting = '-id'
     if request.GET.get('sort', False):
-        request.session["sort_adm_list"]=request.GET.get('sort', False)
+        request.session["sort_adm_list"] = sorting
     if request.GET.get('page', False):
         request.session["page_adm_list"]=request.GET.get('page', False)
 
@@ -131,8 +135,7 @@ def list_all(request, *args, **kw):
     return render_to_response("clariadmin/list.html", {
         "page": page,
         "form": form,
-        "columns": HostForm.filter_list(request.user,
-                ("hostname","ip", "site", "type", "os", "model", "status")),
+        "columns": columns,
         "sorting": sorting,
         "form_extra":form_extra
     }, context_instance=RequestContext(request))
