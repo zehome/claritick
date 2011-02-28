@@ -28,7 +28,11 @@ django.jQuery.fn.formset = function (opts){
 
 old_dismiss = dismissAddAnotherPopup;
 dismissAddAnotherPopup = function(win, newId, newRepr) {
-    old_dismiss(win, newId, newRepr);
+    try{
+        old_dismiss(win, newId, newRepr);
+    }catch(err){
+        win.close();
+    }
     var elem = document.getElementById(windowname_to_id(win.name));
     elem.onchange();
 }

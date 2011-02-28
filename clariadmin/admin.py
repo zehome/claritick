@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.contrib import admin
+from django.http import HttpResponse
 from clariadmin.models import OperatingSystem, HostType, Supplier, ParamAdditionnalField
 from clariadmin.forms import ParamAdditionnalFieldAdminForm
 from common.widgets import ColorPickerWidget
@@ -37,6 +38,14 @@ class ExtraFieldAdmin(admin.ModelAdmin):
         ('Booleen',{
             'classes': ('dj_admin_Bool',),
             'fields':('bool_val',)}),)
+
+    def response_change(self, request, obj, *args, **kwargs):
+        if(request.REQUEST.has_key('_popup')):
+            return HttpResponse("""<script type="text/javascript">
+                 opener.dismissAddAnotherPopup(window);
+                </script>""")
+        else:
+            return super(CustomModelAdmin, self).response_change(request, obj, *args, **kwargs)
 
 class ExtraFieldAdminInLine(admin.TabularInline):
 
