@@ -40,15 +40,18 @@ class ExtraFieldAdmin(admin.ModelAdmin):
             'fields':('bool_val',)}),)
 
     def response_change(self, request, obj, *args, **kwargs):
+        """
+        Inspired from http://drl.posterous.com/django-admin-popup-to-change-add
+        """
         if(request.REQUEST.has_key('_popup')):
-            return HttpResponse("""<script type="text/javascript">
-                 opener.dismissAddAnotherPopup(window);
-                </script>""")
+            return HttpResponse("""<html><head></head><body>
+                  <script type="text/javascript">
+                  opener.dismissAddAnotherPopup(window);
+                  </script></body></html>""")
         else:
             return super(CustomModelAdmin, self).response_change(request, obj, *args, **kwargs)
 
 class ExtraFieldAdminInLine(admin.TabularInline):
-
     extra=0
     model=ParamAdditionnalField
     readonly_fields=('host_type','data_type','default_values')
