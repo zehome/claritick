@@ -44,23 +44,39 @@ def global_search(user, search, qs):
     Returns results according to search keyword.
     It will look in all available fields.
     """
+
+    # LC: Detournement du filter_querydict,
+    # Filtre les foreign key en fonction du niveau
+    # de securite.
     fks = HostForm.filter_querydict(user, {
-        'os':'name',
+        'os': 'name',
         'site':'label',
         'supplier':'name',
         'type':'text'})
-    fields = HostForm.filter_list(user, SearchHostForm.Meta.fields)
-    return qs.filter((Q(additionnalfield__field__fast_search__exact=True)
-            & ~Q(additionnalfield__field__data_type__in=('2','3','6'))
-            & Q(additionnalfield__value__icontains=search))
-            | reduce(ior,(Q(**{key+"__icontains":search})
-                     for key in fields if key not in fks.keys()))
-            | reduce(ior,(Q(**{"%s__%s__icontains"%(key,value):search}) 
-                     for key,value in fks.iteritems()))).distinct()
 
-def get_host_or_404(user,*args, **kw):
+    # Filter local fields
+    fields = HostForm.filter_list(user, SearchHostForm.Meta.fields)
+    qs = qs.filter(
+        (
+            Q(additionnalfield__field__fast_search__exact=True)
+            & ~Q(additionnalfield__field__data_type__in=('2','3','6'))
+            & Q(additionnalfield__value__icontains=search)
+        ) | (
+            # Do search only for local fields
+            reduce(ior,(Q(**{"%s__icontains" % (key,): search})
+                     for key in fields if key not in fks.keys()))
+        ) | (
+            # Do search on filtered foreign keys
+            reduce(ior,(Q(**{"%s__%s__icontains" % (key, value): search}) 
+                     for key, value in fks.iteritems()))
+        )
+    )
+    # Distict is needed because could match 2 fields in the or just above
+    return qs.distinct()
+
+def get_host_or_404(user, *args, **kw):
     """wrap get_object_or_404 to restrict access by user"""
-    h=get_object_or_404(Host,*args,**kw)
+    h = get_object_or_404(Host, *args, **kw)
     if not h.available_for(user):
         raise Http404
     return h
@@ -75,24 +91,28 @@ def list_all(request, *args, **kw):
         sort_adm_list : dernier tri
     """
     POST = HostForm.filter_querydict(request.user, request.POST)
-    #declare
     new_search = False
     form_extra = False
     reset = False
-    columns = HostForm.filter_list(request.user,(
-		"hostname","ip", "site", "type", "os", "model", "status"))
+    columns = HostForm.filter_list(request.user, (
+		"hostname", "ip", "site", "type", "os", "model", "status"))
 
-    #instanciate forms
+    # LC: ?
+    host_type = request.session.get('filter_adm_list', {}).get('type', False)
+
     if POST:
-        reset = POST.get('filter_reset',False)
-        form = SearchHostForm(request.user,POST if not reset else {})
+        reset = POST.get('filter_reset', False)
+        form = SearchHostForm(request.user, POST if not reset else {})
         if form.is_valid():
-            post_filtred = dict((k,v) for k,v in POST.iteritems()
-                                if k in chain(form.Meta.fields,("global_search",)))
-            if request.session.get('filter_adm_list',{})!=post_filtred:
-                new_search=True
-                request.session['filter_adm_list']=post_filtred
-            host_type = request.session.get('filter_adm_list',{}).get('type', False)
+            # ?
+            post_filtred = dict((k, v) for k, v in POST.iteritems()
+                                if k in chain(form.Meta.fields, ("global_search",)))
+
+            # ??
+            if request.session.get('filter_adm_list', {}) != post_filtred:
+                new_search = True
+                request.session['filter_adm_list'] = post_filtred
+
             if host_type:
                 form_extra = AdditionnalFieldForm.get_form(POST if not reset else {}, host_type=HostType.objects.get(pk=host_type))
                 request.session['filter_extra_adm_list'] = dict(
@@ -100,25 +120,30 @@ def list_all(request, *args, **kw):
                         if k in form_extra.fields.keys()])
                 form_extra.is_valid()
     else:
-        form = SearchHostForm(request.user,request.session.get('filter_adm_list',{}))
-        host_type = request.session.get('filter_adm_list',{}).get('type', False)
+        form = SearchHostForm(request.user, request.session.get('filter_adm_list', {}))
         if host_type:
             form_extra = AdditionnalFieldForm.get_form((request.session.get('filter_extra_adm_list',{})),host_type=HostType.objects.get(pk=host_type))
             form_extra.is_valid()
+
     # use polymorphism and filter SearchHostFrom as a HostFrom
+    # LC: ??!?!
     form.fields = HostForm.filter_querydict(request.user, form.fields)
 
     #get session/GET parametters
-    sorting=request.GET.get('sort',request.session.get("sort_adm_list", '-id'))
+    sorting = request.GET.get('sort', request.session.get("sort_adm_list", '-id'))
+
+    # LC: WTF ?
     if not (sorting in columns or sorting.startswith('-') and sorting[1:] in columns):
         sorting = '-id'
     if request.GET.get('sort', False):
         request.session["sort_adm_list"] = sorting
     if request.GET.get('page', False):
-        request.session["page_adm_list"]=request.GET.get('page', False)
+        request.session["page_adm_list"] = request.GET.get('page', False)
 
     #apply searchs if any.
-    search = form.cleaned_data.pop('global_search',False) if form.is_valid() else False
+    # LC: No oneline please
+    search = form.cleaned_data.pop('global_search', False) if form.is_valid() else False
+    # LC: ?? Simplify
     if search or form.is_valid() and [e for e in form.cleaned_data.values() if e]:
         qs = Host.objects.filter_by_user(request.user)
         if search:
@@ -131,6 +156,7 @@ def list_all(request, *args, **kw):
 
     #fill paginator
     paginator = DiggPaginator(qs, settings.TICKETS_PER_PAGE, body=5, tail=2, padding=2)
+    # Simplify, no oneline please
     page = paginator.page(1 if new_search else request.session.get('page_adm_list', 1)
         if int(request.session.get('page_adm_list', 1)) <= paginator.num_pages else 1)
     return render_to_response("clariadmin/list.html", {
@@ -149,18 +175,19 @@ def new(request, from_host=False):
     POST = HostForm.filter_querydict(request.user, request.POST)
     add_fields=None
 
+    # LC: Simplify
     if from_host and not POST:
-        inst, comp = get_host_or_404(request.user, pk=from_host).copy_instance()
-        form = HostForm(request.user, instance=inst)
-        add_fields = AdditionnalFieldForm.get_form(comp, host=inst)
+        inst, comp = get_host_or_404(request.user, pk = from_host).copy_instance()
+        form = HostForm(request.user, instance = inst)
+        add_fields = AdditionnalFieldForm.get_form(comp, host = inst)
     elif POST:
         form = HostForm(request.user, POST)
         if form.is_valid():
             host = form.save()
-            form_comp = AdditionnalFieldForm.get_form(data=POST, host=host)
+            form_comp = AdditionnalFieldForm.get_form(data = POST, host = host)
             if form_comp.is_valid():
                 form_comp.save()
-            redir=POST.get('submit_button',False)
+            redir = POST.get('submit_button', False)
             if redir == 'new':
                 pass
             elif redir == 'save':
@@ -182,18 +209,20 @@ def modify(request, host_id):
 
     host = get_host_or_404(request.user, pk=host_id)
     if not POST:
+        # LC: I don't like that name !
         form = HostForm(request.user,instance=host)
         form_2 = AdditionnalFieldForm.get_form(host=host)
     else:
-        if POST.get("delete",False):
+        if POST.get("delete", False):
             host.delete()
             return redirect('list_hosts')
         form = HostForm(request.user, POST, instance=host)
         form_comp = AdditionnalFieldForm.get_form(POST, host=host)
+        # LC: Code duplicated no ?
         if form_comp.is_valid() and form.is_valid():
             form_comp.save()
             form.save()
-            redir = POST.get('submit_button',False)
+            redir = POST.get('submit_button', False)
             if redir == 'new':
                 return redirect('new_host')
             elif redir == 'save':
@@ -208,6 +237,10 @@ def modify(request, host_id):
 
 @permission_required("clariadmin.can_access_clariadmin")
 def ajax_extra_fields_form(request, host_id, blank=False):
+    """
+
+    LC: Where is the docstring ?
+    """
     if int(host_id) < 0:
         return HttpResponse("<tr></tr>")
     host_type = get_object_or_404(HostType, pk=host_id)
