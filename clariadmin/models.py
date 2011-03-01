@@ -100,10 +100,6 @@ class Host(models.Model):
 
     status = models.CharField(u"Statut", max_length=32, blank=True, null=True)
 
-#    automate = models.CharField(u"Automate", max_length=64, blank=True, null=True)
-
-    # LC: TODO: handle documents
-
     def get_absolute_url(self):
         return "/clariadmin/modify/%i" % (self.id,)
 
@@ -124,7 +120,6 @@ class Host(models.Model):
             u"\n -> Copie de la machine %s(ip:%s, le:%s)"%(self.hostname, self.ip, date.today()),
              date_start_prod=self.date_start_prod
              , model=self.model, location=self.location)
-        #h.save(commit=False)
         afs=SortedDict()
         for af in self.additionnalfield_set.all():
             AdditionnalField(field=af.field, host=h, value=af.value)#.save()
