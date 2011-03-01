@@ -46,10 +46,10 @@ def global_search(user, search, qs):
            'site':'label',
            'supplier':'name',
            'type':'text'}
-    # Filtre les foreign key en fonction du niveau
-    # de securite.
+    # Filtre les foreign key en fonction du niveau de securite.
+    authorized_keys = SearchHostForm.filter_list(user,fks.keys())
     fks = dict([(k,v) for k,v in fks.iteritems() 
-        if k in SearchHostForm.filter_list(user,fks.keys())])
+        if k in authorized_keys])
 
     # Filter local fields
     fields = SearchHostForm.filter_list(user, SearchHostForm.Meta.fields)
