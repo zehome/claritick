@@ -16,36 +16,35 @@ from itertools import chain
 from django.utils import simplejson as json
 
 def filter_hosts(qs, sorting, search, search_extra=False):
-    search_mapping={'ip': 'icontains',
+    """
+    Returns results according to search and search_extra dictionnays.
+    It will look in fields related to the keyword.
+    """
+    search_mapping={'ip': 'contains',
         'hostname': 'icontains',
         'commentaire': 'icontains',
         'status': 'icontains'
         }
-    try:
-        if search:
-            for key, value in search.iteritems():
-                if value:
-                    try:
-                        lookup = search_mapping[key]
-                    except KeyError:
-                        lookup = 'exact'
-                    if key == 'site':
-                        qs= qs.filter_by_site(value)
-                    else:
-                        qs = qs.filter(**{"%s__%s"%(key,lookup):value})
-    except AttributeError:
-        pass
-    try:
-        if search_extra:
-            for key, value in search_extra.iteritems():
-                if value:
-                    qs = qs.filter(Q(additionnalfield__field__id__exact=key.replace("val_","")) &
-                                   Q(additionnalfield__value__icontains=value))
-    except AttributeError:
-        pass
+    if search:
+        for key, value in search.iteritems():
+            if value:
+                lookup = search_mapping.get(key,'exact')
+                if key == 'site':
+                    qs= qs.filter_by_site(value)
+                else:
+                    qs = qs.filter(**{"%s__%s"%(key,lookup):value})
+    if search_extra:
+        for key, value in search_extra.iteritems():
+            if value:
+                qs = qs.filter(Q(additionnalfield__field__id__exact=key.replace("val_","")) &
+                               Q(additionnalfield__value__icontains=value))
     return qs.order_by(sorting)
 
 def global_search(user, search,qs):
+    """
+    Returns results according to search keyword.
+    It will look in all available fields.
+    """
     fks = HostForm.filter_querydict(user, {
         'os':'name',
         'site':'label',
@@ -53,9 +52,12 @@ def global_search(user, search,qs):
         'type':'text'})
     fields = HostForm.filter_list(user, SearchHostForm.Meta.fields)
     return qs.filter((Q(additionnalfield__field__fast_search__exact=True)
+            & ~Q(additionnalfield__field__data_type__in=('2','3','6'))
             & Q(additionnalfield__value__icontains=search))
-            | reduce(ior,(Q(**{key+"__icontains":search}) for key in fields if key not in fks.keys()))
-            | reduce(ior,(Q(**{"%s__%s__icontains"%(key,value):search}) for key,value in  fks.iteritems()))).distinct()
+            | reduce(ior,(Q(**{key+"__icontains":search})
+                     for key in fields if key not in fks.keys()))
+            | reduce(ior,(Q(**{"%s__%s__icontains"%(key,value):search}) 
+                     for key,value in fks.iteritems()))).distinct()
 
 def get_host_or_404(user,*args, **kw):
     """wrap get_object_or_404 to restrict access by user"""
@@ -67,7 +69,7 @@ def get_host_or_404(user,*args, **kw):
 @permission_required("clariadmin.can_access_clariadmin")
 def list_all(request, *args, **kw):
     """
-    Liste toutes les machines sans aucun filtre
+    Vue permettant de lister les machines que l'on souhaite.
     Variables de session utilisées:
         global_search_adm_list : dernier mot clef de recherche globale
         filter_adm_list : dernier formulaire de rechere
@@ -137,7 +139,7 @@ def list_all(request, *args, **kw):
         "form": form,
         "columns": columns,
         "sorting": sorting,
-        "form_extra":form_extra
+        "form_extra": form_extra
     }, context_instance=RequestContext(request))
 
 @permission_required("clariadmin.can_access_clariadmin")
