@@ -86,7 +86,7 @@
     <table class="search">
 {{ form.as_column_table }}
     </table>
-    <table id="extra_fields" class="search">{%if form_extra%}{{form_extra.as_column_table}}{%else%}<tr><td></td></tr>{%endif%}</table>
+    <table id="extra_fields" class="search">{%if form_extra%}{{form_extra.as_table}}{%else%}<tr><td></td></tr>{%endif%}</table>
     <div class="left_buttons">
         <button type="reset" iconClass="dijitrtl dijitIconClear" dojoType="dijit.form.Button">Annuler</button>
         <button type="button" iconClass="dijitrtl dijitIconDelete" name="reset_button" onclick="postwith({filter_reset:'true'},'.')" dojoType="dijit.form.Button">Reset</button>
