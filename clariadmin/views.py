@@ -7,13 +7,13 @@ from django.conf import settings
 from django.views.generic import list_detail
 from django.http import HttpResponse, Http404
 from django.db.models import Q
+from django.utils import simplejson as json
 
 from clariadmin.models import Host, HostType
 from clariadmin.forms import HostForm, SearchHostForm, AdditionnalFieldForm
 from common.diggpaginator import DiggPaginator
 from operator import ior
 from itertools import chain
-from django.utils import simplejson as json
 
 def filter_hosts(qs, sorting, search, search_extra=False):
     """
