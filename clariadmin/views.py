@@ -15,7 +15,7 @@ from common.diggpaginator import DiggPaginator
 from operator import ior
 from itertools import chain
 
-def filter_hosts(qs, sorting, search, search_extra=False):
+def filter_hosts(qs, sorting, search, search_extra={}):
     """
     Returns results according to search and search_extra dictionnays.
     It will look in fields related to the keyword.
@@ -32,15 +32,14 @@ def filter_hosts(qs, sorting, search, search_extra=False):
                 if key == 'site':
                     qs= qs.filter_by_site(value)
                 else:
-                    qs = qs.filter(**{"%s__%s"%(key,lookup):value})
-    if search_extra:
-        for key, value in search_extra.iteritems():
-            if value:
-                qs = qs.filter(Q(additionnalfield__field__id__exact=key.replace("val_","")) &
-                               Q(additionnalfield__value__icontains=value))
+                    qs = qs.filter(**{"%s__%s" % (key, lookup): value})
+    for key, value in search_extra.iteritems():
+        if value:
+            qs = qs.filter(Q(additionnalfield__field__id__exact=key.replace("val_","")) &
+                           Q(additionnalfield__value__icontains=value))
     return qs.order_by(sorting)
 
-def global_search(user, search,qs):
+def global_search(user, search, qs):
     """
     Returns results according to search keyword.
     It will look in all available fields.
