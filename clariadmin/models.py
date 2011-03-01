@@ -74,7 +74,7 @@ class Host(models.Model):
         verbose_name = u"Machine"
         ordering = ['site', 'hostname']
         permissions = (
-            ("can_access_clariadmin", "Accès CLARIADMIN"),
+            ("can_access_clariadmin", u"Accès CLARIADMIN"),
         )
 
     objects = HostManager()
