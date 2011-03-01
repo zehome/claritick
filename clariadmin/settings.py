@@ -17,4 +17,11 @@ SECURITY = {
         # Root password needs level 2 or lower
         "rootpw": 2,
     },
+    "SearchHostForm": {
+        # Security level 10 needed for any field
+        "__default__": 10,
+        # Root password needs level 2 or lower
+        "rootpw": 2,
+    },
+
 }
