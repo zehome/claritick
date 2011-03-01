@@ -193,7 +193,8 @@ class AdditionnalFieldForm(df.Form):
             cur.value = self.cleaned_data['val_%s'%(f.id)]
             if cur.value == None:
                 cur.value = "null"
-            cur.save(commit)
+            if commit:
+                cur.save()
 
     def get_data(self):
         """returns a `self.cleaned_data` copy without empty ChoiceFields"""
