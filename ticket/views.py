@@ -13,6 +13,7 @@ from django.template import RequestContext
 from django.forms.models import modelformset_factory
 from django.utils import simplejson as json
 from django.contrib.auth.decorators import login_required, permission_required
+from django.views.decorators.csrf import csrf_exempt
 
 from dojango.decorators import json_response
 
@@ -596,9 +597,11 @@ def ajax_load_ticketmailtrace(request, ticket_id):
             {"ticketmailtrace": ticketmailtrace},
             context_instance=RequestContext(request))
 
+@csrf_exempt
 @login_required
 def ajax_set_alarm(request, ticket_id):
     """ Met (ou enlève) une alarme sur le ticket """
+    ret=''
     if not ticket_id:
         raise PermissionDenied
 
@@ -608,10 +611,12 @@ def ajax_set_alarm(request, ticket_id):
     except Ticket.DoesNotExist:
         raise PermissionDenied
 
-    try:
-        reason = request.POST.keys()[0]
-    except IndexError:
-        reason = ''
+    reason = ''
+    if request.POST:
+        try:
+            reason = request.POST.keys()[0]
+        except IndexError:
+            pass
 
     alarm = ticket.get_current_alarm()
 
@@ -632,7 +637,6 @@ def ajax_set_alarm(request, ticket_id):
             alarm.date_close = datetime.datetime.now()
             alarm.save()
         ret = "Nouvelle Alarme"
-
     return http.HttpResponse(ret)
 
 @login_required

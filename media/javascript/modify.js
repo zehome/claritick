@@ -191,16 +191,31 @@ function loadChild (url, add_ticket_full, state_new, state_closed, state_active)
 
 
 function setTicketAlarm(url) {
-    dojo.xhrPost({
-    url: url,
-    postData: dojo.byId('id_alarm').value,
-    handleAs: 'text',
-    load: function (data) {
-        dijit.byId('alarm_dialog').hide();
-        var newclass = dojo.byId('id_alarm').value ? "claritickTicketAlarm" : "claritickNoTicketAlarm";
-        dijit.byId('alarm_button').attr('iconClass', 'dijitEditorIcon '+newclass);
-        dijit.byId('alarm_dialog').attr('title', data);
-    }});
+    var postdata;
+    postdata = dojo.byId('id_alarm').value;
+    if (postdata) {
+        dojo.xhrPost({
+        url: url,
+        postData:dojo.byId('id_alarm').value,
+        handleAs: 'text',
+        load: function (data) {
+            dijit.byId('alarm_dialog').hide();
+            var newclass = dojo.byId('id_alarm').value ? "claritickTicketAlarm" : "claritickNoTicketAlarm";
+            dijit.byId('alarm_button').attr('iconClass', 'dijitEditorIcon '+newclass);
+            dijit.byId('alarm_dialog').attr('title', data);
+        }});
+    } else {
+        dojo.xhrGet({
+        url: url,
+        handleAs: 'text',
+        load: function (data) {
+            dijit.byId('alarm_dialog').hide();
+            var newclass = dojo.byId('id_alarm').value ? "claritickTicketAlarm" : "claritickNoTicketAlarm";
+            dijit.byId('alarm_button').attr('iconClass', 'dijitEditorIcon '+newclass);
+            dijit.byId('alarm_dialog').attr('title', data);
+        }});
+
+    }
 }
 
 function viewTicketMailTraceDialog(url) {
@@ -252,7 +267,7 @@ function update_lock() {
     {
         dojo.global.clearTimeout(timeout_id);
     }
-    dojo.xhrPost({url: lock_url, load: function (data) {
+    dojo.xhrGet({url: lock_url, load: function (data) {
             timeout_id = dojo.global.setTimeout("update_lock()", lock_settings.LOCK_UPDATE * 1000);
             }});
 }
@@ -263,7 +278,7 @@ function modif_ticket() {
         connections = [];
     }
     else { return; }
-    dojo.xhrPost({url: lock_url, load: function (data) {
+    dojo.xhrGet({url: lock_url, load: function (data) {
         var ret = dojo.fromJson(data);
         var dialog = dijit.byId('lock_dialog');
         var content = dojo.byId('lock_dialog_content');
