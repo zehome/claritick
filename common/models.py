@@ -93,7 +93,7 @@ class JsonField(models.TextField):
     def get_db_prep_value(self, value, connection, prepared=False):
         return self.get_prep_value(value, connection)
 
-    def get_prep_value(self, value):
+    def get_prep_value(self, value, connection):
         return json.dumps(value)
 
 class TelephoneField(models.CharField):
