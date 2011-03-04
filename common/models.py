@@ -37,7 +37,7 @@ class ByteaField(models.TextField):
         raise TypeError('Lookup type %r not supported.' % lookup_type)
 
     def get_db_prep_value(self, value, connection, prepared=False):
-        return self.get_prep_value(value)
+        return self.get_prep_value(value, connection)
 
     def get_prep_value(self, value, connection):
         return buffer(value)
@@ -59,7 +59,7 @@ class PickleField(models.TextField):
         return buffer(pickle.dumps(value, 2))
 
     def get_db_prep_value(self, value, connection, prepared=False):
-        return self.get_prep_value(value)
+        return self.get_prep_value(value, connection)
 
     def to_python(self, value):
         if isinstance(value, buffer):
@@ -91,7 +91,7 @@ class JsonField(models.TextField):
         return value
 
     def get_db_prep_value(self, value, connection, prepared=False):
-        return self.get_prep_value(value)
+        return self.get_prep_value(value, connection)
 
     def get_prep_value(self, value):
         return json.dumps(value)
