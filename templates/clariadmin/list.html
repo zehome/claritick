@@ -12,27 +12,29 @@
     dojo.require("dijit.Menu");
     dojo.require('dijit.form.MultiSelect');
     dojo.require('dijit.form.CheckBox');
-
-    function handle_data(data){
-        tab=dojo.byId("extra_fields");
-        tab.innerHTML=data;
-        dojo.parser.parse(tab);
-    }
-    function typeChanged(select_box)
-    {
-        //dojo.byId("extra_fieldset").classList.remove("dijitHidden");
-        dojo.xhrGet({
-            url:"{% url clariadmin.views.ajax_extra_fields_form -1 '/b' %}".replace('-1',select_box.item.value?select_box.item.value:-1),
-            load:handle_data
+    dojo.addOnLoad(function(){
+            dojo.forEach(dojo.query("#context_lines tr"), function(row, index)
+                {
+                    create_menu(row.id, row.children[0].textContent);
+                });
+                dojo.byId("id_global_search").focus();
             });
 
+    function typeChanged(select_box){
+        dojo.xhrGet({
+            url: "{% url clariadmin.views.ajax_extra_fields_form -1 '/b' %}".replace('-1',select_box.item.value?select_box.item.value:-1),
+            load: function(data){
+                    tab = dojo.byId("extra_fields");
+                    tab.innerHTML = data;
+                    dojo.parser.parse(tab);
+                }
+            });
     }
-    var pMenu;
     function create_menu(target_id, host_name) {
         pMenu = new dijit.Menu({
             targetNodeIds: [target_id,],
         });
-        target_id=target_id.replace("comp_","");
+        target_id = target_id.replace("comp_","");
         pMenu.addChild(new dijit.MenuItem({
             label: "Éditer "+host_name,
             iconClass: "dijitEditorIcon dijitEditorIconSave",
@@ -44,12 +46,9 @@
             iconClass: "dijitEditorIcon dijitEditorIconDelete",
             onClick: function() {
                 confirmDialog("Supression de l hote", "Êtes vous sûr de vouloir supprimer cette machine de la base?",
-                    function(arg,url){
-                        if(arg){
-                            postwith(
-                            {delete:"true"},
-                            url)
-                        }
+                    function(arg, url){
+                        if(arg)
+                            postwith({delete: "true"}, url);
                     },
                     "{% url clariadmin.views.modify -1 %}".replace("-1", target_id)
                 )},
@@ -63,16 +62,6 @@
         }));
         pMenu.startup();
     }
-
-    dojo.addOnLoad(function()
-            {dojo.forEach(dojo.query("#context_lines tr"), function(row, index)
-                {
-                    create_menu(row.id, row.children[1].textContent);
-                });
-                var global_search = dojo.byId("id_global_search");
-                if (global_search)
-                    global_search.focus();
-            });
 </script>
 
 {% endblock %}

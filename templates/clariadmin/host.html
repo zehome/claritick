@@ -27,8 +27,8 @@
     dojo.require('dijit.form.MultiSelect');
     dojo.require('dijit.form.CheckBox');
     function handle_data(data){
-        tab=dojo.byId("extra_fields");
-        tab.innerHTML=data;
+        tab = dojo.byId("extra_fields");
+        tab.innerHTML = data;
         dojo.parser.parse(tab);
     }
     function typeChanged(select_box)
@@ -40,10 +40,8 @@
             });
     }
     function confirmation_callback(myBool, form_id){
-        if(myBool){
-            postwith(
-            {delete:"true"},dojo.byId(form_id));
-        }
+        if(myBool)
+            postwith({delete: "true"}, dojo.byId(form_id));
     }
 </script>
 {% endblock %}
