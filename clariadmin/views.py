@@ -28,7 +28,7 @@ def filter_hosts(qs, sorting, search, search_extra={}):
         if value:
             lookup = search_mapping.get(key,'exact')
             if key == 'site':
-                qs= qs.filter_by_site(value)
+                qs = qs.filter_by_site(value)
             else:
                 qs = qs.filter(**{"%s__%s" % (key, lookup): value})
     for key, value in search_extra.iteritems():
@@ -55,6 +55,7 @@ def global_search(user, search, qs):
     fields = SearchHostForm.filter_list(user, SearchHostForm.Meta.fields)
     qs = qs.filter(
         (
+            # Do search on extra_fields
             Q(additionnalfield__field__fast_search__exact=True)
             & ~Q(additionnalfield__field__data_type__in=('2','3','6'))
             & Q(additionnalfield__value__icontains=search)
@@ -81,17 +82,17 @@ def get_host_or_404(user, *args, **kw):
 @permission_required("clariadmin.can_access_clariadmin")
 def list_all(request, *args, **kw):
     """
-    Vue permettant de lister les machines que l'on souhaite.
+    Vue permettant de lister les machines recherchées.
     Variables de session utilisées:
-        global_search_adm_list : dernier mot clef de recherche globale
         search_host_form_fields : dernier formulaire de rechere
         additionnal_field_form_fields : dernier formulaire additionnel
         sort_adm_list : dernier tri
+        lastpage_clariadmin : dernier numéreau de page
     """
     POST = HostForm.filter_querydict(request.user, request.POST)
     new_search = False
     form_extra = False
-    sort_default = "-id"
+    sort_default = settings.HOST_DEFAULT_ORDER
     columns = HostForm.filter_list(request.user, (
         "hostname", "ip", "site", "type", "os", "model", "status"))
 
@@ -128,7 +129,9 @@ def list_all(request, *args, **kw):
     else:
         form = SearchHostForm(request.user, request.session.get('search_host_form_fields', {}))
         if host_type:
-            form_extra = AdditionnalFieldForm.get_form((request.session.get('additionnal_field_form_fields',{})),host_type=HostType.objects.get(pk=host_type))
+            form_extra = AdditionnalFieldForm.get_form(
+                        request.session.get('additionnal_field_form_fields',{}),
+                        host_type=HostType.objects.get(pk=host_type))
             form_extra.is_valid()
 
     # filter SearchHostFrom
@@ -160,15 +163,15 @@ def list_all(request, *args, **kw):
             form.update(qs)
 
     # fill paginator
-    paginator = DiggPaginator(qs, settings.TICKETS_PER_PAGE, body=5, tail=2, padding=2)
+    paginator = DiggPaginator(qs, settings.HOSTS_PER_PAGE, body=5, tail=2, padding=2)
 
     # get page
     page_num = 1
-    page_asked = int(request.session.get('page_adm_list',
+    page_asked = int(request.session.get('lastpage_clariadmin',
                                          request.GET.get('page', 1)))
     if ((page_asked <= paginator.num_pages) and not new_search):
         page_num = page_asked
-    request.session["page_adm_list"] = page_num
+    request.session["lastpage_clariadmin"] = page_num
     page = paginator.page(page_num)
 
     return render_to_response("clariadmin/list.html", {

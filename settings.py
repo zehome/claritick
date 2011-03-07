@@ -169,6 +169,9 @@ TICKET_STATE_NEW = 1 # pk de l'etat nouveau
 TICKET_STATE_ACTIVE = 2 # pk de l'état actif
 TICKET_PRIORITY_NORMAL = 2 # pk de la priorité normale
 
+HOSTS_PER_PAGE = 50
+HOST_DEFAULT_ORDER = '-id'
+
 SUMMARY_TICKETS=15 # Nombre de tickets affich�s sur la page d'accueil
 EMAIL_INTERNAL_COMMENTS = False # Ne transmet pas d'email lorsque l'on poste un commentaire interne
 COMMENT_MAX_LENGTH = 65535 * 4
