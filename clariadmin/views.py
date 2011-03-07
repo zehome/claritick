@@ -100,8 +100,10 @@ def list_all(request, *args, **kw):
 
     if POST:
         if POST.get('filter_reset', False):
+            # Reset form
             form = SearchHostForm(request.user,{})
         else:
+            # Init forms
             form = SearchHostForm(request.user, POST )
             if form.is_valid():
                 # récupère les éléments de POST propre à SearchHostForm
@@ -114,10 +116,14 @@ def list_all(request, *args, **kw):
                     request.session['search_host_form_fields'] = post_filtred
 
                 if host_type:
-                    form_extra = AdditionnalFieldForm.get_form(POST, host_type=HostType.objects.get(pk=host_type))
-                    request.session['additionnal_field_form_fields'] = dict(
-                        [(k,v) for k,v in POST.iteritems()
-                            if k in form_extra.fields.keys()])
+                    form_extra = AdditionnalFieldForm.get_form(POST,
+                                 host_type=HostType.objects.get(pk=host_type))
+                    # if search != last search => page 1 and update session
+                    post_filtred = dict([(k,v) for k,v in POST.iteritems()
+                                            if k in form_extra.fields.keys()])
+                    if request.session.get('additionnal_field_form_fields',{}) != post_filtred:
+                        new_search = True
+                        request.session['additionnal_field_form_fields'] = post_filtred
                     form_extra.is_valid()
     else:
         form = SearchHostForm(request.user, request.session.get('search_host_form_fields', {}))
@@ -125,10 +131,10 @@ def list_all(request, *args, **kw):
             form_extra = AdditionnalFieldForm.get_form((request.session.get('additionnal_field_form_fields',{})),host_type=HostType.objects.get(pk=host_type))
             form_extra.is_valid()
 
-    # use polymorphism and filter SearchHostFrom as a HostFrom
+    # filter SearchHostFrom
     form.fields = SearchHostForm.filter_querydict(request.user, form.fields)
 
-    #get session/GET parametters
+    # get sorting
     sorting = sort_default
     sort_get = request.GET.get('sort',
                                request.session.get("sort_adm_list", sort_default))
@@ -138,8 +144,8 @@ def list_all(request, *args, **kw):
         sorting = sort_get
     request.session["sort_adm_list"] = sorting
 
+    # apply searchs if any.
     qs = Host.objects.none()
-    #apply searchs if any.
     if form.is_valid():
         search = form.cleaned_data.pop('global_search', False)
         if search or [e for e in form.cleaned_data.values() if e]:
@@ -153,9 +159,10 @@ def list_all(request, *args, **kw):
                 qs = filter_hosts(qs, sorting, form.cleaned_data)
             form.update(qs)
 
-    #fill paginator
+    # fill paginator
     paginator = DiggPaginator(qs, settings.TICKETS_PER_PAGE, body=5, tail=2, padding=2)
 
+    # get page
     page_num = 1
     page_asked = int(request.session.get('page_adm_list',
                                          request.GET.get('page', 1)))
