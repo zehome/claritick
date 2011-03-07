@@ -14,7 +14,7 @@ from clariadmin.forms import HostForm, SearchHostForm, AdditionnalFieldForm
 from common.diggpaginator import DiggPaginator
 from operator import ior
 
-def filter_hosts(qs, sorting, search, search_extra={}):
+def filter_hosts(qs, user, sorting, search, search_extra={}):
     """
     Returns results according to search and search_extra dictionnays.
     It will look in fields related to the keyword.
@@ -29,6 +29,8 @@ def filter_hosts(qs, sorting, search, search_extra={}):
             lookup = search_mapping.get(key,'exact')
             if key == 'site':
                 qs = qs.filter_by_site(value)
+            elif key == 'global_search':
+                qs = global_search(user, value, qs)
             else:
                 qs = qs.filter(**{"%s__%s" % (key, lookup): value})
     for key, value in search_extra.iteritems():
@@ -150,16 +152,13 @@ def list_all(request, *args, **kw):
     # apply searchs if any.
     qs = Host.objects.none()
     if form.is_valid():
-        search = form.cleaned_data.pop('global_search', False)
-        if search or [e for e in form.cleaned_data.values() if e]:
+        search_args = form.cleaned_data
+        if [e for e in search_args if e]:
             qs = Host.objects.filter_by_user(request.user)
-            if search:
-                qs = global_search(request.user, search, qs)
             if form_extra:
-                qs = filter_hosts(qs, sorting, form.cleaned_data,
-                     form_extra.get_data())
+                qs = filter_hosts(qs, request.user, sorting, form.cleaned_data, form_extra.get_data())
             else:
-                qs = filter_hosts(qs, sorting, form.cleaned_data)
+                qs = filter_hosts(qs, request.user, sorting, form.cleaned_data)
             form.update(qs)
 
     # fill paginator
