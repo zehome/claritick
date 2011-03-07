@@ -35,8 +35,8 @@
     {
         dojo.byId("extra_fieldset").classList.remove("dijitHidden");
         dojo.xhrGet({
-            url:"{% url clariadmin.views.ajax_extra_fields_form -1 %}".replace('-1',select_box.item.value?select_box.item.value:-1),
-            load:handle_data
+            url: "{% url clariadmin.views.ajax_extra_fields_form -1 %}".replace('-1',select_box.item.value?select_box.item.value:-1),
+            load: handle_data
             });
     }
     function confirmation_callback(myBool, form_id){

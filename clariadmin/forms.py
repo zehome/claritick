@@ -275,6 +275,7 @@ class SearchHostForm(df.Form, ModelFormTableMixin, FormSecurityChecker):
     hostname = df.CharField(required=False, label=u'Nom')
     site = df.ChoiceField(choices = (('',''),),
             widget=df.FilteringSelect(attrs=attrs_filtering),  required=False, label=u'Client')
+    # these ModelChoiceFields are initialised twice. once forvalidation and once after filtering
     type = df.ModelChoiceField(queryset = HostType.objects.all(),
         widget=df.FilteringSelect(attrs=attrs_filtering_and({'onchange':'typeChanged(this);'})),
         empty_label='', required=False, label = u'Type')
@@ -294,15 +295,20 @@ class SearchHostForm(df.Form, ModelFormTableMixin, FormSecurityChecker):
 
     def update(self, hosts):
         """Restrict `ModelChoiceFields` to values existing in hosts queryset"""
+        # To avoid some useless select_related joins, only is explicitly used
         if self.fields.has_key('os'):
-            self.fields['os'].queryset = OperatingSystem.objects.filter(host__in=hosts).distinct()
+            self.fields['os'].queryset = OperatingSystem.objects.filter(host__in=hosts) \
+                                        .only('id', 'name', 'version').distinct()
         if self.fields.has_key('supplier'):
-            self.fields['supplier'].queryset = Supplier.objects.filter(host__in=hosts).distinct()
+            self.fields['supplier'].queryset = Supplier.objects.filter(host__in=hosts) \
+                                                .only('id', 'name').distinct()
         if self.fields.has_key('type'):
-            self.fields['type'].queryset = HostType.objects.filter(host__in=hosts).distinct()
+            self.fields['type'].queryset = HostType.objects.filter(host__in=hosts) \
+                                            .only('id', 'text').distinct()
         if self.fields.has_key('site'):
             self.fields['site'].choices = chain((('',''),),((c.id, str(c))
-                for c in sort_queryset(Client.objects.filter(host__in=hosts).distinct())))
+                for c in sort_queryset(Client.objects.filter(host__in=hosts)
+                                    .only('id','label','parent','parent__parent').distinct())))
 
     class Meta:
         fields = ('ip', 'hostname', 'site', 'type', 'os', 'supplier', 'status', 'inventory', 'commentaire')
