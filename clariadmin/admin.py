@@ -15,7 +15,7 @@ class ExtraFieldAdmin(admin.ModelAdmin):
     fieldsets = (
         (None,{
             'fields':('host_type','name','sorting_priority','data_type','fast_search')}),
-        ('Choix',{
+        ('Choix (pas de recherche globale, supression de champs non supporté, favorisez un suffixe)',{
             'classes': ('dj_admin_Choix',),
             'fields':(
                 'choice01_val', 'choice02_val',
@@ -35,7 +35,7 @@ class ExtraFieldAdmin(admin.ModelAdmin):
         ('Date',{
             'classes': ('dj_admin_Date',),
             'fields':('date_val',)}),
-        ('Booleen',{
+        ('Booleen (pas de recherche globale)',{
             'classes': ('dj_admin_Bool',),
             'fields':('bool_val',)}),)
 

@@ -98,7 +98,6 @@ class FormSecurityChecker(object):
         return [e for e in fields
             if userlevel < security_settings.get(e, security_default_level)]
 
-
     # Proxy accessor
     def security_can_view(self):
         return self._security_can_view
