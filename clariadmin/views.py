@@ -117,7 +117,7 @@ def list_all(request, *args, **kw):
                     request.session['search_host_form_fields'] = post_filtred
 
                 if host_type:
-                    form_extra = AdditionnalFieldForm.get_form(POST,
+                    form_extra = AdditionnalFieldForm(POST,
                                  host_type=HostType.objects.get(pk=host_type))
                     # if search != last search => page 1 and update session
                     post_filtred = dict([(k,v) for k,v in POST.iteritems()
@@ -129,7 +129,7 @@ def list_all(request, *args, **kw):
     else:
         form = SearchHostForm(request.user, request.session.get('search_host_form_fields', {}))
         if host_type:
-            form_extra = AdditionnalFieldForm.get_form(
+            form_extra = AdditionnalFieldForm(
                         request.session.get('additionnal_field_form_fields',{}),
                         host_type=HostType.objects.get(pk=host_type))
             form_extra.is_valid()
@@ -194,7 +194,7 @@ def new(request, from_host=False):
         form = HostForm(request.user, POST)
         if form.is_valid():
             host = form.save()
-            form_comp = AdditionnalFieldForm.get_form(data = POST, host = host)
+            form_comp = AdditionnalFieldForm(POST, host = host)
             if form_comp.is_valid():
                 form_comp.save()
             redir = POST.get('submit_button', False)
@@ -208,7 +208,7 @@ def new(request, from_host=False):
         if from_host:
             inst, comp = get_host_or_404(request.user, pk = from_host).copy_instance()
             form = HostForm(request.user, instance = inst)
-            add_fields = AdditionnalFieldForm.get_form(comp, host = inst)
+            add_fields = AdditionnalFieldForm(comp, host = inst)
         else:
             form = HostForm(request.user)
     return render_to_response('clariadmin/host.html', {
@@ -229,7 +229,7 @@ def modify(request, host_id):
             host.delete()
             return redirect('list_hosts')
         form = HostForm(request.user, POST, instance=host)
-        add_fields = AdditionnalFieldForm.get_form(POST, host=host)
+        add_fields = AdditionnalFieldForm(POST, host=host)
         if add_fields.is_valid() and form.is_valid():
             add_fields.save()
             form.save()
@@ -240,10 +240,9 @@ def modify(request, host_id):
                 pass
             elif redir == 'return':
                 return redirect('list_hosts')
-        #add_fieds = AdditionnalFieldForm.get_form(POST, host=host)
     else:
         form = HostForm(request.user,instance=host)
-        add_fields = AdditionnalFieldForm.get_form(host=host)
+        add_fields = AdditionnalFieldForm(host=host)
 
     return render_to_response("clariadmin/host.html", {
         "form": form,
@@ -260,5 +259,5 @@ def ajax_extra_fields_form(request, host_type_id, blank=False):
         host_type = get_object_or_404(HostType, pk=host_type_id)
     except:
         return HttpResponse("<tr></tr>")
-    form=AdditionnalFieldForm.get_form(host_type=host_type, blank=bool(blank))
+    form=AdditionnalFieldForm(host_type=host_type, blank=bool(blank))
     return HttpResponse(form.as_table())

@@ -141,14 +141,25 @@ class HostForm(df.ModelForm, FormSecurityChecker):
         return super(HostForm, self).is_valid()
 
 class AdditionnalFieldForm(df.Form):
-    def _complete(self, host=None, host_type=None, blank=False):
-        """Adapt and fill the form. Called by `AdditionnalFieldForm.get_form`"""
+    def __init__(self, *args, **kwargs):
+        """
+        It uses normal `Form.__init__` args plus these named args:
+            host: host's host type as host_type and form with host's values.
+            host_type: host_type specific fields and default values.
+            blank: provide a form with no values
+        It Adapt and fill the form dynamically.
+        """
+        host=kwargs.pop('host',False)
+        host_type=kwargs.pop('host_type',False)
+        blank=kwargs.pop('blank',False)
+        super(AdditionnalFieldForm, self).__init__(*args, **kwargs)
+
         # Rapide controle des arguments
         if host:
             host_type=host.type
             self.host=host
         if not host_type:
-            return self
+            return
         # Récupère la liste des champs propre au type d'hote
         self.avail_fields=ParamAdditionnalField.objects.filter(host_type=host_type.id)[:]
         # Détermine la liste des champs et leurs valeurs courrante (défaut puis établi si existant)
@@ -176,8 +187,6 @@ class AdditionnalFieldForm(df.Form):
                     if field.data_type == '3' else
                  df.MultipleChoiceField(choices=enumerate(field.default_values), **args(field,c_fields)))
             )for field in self.avail_fields))
-        # renvoie son adresse
-        return self
 
     def save(self, force_insert=False, force_update=False, commit=True):
         """To use used like the ModelFrom save method"""
@@ -200,20 +209,6 @@ class AdditionnalFieldForm(df.Form):
         return dict((k, self.cleaned_data[k])
                 for k, v in self.fields.iteritems()
                 if not((isinstance(v,df.ChoiceField) and self.cleaned_data[k]=='-1')))
-
-    @staticmethod
-    def get_form(*args, **kwargs):
-        """
-        Used to wrap `Form.__init__` method and returns a new instance.
-        It uses normal `Form.__init__` args and these named args:
-            host: host's host type as host_type and form with host's values.
-            host_type: host_type specific fields and default values.
-            blank: provide a form with no values
-        """
-        h=kwargs.pop('host',False)
-        ht=kwargs.pop('host_type',False)
-        b=kwargs.pop('blank',False)
-        return AdditionnalFieldForm(*args,**kwargs)._complete(h,ht,b)
 
 class ParamAdditionnalFieldAdminForm(df.ModelForm):
     text_val = df.CharField(label=u'Défaut', required=False)
@@ -271,8 +266,11 @@ class ParamAdditionnalFieldAdminForm(df.ModelForm):
 
 class SearchHostForm(df.Form, ModelFormTableMixin, FormSecurityChecker):
     global_search = df.CharField(label="Recherche globale",required=False)
-    cheat_1 = df.CharField(max_length=1, label='', widget=df.TextInput(attrs={'class':'dijitHidden'}),required=False)
-    cheat_2 = df.CharField(max_length=1, label='', widget=df.TextInput(attrs={'class':'dijitHidden'}),required=False)
+    # theses two fields allow global search to look alone on his row.
+    cheat_1 = df.CharField(max_length=1, label='',
+            widget=df.TextInput(attrs={'class':'dijitHidden'}), required=False)
+    cheat_2 = df.CharField(max_length=1, label='',
+            widget=df.TextInput(attrs={'class':'dijitHidden'}), required=False)
     ip = df.CharField(required=False)
     hostname = df.CharField(required=False, label=u'Nom')
     site = df.ChoiceField(choices = (('',''),),
