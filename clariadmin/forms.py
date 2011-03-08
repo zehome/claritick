@@ -308,16 +308,16 @@ class SearchHostForm(df.Form, ModelFormTableMixin, FormSecurityChecker):
     def update(self, hosts):
         """Restrict `ModelChoiceFields` to values existing in hosts queryset"""
         # To avoid some useless select_related joins, only is explicitly used
-        if self.fields.has_key('os'):
+        if self.fields.has_key('os') and not self.cleaned_data['os']:
             self.fields['os'].queryset = OperatingSystem.objects.filter(host__in=hosts) \
                                         .only('id', 'name', 'version').distinct()
-        if self.fields.has_key('supplier'):
+        if self.fields.has_key('supplier') and not self.cleaned_data['supplier']:
             self.fields['supplier'].queryset = Supplier.objects.filter(host__in=hosts) \
                                                 .only('id', 'name').distinct()
-        if self.fields.has_key('type'):
+        if self.fields.has_key('type') and not self.cleaned_data['type']:
             self.fields['type'].queryset = HostType.objects.filter(host__in=hosts) \
                                             .only('id', 'text').distinct()
-        if self.fields.has_key('site'):
+        if self.fields.has_key('site') and not self.cleaned_data['site']:
             self.fields['site'].choices = chain((('',''),),((c.id, str(c))
                 for c in sort_queryset(Client.objects.filter(host__in=hosts)
                                     .only('id','label','parent','parent__parent').distinct())))
