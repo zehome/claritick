@@ -230,11 +230,13 @@ class ParamAdditionnalFieldAdminForm(df.ModelForm):
     choice13_val = df.CharField(label=u'Proposition', required=False)
     choice14_val = df.CharField(label=u'Proposition', required=False)
     choice15_val = df.CharField(label=u'Proposition', required=False)
+
     class Meta:
         model=ParamAdditionnalField
         widgets={
             'data_type':df.FilteringSelect(attrs=attrs_filtering_and({'onchange':'typeChanged(this);'}))
             }
+
     def __init__(self, *args, **kwargs):
         super(ParamAdditionnalFieldAdminForm, self).__init__(*args, **kwargs)
         if kwargs.has_key('instance'):
@@ -249,6 +251,16 @@ class ParamAdditionnalFieldAdminForm(df.ModelForm):
                             self.initial[e]=inst.default_values[i]
                     except IndexError:
                         pass
+    def clean(self):
+        cleaned_data = self.cleaned_data
+        api_key = cleaned_data.get('api_key',False)
+        host_type = cleaned_data.get('host_type',False)
+        if (api_key and ParamAdditionnalField.objects.filter(api_key__exact=api_key)
+                                                .filter(host_type__exact=host_type)):
+            self._errors["api_key"] = self.error_class(["Doit être unique par type d'hôte"])
+            del cleaned_data["api_key"]
+        return cleaned_data
+
     def save(self, commit=True):
         inst = super(ParamAdditionnalFieldAdminForm, self).save(commit=False)
         cd=self.cleaned_data

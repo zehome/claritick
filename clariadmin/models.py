@@ -140,6 +140,7 @@ class ParamAdditionnalField(models.Model):
     default_values = JsonField(u"Valeur par défaut/choix", max_length=8192)
     fast_search = models.BooleanField(u"Champ recherché par défaut", default=False)
     sorting_priority = models.IntegerField(u"Priorité d'affichage", default=100)
+    api_key = models.CharField(u"Nom d'exposition api", blank=True, max_length=64)
     def __unicode__(self):
         return u"%s"%(self.name,)
 

@@ -14,7 +14,8 @@ class ExtraFieldAdmin(admin.ModelAdmin):
         js = ("js/clariadmin_extra_field_admin.js",)
     fieldsets = (
         (None,{
-            'fields':('host_type','name','sorting_priority','data_type','fast_search')}),
+            'fields':('host_type', 'name', 'sorting_priority', 'api_key',
+                      'data_type', 'fast_search')}),
         ('Choix (pas de recherche globale, supression de champs non supporté, favorisez un suffixe)',{
             'classes': ('dj_admin_Choix',),
             'fields':(
@@ -49,13 +50,14 @@ class ExtraFieldAdmin(admin.ModelAdmin):
                   opener.dismissAddAnotherPopup(window);
                   </script></body></html>""")
         else:
-            return super(CustomModelAdmin, self).response_change(request, obj, *args, **kwargs)
+            return super(ExtraFieldAdmin, self).response_change(request, obj, *args, **kwargs)
 
 class ExtraFieldAdminInLine(admin.TabularInline):
-    extra=0
-    model=ParamAdditionnalField
-    readonly_fields=('host_type','data_type','default_values')
-    fields=('name','sorting_priority','fast_search','host_type','data_type','default_values')
+    extra = 0
+    model = ParamAdditionnalField
+    readonly_fields = ('host_type','data_type','api_key','default_values')
+    fields = ('name','sorting_priority','fast_search','host_type','api_key',
+              'data_type','default_values')
 
 
 class HostTypeAdmin(admin.ModelAdmin):

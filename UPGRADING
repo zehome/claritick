@@ -1,3 +1,5 @@
+r587
+    ALTER TABLE clariadmin_paramadditionnalfield ADD COLUMN "api_key" varchar(64);
 r523
     ALTER TABLE common_userprofile ADD COLUMN "security_level" integer NOT NULL DEFAULT 99;
 r518
