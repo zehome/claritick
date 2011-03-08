@@ -3,7 +3,7 @@
 import dojango.forms as df
 from clariadmin.models import Host, OperatingSystem, HostType
 from clariadmin.models import AdditionnalField, ParamAdditionnalField, Supplier
-from clariadmin.models import CHOICES_FIELDS_AVAILABLE
+from clariadmin.models import CHOICES_FIELDS_AVAILABLE, HostEditLog
 from common.models import Client
 from common.utils import sort_queryset
 from common.forms import ModelFormTableMixin
@@ -124,15 +124,40 @@ class HostForm(df.ModelForm, FormSecurityChecker):
         fields = ("site","hostname","ip","os","rootpw","supplier", "model",
             "type","location","serial","inventory", "date_start_prod","date_end_prod",
             "status","commentaire")
-    def __init__(self, user, *args, **kwargs):
+    def __init__(self, user, ip, *args, **kwargs):
         super(HostForm, self).__init__(*args, **kwargs)
         self.fields['site'].queryset = Client.objects.filter(id__in=(c.id for c in user.clients))
-
         self._security_filter(user = user, formName = 'Host')
+        self.user = user
+        self.user_ip = ip
+        self.new = self.instance.pk is None
+        if not self.new:
+            HostEditLog(host=self.instance, user=self.user,
+                message=self.log_format(u"consulté")).save() 
+
+    def log_format(self, action):
+        return u"Le poste %s a été %s par %s (sec:%s, ip:%s) le %s"%(
+                self.instance.hostname,
+                action,
+                self.user.username,
+                self.user.get_profile().get_security_level(),
+                self.user_ip,
+                datetime.datetime.now().isoformat())
 
     def save(self, force_insert=False, force_update=False, commit=True):
         assert(self.security_can_save())
-        return super(HostForm, self).save(commit)
+        inst = super(HostForm, self).save()
+        message= self.log_format(u"créé" if self.new else u"modifié")
+        HostEditLog(host=inst, user=self.user, 
+                    message=message).save()
+        return inst
+
+    def delete(self, *args, **kwargs):
+        import ipdb;ipdb.set_trace()
+        #assert(self.security_can_delete())
+        HostEditLog(host=None, user=self.user, 
+                    message=self.log_format(u"suprimé")).save()
+        return self.instance.delete(*args, **kwargs)
 
     def is_valid(self):
         if not self.security_can_save():

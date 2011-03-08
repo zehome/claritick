@@ -190,7 +190,7 @@ def new(request, from_host=False):
     add_fields = None
 
     if POST:
-        form = HostForm(request.user, POST)
+        form = HostForm(request.user,request.META['REMOTE_ADDR'], POST)
         if form.is_valid():
             host = form.save()
             form_comp = AdditionnalFieldForm(POST, host = host)
@@ -198,7 +198,7 @@ def new(request, from_host=False):
                 form_comp.save()
             redir = POST.get('submit_button', False)
             if redir == 'new':
-                form = HostForm(request.user)
+                form = HostForm(request.user, request.META['REMOTE_ADDR'])
             elif redir == 'save':
                 return redirect(host)
             elif redir == 'return':
@@ -206,10 +206,10 @@ def new(request, from_host=False):
     else:
         if from_host:
             inst, comp = get_host_or_404(request.user, pk = from_host).copy_instance()
-            form = HostForm(request.user, instance = inst)
+            form = HostForm(request.user,request.META['REMOTE_ADDR'] ,instance = inst)
             add_fields = AdditionnalFieldForm(comp, host = inst)
         else:
-            form = HostForm(request.user)
+            form = HostForm(request.user,request.META['REMOTE_ADDR'])
     return render_to_response('clariadmin/host.html', {
             'form': form,
             'additionnal_fields': add_fields},
@@ -224,11 +224,11 @@ def modify(request, host_id):
     host = get_host_or_404(request.user, pk=host_id)
 
     if POST:
-        if POST.get("delete", False):
-            host.delete()
-            return redirect('list_hosts')
-        form = HostForm(request.user, POST, instance=host)
+        form = HostForm(request.user, request.META['REMOTE_ADDR'], POST, instance=host)
         add_fields = AdditionnalFieldForm(POST, host=host)
+        if POST.get("delete", False):
+            form.delete()
+            return redirect('list_hosts')
         if add_fields.is_valid() and form.is_valid():
             add_fields.save()
             form.save()
@@ -240,7 +240,7 @@ def modify(request, host_id):
             elif redir == 'return':
                 return redirect('list_hosts')
     else:
-        form = HostForm(request.user,instance=host)
+        form = HostForm(request.user, request.META['REMOTE_ADDR'], instance=host)
         add_fields = AdditionnalFieldForm(host=host)
 
     return render_to_response("clariadmin/host.html", {

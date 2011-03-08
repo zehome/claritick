@@ -4,9 +4,11 @@ from django.db import models
 from django.db.models import Q
 from django.template.loader import get_template
 from django.template import Context
+from django.utils.datastructures import SortedDict
+from django.contrib.auth.models import User
+
 from common.models import Client, ClientField, JsonField, ColorField
 from datetime import date
-from django.utils.datastructures import SortedDict
 
 CHOICES_FIELDS_AVAILABLE = (
    (u'1', u"texte"),            # CharField
@@ -128,7 +130,7 @@ class Host(models.Model):
 
     def available_for(self,user):
         return (self.site in user.clients)
-
+    
 class ParamAdditionnalField(models.Model):
     class Meta:
         verbose_name = u"Définition de champs complémentaires"
@@ -157,3 +159,12 @@ class AdditionnalField(models.Model):
     field = models.ForeignKey(ParamAdditionnalField, verbose_name="Origine du champ")
     value = models.CharField(u"Valeur", max_length=512)
     host = models.ForeignKey(Host, verbose_name=u"")
+
+class HostEditLog(models.Model):
+    class Meta:
+        ordering = ('date',)
+    host = models.ForeignKey(Host, verbose_name=u"", blank=True, null=True)
+    user = models.ForeignKey(User, verbose_name=u"", blank=True, null=True)
+    date = models.DateTimeField(u"Date d'ajout", auto_now_add=True)
+    message = models.CharField(u'Action répertoriée', max_length=1024)
+
