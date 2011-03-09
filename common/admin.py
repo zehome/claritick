@@ -24,7 +24,7 @@ class UserProfileInline(admin.TabularInline):
 
 class UserAdmin(DjangoUserAdmin):
     inlines = [UserProfileInline]
-    list_display = ["username", "email", "first_name", "last_name", "is_staff", "get_client"]
+    list_display = ["username", "get_client", "first_name", "last_name", "email", "is_staff", "is_active" ]
 
     add_fieldsets = (
         (None, {
@@ -33,6 +33,9 @@ class UserAdmin(DjangoUserAdmin):
         ),
     )
     add_form = ClaritickUserCreationForm
+    ordering = [ "client", "first_name", "last_name" ]
+    actions_on_bottom = True
+    list_per_page = 200
 
 admin.site.register(Client, ClientAdmin)
 admin.site.register(ClaritickUser, UserAdmin)
