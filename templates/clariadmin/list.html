@@ -17,7 +17,9 @@
                 {
                     create_menu(row.id, row.children[0].textContent);
                 });
-                dojo.byId("id_global_search").focus();
+                var global_search = dojo.byId("id_global_search");
+                if (global_search)
+                    global_search.focus();
             });
 
     function typeChanged(select_box){
