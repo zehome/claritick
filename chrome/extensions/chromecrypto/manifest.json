@@ -1,0 +1,44 @@
+{
+  "name": "Chrome crypto",
+  "version": "0.5",
+  "description": "An extension for chrome that permits to cipher/decipher some text in a webpage.",
+  "background_page": "background.html",
+  "options_page": "options.html",
+  "page_action": {
+    "default_icon": "icons/icon.png",
+    "default_popup": "popup.html",
+    "default_title": "Ciphered content found."
+  },
+  "content_scripts": [
+    {
+      "matches": [ 
+        "https://claritick.clarisys.fr/*",
+        "file://*/*"
+      ],
+      "js": [
+        "js/dojo.js",
+        "js/base64.js",
+        "js/rc4.js",
+        "js/contentscript.js"
+      ],
+      "run_at": "document_idle",
+      "all_frames": false
+    },
+    {
+      "matches": [
+        "https://claritick.clarisys.fr/*",
+        "file://*/*"
+      ],
+      "js": [
+        "js/dojo.js",
+        "js/content_insertpresence.js"
+      ],
+      "run_at": "document_end",
+      "all_frames": false
+    }
+  ],
+  "icons": {
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  }
+}
