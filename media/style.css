@@ -59,7 +59,6 @@ ul li {
 }
 
 table {
-  font-weight: bold;
   color: #013368;
   padding: 0;
   margin: 0;
@@ -228,7 +227,6 @@ table#menuPrincipal{
     padding:5px 5px;
     margin-left: 10px;
     text-decoration:none;
-    font-family: 'Droid Sans';
     -webkit-box-shadow: rgba(64, 64, 64, 0.1) 4px 4px 5px;
 }
 
@@ -527,8 +525,9 @@ body.claritick fieldset {
     margin: 5px;
 }
 
-.claritick td {
+td, th, .object-tools {
     border: 0;
+    font-family:"Lucida Grande","DejaVu Sans","Bitstream Vera Sans",Verdana,Arial,sans-serif !important;
 }
 
 /* Admin hack */

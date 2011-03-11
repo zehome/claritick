@@ -4,9 +4,9 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   <head>
     <title>CLARITICK - Gestion{% block title %}{% endblock %}</title>
-    <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}style.css" />
     <!-- Admin -->
     <link rel="stylesheet" type="text/css" href="{% block stylesheet %}{% load adminmedia %}{% admin_media_prefix %}css/base.css{% endblock %}" />
+    <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}style.css" />
     {% block extrastyle %}
     <style type="text/css" media="screen">
         ul.errorlist {
@@ -156,16 +156,18 @@
         <td valign="middle" align="center" width="33%">
             <a href="/"><img src="{{ MEDIA_URL }}images/logo_pt.png" alt="logo" /></a>
         </td>
-        <td align="right" width="33%">
+        <td align="right" width="33%" style="status">
           <span id="status">[ IDLE ]</span>
           {% if user.is_authenticated %}
-            <p style="padding: 0; margin: 0;">Utilisateur: {{ user.username }}</p>
+            <p style="padding: 0; margin: 0; display: inline;">Utilisateur: {{ user.username }}</p>
           {% endif %}
           {% if user.is_authenticated %}
-          Aller au ticket # <input type="text" id="id_num_ticket" size="5" /> <button dojoType="dijit.form.Button" id="id_go_ticket">Go</button>
+          <p style="padding: 0; margin: 0;">        
+            Aller au ticket # <input type="text" id="id_num_ticket" size="6" /> <button dojoType="dijit.form.Button" id="id_go_ticket">Go</button>
             {% if perms.clariadmin.can_access_clariadmin %}
-              <br/>Rechercher l'hote <input type="text" id="id_num_host" size="5" /> {% csrf_token %}
-            {%endif%}
+              <br />Clariadmin: <input type="text" id="id_num_host" size="25" /> {% csrf_token %}
+            {% endif %}
+          </p>
           {% endif %}
         </td>
       </tr>
