@@ -57,8 +57,6 @@ class FormSecurityChecker(object):
         self._security_default_level = self._security_settings.get("__default__", settings.SECURITY["DEFAULT_LEVEL"])
         for fname in self.fields.keys():
             required_level = self._security_settings.get(fname, self._security_default_level)
-            # LC: TODO: Debug: remove this
-            print "User level %d required %s for %s" % (self._security_userlevel, required_level, fname)
             if required_level < self._security_userlevel:
                 field = self.fields[fname]
                 if field.required:
@@ -80,8 +78,6 @@ class FormSecurityChecker(object):
         for key in filtred_querydict.keys():
             required_level = security_settings.get(key, security_default_level)
             if required_level < userlevel:
-                # LC: TODO: Debug: remove this
-                print "Deleted querydict key %s" % (key,)
                 del(filtred_querydict[key])
         return filtred_querydict
 
