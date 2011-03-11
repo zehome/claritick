@@ -71,6 +71,38 @@ class HostManager(models.Manager):
     def filter_by_user(self, user):
         return self.all().filter_by_user(user)
 
+
+class ChromeCryptoStr(object):
+    def __init__(self, data):
+        self.data = data
+    def __len__(self):
+        return len(self.data)
+    def __eq__(self, other):
+        return self.data == other
+    def __cmp__(self, other):
+        return cmp(self.data, other)
+    def __adapt__(self):
+        pass
+    def __unicode__(self):
+        return u"{chromecrypto:%s}" % (self.data,)
+    def __repr__(self):
+        return u"{chromecrypto:%s}" % (self.data,)
+
+class ChromeCryptoField(models.CharField):
+
+    __metaclass__ = models.SubfieldBase
+
+    def to_python(self, value):
+        if value is None: return value
+        if isinstance(value, ChromeCryptoStr):
+            return value
+        return ChromeCryptoStr(value)
+
+    def get_prep_value(self, value):
+        if value.data.startswith("{chromecrypto:"):
+            return value.data[14:-1]
+        return value.data
+
 class Host(models.Model):
     class Meta:
         verbose_name = u"Machine"
@@ -85,7 +117,7 @@ class Host(models.Model):
     type = models.ForeignKey(HostType, verbose_name=u"Type d'hôte", blank=True, null=True)
     os = models.ForeignKey(OperatingSystem, verbose_name=u"Système d'exploitation", blank=True, null=True)
     hostname = models.CharField(u"Nom d'hôte", max_length=64)
-    rootpw = models.CharField(u"Mot de passe root", max_length=64, blank=True, null=True)
+    rootpw = ChromeCryptoField(u"Mot de passe root", max_length=64, blank=True, null=True)
     commentaire = models.TextField(blank=True, max_length=4096)
     ip = models.CharField("Adresse IP", max_length=128, blank=True, null=True)
 
