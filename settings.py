@@ -207,6 +207,7 @@ SVNDOC_CONFIG = {
 # Where package files are stored
 PACKAGING_ROOT = os.path.join(basepath, 'packaging', 'filestorage')
 INTERNAL_IPS = ('127.0.0.1',)
+CHROMECRYPTO_KEY = ""
 
 try:
     from local_settings import *
@@ -222,4 +223,3 @@ except ImportError:
     print "Unable to load clariadmin settings."
     raise
 
-CHROMECRYPTO_KEY = ""
