@@ -209,7 +209,7 @@ class Client(models.Model):
         ordering = ['parent__label', 'label']
     
     label = models.CharField("Nom", max_length=64) 
-    parent = ClientField('Client', verbose_name='Parent', null=True, blank=True, limit_choices_to = {'parent__parent': None})
+    parent = ClientField('Client', verbose_name='Parent', null=True, blank=True) #, limit_choices_to = {'parent__parent': None})
     coordinates = models.ForeignKey(Coordinate, verbose_name=u'Coordonnées', blank=True, null=True)
     emails = models.CharField("Emails séparés par des virgule", max_length=2048, blank=True, null=True)
     notifications_by_fax = models.BooleanField(u"Transmission des notifications par fax", default=False)
@@ -217,7 +217,8 @@ class Client(models.Model):
     objects = ClientManager()
 
     def __unicode__(self):
-        if self.parent and self.parent.parent:
+#        if self.parent and self.parent.parent:
+        if self.parent and self.parent.label != 'Clarisys':
             return u"%s - %s" % (self.parent.label, self.label)
         return u"%s" % (self.label,)
     

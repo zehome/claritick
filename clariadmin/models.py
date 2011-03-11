@@ -6,6 +6,8 @@ from django.template.loader import get_template
 from django.template import Context
 from django.utils.datastructures import SortedDict
 from django.contrib.auth.models import User
+from django.conf import settings
+from common.rc4 import b64rc4crypt
 
 from common.models import Client, ClientField, JsonField, ColorField
 from datetime import date
@@ -98,10 +100,13 @@ class ChromeCryptoField(models.CharField):
             return value
         return ChromeCryptoStr(value)
 
+    def _encrypt(self, data):
+        return b64rc4crypt(data, settings.CHROMECRYPTO_KEY)
+
     def get_prep_value(self, value):
         if value.data.startswith("{chromecrypto:"):
             return value.data[14:-1]
-        return value.data
+        return self._encrypt(value.data)
 
 class Host(models.Model):
     class Meta:

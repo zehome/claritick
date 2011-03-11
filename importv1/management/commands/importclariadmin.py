@@ -71,8 +71,11 @@ class Command(BaseCommand):
                 except cmod.Client.DoesNotExist:
                     print "[FAIL]: Client id=%s not found in claritick! (refering to clariadmin: Site %s groupe=%s id=%s)" % (mapping_row, row[2], row[1], row[0])
                 else:
-                    print "[OK]: %s - %s => %s" % (row[1], row[2], site)
-                    clariadmin_claritick_site_mapping[int(row[0])] = site
+                    try:
+                        print "[OK]: %s - %s => %s" % (row[1], row[2], site)
+                        clariadmin_claritick_site_mapping[int(row[0])] = site
+                    except:
+                        traceback.print_exc()
         
         print "Mapping/Génération HostType..."
         clariadmin_claritick_hosttype_mapping = {}
@@ -146,12 +149,12 @@ class Command(BaseCommand):
                     host.ip = row[7]
                     if row[8]:
                         host.date_add = row[8]
-                    try:
-                        premap_marque = pre_mapping_marque[row[3]]
-                        if premap_marque:
-                            host.model = premap_marque
-                    except KeyError:
-                        pass
+                    #try:
+                    #    premap_marque = pre_mapping_marque[row[3]]
+                    #    if premap_marque:
+                    #        host.model = premap_marque
+                    #except KeyError:
+                    #    pass
                     host.model = row[9]
                     host.location = row[10]
                     host.serial = row[11]
