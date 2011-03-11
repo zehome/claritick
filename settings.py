@@ -222,3 +222,4 @@ except ImportError:
     print "Unable to load clariadmin settings."
     raise
 
+CHROMECRYPTO_KEY = ""
