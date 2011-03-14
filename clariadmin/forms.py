@@ -127,8 +127,8 @@ class HostForm(df.ModelForm, FormSecurityChecker):
         self.user = user
         self.user_ip = ip
         self.new = self.instance.pk is None
-        if not self.new:
-            self.log_action(u"consulté")
+        #if not self.new:
+            #self.log_action(u"consulté")
 
     def log_action(self, action, instance=None):
         if instance is None:
@@ -146,14 +146,12 @@ class HostForm(df.ModelForm, FormSecurityChecker):
     def save(self, force_insert=False, force_update=False, commit=True):
         assert(self.security_can_save())
         inst = super(HostForm, self).save()
-        self.log_format(u"créé" if self.new else u"modifié", inst)
+        self.log_action(u"créé" if self.new else u"modifié", inst)
         return inst
 
     def delete(self, *args, **kwargs):
-        import ipdb;ipdb.set_trace()
         #assert(self.security_can_delete())
-        HostEditLog(host=None, user=self.user, 
-                    message=self.log_format(u"supprimé")).save()
+        self.log_action(u"supprimé")
         return self.instance.delete(*args, **kwargs)
 
     def is_valid(self):

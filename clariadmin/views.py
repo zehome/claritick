@@ -207,8 +207,10 @@ def new(request, from_host=False):
                 return redirect('list_hosts')
     else:
         if from_host:
-            inst, comp = get_host_or_404(request.user, pk = from_host).copy_instance()
+            from_host = get_host_or_404(request.user, pk = from_host)
+            inst, comp = from_host.copy_instance()
             form = HostForm(request.user,request.META['REMOTE_ADDR'] ,instance = inst)
+            form.log_action(u"consulté", from_host)
             add_fields = AdditionnalFieldForm(comp, host = inst)
         else:
             form = HostForm(request.user,request.META['REMOTE_ADDR'])
@@ -245,7 +247,7 @@ def modify(request, host_id):
     else:
         form = HostForm(request.user, request.META['REMOTE_ADDR'], instance=host)
         add_fields = AdditionnalFieldForm(host=host)
-
+    form.log_action(u"consulté")
     return render_to_response("clariadmin/host.html", {
         "form": form,
         'additionnal_fields': add_fields,

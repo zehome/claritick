@@ -22,10 +22,10 @@ FIELD_TYPES = (
    )
 
 ACTIONS_LOG = [
-    (0, u"consulté"),
-    (1, u"créé"),
-    (2, u"modifié"),
-    (3, u"supprimé")]
+    (0, u"consulté", "#FFFFFF"),
+    (1, u"créé", "#77FF77"),
+    (2, u"modifié", "#FFFF77"),
+    (3, u"supprimé", "#FF7777")]
 
 class OperatingSystem(models.Model):
     class Meta:
@@ -205,16 +205,21 @@ class AdditionnalField(models.Model):
 class HostEditLog(models.Model):
     class Meta:
         ordering = ('date',)
-    host = models.ForeignKey(Host, verbose_name=u"", blank=True, null=True)
-    user = models.ForeignKey(User, verbose_name=u"", blank=True, null=True)
+    host = models.ForeignKey(Host, verbose_name=u"Machine", blank=True, null=True, on_delete=models.SET_NULL)
+    user = models.ForeignKey(User, verbose_name=u"Utilisateur", blank=True, null=True, on_delete=models.SET_NULL)
     date = models.DateTimeField(u"Date d'ajout", auto_now_add=True)
     ip = models.CharField(u'Ip utilisateur', max_length=1024)
-    action = models.IntegerField(u"Action" ,choices=ACTIONS_LOG)
+    action = models.IntegerField(u"Action" ,choices=((i,s) for i,s,c in ACTIONS_LOG))
     message = models.CharField(u'Action répertoriée', max_length=1024)
+    @property
+    def color(self):
+        return dict((i,c) for i,s,c in ACTIONS_LOG)[self.action]
+    @property
+    def action_text(self):
+        return dict((i,s) for i,s,c in ACTIONS_LOG)[self.action]
     def __init__(self,*args,**kwargs):
-        print "#### Here HostEditLogArgs :->",args,kwargs
         action = kwargs.pop("action",None)
         if isinstance(action, unicode):
-            action = dict((v,k) for k,v in ACTIONS_LOG)[action]
+            action = dict((s,i) for i,s,c in ACTIONS_LOG)[action]
         super(HostEditLog,self).__init__(*args, action=action, **kwargs)
 
