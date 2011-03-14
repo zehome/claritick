@@ -97,8 +97,6 @@ def list_all(request, *args, **kw):
         "hostname", "ip", "site", "type", "os", "model", "status"))
 
     # Récupère le type d'hote pour adapter si besoin l'AdditionnalFieldForm.
-    host_type = request.session.get('search_host_form_fields', {}).get('type', False)
-
     if POST:
         if POST.get('filter_reset', False):
             # Reset form
@@ -115,6 +113,7 @@ def list_all(request, *args, **kw):
                 if request.session.get('search_host_form_fields', {}) != post_filtred:
                     new_search = True
                     request.session['search_host_form_fields'] = post_filtred
+                host_type = request.session.get('search_host_form_fields', {}).get('type', False)
 
                 if host_type:
                     form_extra = AdditionnalFieldForm(POST,
@@ -127,6 +126,7 @@ def list_all(request, *args, **kw):
                         request.session['additionnal_field_form_fields'] = post_filtred
                     form_extra.is_valid()
     else:
+        host_type = request.session.get('search_host_form_fields', {}).get('type', False)
         form = SearchHostForm(request.user, request.session.get('search_host_form_fields', {}))
         if host_type:
             form_extra = AdditionnalFieldForm(
@@ -176,7 +176,7 @@ def list_all(request, *args, **kw):
         "form": form,
         "columns": columns,
         "sorting": sorting,
-        "form_extra": form_extra
+        "form_extra": form_extra,
     }, context_instance=RequestContext(request))
 
 @permission_required("clariadmin.can_access_clariadmin")
