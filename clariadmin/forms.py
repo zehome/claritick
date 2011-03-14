@@ -128,7 +128,7 @@ class HostForm(df.ModelForm, FormSecurityChecker):
         self.user_ip = ip
         self.new = self.instance.pk is None
         if not self.new:
-            self.log_action("consulté")
+            self.log_action(u"consulté")
 
     def log_action(self, action, instance=None):
         if instance is None:
@@ -140,7 +140,7 @@ class HostForm(df.ModelForm, FormSecurityChecker):
                 self.user.get_profile().get_security_level(),
                 self.user_ip,
                 datetime.datetime.now().isoformat())
-        HostEditLog(host=instance, user=self.user, ip=self.ip, action=action, 
+        HostEditLog(host=instance, user=self.user, ip=self.user_ip, action=action, 
                     message=message).save()
 
     def save(self, force_insert=False, force_update=False, commit=True):
