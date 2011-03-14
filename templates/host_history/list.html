@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}Liste des logs machines{% endblock %}
+{% block content_title %}Liste des logs machines{% endblock %}
+{% block image %}<img src="/media/images/oxygen/search.png" />{% endblock %}
+
+{% block extrajs %}
+{{ block.super }}
+{% endblock %}
+{% block content %}
+{% if page.object_list %}
+<h2>Résultats</h2>
+<table class="resultat exportable" id="clariadmin_result_all">
+<thead>
+<tr>{%for column in columns %}
+    <th><a href="?sort={% if sorting == column %}-{% endif %}{{ column }}">{% if sorting == column %}
+        <img src="/media/images/oxygen/arrow-up.png" class="state_image" alt="down" />{% else %} {% if sorting == '-'|add:column %}
+        <img src="/media/images/oxygen/arrow-down.png" class="state_image" alt="up" />{% endif %}{% endif %}
+        {{ column }}</a></th>{% endfor %}
+</tr>
+</thead>
+<tbody id="context_lines">
+{% for row in page.object_list %}
+    <tr id="comp_{{ row.id }}" class="{% cycle 'row1' 'row2'%}">
+        {% if 'host' in columns %}<td><a href="{% url clariadmin.views.modify row.id %}">{{ row.host.hostname }}</a></td>{% endif %}
+        {% if 'user' in columns %}<td>{{ row.user.username }}</td>{% endif %}
+        {% if 'date' in columns %}<td>{{ row.date }}</td>{% endif %}
+        {% if 'ip' in columns %}<td>{{ row.ip }}</td>{% endif %}
+        {% if 'action' in columns %}<td style='background-color:{{row.color}}'>{{ row.action_text }}</td>{% endif %}
+        {% if 'message' in columns %}<td>{{ row.message }}</td>{% endif %}
+    </tr>{% endfor %}
+</tbody>
+</table>
+{% load diggpaginator %}
+{% if page.paginator.num_pages > 1 %}
+{% diggpaginator page %}
+{% endif %}
+{% endif %}
+{% endblock %}          
