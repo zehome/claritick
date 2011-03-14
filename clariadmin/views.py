@@ -89,6 +89,9 @@ def list_all(request, *args, **kw):
         sort_adm_list : dernier tri
         lastpage_clariadmin : dernier numéreau de page
     """
+    if request.GET.get("reset", "0") == "1":
+        request.session["search_host_form_fields"] = {}
+
     POST = HostForm.filter_querydict(request.user, request.POST)
     new_search = False
     form_extra = False
