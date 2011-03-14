@@ -104,6 +104,7 @@ def list_all(request, *args, **kw):
         if POST.get('filter_reset', False):
             # Reset form
             form = SearchHostForm(request.user,{})
+            request.session["search_host_form_fields"] = {}
         else:
             # Init forms
             form = SearchHostForm(request.user, POST )
