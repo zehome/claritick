@@ -24,7 +24,7 @@ FIELD_TYPES = (
 ACTIONS_LOG = [
     (0, u"consulté"),
     (1, u"créé"),
-    (2, u"modifié")
+    (2, u"modifié"),
     (3, u"supprimé")]
 
 class OperatingSystem(models.Model):
