@@ -1,3 +1,8 @@
+r610
+    ALTER TABLE clariadmin_hosteditlog ADD COLUMN "action" integer NOT NULL DEFAULT 0;
+    ALTER TABLE clariadmin_hosteditlog ALTER COLUMN action DROP DEFAULT;
+    ALTER TABLE clariadmin_hosteditlog ADD COLUMN "ip" varchar(32) NOT NULL DEFAULT '0.0.0.0';
+    ALTER TABLE clariadmin_hosteditlog ALTER COLUMN ip DROP DEFAULT;
 r587
     ALTER TABLE clariadmin_paramadditionnalfield ADD COLUMN "api_key" varchar(64);
 r523

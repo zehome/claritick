@@ -128,31 +128,32 @@ class HostForm(df.ModelForm, FormSecurityChecker):
         self.user_ip = ip
         self.new = self.instance.pk is None
         if not self.new:
-            HostEditLog(host=self.instance, user=self.user,
-                message=self.log_format(u"consulté")).save() 
+            self.log_action("consulté")
 
-    def log_format(self, action):
-        return u"Le poste %s a été %s par %s (sec:%s, ip:%s) le %s"%(
-                self.instance.hostname,
+    def log_action(self, action, instance=None):
+        if instance is None:
+            instance = self.instance
+        message = u"Le poste %s a été %s par %s (sec:%s, ip:%s) le %s"%(
+                instance.hostname,
                 action,
                 self.user.username,
                 self.user.get_profile().get_security_level(),
                 self.user_ip,
                 datetime.datetime.now().isoformat())
+        HostEditLog(host=instance, user=self.user, ip=self.ip, action=action, 
+                    message=message).save()
 
     def save(self, force_insert=False, force_update=False, commit=True):
         assert(self.security_can_save())
         inst = super(HostForm, self).save()
-        message= self.log_format(u"créé" if self.new else u"modifié")
-        HostEditLog(host=inst, user=self.user, 
-                    message=message).save()
+        self.log_format(u"créé" if self.new else u"modifié", inst)
         return inst
 
     def delete(self, *args, **kwargs):
         import ipdb;ipdb.set_trace()
         #assert(self.security_can_delete())
         HostEditLog(host=None, user=self.user, 
-                    message=self.log_format(u"suprimé")).save()
+                    message=self.log_format(u"supprimé")).save()
         return self.instance.delete(*args, **kwargs)
 
     def is_valid(self):

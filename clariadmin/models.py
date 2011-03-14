@@ -12,7 +12,7 @@ from common.rc4 import b64rc4crypt
 from common.models import Client, ClientField, JsonField, ColorField
 from datetime import date
 
-CHOICES_FIELDS_AVAILABLE = (
+FIELD_TYPES = (
    (u'1', u"texte"),            # CharField
    (u'2', u"booléen"),          # BooleanField
    (u'3', u"choix" ),           # ChoiceField
@@ -21,6 +21,11 @@ CHOICES_FIELDS_AVAILABLE = (
    (u'6',u'choix multiple'),    # MultipleChoiceField
    )
 
+ACTIONS_LOG = [
+    (0, u"consulté"),
+    (1, u"créé"),
+    (2, u"modifié")
+    (3, u"supprimé")]
 
 class OperatingSystem(models.Model):
     class Meta:
@@ -174,7 +179,7 @@ class ParamAdditionnalField(models.Model):
         ordering = (u"host_type",u"sorting_priority")
     host_type = models.ForeignKey(HostType, verbose_name=u"Type d'hôte")
     name = models.CharField(u"Nom", max_length=32)
-    data_type = models.CharField(u"Type de donnée", max_length=4 , choices=CHOICES_FIELDS_AVAILABLE)
+    data_type = models.CharField(u"Type de donnée", max_length=4 , choices=FIELD_TYPES)
     # dans un cas de choices il sera stocké en json non indenté. ex: ["a","b","c"]
     default_values = JsonField(u"Valeur par défaut/choix", max_length=8192)
     fast_search = models.BooleanField(u"Champ recherché par défaut", default=False)
@@ -203,5 +208,13 @@ class HostEditLog(models.Model):
     host = models.ForeignKey(Host, verbose_name=u"", blank=True, null=True)
     user = models.ForeignKey(User, verbose_name=u"", blank=True, null=True)
     date = models.DateTimeField(u"Date d'ajout", auto_now_add=True)
+    ip = models.CharField(u'Ip utilisateur', max_length=1024)
+    action = models.IntegerField(u"Action" ,choices=ACTIONS_LOG)
     message = models.CharField(u'Action répertoriée', max_length=1024)
+    def __init__(self,*args,**kwargs):
+        print "#### Here HostEditLogArgs :->",args,kwargs
+        action = kwargs.pop("action",None)
+        if isinstance(str, action):
+            action = dict((v,k) for k,v in ACTIONS_LOG)[action]
+        super(HostEditLog,self).__init__(*args, action=action, **kwargs)
 
