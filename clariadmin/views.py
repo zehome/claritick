@@ -4,10 +4,8 @@ from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.template import RequestContext
 from django.contrib.auth.decorators import permission_required
 from django.conf import settings
-from django.views.generic import list_detail
 from django.http import HttpResponse, Http404
 from django.db.models import Q
-from django.utils import simplejson as json
 
 from clariadmin.models import Host, HostType
 from clariadmin.forms import HostForm, SearchHostForm, AdditionnalFieldForm

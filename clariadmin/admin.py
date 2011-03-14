@@ -4,7 +4,7 @@ from django.http import HttpResponse
 from clariadmin.models import OperatingSystem, HostType, Supplier, ParamAdditionnalField
 from clariadmin.forms import ParamAdditionnalFieldAdminForm
 from common.widgets import ColorPickerWidget
-from common.models import ColorField, JsonField
+from common.models import ColorField
 # Procédure en cour d'implémentation inspirée de:
 # http://www.hindsightlabs.com/blog/2010/02/11/adding-extra-fields-to-a-model-form-in-djangos-admin/
 

@@ -3,7 +3,7 @@
 import dojango.forms as df
 from clariadmin.models import Host, OperatingSystem, HostType
 from clariadmin.models import AdditionnalField, ParamAdditionnalField, Supplier
-from clariadmin.models import CHOICES_FIELDS_AVAILABLE, HostEditLog
+from clariadmin.models import HostEditLog
 from common.models import Client
 from common.utils import sort_queryset
 from common.forms import ModelFormTableMixin
@@ -122,7 +122,7 @@ class HostForm(df.ModelForm, FormSecurityChecker):
             "status","commentaire")
     def __init__(self, user, ip, *args, **kwargs):
         super(HostForm, self).__init__(*args, **kwargs)
-        self.fields['site'].queryset = Client.objects.filter(id__in=(c.id for c in user.clients))
+        self.fields['site'].choices = ((c.id, str(c)) for c in sort_queryset(Client.objects.filter(id__in=(c.id for c in user.clients))))
         self._security_filter(user = user, formName = 'Host')
         self.user = user
         self.user_ip = ip
