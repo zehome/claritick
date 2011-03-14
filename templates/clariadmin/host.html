@@ -51,7 +51,7 @@
 {% if form.security_can_view %}
 
 {% if form.rootpw %}
-<div id="chromecrypto_download" style="font-size: 2em; color: red; font-weight: bold; border: 1px solid red; display: none;">Vous devez installer <a href="{{ MEDIA_URL }}/chromecrypto.crx">ChromeCrypto</a> pour voir les mots de passe root!</div>
+<div id="chromecrypto_download" style="font-size: 2em; color: red; font-weight: bold; border: 1px solid red; display: none;">Vous devez installer <a href="{{ MEDIA_URL }}chromecrypto.crx">ChromeCrypto</a> pour voir les mots de passe root!</div>
 <script type="text/javascript">
 setTimeout( function() {
     console.log("cc: "+dojo.byId("chromecrypto_presence"));

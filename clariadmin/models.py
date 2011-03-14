@@ -214,7 +214,7 @@ class HostEditLog(models.Model):
     def __init__(self,*args,**kwargs):
         print "#### Here HostEditLogArgs :->",args,kwargs
         action = kwargs.pop("action",None)
-        if isinstance(action, str):
+        if isinstance(action, unicode):
             action = dict((v,k) for k,v in ACTIONS_LOG)[action]
         super(HostEditLog,self).__init__(*args, action=action, **kwargs)
 
