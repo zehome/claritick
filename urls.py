@@ -1,14 +1,13 @@
 # -*- coding: utf-8 -*-
 
-from django.conf.urls.defaults import *
+from django.conf.urls.defaults import patterns, url, include
 from django.shortcuts import render_to_response
 from django.contrib import admin
-from ticket.views import get_ticket_text_statistics, get_critical_tickets, get_ticket_alarm
+from ticket.views import get_critical_tickets, get_ticket_alarm
 from django.http import HttpResponse
 
 import reporting
 
-import django.contrib.auth.views
 from django.template import RequestContext
 
 # Custom models
@@ -20,6 +19,7 @@ import ws.urls
 import chuser.urls
 import lock.urls
 import packaging.urls
+import host_history.urls
 
 # Init code
 admin.autodiscover()
@@ -72,6 +72,7 @@ urlpatterns = patterns('',
     (r'^chuser/', include(chuser.urls)),
     (r'^lock/', include(lock.urls)),
     (r'^clariadmin/', include(clariadmin.urls)),
+    (r'^host-history/', include(host_history.urls)),
     (r'^developpements/', include(developpements.urls)),
     (r'^agenda/$', agenda),
     (r'^dojango/', include('dojango.urls')), # Dojango requires
@@ -95,4 +96,3 @@ urlpatterns = patterns('',
     ## Ovh cert
     (r'^ovh-cert.txt', ovh_cert),
 )
-
