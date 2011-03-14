@@ -255,18 +255,19 @@ class ClaritickUserManager(models.Manager):
     """
     def get_query_set(self):
         """
-            On va chercher le userprofile et client.
+            On va chercher le userprofile et client, ainsi que d'autre attributs du profil.
             En sortie, l'objet aura un attribut client correspondant au userprofile__client__label de l'utilisateur.
         """
         return super(ClaritickUserManager, self).get_query_set().\
-            extra(select={"client": '"common_client"."label"'}).\
-            select_related("userprofile", "userprofile__client").order_by("userprofile__client__label")
+            extra(select={"client": '"common_client"."label"', "security_level": '"common_userprofile"."security_level"'}).\
+            select_related("userprofile", "userprofile__client", "userprofile__security_level").order_by("userprofile__client__label")
 
 class ClaritickUser(User):
     """
         Model proxy de User.
     """
     client = u""
+    #security_level = 99
     objects = ClaritickUserManager()
 
     def __unicode__(self):
@@ -279,6 +280,11 @@ class ClaritickUser(User):
             return self.client or u""
         return u""
     get_client.short_description = u"Client"
+
+    def get_security_level(self):
+        print dir(self)
+        return getattr(self, "security_level", 99)
+    get_security_level.short_description = u"Security level"
 
     def get_child_users(self):
         """

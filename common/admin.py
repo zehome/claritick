@@ -24,7 +24,7 @@ class UserProfileInline(admin.TabularInline):
 
 class UserAdmin(DjangoUserAdmin):
     inlines = [UserProfileInline]
-    list_display = ["username", "get_client", "first_name", "last_name", "email", "is_staff", "is_active" ]
+    list_display = ["username", "get_client", "first_name", "last_name", "email", "is_staff", "is_active", "get_security_level" ]
 
     add_fieldsets = (
         (None, {
