@@ -22,7 +22,8 @@
 <tbody id="context_lines">
 {% for row in page.object_list %}
     <tr id="comp_{{ row.id }}" class="{% cycle 'row1' 'row2'%}">
-        {% if 'host' in columns %}<td><a href="{% url clariadmin.views.modify row.id %}">{{ row.host.hostname }}</a></td>{% endif %}
+        {% if 'host' in columns %}<td>{% if row.host %}<a href="{% url clariadmin.views.modify row.host.id %}">{{ row.host.hostname }}</a>{% else %}
+                                      <i style="color:red;"> Deleted</i> {% endif %}</td>{% endif %}
         {% if 'user' in columns %}<td>{{ row.user.username }}</td>{% endif %}
         {% if 'date' in columns %}<td>{{ row.date }}</td>{% endif %}
         {% if 'ip' in columns %}<td>{{ row.ip }}</td>{% endif %}
