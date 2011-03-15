@@ -21,7 +21,20 @@
       if (global_search)
         global_search.focus();
     });
-
+    
+    function validateIfEnter(ievent) {
+      if (ievent.keyCode == 13) {
+        dojo.byId("search_form").submit();
+      }
+    }
+    dojo.addOnLoad(
+      function(){
+        dojo.connect(dijit.byId("id_os"),"onKeyUp",validateIfEnter);
+        dojo.connect(dijit.byId("id_type"),"onKeyUp",validateIfEnter);
+        dojo.connect(dijit.byId("id_supplier"),"onKeyUp",validateIfEnter);
+        dojo.connect(dijit.byId("id_site"),"onKeyUp",validateIfEnter);
+    });
+ 
     function typeChanged(select_box){
       dojo.xhrGet({
           url: "{% url clariadmin.views.ajax_extra_fields_form -1 '/b' %}".replace('-1',select_box.item.value?select_box.item.value:-1),
@@ -70,7 +83,7 @@
 {% block content %}
 
   {% if form.security_can_view %}
-    <form method="post">
+    <form method="post" id="search_form">
       {% csrf_token %}
       <fieldset class="block form">
         <legend>Filtrage</legend>
