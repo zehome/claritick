@@ -129,6 +129,7 @@ INSTALLED_APPS = (
     'packaging',               # Clarideploy tools
     'importv1',
     'debug_toolbar',
+    'reversion',
 )
 
 COMMENTS_APP = 'ticket_comments'

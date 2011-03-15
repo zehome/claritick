@@ -1,3 +1,10 @@
+r632
+    Nouveau modèle et nouvelle dépendence: django-reversion ( "http://pypi.python.org/pypi/django-reversion/" )
+    - syncdb
+    ALTER TABLE clariadmin_hosteditlog ADD COLUMN "username" varchar(64) NOT NULL DEFAULT 'nobody';
+    ALTER TABLE clariadmin_hosteditlog ALTER COLUMN username DROP DEFAULT;
+    ALTER TABLE clariadmin_hosteditlog DROP COLUMN user_id;
+    ALTER TABLE clariadmin_hosteditlog ADD COLUMN "revision_id" integer REFERENCES "reversion_revision" ("id") DEFERRABLE INITIALLY DEFERRED;
 r610
     ALTER TABLE clariadmin_hosteditlog ADD COLUMN "action" integer NOT NULL DEFAULT 0;
     ALTER TABLE clariadmin_hosteditlog ALTER COLUMN action DROP DEFAULT;

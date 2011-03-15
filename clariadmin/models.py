@@ -5,10 +5,11 @@ from django.db.models import Q
 from django.template.loader import get_template
 from django.template import Context
 from django.utils.datastructures import SortedDict
-from django.contrib.auth.models import User
 from django.conf import settings
 from common.rc4 import b64rc4crypt
 
+import reversion
+from reversion.models import Revision
 from common.models import Client, ClientField, JsonField, ColorField
 from datetime import date
 
@@ -172,7 +173,7 @@ class Host(models.Model):
 
     def available_for(self,user):
         return (self.site in user.clients)
-    
+
 class ParamAdditionnalField(models.Model):
     class Meta:
         verbose_name = u"Définition de champs complémentaires"
@@ -206,7 +207,9 @@ class HostEditLog(models.Model):
     class Meta:
         ordering = ('date',)
     host = models.ForeignKey(Host, verbose_name=u"Machine", blank=True, null=True, on_delete=models.SET_NULL)
-    user = models.ForeignKey(User, verbose_name=u"Utilisateur", blank=True, null=True, on_delete=models.SET_NULL)
+    #user = models.ForeignKey(User, verbose_name=u"Utilisateur", blank=True, null=True, on_delete=models.SET_NULL)
+    username = models.CharField("Nom utilisateur", max_length=128)
+    revision = models.ForeignKey(Revision, verbose_name=u"Version", null=True, on_delete=models.SET_NULL)
     date = models.DateTimeField(u"Date d'ajout", auto_now_add=True)
     ip = models.CharField(u'Ip utilisateur', max_length=1024)
     action = models.IntegerField(u"Action" ,choices=((i,s) for i,s,c in ACTIONS_LOG))
@@ -223,3 +226,5 @@ class HostEditLog(models.Model):
             action = dict((s,i) for i,s,c in ACTIONS_LOG)[action]
         super(HostEditLog,self).__init__(*args, action=action, **kwargs)
 
+reversion.register(Host, follow=["additionnalfield_set"])
+reversion.register(AdditionnalField)

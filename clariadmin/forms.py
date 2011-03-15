@@ -11,6 +11,8 @@ from django.utils import simplejson as json
 from django.utils.datastructures import SortedDict
 from django.conf import settings
 from itertools import chain
+import reversion
+from reversion.models import Version
 import datetime
 
 attrs_filtering={'queryExpr':'*${0}*','highlightMatch':'all','autoComplete':'False'}
@@ -130,29 +132,42 @@ class HostForm(df.ModelForm, FormSecurityChecker):
         #if not self.new:
             #self.log_action(u"consulté")
 
-    def log_action(self, action, instance=None):
+    def log_action(self, action, instance=None, rev=None):
         if instance is None:
             instance = self.instance
+        #if rev is not None:
+        #    import pdb;pdb.set_trace()
         message = u"Le poste %s a été %s par %s (sec:%s, ip:%s) le %s"%(
                 instance.hostname,
                 action,
                 self.user.username,
                 self.user.get_profile().get_security_level(),
                 self.user_ip,
-                datetime.datetime.now().isoformat())
-        HostEditLog(host=instance, user=self.user, ip=self.user_ip, action=action, 
-                    message=message).save()
+                datetime.datetime.now().strftime("%m/%d/%Y %H:%M"))
+        HostEditLog(host=instance, username=self.user.username, ip=self.user_ip, action=action, 
+                    message=message, revision=rev).save()
 
-    def save(self, force_insert=False, force_update=False, commit=True):
+    def save(self, force_insert=False, force_update=False, commit=True, extra_fields=None):
         assert(self.security_can_save())
-        inst = super(HostForm, self).save()
-        self.log_action(u"créé" if self.new else u"modifié", inst)
+        with reversion.revision:
+            inst = super(HostForm, self).save()
+            if extra_fields and extra_fields.is_valid():
+                extra_fields.host = inst
+                extra_fields.save()
+            reversion.revision.user = self.user
+        rev = Version.objects.get_for_object(inst)
+        self.log_action(u"créé" if self.new else u"modifié", inst, rev=rev)
         return inst
 
     def delete(self, *args, **kwargs):
         #assert(self.security_can_delete())
-        self.log_action(u"supprimé")
-        return self.instance.delete(*args, **kwargs)
+        rev = Version.objects.get_for_object(self.instance)
+        with reversion.revision:
+            reversion.revision.user = self.user
+            ret = self.instance.delete(*args, **kwargs)
+
+        self.log_action(u"supprimé", rev=rev)
+        return ret
 
     def is_valid(self):
         if not self.security_can_save():
