@@ -1,5 +1,6 @@
 # Create your views here.
 from clariadmin.models import HostEditLog, Host
+from host_history.forms import SearchLogForm
 from common.diggpaginator import DiggPaginator
 
 from django.conf import settings
@@ -24,6 +25,10 @@ def list_logs(request, filter_type=None, filter_key=None):
     else:
         qs = HostEditLog.objects.all()
     qs = qs.select_related('host','user')
+    print request.POST
+    form = SearchLogForm(request.user, request.POST)
+    if form.is_valid():
+        qs = form.search(qs)
         
     # get sorting
     sorting = sort_default
@@ -51,5 +56,6 @@ def list_logs(request, filter_type=None, filter_key=None):
         'host_history/list.html',
         {"page": page,
          "columns": columns,
-         "sorting": sorting,},
+         "sorting": sorting,
+         "form": form},
         context_instance=RequestContext(request))
