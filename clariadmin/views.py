@@ -155,7 +155,7 @@ def list_all(request, *args, **kw):
     qs = Host.objects.none()
     if form.is_valid():
         search_args = form.cleaned_data
-        if [e for e in search_args if e]:
+        if [v for v in search_args.itervalues() if v]:
             qs = Host.objects.filter_by_user(request.user)
             if form_extra:
                 qs = filter_hosts(qs, request.user, sorting, form.cleaned_data, form_extra.get_data())
