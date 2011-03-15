@@ -143,7 +143,8 @@
         {% endblock %}
     </div>
     <div id="gauche-spin"></div>
-
+    {# Token utilisé par recherche globale clariadmin et simuler un post en javascript depuis chaque page interne avec la fonction postwith(kwargs, url). #}
+    {% csrf_token %}
     <table id="menuPrincipal" summary="Menu">
       <tr>
         <td align="left" width="33%">
@@ -165,7 +166,7 @@
           <p style="padding: 0; margin: 0;">        
             Aller au ticket # <input type="text" id="id_num_ticket" size="6" /> <button dojoType="dijit.form.Button" id="id_go_ticket">Go</button>
             {% if perms.clariadmin.can_access_clariadmin %}
-              <br />Clariadmin: <input type="text" id="id_num_host" size="25" /> {% csrf_token %}
+              <br />Clariadmin: <input type="text" id="id_num_host" size="25" />
             {% endif %}
           </p>
           {% endif %}
