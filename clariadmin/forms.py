@@ -135,8 +135,8 @@ class HostForm(df.ModelForm, FormSecurityChecker):
     def log_action(self, action, instance=None, rev=None):
         if instance is None:
             instance = self.instance
-        #if rev is not None:
-        #    import pdb;pdb.set_trace()
+        if rev is not None:
+            import pdb;pdb.set_trace()
         message = u"Le poste %s a été %s par %s (sec:%s, ip:%s) le %s"%(
                 instance.hostname,
                 action,
@@ -145,7 +145,7 @@ class HostForm(df.ModelForm, FormSecurityChecker):
                 self.user_ip,
                 datetime.datetime.now().strftime("%m/%d/%Y %H:%M"))
         HostEditLog(host=instance, username=self.user.username, ip=self.user_ip, action=action, 
-                    message=message, revision=rev).save()
+                    message=message, version=rev).save()
 
     def save(self, force_insert=False, force_update=False, commit=True, extra_fields=None):
         assert(self.security_can_save())
@@ -155,13 +155,13 @@ class HostForm(df.ModelForm, FormSecurityChecker):
                 extra_fields.host = inst
                 extra_fields.save()
             reversion.revision.user = self.user
-        rev = Version.objects.get_for_object(inst)
+        rev = Version.objects.get_for_date(inst, datetime.datetime.now())
         self.log_action(u"créé" if self.new else u"modifié", inst, rev=rev)
         return inst
 
     def delete(self, *args, **kwargs):
         #assert(self.security_can_delete())
-        rev = Version.objects.get_for_object(self.instance)
+        rev = Version.objects.get_for_date(self.instance, datetime.datetime.now())
         with reversion.revision:
             reversion.revision.user = self.user
             ret = self.instance.delete(*args, **kwargs)
