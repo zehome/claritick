@@ -6,10 +6,27 @@
 
 {% block extrajs %}
 {{ block.super }}
+  <script type="text/javascript" src="{{ MEDIA_URL }}js/clariadmin.js"></script>
 {% endblock %}
 {% block content %}
 {% if page.object_list %}
 <h2>Résultats</h2>
+<form method="post" id="search_form">
+  {% csrf_token %}
+  <fieldset class="block form">
+    <legend>Filtrage</legend>
+    <table class="search">
+      {{ form.as_column_table }}
+    </table>
+    <div class="left_buttons">
+      <button type="reset" iconClass="dijitrtl dijitIconClear" dojoType="dijit.form.Button">Annuler</button>
+      <button type="button" iconClass="dijitrtl dijitIconDelete" name="reset_button" onclick="postwith({filter_reset:'true'},'.')" dojoType="dijit.form.Button">Reset</button>
+    </div>
+    <div align='center'>
+      <button type="submit"  dojoType="dijit.form.Button" iconClass="dijitrtl dijitIconSearch">Rechercher</button>
+    </div>
+  </fieldset>
+</form>
 <table class="resultat exportable" id="clariadmin_result_all">
 <thead>
 <tr>{%for column in columns %}
@@ -22,8 +39,7 @@
 <tbody id="context_lines">
 {% for row in page.object_list %}
     <tr id="comp_{{ row.id }}" class="{% cycle 'row1' 'row2'%}">
-        {% if 'host' in columns %}<td>{% if row.host %}<a href="{% url clariadmin.views.modify row.host.id %}">{{ row.host.hostname }}</a>{% else %}
-                                      <i style="color:red;"> Deleted</i> {% endif %}</td>{% endif %}
+        {% if 'host' in columns %}<td>{% if row.host %}<a href="{% url clariadmin.views.modify row.host.id %}">{{ row.host.hostname }}</a>{% else %}<i style="color:red;">Deleted</i> {% endif %}</td>{% endif %}
         {% if 'user' in columns %}<td>{{ row.user.username }}</td>{% endif %}
         {% if 'date' in columns %}<td>{{ row.date }}</td>{% endif %}
         {% if 'ip' in columns %}<td>{{ row.ip }}</td>{% endif %}
