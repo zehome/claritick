@@ -252,8 +252,8 @@ class ParamAdditionnalFieldAdminForm(df.ModelForm):
     choice15_val = df.CharField(label=u'Proposition', required=False)
 
     class Meta:
-        model=ParamAdditionnalField
-        widgets={
+        model = ParamAdditionnalField
+        widgets = {
             'data_type':df.FilteringSelect(attrs=attrs_filtering_and({'onchange':'typeChanged(this);'}))
             }
 
@@ -276,15 +276,16 @@ class ParamAdditionnalFieldAdminForm(df.ModelForm):
         api_key = cleaned_data.get('api_key',False)
         host_type = cleaned_data.get('host_type',False)
         if (api_key and ParamAdditionnalField.objects.filter(api_key__exact=api_key)
-                                                .filter(host_type__exact=host_type)):
+                                                 .filter(host_type__exact=host_type)
+                                                 .exclude(pk=self.instance.id)):
             self._errors["api_key"] = self.error_class(["Doit être unique par type d'hôte"])
             del cleaned_data["api_key"]
         return cleaned_data
 
     def save(self, commit=True):
         inst = super(ParamAdditionnalFieldAdminForm, self).save(commit=False)
-        cd=self.cleaned_data
-        normal_fields={'1':'text_val', '2':'bool_val', '4':'int_val', '5':'date_val'}
+        cd = self.cleaned_data
+        normal_fields = {'1': 'text_val', '2': 'bool_val', '4': 'int_val', '5': 'date_val'}
         if normal_fields.get(cd['data_type'],False):
             dv = cd[normal_fields[cd['data_type']]]
         else:
