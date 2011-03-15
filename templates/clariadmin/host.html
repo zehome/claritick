@@ -169,11 +169,15 @@ setTimeout( function() {
 
     <hr />
     <div id="save_buttons">
-        {% if host %}<button dojoType="dijit.form.Button" onclick='confirmDialog("Supression de l hote", "Êtes vous sûr de vouloir supprimer cette machine de la base?", confirmation_callback, "the_form")' iconClass="dijitEditorIcon dijitEditorIconDelete" type="button" value="true" class="default">Suprimer</button>{% endif %}
-        <button dojoType="dijit.form.Button" iconClass="dijitEditorIcon dijitEditorIconUndo" type="button" onclick='window.location = ".."'>Retourner à la liste</button>
-        <button dojoType="dijit.form.Button" iconClass="dijitEditorIcon dijitEditorIconSave" type="submit" name="submit_button" value="save">Enregistrer</button>
-        <button dojoType="dijit.form.Button" iconClass="dijitEditorIcon dijitEditorIconNewPage" type="submit" name="submit_button" value="new">Enregistrer et ajouter un nouveau</button>
-        <button dojoType="dijit.form.Button" iconClass="dijitEditorIcon dijitEditorIconRightToLeft" type="submit" name="submit_button" value="return">Enregistrer et retourner à la liste</button>
+      {% if host %}<button dojoType="dijit.form.Button" onclick='confirmDialog("Supression de l hote", "Êtes vous sûr de vouloir supprimer cette machine de la base?", confirmation_callback, "the_form")' iconClass="dijitEditorIcon dijitEditorIconDelete" type="button" value="true" class="default">Suprimer</button>{% endif %}
+      <button dojoType="dijit.form.Button" iconClass="dijitEditorIcon dijitEditorIconUndo" type="button" onclick='window.location = ".."'>Retourner à la liste</button>
+      <button dojoType="dijit.form.Button" iconClass="dijitEditorIcon dijitEditorIconSave" type="submit" name="submit_button" value="save">Enregistrer</button>
+      <button dojoType="dijit.form.Button" iconClass="dijitEditorIcon dijitEditorIconNewPage" type="submit" name="submit_button" value="new">Enregistrer et ajouter un nouveau</button>
+      <button dojoType="dijit.form.Button" iconClass="dijitEditorIcon dijitEditorIconRightToLeft" type="submit" name="submit_button" value="return">Enregistrer et retourner à la liste</button>
+      <div class="right_buttons">
+        <div dojoType="dijit.form.Button" iconClass="dijitEditorIcon claritickTicketMailAction" id="id_trace_button" onClick="window.location = '{% url list_logs "host" form.instance.id %}';">Historique</div>
+        <div dojoType="dijit.Tooltip" connectId="id_trace_button">Voir l'historique de cette machine.</div>
+      </div>
     </div>
   </div>
 </form>
