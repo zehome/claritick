@@ -8,8 +8,6 @@ from django.utils.datastructures import SortedDict
 from django.conf import settings
 from common.rc4 import b64rc4crypt
 
-import reversion
-from reversion.models import Version
 from common.models import Client, ClientField, JsonField, ColorField
 from datetime import date
 
@@ -209,7 +207,6 @@ class HostEditLog(models.Model):
     host = models.ForeignKey(Host, verbose_name=u"Machine", blank=True, null=True, on_delete=models.SET_NULL)
     #user = models.ForeignKey(User, verbose_name=u"Utilisateur", blank=True, null=True, on_delete=models.SET_NULL)
     username = models.CharField("Nom utilisateur", max_length=128)
-    version = models.ForeignKey(Version, verbose_name=u"Version", null=True, on_delete=models.SET_NULL)
     date = models.DateTimeField(u"Date d'ajout", auto_now_add=True)
     ip = models.CharField(u'Ip utilisateur', max_length=1024)
     action = models.IntegerField(u"Action" ,choices=((i,s) for i,s,c in ACTIONS_LOG))
@@ -226,5 +223,10 @@ class HostEditLog(models.Model):
             action = dict((s,i) for i,s,c in ACTIONS_LOG)[action]
         super(HostEditLog,self).__init__(*args, action=action, **kwargs)
 
-reversion.register(Host, follow=["additionnalfield_set"])
-reversion.register(AdditionnalField)
+class HostVersion(models.Model):
+    class Meta:
+        ordering = ("log_entry__date",)
+    host = JsonField(u"Host data")
+    additionnal_fields = JsonField(u"Host additionnal fields")
+    log_entry = models.OneToOneField(HostEditLog)
+
