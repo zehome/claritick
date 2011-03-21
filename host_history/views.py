@@ -1,7 +1,9 @@
+# -*- coding=utf8 -*-
 # Create your views here.
 from clariadmin.models import HostEditLog, Host
 from host_history.forms import SearchLogForm
 from common.diggpaginator import DiggPaginator
+from django.http import Http404
 
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -11,25 +13,49 @@ from django.contrib.auth.decorators import permission_required
 
 @permission_required("clariadmin.can_access_clariadmin")
 def list_logs(request, filter_type=None, filter_key=None):
+    """
+    Cette fonction gère le tri et l'affichage de l'historique des hotes
+    Elle sert à garder une tracabilité des modifications et états.
+    Variables de session:
+        - lastpage_log_list: dernière page accédée
+        - search_log_list: recherche courrante
+        - sort_log_list: garde l'ordre courrent
+    """
     sort_default='-date'
-    columns = ["host","user","date","ip","action","message"]
+    columns = ["host","user","date","ip","action","message","version"]
     new_search = False
-    if filter_type == 'host' and filter_key == 'deleted':
-        qs = HostEditLog.objects.filter(host__exact=None)
-    elif filter_type == 'user' and filter_key == 'deleted':
-        qs = HostEditLog.objects.filter(user__exact=None)
-    elif filter_type == 'host':
-        qs = get_object_or_404(Host, pk=filter_key).hosteditlog_set
-    elif filter_type == 'user':
-        qs = get_object_or_404(User, pk=filter_key).hosteditlog_set
+
+    # Url filtering
+    if filter_type:
+        if filter_type == 'host' and filter_key == 'deleted':
+            qs = HostEditLog.objects.filter(host__exact=None)
+        elif filter_type == 'user' and filter_key == 'deleted':
+            qs = HostEditLog.objects.filter(user__exact=None)
+        elif filter_type == 'host':
+            qs = get_object_or_404(Host, pk=filter_key).hosteditlog_set
+        elif filter_type == 'user':
+            qs = get_object_or_404(User, pk=filter_key).hosteditlog_set
+        else:
+            raise Http404
     else:
         qs = HostEditLog.objects.all()
     qs = qs.select_related('host','user')
-    form = SearchLogForm(request.user, request.POST)
+
+    # Reset button
+    if request.POST.get("filter_reset",False):
+        form = SearchLogForm(request.user,{})
+        del(request.session["lastpage_log_list"])
+        del(request.session["search_log_list"])
+        del(request.session["sort_log_list"])
+
+    # Handle SearchForm filtering
+    form = SearchLogForm(request.user, request.POST or 
+                                     request.session.get("search_log_list",{}))
     if form.is_valid():
+        request.session["search_log_list"] = form.cleaned_data
         qs = form.search(qs)
         
-    # get sorting
+    # Update sorting
     sorting = sort_default
     sort_get = request.GET.get('sort',
                    request.session.get("sort_log_list", sort_default))
@@ -39,17 +65,17 @@ def list_logs(request, filter_type=None, filter_key=None):
         sorting = sort_get
     request.session["sort_log_list"] = sorting
 
+    # Set paginator
     paginator = DiggPaginator(qs.order_by(sorting),
                               settings.HOSTS_PER_PAGE, body=5, tail=2, padding=2)
 
-    # get page
+    # Get page
     page_num = 1
     page_asked = int(request.GET.get('page',
-                                     request.session.get('lastpage_host-history', 1)))
+                                     request.session.get('lastpage_log_list', 1)))
     if ((page_asked <= paginator.num_pages) and not new_search):
         page_num = page_asked
-    request.session["lastpage_host-history"] = page_num
-
+    request.session["lastpage_log_list"] = page_num
     page = paginator.page(page_num)
     return render_to_response(
         'host_history/list.html',
