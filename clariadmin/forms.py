@@ -135,8 +135,6 @@ class HostForm(df.ModelForm, FormSecurityChecker):
     def log_action(self, action, instance=None, rev=None):
         if instance is None:
             instance = self.instance
-        if rev is not None:
-            import pdb;pdb.set_trace()
         message = u"Le poste %s a été %s par %s (sec:%s, ip:%s) le %s"%(
                 instance.hostname,
                 action,

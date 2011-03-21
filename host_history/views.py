@@ -25,7 +25,6 @@ def list_logs(request, filter_type=None, filter_key=None):
     else:
         qs = HostEditLog.objects.all()
     qs = qs.select_related('host','user')
-    print request.POST
     form = SearchLogForm(request.user, request.POST)
     if form.is_valid():
         qs = form.search(qs)
