@@ -232,7 +232,6 @@ class HostVersion(models.Model):
 
     @staticmethod
     def save_instance(host, log):
-        from pdb import set_trace;set_trace()
 
         fields = [dict([(k,v) for k,v in e.__dict__.iteritems() if k[0]!="_"])
                        for e in host.additionnalfield_set.all()]
