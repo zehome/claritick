@@ -3,7 +3,7 @@
 import dojango.forms as df
 from clariadmin.models import Host, OperatingSystem, HostType
 from clariadmin.models import AdditionnalField, ParamAdditionnalField, Supplier
-from clariadmin.models import HostEditLog
+from clariadmin.models import HostEditLog, HostVersion
 from common.models import Client
 from common.utils import sort_queryset
 from common.forms import ModelFormTableMixin
@@ -11,8 +11,6 @@ from django.utils import simplejson as json
 from django.utils.datastructures import SortedDict
 from django.conf import settings
 from itertools import chain
-import reversion
-from reversion.models import Version
 import datetime
 
 attrs_filtering={'queryExpr':'*${0}*','highlightMatch':'all','autoComplete':'False'}
@@ -132,7 +130,7 @@ class HostForm(df.ModelForm, FormSecurityChecker):
         #if not self.new:
             #self.log_action(u"consulté")
 
-    def log_action(self, action, instance=None, rev=None):
+    def log_action(self, action, instance=None):
         if instance is None:
             instance = self.instance
         message = u"Le poste %s a été %s par %s (sec:%s, ip:%s) le %s"%(
@@ -142,29 +140,22 @@ class HostForm(df.ModelForm, FormSecurityChecker):
                 self.user.get_profile().get_security_level(),
                 self.user_ip,
                 datetime.datetime.now().strftime("%m/%d/%Y %H:%M"))
-        HostEditLog(host=instance, username=self.user.username, ip=self.user_ip, action=action, 
-                    message=message, version=rev).save()
+        log = HostEditLog(host=instance, username=self.user.username, ip=self.user_ip, action=action, 
+                    message=message)
+        log.save()
+        return log
 
     def save(self, force_insert=False, force_update=False, commit=True, extra_fields=None):
         assert(self.security_can_save())
-        with reversion.revision:
-            inst = super(HostForm, self).save()
-            if extra_fields and extra_fields.is_valid():
-                extra_fields.host = inst
-                extra_fields.save()
-            reversion.revision.user = self.user
-        rev = Version.objects.get_for_date(inst, datetime.datetime.now())
-        self.log_action(u"créé" if self.new else u"modifié", inst, rev=rev)
+        inst = super(HostForm, self).save()
+        log = self.log_action(u"créé" if self.new else u"modifié", inst)
+        HostVersion.save_instance(inst, log)
         return inst
 
     def delete(self, *args, **kwargs):
         #assert(self.security_can_delete())
-        rev = Version.objects.get_for_date(self.instance, datetime.datetime.now())
-        with reversion.revision:
-            reversion.revision.user = self.user
-            ret = self.instance.delete(*args, **kwargs)
-
-        self.log_action(u"supprimé", rev=rev)
+        ret = self.instance.delete(*args, **kwargs)
+        self.log_action(u"supprimé")
         return ret
 
     def is_valid(self):

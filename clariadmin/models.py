@@ -227,6 +227,16 @@ class HostVersion(models.Model):
     class Meta:
         ordering = ("log_entry__date",)
     host = JsonField(u"Host data")
-    additionnal_fields = JsonField(u"Host additionnal fields")
+    additionnal_fields = JsonField(u"Host additionnal fields", null=True)
     log_entry = models.OneToOneField(HostEditLog)
+
+    @staticmethod
+    def save_instance(host, log):
+        from pdb import set_trace;set_trace()
+
+        fields = [dict([(k,v) for k,v in e.__dict__.iteritems() if k[0]!="_"])
+                       for e in host.additionnalfield_set.all()]
+        host = dict((k,v) for k,v in host.__dict__.iteritems() if k[0]!='_')
+        v=HostVersion(host=host,additionnal_fields=fields,log_entry=log)
+        v.save()
 
