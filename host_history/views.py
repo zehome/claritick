@@ -39,7 +39,7 @@ def list_logs(request, filter_type=None, filter_key=None):
             raise Http404
     else:
         qs = HostEditLog.objects.all()
-    qs = qs.select_related('host','user')
+    qs = qs.select_related('host','user','hostrevision')
 
     # Reset button
     if request.POST.get("filter_reset",False):

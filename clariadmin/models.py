@@ -9,7 +9,7 @@ from django.conf import settings
 from common.rc4 import b64rc4crypt
 
 from common.models import Client, ClientField, JsonField, ColorField
-from datetime import date
+import datetime 
 
 FIELD_TYPES = (
    (u'1', u"texte"),            # CharField
@@ -160,7 +160,7 @@ class Host(models.Model):
         h = Host(site=self.site, type=self.type, hostname=self.hostname+'_copy',
             os=self.os, status=self.status, date_end_prod=self.date_end_prod,
             supplier=self.supplier, commentaire=self.commentaire +
-            u"\n -> Copie de la machine %s(ip:%s, le:%s)"%(self.hostname, self.ip, date.today()),
+            u"\n -> Copie de la machine %s(ip:%s, le:%s)"%(self.hostname, self.ip, datetime.date.today()),
              date_start_prod=self.date_start_prod
              , model=self.model, location=self.location)
         afs=SortedDict()
@@ -232,10 +232,26 @@ class HostVersion(models.Model):
 
     @staticmethod
     def save_instance(host, log):
-
         fields = [dict([(k,v) for k,v in e.__dict__.iteritems() if k[0]!="_"])
                        for e in host.additionnalfield_set.all()]
-        host = dict((k,v) for k,v in host.__dict__.iteritems() if k[0]!='_')
+        host = dict((k,preserialize(v)) for k,v in host.__dict__.iteritems() if k[0]!='_')
         v=HostVersion(host=host,additionnal_fields=fields,log_entry=log)
         v.save()
+
+format_date="python_datetime:%Y-%m-%dT%H:%M:%S"
+def preserialize(val):
+    if isinstance(val,datetime.datetime) or isinstance(val,datetime.date):
+        return val.strftime(format_date)
+    if isinstance(val,ChromeCryptoStr):
+        return repr(val)
+    return val
+
+def postdeserialization(val):
+    if isinstance(val,str):
+        if val.startswith("python_datetime:"):
+            return datetime.datetime.strptime(val, format_date)
+        if val.startswith("{chromecrypto:"):
+            return ChromeCryptoStr(val[14:-1])
+    return val
+ 
 
