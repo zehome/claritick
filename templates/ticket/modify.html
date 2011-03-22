@@ -1,5 +1,9 @@
 <!-- <?xml version='1.0' encoding='utf-8'?> -->
 {% extends "base.html" %}
+{% block extrastyle %}
+  {{ block.super }}
+  <link rel="stylesheet" type="text/css" href="{{MEDIA_URL}}print_ticket.css" media="print" />
+{% endblock %}
 {% block extrajs %}<script type="text/javascript" src="{{ MEDIA_URL }}javascript/modify.js"></script>{% endblock %}
 
 {% block title %}Ticket numéro {{ form.instance.id }}{% endblock %}
@@ -86,7 +90,7 @@ var lock_settings = {{ lock_settings|safe }};
 </fieldset>
 {% endwith %}
 
-<fieldset class="block form">
+<fieldset class="block form no_print">
     <legend>Appels du client</legend>
     {% with form.instance.ticketappel_set.all as appels %}
     {% if appels %}
@@ -114,7 +118,7 @@ var lock_settings = {{ lock_settings|safe }};
   </table>
 </fieldset>
 
-<fieldset class="block form">
+<fieldset class="block form no_print">
     <legend>Fichiers joint</legend>
     <table>
         {% for file in form.instance.ticketfile_set.all %}

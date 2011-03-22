@@ -1,0 +1,60 @@
+#contenu div.image,
+table#menuPrincipal,
+div#save_buttons,
+div#gauche-spin,
+.dijitButtonNode,
+.no_print{
+  display:none !important;
+}
+
+#contenu h1.title{
+  /*position:absolute;*/
+  margin-top:15px;
+  width:30%;
+  height:80px;
+  left:10px;
+  vertical-align:middle;
+  padding:10px,10px,10px,10px;
+  float:right;
+  border-top:solid;
+  border-width:1px;
+  border-color:#777;
+}
+legend{
+  background-color:#FFF;
+}
+fieldset#fieldset_general{
+  position:absolute;
+  margin-top:100px;
+  right:0px;
+  width:28.5%;
+  float:right;
+}
+fieldset#fieldset_general div{
+  display:block;
+  line-height:20px;
+  position:relative;
+  left:30px;
+}
+fieldset#fieldset_general select{
+    position:absolute;
+    right:50px;
+}
+
+#contenu h1.title:before{
+  content:"⠀";
+  font-size:5.000em;
+}
+input, input[type="text"],option, input[type="password"], textarea, select, .vTextField{
+  border:none;
+  background-color:#FFFFFF;
+}
+
+input#id_title{
+  font-size:2.0em;
+  width:600px;
+}
+
+.form{
+  background-color:#FFFFFF;
+}
