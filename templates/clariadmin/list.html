@@ -124,7 +124,7 @@
           {% if 'type' in columns %}<td style="color:{{row.type.color_fg}};background-color:{{row.type.color_bg}}">{{ row.type }}</td>{% endif %}
           {% if 'os' in columns %}<td>{{ row.os }}</td>{% endif %}
           {% if 'model' in columns %}<td>{{ row.supplier.name }}{% if row.model %} - {{ row.model }}{% endif %}</td>{% endif %}
-          {% if 'status' in columns %}<td>{% if row.status %}{{ row.status }}{% endif %}</td>{% endif %}
+          {% if 'status' in columns %}<td style="background-color:{{row.status_color}};">{{ row.status_text }}</td>{% endif %}
         </tr>{% endfor %}
       </tbody>
     </table>

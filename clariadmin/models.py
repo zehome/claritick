@@ -9,7 +9,7 @@ from django.conf import settings
 from common.rc4 import b64rc4crypt
 
 from common.models import Client, ClientField, JsonField, ColorField
-import datetime 
+import datetime
 
 FIELD_TYPES = (
    (u'1', u"texte"),            # CharField
@@ -19,6 +19,14 @@ FIELD_TYPES = (
    (u'5',u'date'),              # DateField
    (u'6',u'choix multiple'),    # MultipleChoiceField
    )
+
+HOST_STATUS = [
+    (u'Stock', u"Stock", "#AAAAAA"),
+    (u'Service', u"Service", "#77FF77"),
+    (u'Hors Service', u"Hors Service", "#FF7777"),
+    #(3, u"Obsolete", "#FFFF77"),
+]
+
 
 ACTIONS_LOG = [
     (0, u"consulté", "#FFFFFF"),
@@ -141,7 +149,21 @@ class Host(models.Model):
     serial = models.CharField(u"Numéro de série", blank=True, max_length=128, null=True)
     inventory = models.CharField(u"Numéro d'inventaire", blank=True, max_length=128, null=True)
 
-    status = models.CharField(u"Statut", max_length=32, blank=True, null=True)
+    status = models.CharField(u"Statut", choices=((i,s) for i,s,c in HOST_STATUS)
+                              , max_length=32, blank=True, null=True)
+
+    @property
+    def status_color(self):
+        try:
+            return next(c for i,s,c in HOST_STATUS if i == self.status)
+        except StopIteration:
+            return u"no"
+    @property
+    def status_text(self):
+        try:
+            return next(s for i,s,c in HOST_STATUS if i == self.status)
+        except StopIteration:
+            return u"Non défini"
 
     def get_absolute_url(self):
         return "/clariadmin/modify/%i" % (self.id,)
@@ -226,32 +248,6 @@ class HostEditLog(models.Model):
 class HostVersion(models.Model):
     class Meta:
         ordering = ("log_entry__date",)
-    host = JsonField(u"Host data")
-    additionnal_fields = JsonField(u"Host additionnal fields", null=True)
+    host = models.TextField(u"Host data")
+    additionnal_fields = models.TextField(u"Host additionnal fields", null=True)
     log_entry = models.OneToOneField(HostEditLog)
-
-    @staticmethod
-    def save_instance(host, log):
-        fields = [dict([(k,v) for k,v in e.__dict__.iteritems() if k[0]!="_"])
-                       for e in host.additionnalfield_set.all()]
-        host = dict((k,preserialize(v)) for k,v in host.__dict__.iteritems() if k[0]!='_')
-        v=HostVersion(host=host,additionnal_fields=fields,log_entry=log)
-        v.save()
-
-format_date="python_datetime:%Y-%m-%dT%H:%M:%S"
-def preserialize(val):
-    if isinstance(val,datetime.datetime) or isinstance(val,datetime.date):
-        return val.strftime(format_date)
-    if isinstance(val,ChromeCryptoStr):
-        return repr(val)
-    return val
-
-def postdeserialization(val):
-    if isinstance(val,str):
-        if val.startswith("python_datetime:"):
-            return datetime.datetime.strptime(val, format_date)
-        if val.startswith("{chromecrypto:"):
-            return ChromeCryptoStr(val[14:-1])
-    return val
- 
-

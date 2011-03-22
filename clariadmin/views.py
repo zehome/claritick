@@ -231,8 +231,8 @@ def modify(request, host_id):
         if POST.get("delete", False):
             form.delete()
             return redirect('list_hosts')
+        add_fields = AdditionnalFieldForm(POST, host=host)
         if form.is_valid():
-            add_fields = AdditionnalFieldForm(POST, host=host)
             host = form.save(extra_fields=add_fields)
             redir = POST.get('submit_button', False)
             if redir == 'new':

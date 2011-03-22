@@ -114,6 +114,7 @@ class HostForm(df.ModelForm, FormSecurityChecker):
             'type':df.FilteringSelect(attrs_filtering_and({'onchange':'typeChanged(this);'})),
             'site':df.FilteringSelect(attrs_filtering),
             'supplier':df.FilteringSelect(attrs_filtering),
+            'status':df.FilteringSelect(attrs_filtering),
             'ip':df.IPAddressTextInput(),
             'commentaire':df.Textarea({"class":'comment_field'})
         }
