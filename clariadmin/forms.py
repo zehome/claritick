@@ -134,23 +134,30 @@ class HostForm(df.ModelForm, FormSecurityChecker):
     def log_action(self, action, instance=None):
         if instance is None:
             instance = self.instance
-        message = u"Le poste %s a été %s par %s (sec:%s, ip:%s) le %s"%(
+        message = HostEditLog.message_format%(
                 instance.hostname,
                 action,
                 self.user.username,
                 self.user.get_profile().get_security_level(),
                 self.user_ip,
                 datetime.datetime.now().strftime("%m/%d/%Y %H:%M"))
-        log = HostEditLog(host=instance, username=self.user.username, ip=self.user_ip, action=action, 
+        log = HostEditLog(host=instance, username=self.user.username, ip=self.user_ip, action=action,
                     message=message)
         log.save()
         return log
 
     def save(self, force_insert=False, force_update=False, commit=True, extra_fields=None):
         assert(self.security_can_save())
+        #import pdb;pdb.set_trace()
+        host_changes=""
+        fields_changes=""
+        for elem in self.changed_data:
+            host_changes += u"Le champ Host.%s est passé de <%s> à <%s>\n"%(
+                        elem, self.initial[elem], getattr(self.instance,elem))
         inst = super(HostForm, self).save()
-        log = self.log_action(u"créé" if self.new else u"modifié", inst)
-        HostVersion.save_instance(inst, log)
+        if(host_changes or fields_changes):
+            log = self.log_action(u"créé" if self.new else u"modifié", inst)
+            HostVersion(host=host_changes, additionnal_fields=fields_changes, log_entry=log).save()
         return inst
 
     def delete(self, *args, **kwargs):

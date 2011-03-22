@@ -10,6 +10,8 @@ from common.rc4 import b64rc4crypt
 
 from common.models import Client, ClientField, JsonField, ColorField
 import datetime
+import re
+
 
 FIELD_TYPES = (
    (u'1', u"texte"),            # CharField
@@ -239,6 +241,18 @@ class HostEditLog(models.Model):
     @property
     def action_text(self):
         return dict((i,s) for i,s,c in ACTIONS_LOG)[self.action]
+
+    message_format = u"Le poste %s a été %s par %s (sec:%s, ip:%s) le %s"
+
+    def parse_message(self):
+        infos = re.match(ur"Le poste ([\w\W]+) a été ([\wé]+) par (\w+) " +
+                  ur"\(sec:(\d+), ip:(\d?\d?\d.\d?\d?\d.\d?\d?\d.\d?\d?\d)\)" +
+                  ur" le (\d?\d/\d?\d/\d?\d?\d\d \d?\d:\d?\d)\Z",self.message)
+        if infos:
+            return infos
+        else:
+            raise Exception('invalid message')
+
     def __init__(self,*args,**kwargs):
         action = kwargs.pop("action",None)
         if isinstance(action, unicode):

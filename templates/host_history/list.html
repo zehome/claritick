@@ -45,7 +45,7 @@
         {% if 'ip' in columns %}<td>{{ row.ip }}</td>{% endif %}
         {% if 'action' in columns %}<td style='background-color:{{row.color}}'>{{ row.action_text }}</td>{% endif %}
         {% if 'message' in columns %}<td>{{ row.message }}</td>{% endif %}
-        {% if 'version' in columns %}<td>{{ row.hostversion.id }}</td>{% endif %}
+        {% if 'version' in columns %}<td>{%if row.hostversion %} <a href="{% url view_changes row.hostversion.id %}">Détails de révision</a>{% endif %}</td>{% endif %}
     </tr>{% endfor %}
 </tbody>
 </table>
@@ -54,4 +54,4 @@
 {% diggpaginator page %}
 {% endif %}
 {% endif %}
-{% endblock %}          
+{% endblock %}

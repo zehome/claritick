@@ -1,6 +1,6 @@
 # -*- coding=utf8 -*-
 # Create your views here.
-from clariadmin.models import HostEditLog, Host
+from clariadmin.models import HostEditLog, Host, HostVersion
 from host_history.forms import SearchLogForm
 from common.diggpaginator import DiggPaginator
 from django.http import Http404
@@ -49,12 +49,12 @@ def list_logs(request, filter_type=None, filter_key=None):
         del(request.session["sort_log_list"])
 
     # Handle SearchForm filtering
-    form = SearchLogForm(request.user, request.POST or 
+    form = SearchLogForm(request.user, request.POST or
                                      request.session.get("search_log_list",{}))
     if form.is_valid():
         request.session["search_log_list"] = form.cleaned_data
         qs = form.search(qs)
-        
+
     # Update sorting
     sorting = sort_default
     sort_get = request.GET.get('sort',
@@ -84,3 +84,18 @@ def list_logs(request, filter_type=None, filter_key=None):
          "sorting": sorting,
          "form": form},
         context_instance=RequestContext(request))
+
+@permission_required("clariadmin.can_access_clariadmin")
+def view_changes(request, rev_id):
+    version = get_object_or_404(HostVersion, pk = rev_id)
+    log = version.log_entry
+    print log.message
+    message_infos = log.parse_message()
+    return render_to_response('host_history/view.html',
+        {   "host_changes":version.host.split('\n'),
+            "old_hostname":message_infos.group(1),
+            "date": log.date,
+            "action": message_infos.group(2),
+            "fields_changes":version.additionnal_fields.split('\n'),
+            "log":log,
+        },context_instance=RequestContext(request))
