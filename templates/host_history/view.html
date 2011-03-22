@@ -1,0 +1,23 @@
+ {% extends "base.html" %}
+
+{% block title %}Liste des logs machines{% endblock %}
+{% block content_title %}Liste des logs machines{% endblock %}
+{% block image %}<img src="/media/images/oxygen/search.png" />{% endblock %}
+
+{% block extrajs %}
+{{ block.super }}
+  <script type="text/javascript" src="{{ MEDIA_URL }}js/clariadmin.js"></script>
+{% endblock %}
+{% block content %}
+<div>
+  <h1> {{old_hostname}} {{action}} le {{date}}</h1>
+  <div class="left">
+{% if log.host %}<a href="{% url clariadmin.views.modify log.host.id %}">{{ log.host.hostname }}</a>{% else %}<i style="color:red;">Deleted</i> {% endif %}
+
+{% for change in host_changes %}
+  <p>{{change}}</p>
+{% endfor %}
+</div>
+</div>
+
+{% endblock %}
