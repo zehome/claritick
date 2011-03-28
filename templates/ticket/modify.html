@@ -2,7 +2,7 @@
 {% extends "base.html" %}
 {% block extrastyle %}
   {{ block.super }}
-  <link rel="stylesheet" type="text/css" href="{{MEDIA_URL}}print_ticket.css" {#media="print"#} />
+  <link rel="stylesheet" type="text/css" href="{{MEDIA_URL}}print_ticket.css" media="print" />
 {% endblock %}
 {% block extrajs %}<script type="text/javascript" src="{{ MEDIA_URL }}javascript/modify.js"></script>{% endblock %}
 
