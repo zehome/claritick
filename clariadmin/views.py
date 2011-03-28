@@ -169,8 +169,8 @@ def list_all(request, *args, **kw):
 
     # get page
     page_num = 1
-    page_asked = int(request.session.get('lastpage_clariadmin',
-                                         request.GET.get('page', 1)))
+    page_asked = int(request.GET.get('page', request.session.get('lastpage_clariadmin',
+                                         1)))
     if ((page_asked <= paginator.num_pages) and not new_search):
         page_num = page_asked
     request.session["lastpage_clariadmin"] = page_num
