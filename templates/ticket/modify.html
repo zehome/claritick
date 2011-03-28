@@ -2,7 +2,7 @@
 {% extends "base.html" %}
 {% block extrastyle %}
   {{ block.super }}
-  <link rel="stylesheet" type="text/css" href="{{MEDIA_URL}}print_ticket.css" media="print" />
+  <link rel="stylesheet" type="text/css" href="{{MEDIA_URL}}print_ticket.css" {#media="print"#} />
 {% endblock %}
 {% block extrajs %}<script type="text/javascript" src="{{ MEDIA_URL }}javascript/modify.js"></script>{% endblock %}
 
@@ -65,12 +65,12 @@ var lock_settings = {{ lock_settings|safe }};
   </table>
 </fieldset>
 
-<fieldset class="block form">
+<fieldset class="block form print_content">
   <legend>Contenu</legend>
-  <table>
+  <table class="print_title">
     <tr>
-        <th class="large">{{ form.title.label_tag }}</th>
-        <td class="large right">{{ form.title }}</td>
+        <th class="large print_bottom_padding">{{ form.title.label_tag }}</th>
+        <td class="large right print_bottom_padding">{{ form.title }}</td>
     </tr>
     <tr>
         <th></th>
@@ -104,7 +104,7 @@ var lock_settings = {{ lock_settings|safe }};
     <div>{{ form.appel }} {{ form.appel.label_tag }}</div>
 </fieldset>
 
-<fieldset class="block form">
+<fieldset class="block form no_print">
   <legend>Planification</legend>
   <table>
     <tr>

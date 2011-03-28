@@ -1,15 +1,14 @@
-#contenu div.image,
-table#menuPrincipal,
-div#save_buttons,
-div#gauche-spin,
-.dijitButtonNode,
-.no_print{
+#contenu div.image, div#save_buttons, div#gauche-spin, .dijitButtonNode, .no_print{
   display:none !important;
+}
+
+table#menuPrincipal{
+  visibility:hidden;
 }
 
 #contenu h1.title{
   /*position:absolute;*/
-  margin-top:15px;
+  margin-top:-85px;
   width:30%;
   height:80px;
   left:10px;
@@ -20,22 +19,26 @@ div#gauche-spin,
   border-width:1px;
   border-color:#777;
 }
+
 legend{
   background-color:#FFF;
 }
+
 fieldset#fieldset_general{
   position:absolute;
-  margin-top:100px;
+  margin-top:10px;
   right:0px;
-  width:28.5%;
+  width:27.5%;
   float:right;
 }
+
 fieldset#fieldset_general div{
   display:block;
   line-height:20px;
   position:relative;
   left:30px;
 }
+
 fieldset#fieldset_general select{
     position:absolute;
     right:50px;
@@ -45,9 +48,20 @@ fieldset#fieldset_general select{
   content:"⠀";
   font-size:5.000em;
 }
+
 input, input[type="text"],option, input[type="password"], textarea, select, .vTextField{
   border:none;
   background-color:#FFFFFF;
+}
+
+#logoClaritick{
+  display:block !important;
+  visibility:visible !important;
+  position:absolute;
+  top:10px;
+  left:10px;
+  height:40px;
+  width:160px;
 }
 
 input#id_title{
@@ -57,4 +71,36 @@ input#id_title{
 
 .form{
   background-color:#FFFFFF;
+}
+
+.print_title{
+  position:relative;
+  top:-85px;
+/*  position:relative;
+  top:-30px;*/
+}
+
+fieldset.print_content{
+  margin-top:75px !important;
+  padding-top:-10px;
+}
+
+fieldset table{
+  border:none;
+}
+
+.print_title_field{
+  width:30px;
+}
+
+.print_bottom_padding{
+  padding-bottom:55px;
+}
+.print_bottom_padding input{
+  width:510px !important;
+}
+select{
+  background-color:#000;
+  color:#fff;
+  width:75px;
 }
