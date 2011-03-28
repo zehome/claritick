@@ -232,7 +232,7 @@ def modify(request, host_id):
             form.delete()
             return redirect('list_hosts')
         add_fields = AdditionnalFieldForm(POST, host=host)
-        if form.is_valid():
+        if form.is_valid() and add_fields.is_valid():
             host = form.save(extra_fields=add_fields)
             redir = POST.get('submit_button', False)
             if redir == 'new':

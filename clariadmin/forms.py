@@ -121,6 +121,7 @@ class HostForm(df.ModelForm, FormSecurityChecker):
         fields = ("site","hostname","ip","os","rootpw","supplier", "model",
             "type","location","serial","inventory", "date_start_prod","date_end_prod",
             "status","commentaire")
+
     def __init__(self, user, ip, *args, **kwargs):
         super(HostForm, self).__init__(*args, **kwargs)
         self.fields['site'].choices = ((c.id, str(c)) for c in sort_queryset(Client.objects.filter(id__in=(c.id for c in user.clients))))
@@ -149,12 +150,22 @@ class HostForm(df.ModelForm, FormSecurityChecker):
     def save(self, force_insert=False, force_update=False, commit=True, extra_fields=None):
         assert(self.security_can_save())
         #import pdb;pdb.set_trace()
-        host_changes=""
-        fields_changes=""
+        host_changes=u""
+        fields_changes=u""
+        old_fields=list(self.instance.additionnalfield_set.all())
         for elem in self.changed_data:
             host_changes += u"Le champ Host.%s est passé de <%s> à <%s>\n"%(
                         elem, self.initial[elem], getattr(self.instance,elem))
         inst = super(HostForm, self).save()
+        extra_fields.save()
+        print "Iterration over those new additionnal fields", inst.additionnalfield_set.all(), " compared to this olds ones ",old_fields
+        for cf in inst.additionnalfield_set.all():
+            try:
+                old= next((o for o in old_fields if cf.id == o.id))
+                if old.value != cf.value:
+                    fields_changes+=u"Le champ AdditionnalField.%s est passé de <%s> à <%s>\n"%(old.field.name,old.value,cf.value)
+            except StopIteration, e:
+                fields_changes+=u"Le champ AdditionnalField.%s est innitialisé à <%s>\n"%(old.field.name,cf.value)
         if(host_changes or fields_changes):
             log = self.log_action(u"créé" if self.new else u"modifié", inst)
             HostVersion(host=host_changes, additionnal_fields=fields_changes, log_entry=log).save()
@@ -197,8 +208,11 @@ class AdditionnalFieldForm(df.Form):
         # Détermine la liste des champs et leurs valeurs courrante (défaut puis établi si existant)
         c_fields = dict((v.id, v.default_values ) for v in (self.avail_fields))
         if host:
-            c_fields.update(dict((addf.field.id,addf.value)
-                for addf in host.additionnalfield_set.all() if addf.field.id in c_fields.keys()))
+            host_fields = dict((addf.field.id,addf.value)
+                               for addf in host.additionnalfield_set.all()
+                               if addf.field.id in c_fields.keys())
+            self.host_fields = dict(('val_%s'%(k,),v) for k,v in host_fields.iteritems())
+            c_fields.update(host_fields)
         # Ajoute les champs dojango au formulaire
         if blank :
             args = lambda x,y:{'label':x.name,'initial':None,'required':False}
