@@ -91,11 +91,15 @@ def view_changes(request, rev_id):
     log = version.log_entry
     print log.message
     message_infos = log.parse_message()
+    # Removing last item because it's an empty line.
+    host_changes = version.host.split('\n')[:-1]
+    fields_changes = version.additionnal_fields.split('\n')[:-1]
     return render_to_response('host_history/view.html',
-        {   "host_changes":version.host.split('\n')[:-1],
-            "old_hostname":message_infos.group(1),
+        {   "host_changes": host_changes,
+            "fields_changes": fields_changes,
+            "old_hostname": message_infos.group(1),
             "date": log.date,
+            "user": log.username,
             "action": message_infos.group(2),
-            "fields_changes":version.additionnal_fields.split('\n')[:-1],
             "log":log,
         },context_instance=RequestContext(request))

@@ -13,7 +13,7 @@
   <h1> {{old_hostname}} {{action}} le {{date}}</h1>
   <div class="left" style="text-align:left;">
     <p><b>{% if log.host %}<a href="{% url clariadmin.views.modify log.host.id %}">Modifier l'hôte: {{ log.host.hostname }}</a>{% else %}<i style="color:red;">Deleted</i> {% endif %}</b></p>
-    <h2><b>Liste des modifications:</b></h2>
+    <h2><b>Liste des modifications du {{date}} par {{user}}:</b></h2>
 <ul>
 {% for change in host_changes %}
   <li>{{change}}</li>
