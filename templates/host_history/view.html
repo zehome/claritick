@@ -9,17 +9,19 @@
   <script type="text/javascript" src="{{ MEDIA_URL }}js/clariadmin.js"></script>
 {% endblock %}
 {% block content %}
-<div>
+<div >
   <h1> {{old_hostname}} {{action}} le {{date}}</h1>
-  <div class="left">
-{% if log.host %}<a href="{% url clariadmin.views.modify log.host.id %}">{{ log.host.hostname }}</a>{% else %}<i style="color:red;">Deleted</i> {% endif %}
-
+  <div class="left" style="text-align:left;">
+    <p><b>{% if log.host %}<a href="{% url clariadmin.views.modify log.host.id %}">Modifier l'hôte: {{ log.host.hostname }}</a>{% else %}<i style="color:red;">Deleted</i> {% endif %}</b></p>
+    <h2><b>Liste des modifications:</b></h2>
+<ul>
 {% for change in host_changes %}
-  <p>{{change}}</p>
+  <li>{{change}}</li>
 {% endfor %}
 {% for change in fields_changes %}
-  <p>{{change}}</p>
+  <li>{{change}}</li>
 {% endfor %}
+</ul>
 </div>
 </div>
 

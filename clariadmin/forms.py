@@ -163,9 +163,9 @@ class HostForm(df.ModelForm, FormSecurityChecker):
             try:
                 old= next((o for o in old_fields if cf.id == o.id))
                 if old.value != cf.value:
-                    fields_changes+=u"Le champ AdditionnalField.%s est passé de <%s> à <%s>\n"%(old.field.name,old.value,cf.value)
+                    fields_changes+=u"Le champ AdditionnalField nommé <%s> est passé de <%s> à <%s>\n"%(old.field.name,old.value,cf.value)
             except StopIteration, e:
-                fields_changes+=u"Le champ AdditionnalField.%s est innitialisé à <%s>\n"%(old.field.name,cf.value)
+                fields_changes+=u"Le champ AdditionnalField nommé <%s> est innitialisé à <%s>\n"%(cf.field.name,cf.value)
         if(host_changes or fields_changes):
             log = self.log_action(u"créé" if self.new else u"modifié", inst)
             HostVersion(host=host_changes, additionnal_fields=fields_changes, log_entry=log).save()

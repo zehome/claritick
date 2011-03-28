@@ -92,10 +92,10 @@ def view_changes(request, rev_id):
     print log.message
     message_infos = log.parse_message()
     return render_to_response('host_history/view.html',
-        {   "host_changes":version.host.split('\n'),
+        {   "host_changes":version.host.split('\n')[:-1],
             "old_hostname":message_infos.group(1),
             "date": log.date,
             "action": message_infos.group(2),
-            "fields_changes":version.additionnal_fields.split('\n'),
+            "fields_changes":version.additionnal_fields.split('\n')[:-1],
             "log":log,
         },context_instance=RequestContext(request))
