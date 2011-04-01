@@ -46,8 +46,8 @@ Contact:               {% if ticket.contact %}{{ ticket.contact }}{% else %}{{ t
 
 -- 
 CLARISYS Informatique        http://www.clarisys.fr/
-1, Impasse de ratalens,      31240 SAINT JEAN
-Téléphone: 09 72 11 43 60    Fax: 05 11 11 11 11
+6, rue Jean Monnet           31240 SAINT JEAN
+Téléphone: 09 72 11 43 60    Fax: 09 72 11 33 88
 
 Email généré automatiquement par le système de suivi CLARITICK.
 Cet email vous est transmi pour la/les raison(s) suivante: 
