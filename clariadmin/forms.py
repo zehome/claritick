@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import dojango.forms as df
-from clariadmin.models import Host, OperatingSystem, HostType
+from clariadmin.models import Host, OperatingSystem, HostType, HOST_STATUS
 from clariadmin.models import AdditionnalField, ParamAdditionnalField, Supplier
 from host_history.models import HostEditLog, HostVersion
 from common.models import Client
@@ -351,7 +351,8 @@ class SearchHostForm(df.Form, ModelFormTableMixin, FormSecurityChecker):
         widget=df.FilteringSelect(attrs=attrs_filtering), empty_label='', required=False, label=u'OS')
     supplier = df.ModelChoiceField(queryset = Supplier.objects.all(),
         widget=df.FilteringSelect(attrs=attrs_filtering), empty_label='', required=False, label=u'Fournisseur')
-    status = df.CharField(required=False)
+    status = df.ChoiceField(choices=chain((('', ''),),((k,v) for k,v,s in HOST_STATUS)) ,
+            widget=df.FilteringSelect(attrs=attrs_filtering),  required=False)
     inventory = df.CharField(required=False, label=u'Inventaire')
     commentaire = df.CharField(required=False)
 
