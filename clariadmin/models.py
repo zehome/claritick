@@ -200,8 +200,11 @@ class ParamAdditionnalField(models.Model):
     fast_search = models.BooleanField(u"Champ recherché par défaut", default=False)
     sorting_priority = models.IntegerField(u"Priorité d'affichage", default=100)
     api_key = models.CharField(u"Nom d'exposition api", blank=True, max_length=64)
+
     def __unicode__(self):
-        return u"%s"%(self.name,)
+        if self.host_type:
+            return u"%s [%s]" % (self.name, self.host_type)
+        return u"%s" % (self.name,)
 
 class AdditionnalFieldManager(models.Manager):
     def get_query_set(self):
