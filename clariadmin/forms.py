@@ -149,13 +149,12 @@ class HostForm(df.ModelForm, FormSecurityChecker):
 
     def save(self, force_insert=False, force_update=False, commit=True, extra_fields=None):
         assert(self.security_can_save())
-        #import pdb;pdb.set_trace()
         host_changes=u""
         fields_changes=u""
         old_fields=list(self.instance.additionnalfield_set.all())
         for elem in self.changed_data:
             host_changes += u"Le champ Host.%s est passé de <%s> à <%s>\n"%(
-                        elem, self.initial[elem], getattr(self.instance,elem))
+                         elem, self.initial[elem], getattr(self.instance,elem))
         inst = super(HostForm, self).save()
         extra_fields.save()
         print "Iterration over those new additionnal fields", inst.additionnalfield_set.all(), " compared to this olds ones ",old_fields
@@ -173,8 +172,18 @@ class HostForm(df.ModelForm, FormSecurityChecker):
 
     def delete(self, *args, **kwargs):
         #assert(self.security_can_delete())
+        host_changes=u"L'hote %s a été suprimé:\n"%self.instance.hostname
+        for key in self.fields.iterkeys():
+            val = getattr(self.instance, key)
+            if val:
+                host_changes += u"%s valait <%s>\n"%(key, val)
+        fields_changes=""
+        for f in self.instance.additionnalfield_set.all():
+            fields_changes+=u"Le champ additionnel %s vallait %s\n"%(
+                            f.field.name, f.value)
         ret = self.instance.delete(*args, **kwargs)
-        self.log_action(u"supprimé")
+        log = self.log_action(u"supprimé")
+        HostVersion(host=host_changes, additionnal_fields=fields_changes, log_entry=log).save()
         return ret
 
     def is_valid(self):
