@@ -1,6 +1,6 @@
 # -*- coding=utf8 -*-
 # Create your views here.
-from clariadmin.models import HostEditLog, Host, HostVersion
+from host_history.models import HostEditLog, Host, HostVersion
 from host_history.forms import SearchLogForm
 from common.diggpaginator import DiggPaginator
 from django.http import Http404

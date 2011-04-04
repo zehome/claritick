@@ -3,7 +3,7 @@
 import dojango.forms as df
 from clariadmin.models import Host, OperatingSystem, HostType
 from clariadmin.models import AdditionnalField, ParamAdditionnalField, Supplier
-from clariadmin.models import HostEditLog, HostVersion
+from host_history.models import HostEditLog, HostVersion
 from common.models import Client
 from common.utils import sort_queryset
 from common.forms import ModelFormTableMixin

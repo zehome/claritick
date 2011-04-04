@@ -121,6 +121,7 @@ INSTALLED_APPS = (
     'ticket',
     'ticket_comments',
     'clariadmin',              # Clariadmin
+    'host_history',            # Clariadmin hosts versioning
     'developpements',          # Suivi developpements MCA3
     'qsstats',                 # Fun with aggregates ;)
     'backlinks',               # Return to page saved in sessions

@@ -1,5 +1,6 @@
+# -*- coding: utf-8 -*-
 import dojango.forms as df
-from clariadmin.models import ACTIONS_LOG
+from host_history.models import ACTIONS_LOG
 from clariadmin.forms import attrs_filtering
 from common.models import Client
 from common.utils import sort_queryset
