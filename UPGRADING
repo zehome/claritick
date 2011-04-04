@@ -1,6 +1,6 @@
 r653
-    claritick=> ALTER TABLE clariadmin_hosteditlog RENAME TO host_history_hosteditlog;
-    claritick=> ALTER TABLE clariadmin_hostversion RENAME TO host_history_hostversion;
+    ALTER TABLE clariadmin_hosteditlog RENAME TO host_history_hosteditlog;
+    ALTER TABLE clariadmin_hostversion RENAME TO host_history_hostversion;
 r635
     Nouvelle table en remplacement de django-reversion.
     - syncdb
