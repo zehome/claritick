@@ -1,3 +1,6 @@
+r656
+    ajouts du droit host_history.can_access_host_history:
+    - syncdb
 r653
     ALTER TABLE clariadmin_hosteditlog RENAME TO host_history_hosteditlog;
     ALTER TABLE clariadmin_hostversion RENAME TO host_history_hostversion;

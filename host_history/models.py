@@ -12,6 +12,9 @@ ACTIONS_LOG = [
 class HostEditLog(models.Model):
     class Meta:
         ordering = ('date',)
+        permissions = (
+            ("can_access_host_history", u"Accès historique des hôtes"),
+        )
     host = models.ForeignKey(Host, verbose_name=u"Machine", blank=True, null=True, on_delete=models.SET_NULL)
     #user = models.ForeignKey(User, verbose_name=u"Utilisateur", blank=True, null=True, on_delete=models.SET_NULL)
     username = models.CharField("Nom utilisateur", max_length=128)

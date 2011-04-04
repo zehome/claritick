@@ -11,7 +11,7 @@ from django.template import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
 from django.contrib.auth.decorators import permission_required
 
-@permission_required("clariadmin.can_access_clariadmin")
+@permission_required("host_history.can_access_host_history")
 def list_logs(request, filter_type=None, filter_key=None):
     """
     Cette fonction gère le tri et l'affichage de l'historique des hotes
@@ -85,7 +85,7 @@ def list_logs(request, filter_type=None, filter_key=None):
          "form": form},
         context_instance=RequestContext(request))
 
-@permission_required("clariadmin.can_access_clariadmin")
+@permission_required("host_history.can_access_host_history")
 def view_changes(request, rev_id):
     version = get_object_or_404(HostVersion, pk = rev_id)
     log = version.log_entry
