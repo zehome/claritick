@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load diggpaginator %}
 
 {% block title %}Liste des machines{% endblock %}
 {% block content_title %}Liste des machines{% endblock %}
@@ -105,7 +106,9 @@
   {% endif %}
 
   {% if page.object_list %}
-    <h2>Résultats</h2>
+    {% if page.paginator.num_pages > 1 %}
+      {% diggpaginator page %}
+    {% endif %}
     <table class="resultat exportable" id="clariadmin_result_all">
       <thead>
         <tr>{%for column in columns %}
@@ -128,7 +131,6 @@
         </tr>{% endfor %}
       </tbody>
     </table>
-    {% load diggpaginator %}
     {% if page.paginator.num_pages > 1 %}
       {% diggpaginator page %}
     {% endif %}
