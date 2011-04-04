@@ -106,6 +106,7 @@ def list_all(request, *args, **kw):
             form = SearchHostForm(request.user,{})
             request.session["search_host_form_fields"] = {}
             del(request.session["sort_adm_list"])
+            redirect('list_hosts')
         else:
             # Init forms
             form = SearchHostForm(request.user, POST )
