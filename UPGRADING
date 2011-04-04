@@ -4,6 +4,8 @@ r656
 r653
     ALTER TABLE clariadmin_hosteditlog RENAME TO host_history_hosteditlog;
     ALTER TABLE clariadmin_hostversion RENAME TO host_history_hostversion;
+    Déplacement de tables, ajouts de droits:
+    - syncdb
 r635
     Nouvelle table en remplacement de django-reversion.
     - syncdb
