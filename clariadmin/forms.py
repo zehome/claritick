@@ -153,13 +153,15 @@ class HostForm(df.ModelForm, FormSecurityChecker):
             return inst
         host_changes=u""
         fields_changes=u""
-        old_fields=list(self.instance.additionnalfield_set.all())
         for elem in self.changed_data:
             host_changes += u"Le champ Host.%s est passé de <%s> à <%s>\n"%(
                          elem, self.initial[elem], getattr(self.instance,elem))
+            if elem == "type":
+                self.instance.additionnalfield_set.all().delete()
+        old_fields=list(self.instance.additionnalfield_set.all())
         inst = super(HostForm, self).save()
+
         extra_fields.save()
-        print "Iterration over those new additionnal fields", inst.additionnalfield_set.all(), " compared to this olds ones ",old_fields
         for cf in inst.additionnalfield_set.all():
             try:
                 old= next((o for o in old_fields if cf.id == o.id))
