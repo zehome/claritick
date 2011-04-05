@@ -200,6 +200,7 @@ class ParamAdditionnalField(models.Model):
     fast_search = models.BooleanField(u"Champ recherché par défaut", default=False)
     sorting_priority = models.IntegerField(u"Priorité d'affichage", default=100)
     api_key = models.CharField(u"Nom d'exposition api", blank=True, max_length=64)
+    show = models.BooleanField(u"Affiché dans la liste", default=False)
 
     def __unicode__(self):
         if self.host_type:

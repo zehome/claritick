@@ -15,7 +15,7 @@ class ExtraFieldAdmin(admin.ModelAdmin):
     fieldsets = (
         (None,{
             'fields':('host_type', 'name', 'sorting_priority', 'api_key',
-                      'data_type', 'fast_search')}),
+                      'data_type', 'fast_search','show')}),
         ('Choix (pas de recherche globale, supression de champs non supporté, favorisez un suffixe)',{
             'classes': ('dj_admin_Choix',),
             'fields':(
