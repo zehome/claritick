@@ -9,6 +9,7 @@ from django.conf import settings
 from common.rc4 import b64rc4crypt
 
 from common.models import Client, ClientField, JsonField, ColorField
+from django.utils import simplejson as json
 import datetime
 
 FIELD_TYPES = (
@@ -221,4 +222,16 @@ class AdditionnalField(models.Model):
     value = models.CharField(u"Valeur", max_length=512)
     host = models.ForeignKey(Host, verbose_name=u"")
 
+    @property
+    def value_readable(self):
+        if self.field.data_type in (u"1",u"2",u"4",u"5"):
+            return self.value
+        if self.field.data_type == u"3":
+            return self.field.default_values[int(self.value)] if self.value else "False"
+        val = ""
+        for e in json.loads(self.value):
+            val += self.field.default_values[int(e)] +","
+        return val if not val else val[:-1]
 
+    def render_clean(self):
+        return u'<b>%s:</b>%s'%(self.field.name, self.value_readable)

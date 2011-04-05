@@ -1,3 +1,8 @@
+r667
+    Des objets étaient stoqués en DB en repr au lieu de json., corrige en enlevent les signes d'unicode.
+    UPDATE clariadmin_additionnalfield SET value = regexp_replace(value, 'u''','''','g');
+r665
+    ALTER TABLE clariadmin_paramadditionnalfield ADD COLUMN "show" boolean NOT NULL DEFAULT FALSE;
 r656
     ajouts du droit host_history.can_access_host_history:
     - syncdb
@@ -53,7 +58,7 @@ r413
     ALTER TABLE common_userprofile ADD COLUMN "tickets_vus" text;
     ALTER TABLE ticket_ticketview ADD COLUMN "notseen" boolean NOT NULL DEFAULT false;
 r401
-    alter table developpements_project add group_id integer not null references auth_group( id) deferrable initially deferred; 
+    alter table developpements_project add group_id integer not null references auth_group( id) deferrable initially deferred;
     alter table packaging_package add column "file" varchar(100);
 r386
     syncdb (new permission auth.no_autologout)
@@ -83,7 +88,7 @@ r341
 r311
     ALTER TABLE ticket_ticket ADD message_id text;
 r304
-    ALTER TABLE ticket_ticket ADD nb_appels integer NOT NULL DEFAULT 0; 
+    ALTER TABLE ticket_ticket ADD nb_appels integer NOT NULL DEFAULT 0;
 r300
     Nouveau modèle
     -> syncdb

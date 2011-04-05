@@ -96,8 +96,8 @@ def list_all(request, *args, **kw):
     new_search = False
     form_extra = False
     sort_default = settings.HOST_DEFAULT_ORDER
-    columns = HostForm.filter_list(request.user, (
-        "hostname", "ip", "site", "type", "os", "model", "status"))
+    columns = HostForm.filter_list(request.user, ("hostname", "ip", "site",
+                      "type", "os", "model", "status","additionnal_fields"))
 
     # Récupère le type d'hote pour adapter si besoin l'AdditionnalFieldForm.
     if POST:

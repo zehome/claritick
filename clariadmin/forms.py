@@ -255,7 +255,10 @@ class AdditionnalFieldForm(df.Form):
                 cur = AdditionnalField(host=self.host,field=f)
             else:
                 cur=cur[0]
-            cur.value = self.cleaned_data['val_%s'%(f.id)]
+            if cur.field.data_type==u"6":
+                cur.value = json.dumps(self.cleaned_data['val_%s'%(f.id)])
+            else:
+                cur.value = self.cleaned_data['val_%s'%(f.id)]
             if cur.value == None:
                 cur.value = "null"
             if commit:
@@ -329,7 +332,7 @@ class ParamAdditionnalFieldAdminForm(df.ModelForm):
             dv = [cd[e] for e in
                     ("choice%s_val"%(str(i).rjust(2,'0')) for i in range(1,16))
                     if cd[e]]
-        inst.default_values = json.dumps(dv)
+        inst.default_values = dv
         if commit:
             inst.save()
         return inst

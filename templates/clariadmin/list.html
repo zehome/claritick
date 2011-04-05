@@ -22,7 +22,7 @@
       if (global_search)
         global_search.focus();
     });
-    
+
     function validateIfEnter(ievent) {
       if (ievent.keyCode == 13) {
         dojo.byId("search_form").submit();
@@ -35,7 +35,7 @@
         dojo.connect(dijit.byId("id_supplier"),"onKeyUp",validateIfEnter);
         dojo.connect(dijit.byId("id_site"),"onKeyUp",validateIfEnter);
     });
- 
+
     function typeChanged(select_box){
       dojo.xhrGet({
           url: "{% url clariadmin.views.ajax_extra_fields_form -1 '/b' %}".replace('-1',select_box.item.value?select_box.item.value:-1),
@@ -128,6 +128,7 @@
           {% if 'os' in columns %}<td>{{ row.os }}</td>{% endif %}
           {% if 'model' in columns %}<td>{{ row.supplier.name }}{% if row.model %} - {{ row.model }}{% endif %}</td>{% endif %}
           {% if 'status' in columns %}<td style="background-color:{{row.status_color}};">{{ row.status_text }}</td>{% endif %}
+          {% if 'additionnal_fields' in columns %}<td>{% for f in row.additionnalfield_set.all %}{% if f.field.show %}<b>{{f.field.name}}:</b>{{f.value_readable}}, {% endif %}{% endfor %}</td>{% endif %}
         </tr>{% endfor %}
       </tbody>
     </table>
