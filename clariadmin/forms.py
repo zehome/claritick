@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 import dojango.forms as df
 from clariadmin.models import Host, OperatingSystem, HostType, HOST_STATUS
 from clariadmin.models import AdditionnalField, ParamAdditionnalField, Supplier
@@ -129,8 +128,6 @@ class HostForm(df.ModelForm, FormSecurityChecker):
         self.user = user
         self.user_ip = ip
         self.new = self.instance.pk is None
-        #if not self.new:
-            #self.log_action(u"consulté")
 
     def log_action(self, action, instance=None):
         if instance is None:
@@ -149,6 +146,11 @@ class HostForm(df.ModelForm, FormSecurityChecker):
 
     def save(self, force_insert=False, force_update=False, commit=True, extra_fields=None):
         assert(self.security_can_save())
+        if(self.new):
+            inst = super(HostForm, self).save()
+            self.log_action(u"créé", inst)
+            extra_fields.save()
+            return inst
         host_changes=u""
         fields_changes=u""
         old_fields=list(self.instance.additionnalfield_set.all())
@@ -166,7 +168,7 @@ class HostForm(df.ModelForm, FormSecurityChecker):
             except StopIteration, e:
                 fields_changes+=u"Le champ AdditionnalField nommé <%s> est innitialisé à <%s>\n"%(cf.field.name,cf.value)
         if(host_changes or fields_changes):
-            log = self.log_action(u"créé" if self.new else u"modifié", inst)
+            log = self.log_action(u"modifié", inst)
             HostVersion(host=host_changes, additionnal_fields=fields_changes, log_entry=log).save()
         return inst
 
