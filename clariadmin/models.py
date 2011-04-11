@@ -144,7 +144,7 @@ class Host(models.Model):
     inventory = models.CharField(u"Numéro d'inventaire", blank=True, max_length=128, null=True)
 
     status = models.CharField(u"Statut", choices=((i,s) for i,s,c in HOST_STATUS)
-                              , max_length=32, blank=True, null=True)
+                         , max_length=32, blank=False, default="Service", null=False)
 
     @property
     def status_color(self):

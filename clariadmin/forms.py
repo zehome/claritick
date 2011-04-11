@@ -12,7 +12,7 @@ from django.conf import settings
 from itertools import chain
 import datetime
 
-attrs_filtering={'queryExpr':'*${0}*','highlightMatch':'all','autoComplete':'False'}
+attrs_filtering={'queryExpr':'*${0}*','highlightMatch':'all','ignoreCase':'true','autoComplete':'false'}
 def attrs_filtering_and(a):
     d=attrs_filtering.copy()
     d.update(a)
@@ -149,7 +149,8 @@ class HostForm(df.ModelForm, FormSecurityChecker):
         if(self.new):
             inst = super(HostForm, self).save()
             self.log_action(u"créé", inst)
-            extra_fields.save()
+            if extra_fields:
+                extra_fields.save()
             return inst
         host_changes=u""
         fields_changes=u""
