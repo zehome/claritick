@@ -165,6 +165,9 @@ def list_all(request, *args, **kw):
                 qs = filter_hosts(qs, request.user, sorting, form.cleaned_data)
             form.update(qs)
 
+    if(qs.count()==1):
+        return redirect(qs[0])
+
     # fill paginator
     paginator = DiggPaginator(qs, settings.HOSTS_PER_PAGE, body=5, tail=2, padding=2)
 
