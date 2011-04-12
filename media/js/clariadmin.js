@@ -1,3 +1,6 @@
+dojo.require('dojox.fx.scroll');
+dojo.require('dojox.fx');
+
 function confirmDialog(title, question, callbackFn, e) {
     var errorDialog = new dijit.Dialog({ id: 'queryDialog', title: title });
     function callback(mouseEvent) {
@@ -38,4 +41,27 @@ function postwith (inputs,post_url_or_form) {
     document.body.appendChild(f);
     f.submit() ;
     document.body.removeChild(f);
+}
+
+function scrollAndHighlight(target, scrollDuration, highlightDuration)
+{
+    dojox.fx.smoothScroll(
+	{
+		node: target,
+		win: window,
+		duration: scrollDuration
+	}
+    ).play();
+    highlight(target, highlightDuration, '#ffd76a');
+}
+
+function highlight(target, highlightDuration, color) 
+{
+    dojox.fx.highlight(
+	{
+		node: target,
+		duration: highlightDuration,
+        color: color
+	}
+    ).play();
 }
