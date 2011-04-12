@@ -1,5 +1,5 @@
 <div>
-  <style type="text/css">
+<style type="text/css">
         .comment_field {
              width: 100% ! important;
         }
@@ -16,29 +16,11 @@
         .better th {
              vertical-align: middle;
         }
-  </style>
+</style>
 <script type="text/javascript" charset="utf-8">
     dojo.require('dijit.form.MultiSelect');
     dojo.require('dijit.form.CheckBox');
-    function handle_data(data){
-        tab = dojo.byId("extra_fields");
-        tab.innerHTML = data;
-        dojo.parser.parse(tab);
-    }
-    function typeChanged(select_box)
-    {
-        dojo.byId("extra_fieldset").classList.remove("dijitHidden");
-        dojo.xhrGet({
-            url: "{% url clariadmin.views.ajax_extra_fields_form -1 %}".replace('-1',select_box.item.value?select_box.item.value:-1),
-            load: handle_data
-            });
-    }
-    function confirmation_callback(myBool, form_id){
-        if(myBool)
-            postwith({delete: "true"}, dojo.byId(form_id));
-    }
 </script>
-
 {% if form.security_can_view %}
 {% if form.rootpw %}
 <div id="chromecrypto_download" style="font-size: 2em; color: red; font-weight: bold; border: 1px solid red; display: none;">Vous devez installer <a href="{{ MEDIA_URL }}chromecrypto.crx">ChromeCrypto</a> pour voir les mots de passe root!</div>
@@ -51,7 +33,6 @@ setTimeout( function() {
 }, 500);
 </script>
 {% endif %}{# rootpw #}
-
 <form id="the_form" method="post">
   {% csrf_token %}
   <div>
@@ -135,9 +116,8 @@ setTimeout( function() {
             </tr>
         </table>
     </fieldset>
-
-    <fieldset id="extra_fieldset"{% if not additionnal_fields.fields %} class="dijitHidden"{% endif %}>
-        <table id="extra_fields" class="clariadmin_form better">
+    <fieldset id="ajaxextra_fieldset"{% if not additionnal_fields.fields %} class="dijitHidden"{% endif %}>
+        <table id="ajaxextra_fields" class="clariadmin_form better">
         {% if additionnal_fields.fields %}
             {{ additionnal_fields }}
         {% else %}
@@ -146,7 +126,6 @@ setTimeout( function() {
         </table>
     </fieldset>
     <hr class="clear" />
-
     {% if form.commentaire %}
     <table id="comment_table" class="clariadmin_form better">
         <tr>
@@ -156,7 +135,6 @@ setTimeout( function() {
         </tr>
     </table>
     {% endif %}
-
     <hr />
     <div >
       {% if host %}<button dojoType="dijit.form.Button" onclick='confirmDialog("Supression de l hote", "Êtes vous sûr de vouloir supprimer cette machine de la base?", confirmation_callback, "the_form")' iconClass="dijitEditorIcon dijitEditorIconDelete" type="button" value="true" class="default">Suprimer</button>{% endif %}

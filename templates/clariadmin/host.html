@@ -27,6 +27,7 @@
     dojo.require('dijit.form.CheckBox');
     function handle_data(data){
         tab = dojo.byId("extra_fields");
+        dojo.forEach(dijit.findWidgets(tab), function(w) {w.destroyRecursive();});
         tab.innerHTML = data;
         dojo.parser.parse(tab);
     }

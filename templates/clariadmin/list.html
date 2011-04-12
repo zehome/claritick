@@ -15,6 +15,7 @@
     dojo.require('dijit.form.CheckBox');
     dojo.require("dijit.Dialog");
     dojo.require("dojo.parser");
+    dojo.require("dojox.validate");
     var dialog;
     dojo.addOnLoad(function(){
       dojo.forEach(dojo.query("#context_lines tr"), function(row, index)
@@ -33,11 +34,12 @@
       dojo.xhrGet({
           url:"{% url clariadmin.views.modify -1 %}".replace('-1',target.parentNode.id.replace('comp_','')),
           load:function(data){
+            dojo.forEach(dijit.findWidgets(dialog.containerNode), function(w) {w.destroyRecursive();});
             dialog.containerNode.innerHTML=data;
             dojo.parser.parse(dialog.containerNode);
+            dojo.connect(dijit.byId("id_ajax-type"),"onchange",ajaxTypeChanged);
           }
       })
-     // dialog.containerNode.innerHTML="<h1>titre</h1>";
       dialog.show();
     }
 
@@ -57,8 +59,10 @@
     function typeChanged(select_box){
       dojo.xhrGet({
           url: "{% url clariadmin.views.ajax_extra_fields_form -1 '/b' %}".replace('-1',select_box.item.value?select_box.item.value:-1),
+          handleAs: "text",
           load: function(data){
             tab = dojo.byId("extra_fields");
+            dojo.forEach(dijit.findWidgets(tab), function(w) {w.destroyRecursive();});
             tab.innerHTML = data;
             dojo.parser.parse(tab);
           }
@@ -95,6 +99,24 @@
             },
       }));
       pMenu.startup();
+    }
+    function ajaxTypeChanged(evt){
+      alert("ajaxTypeChanged");
+        dojo.stopEvent(evt);
+        dojo.byId("ajaxextra_fieldset").classList.remove("dijitHidden");
+        dojo.xhrGet({
+            url: "{% url clariadmin.views.ajax_extra_fields_form -1 %}".replace('-1',select_box.item.value?select_box.item.value:-1),
+            load: function(data){
+                  tab = dojo.byId("ajaxextra_fields");
+                  dojo.forEach(dijit.findWidgets(tab), function(w) {w.destroyRecursive();});
+                  tab.innerHTML = data;
+                  dojo.parser.parse(tab);
+                }
+            });
+    }
+    function confirmation_callback(myBool, form_id){
+        if(myBool)
+            postwith({delete: "true"}, dojo.byId(form_id));
     }
   </script>
 
