@@ -31,7 +31,8 @@
     function showHostPopup(e){
       e = e || event;
       var target = e.srcElement || e.target;
-      dojo.xhrGet({
+      if(! (target.children.length || target.tagName == 'A')){
+        dojo.xhrGet({
           url:"{% url clariadmin.views.modify -1 %}".replace('-1',target.parentNode.id.replace('comp_','')),
           load:function(data){
             dojo.forEach(dijit.findWidgets(dialog.containerNode), function(w) {w.destroyRecursive();});
@@ -39,8 +40,9 @@
             dojo.parser.parse(dialog.containerNode);
             dojo.connect(dijit.byId("id_ajax-type"),"onchange",ajaxTypeChanged);
           }
-      })
+        });
       dialog.show();
+      }
     }
 
     function validateIfEnter(ievent) {
