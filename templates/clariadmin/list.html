@@ -4,7 +4,6 @@
 {% block title %}Liste des machines{% endblock %}
 {% block content_title %}Liste des machines{% endblock %}
 {% block image %}<img src="/media/images/oxygen/search.png" />{% endblock %}
-
 {% block extrajs %}
   {{ block.super }}
   <script type="text/javascript" src="{{ MEDIA_URL }}js/clariadmin.js"></script>
@@ -16,32 +15,50 @@
     dojo.require("dijit.Dialog");
     dojo.require("dojo.parser");
     dojo.require("dojox.validate");
-    var dialog;
+    dojo.require("dojox.fx");
+    dojo.require("dijit.layout.ContentPane");
     dojo.addOnLoad(function(){
-      dojo.forEach(dojo.query("#context_lines tr"), function(row, index)
+      dojo.forEach(dojo.query(".clickable_rows"), function(row)
       {
         create_menu(row.id, row.children[0].textContent);
-        dojo.connect(row, "onclick", showHostPopup);
+        dojo.connect(row, "onclick", showHostPane);
       });
-      dialog = new dijit.Dialog({title: "Détails et édition de l'hote:",style: "width: 700px"});
       var global_search = dojo.byId("id_global_search");
       if (global_search)
         global_search.focus();
     });
-    function showHostPopup(e){
+    var openRow=null;
+    function showHostPane(e){
       e = e || event;
       var target = e.srcElement || e.target;
+      host_id = target.parentNode.id.replace('comp_','');
+      pane = dijit.byId('pane_row_'+host_id)
+      if(openRow){
+        dojox.fx.wipeOut({
+            node:openRow,
+            duration:400,
+        }).play();
+        //openRow.classList.add('dijitHidden');
+        dijit.byId(openRow.children[0].children[0].id).set('content','');
+        if(openRow == dojo.byId('edit_row_'+host_id))
+          return openRow = null;
+      }
       if(! (target.children.length || target.tagName == 'A')){
         dojo.xhrGet({
-          url:"{% url clariadmin.views.modify -1 %}".replace('-1',target.parentNode.id.replace('comp_','')),
+          url:"{% url clariadmin.views.modify -1 %}".replace('-1',host_id),
           load:function(data){
-            dojo.forEach(dijit.findWidgets(dialog.containerNode), function(w) {w.destroyRecursive();});
-            dialog.containerNode.innerHTML=data;
-            dojo.parser.parse(dialog.containerNode);
-            dojo.connect(dijit.byId("id_ajax-type"),"onchange",ajaxTypeChanged);
+            pane.set('content',data);
+            console.log("data loaded, start processing");
+            dojo.connect(dijit.byId("id_"+host_id+"-type"),"onchange",ajaxTypeChanged);
           }
         });
-      dialog.show();
+        openRow = dojo.byId('edit_row_'+host_id);
+        openRow.classList.remove('dijitHidden');
+        dojox.fx.wipeTo({
+            node:openRow,
+            duration: 600,
+            height: 500,
+        }).play();
       }
     }
 
@@ -116,6 +133,19 @@
                 }
             });
     }
+    function sendForm() {
+      var form = dojo.byId("the_ajax_form");
+      dojo.connect(form, "onsubmit", function(event) {
+        dojo.stopEvent(event);
+        dojo.xhrPost({
+            form: dojo.byId("the_ajax_form"),
+            handleAs: "text",
+            load: function(data) {
+              dialog.hide();
+            }
+        });
+      });
+    }
     function confirmation_callback(myBool, form_id){
         if(myBool)
             postwith({delete: "true"}, dojo.byId(form_id));
@@ -136,7 +166,6 @@
         <table id="extra_fields" class="search">{%if form_extra%}{{form_extra.as_table}}{%else%}<tr><td></td></tr>{%endif%}</table>
         <div class="left_buttons">
           <button type="reset" iconClass="dijitrtl dijitIconClear" dojoType="dijit.form.Button">Annuler</button>
-          <button type="button" iconClass="dijitrtl dijitIconDelete" name="reset_button" onclick="postwith({filter_reset:'true'},'.')" dojoType="dijit.form.Button">Reset</button>
         </div>
         <div align='center'>
           <button type="submit"  dojoType="dijit.form.Button" iconClass="dijitrtl dijitIconSearch">Rechercher</button>
@@ -162,16 +191,16 @@
       </thead>
       <tbody id="context_lines">
           {% for row in page.object_list %}
-          <tr id="comp_{{ row.id }}" class="{% cycle 'row1' 'row2'%}">
-          {% if 'hostname' in columns %}<td><a href="{% url clariadmin.views.modify row.id %}">{{ row.hostname }}</a></td>{% endif %}
+          <tr id='comp_{{ row.id }}' class='{% cycle 'row1' 'row2'%} clickable_rows'>
+          {% if 'hostname' in columns %}<td><a href='{% url clariadmin.views.modify row.id %}'>{{ row.hostname }}</a></td>{% endif %}
           {% if 'ip' in columns %}<td>{{ row.ip }}</td>{% endif %}
           {% if 'site' in columns %}<td>{{ row.site }}</td>{% endif %}
-          {% if 'type' in columns %}<td style="color:{{row.type.color_fg}};background-color:{{row.type.color_bg}}">{{ row.type }}</td>{% endif %}
+          {% if 'type' in columns %}<td style='color:{{row.type.color_fg}};background-color:{{row.type.color_bg}}'>{{ row.type }}</td>{% endif %}
           {% if 'os' in columns %}<td>{{ row.os }}</td>{% endif %}
           {% if 'model' in columns %}<td>{{ row.supplier.name }}{% if row.model %} - {{ row.model }}{% endif %}</td>{% endif %}
-          {% if 'status' in columns %}<td style="background-color:{{row.status_color}};">{{ row.status_text }}</td>{% endif %}
+          {% if 'status' in columns %}<td style='background-color:{{row.status_color}};'>{{ row.status_text }}</td>{% endif %}
           {% if 'additionnal_fields' in columns %}<td>{% for f in row.additionnalfield_set.all %}{% if f.field.show %}<b>{{f.field.name}}:</b>{{f.value_readable}}, {% endif %}{% endfor %}</td>{% endif %}
-        </tr>{% endfor %}
+        </tr><tr class="dijitHidden" id="edit_row_{{row.id}}" ><td colspan="99"><div dojoType="dijit.layout.ContentPane" id="pane_row_{{row.id}}"></div></td></tr>{% endfor %}
       </tbody>
     </table>
     {% if page.paginator.num_pages > 1 %}
