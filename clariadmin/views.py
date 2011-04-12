@@ -225,13 +225,9 @@ def modify(request, host_id):
     """
     POST = HostForm.filter_querydict(request.user, request.POST)
     host = get_host_or_404(request.user, pk=host_id)
+    prefix = str(host_id)
+    template = "clariadmin/ajax_host.html" if request.is_ajax() else "clariadmin/host.html"
 
-    if request.is_ajax():
-        template = "clariadmin/ajax_host.html"
-        prefix="ajax"
-    else:
-        template =  "clariadmin/host.html"
-        prefix = ""
     if POST:
         form = HostForm(request.user, request.META['REMOTE_ADDR'],
                         POST, instance=host, prefix=prefix)
@@ -241,6 +237,8 @@ def modify(request, host_id):
         add_fields = AdditionnalFieldForm(POST, host=host, prefix=prefix)
         if form.is_valid() and add_fields.is_valid():
             host = form.save(extra_fields=add_fields)
+            if request.is_ajax():
+                return HttpResponse("ok")
             redir = POST.get('submit_button', False)
             if redir == 'new':
                 return redirect('new_host')
@@ -253,9 +251,11 @@ def modify(request, host_id):
                         instance=host, prefix=prefix)
         add_fields = AdditionnalFieldForm(host=host, prefix=prefix)
     form.log_action(u"consulté")
-    return render_to_response("clariadmin/ajax_host.html" if request.is_ajax() else "clariadmin/host.html", {
+    return render_to_response(template, {
         "form": form,
         'additionnal_fields': add_fields,
+        'prefix':prefix,
+        'ajax':request.is_ajax(),
         "host": host}, context_instance=RequestContext(request))
 
 @permission_required("clariadmin.can_access_clariadmin")
