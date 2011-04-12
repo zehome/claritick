@@ -91,6 +91,9 @@ def list_all(request, *args, **kw):
     """
     if request.GET.get("reset", "0") == "1":
         request.session["search_host_form_fields"] = {}
+        request.session["additionnal_field_form_fields"] = {}
+        del request.session["sort_adm_list"] 
+        return redirect('list_hosts')
 
     POST = HostForm.filter_querydict(request.user, request.POST)
     new_search = False
@@ -101,36 +104,29 @@ def list_all(request, *args, **kw):
 
     # Récupère le type d'hote pour adapter si besoin l'AdditionnalFieldForm.
     if POST:
-        if POST.get('filter_reset', False):
-            # Reset form
-            form = SearchHostForm(request.user,{})
-            request.session["search_host_form_fields"] = {}
-            del(request.session["sort_adm_list"])
-            redirect('list_hosts')
-        else:
-            # Init forms
-            form = SearchHostForm(request.user, POST )
-            if form.is_valid():
-                # récupère les éléments de POST propre à SearchHostForm
-                post_filtred = dict((k, v) for k, v in POST.iteritems()
-                                    if k in form.cleaned_data.keys())
+        # Init forms
+        form = SearchHostForm(request.user, POST )
+        if form.is_valid():
+            # récupère les éléments de POST propre à SearchHostForm
+            post_filtred = dict((k, v) for k, v in POST.iteritems()
+                                if k in form.cleaned_data.keys())
 
-                # si recherche != dernière recherche, retour page 1 et update session
-                if request.session.get('search_host_form_fields', {}) != post_filtred:
+            # si recherche != dernière recherche, retour page 1 et update session
+            if request.session.get('search_host_form_fields', {}) != post_filtred:
+                new_search = True
+                request.session['search_host_form_fields'] = post_filtred
+            host_type = request.session.get('search_host_form_fields', {}).get('type', False)
+
+            if host_type:
+                form_extra = AdditionnalFieldForm(POST,
+                             host_type=HostType.objects.get(pk=host_type))
+                # if search != last search => page 1 and update session
+                post_filtred = dict([(k,v) for k,v in POST.iteritems()
+                                        if k in form_extra.fields.keys()])
+                if request.session.get('additionnal_field_form_fields',{}) != post_filtred:
                     new_search = True
-                    request.session['search_host_form_fields'] = post_filtred
-                host_type = request.session.get('search_host_form_fields', {}).get('type', False)
-
-                if host_type:
-                    form_extra = AdditionnalFieldForm(POST,
-                                 host_type=HostType.objects.get(pk=host_type))
-                    # if search != last search => page 1 and update session
-                    post_filtred = dict([(k,v) for k,v in POST.iteritems()
-                                            if k in form_extra.fields.keys()])
-                    if request.session.get('additionnal_field_form_fields',{}) != post_filtred:
-                        new_search = True
-                        request.session['additionnal_field_form_fields'] = post_filtred
-                    form_extra.is_valid()
+                    request.session['additionnal_field_form_fields'] = post_filtred
+                form_extra.is_valid()
     else:
         host_type = request.session.get('search_host_form_fields', {}).get('type', False)
         form = SearchHostForm(request.user, request.session.get('search_host_form_fields', {}))
