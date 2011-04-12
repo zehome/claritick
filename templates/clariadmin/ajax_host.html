@@ -1,0 +1,171 @@
+<div>
+  <style type="text/css">
+        .comment_field {
+             width: 100% ! important;
+        }
+        #comment_table {
+             width: 99% ! important;
+        }
+        #comment_table th {
+             width: 5%;
+             padding-right:10px;
+        }
+        .better td {
+             padding: 2px 2px;
+        }
+        .better th {
+             vertical-align: middle;
+        }
+  </style>
+<script type="text/javascript" charset="utf-8">
+    dojo.require('dijit.form.MultiSelect');
+    dojo.require('dijit.form.CheckBox');
+    function handle_data(data){
+        tab = dojo.byId("extra_fields");
+        tab.innerHTML = data;
+        dojo.parser.parse(tab);
+    }
+    function typeChanged(select_box)
+    {
+        dojo.byId("extra_fieldset").classList.remove("dijitHidden");
+        dojo.xhrGet({
+            url: "{% url clariadmin.views.ajax_extra_fields_form -1 %}".replace('-1',select_box.item.value?select_box.item.value:-1),
+            load: handle_data
+            });
+    }
+    function confirmation_callback(myBool, form_id){
+        if(myBool)
+            postwith({delete: "true"}, dojo.byId(form_id));
+    }
+</script>
+
+{% if form.security_can_view %}
+{% if form.rootpw %}
+<div id="chromecrypto_download" style="font-size: 2em; color: red; font-weight: bold; border: 1px solid red; display: none;">Vous devez installer <a href="{{ MEDIA_URL }}chromecrypto.crx">ChromeCrypto</a> pour voir les mots de passe root!</div>
+<script type="text/javascript">
+setTimeout( function() {
+    console.log("cc: "+dojo.byId("chromecrypto_presence"));
+    if (! dojo.byId("chromecrypto_presence")) {
+        dojo.style("chromecrypto_download", "display", "block");
+    }
+}, 500);
+</script>
+{% endif %}{# rootpw #}
+
+<form id="the_form" method="post">
+  {% csrf_token %}
+  <div>
+    <fieldset style="float:left;">
+        <table  class="clariadmin_form better">
+            <tr>
+                <th>{{ form.site.label_tag }}</th><td>{{ form.site }}</td><td>{{ form.site.errors }}</td>
+                <td>
+                    {% if perms.common.add_client %}
+                    <a id='add_id_{{form.site.name}}' class="add-another" href="/admin/common/client/add" onclick="return showAddAnotherPopup(this);">
+                        <img width="10" height="10" alt="Ajouter un autre" src="/adm_media/img/admin/icon_addlink.gif" />
+                    </a>{% endif %}
+                </td>
+            </tr>
+            <tr>
+                <th>{{ form.hostname.label_tag }}</th><td>{{ form.hostname }}</td><td>{{ form.hostname.errors }}</td>
+                <td></td>
+            </tr>
+            <tr>
+                <th>{{ form.ip.label_tag }}</th><td>{{ form.ip }}</td><td>{{ form.ip.errors }}</td>
+                <td></td>
+            </tr>
+            <tr>
+                <th>{{ form.os.label_tag }}</th><td>{{ form.os }}</td><td>{{ form.os.errors }}</td>
+                <td>
+                    {% if perms.clariadmin.add_supplier %}
+                    <a id='add_id_{{form.os.name}}' class="add-another" href="/admin/clariadmin/operatingsystem/add" onclick="return showAddAnotherPopup(this);">
+                        <img width="10" height="10" alt="Ajouter un autre" src="/adm_media/img/admin/icon_addlink.gif" />
+                    </a>{% endif %}
+                </td>
+            </tr>
+            <tr>
+                <th>{{ form.rootpw.label_tag }}</th><td>{{ form.rootpw }}</td><td>{{ form.rootpw.errors }}</td>
+                <td></td>
+            </tr>
+            <tr>
+                <th>{{ form.supplier.label_tag }}</th><td>{{ form.supplier }}</td><td>{{ form.supplier.errors }}</td>
+                <td>
+                    {% if perms.clariadmin.add_supplier %}
+                    <a id='add_id_{{form.supplier.name}}' class="add-another" href="/admin/clariadmin/supplier/add" onclick="return showAddAnotherPopup(this);">
+                        <img width="10" height="10" alt="Ajouter un autre" src="/adm_media/img/admin/icon_addlink.gif" />
+                    </a>{% endif %}
+                </td>
+            </tr>
+            <tr>
+                <th>{{ form.model.label_tag }}</th><td>{{ form.model }}</td><td>{{ form.model.errors }}</td>
+                <td></td>
+            </tr>
+            <tr>
+                <th>{{ form.type.label_tag }}</th><td>{{ form.type }}</td><td>{{ form.type.errors }}</td>
+                <td>
+                    {% if perms.clariadmin.add_hosttype %}
+                    <a id='add_id_{{form.type.name}}' class="add-another" href="/admin/clariadmin/hosttype/add" onclick="return showAddAnotherPopup(this);">
+                        <img width="10" height="10" alt="Ajouter un autre" src="/adm_media/img/admin/icon_addlink.gif" />
+                    </a>{% endif %}
+                </td>
+            </tr>
+            <tr>
+                <th>{{ form.location.label_tag }}</th><td>{{ form.location }}</td><td>{{ form.location.errors }}</td>
+                <td></td>
+            </tr>
+            <tr>
+                <th>{{ form.serial.label_tag }}</th><td>{{ form.serial }}</td><td>{{ form.serial.errors }}</td>
+                <td></td>
+            </tr>
+            <tr>
+                <th>{{ form.inventory.label_tag }}</th><td>{{ form.inventory }}</td><td>{{ form.inventory.errors }}</td>
+                <td></td>
+            </tr>
+            <tr>
+                <th>{{ form.date_start_prod.label_tag }}</th><td>{{ form.date_start_prod }}</td><td>{{ form.date_start_prod.errors }}</td>
+                <td></td>
+            </tr>
+            <tr>
+                <th>{{ form.date_end_prod.label_tag }}</th><td>{{ form.date_end_prod }}</td><td>{{ form.date_end_prod.errors }}</td>
+                <td></td>
+            </tr>
+            <tr>
+                <th>{{ form.status.label_tag }}</th><td>{{ form.status }}</td><td>{{ form.status.errors }}</td>
+                <td></td>
+            </tr>
+        </table>
+    </fieldset>
+
+    <fieldset id="extra_fieldset"{% if not additionnal_fields.fields %} class="dijitHidden"{% endif %}>
+        <table id="extra_fields" class="clariadmin_form better">
+        {% if additionnal_fields.fields %}
+            {{ additionnal_fields }}
+        {% else %}
+            <tr><td></td></tr>
+        {% endif %}
+        </table>
+    </fieldset>
+    <hr class="clear" />
+
+    {% if form.commentaire %}
+    <table id="comment_table" class="clariadmin_form better">
+        <tr>
+            <th>{{ form.commentaire.label_tag }}:</th>
+            <td>{{ form.commentaire }}</td>
+            {% if form.commentaire.errors %}<td>{{ form.commentaire.errors }}</td>{% endif %}
+        </tr>
+    </table>
+    {% endif %}
+
+    <hr />
+    <div >
+      {% if host %}<button dojoType="dijit.form.Button" onclick='confirmDialog("Supression de l hote", "Êtes vous sûr de vouloir supprimer cette machine de la base?", confirmation_callback, "the_form")' iconClass="dijitEditorIcon dijitEditorIconDelete" type="button" value="true" class="default">Suprimer</button>{% endif %}
+      <button dojoType="dijit.form.Button" iconClass="dijitEditorIcon dijitEditorIconRightToLeft" type="submit" name="submit_button" value="return">Enregistrer et retourner à la liste</button>
+      <div class="right_buttons">
+        <div dojoType="dijit.form.Button" iconClass="dijitEditorIcon claritickTicketMailAction" id="id_trace_button" onClick="window.location = '{% url list_logs "host" form.instance.id %}';">Historique</div>
+        <div dojoType="dijit.Tooltip" connectId="id_trace_button">Voir l'historique de cette machine.</div>
+      </div>
+    </div>
+  </div>
+</form>{% endif %}
+</div>

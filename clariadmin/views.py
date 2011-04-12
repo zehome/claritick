@@ -246,7 +246,7 @@ def modify(request, host_id):
         form = HostForm(request.user, request.META['REMOTE_ADDR'], instance=host)
         add_fields = AdditionnalFieldForm(host=host)
     form.log_action(u"consulté")
-    return render_to_response("clariadmin/host.html", {
+    return render_to_response("clariadmin/ajax_host.html" if request.is_ajax() else "clariadmin/host.html", {
         "form": form,
         'additionnal_fields': add_fields,
         "host": host}, context_instance=RequestContext(request))

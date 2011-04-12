@@ -13,15 +13,33 @@
     dojo.require("dijit.Menu");
     dojo.require('dijit.form.MultiSelect');
     dojo.require('dijit.form.CheckBox');
+    dojo.require("dijit.Dialog");
+    dojo.require("dojo.parser");
+    var dialog;
     dojo.addOnLoad(function(){
       dojo.forEach(dojo.query("#context_lines tr"), function(row, index)
       {
         create_menu(row.id, row.children[0].textContent);
+        dojo.connect(row, "onclick", showHostPopup);
       });
+      dialog = new dijit.Dialog({title: "Détails et édition de l'hote:",style: "width: 700px"});
       var global_search = dojo.byId("id_global_search");
       if (global_search)
         global_search.focus();
     });
+    function showHostPopup(e){
+      e = e || event;
+      var target = e.srcElement || e.target;
+      dojo.xhrGet({
+          url:"{% url clariadmin.views.modify -1 %}".replace('-1',target.parentNode.id.replace('comp_','')),
+          load:function(data){
+            dialog.containerNode.innerHTML=data;
+            dojo.parser.parse(dialog.containerNode);
+          }
+      })
+     // dialog.containerNode.innerHTML="<h1>titre</h1>";
+      dialog.show();
+    }
 
     function validateIfEnter(ievent) {
       if (ievent.keyCode == 13) {
@@ -113,7 +131,7 @@
       <thead>
         <tr>{%for column in columns %}
           <th><a href="?sort={% if sorting == column %}-{% endif %}{{ column }}">{% if sorting == column %}
-              <img src="/media/images/oxygen/arrow-up.png" class="state_image" alt="down" />{% else %} {% if sorting == '-'|add:column %}
+              <img src="/media/images/oxygen/arrow-up.png" class="state_image" alt="down" />{% else %}{% if sorting == '-'|add:column %}
               <img src="/media/images/oxygen/arrow-down.png" class="state_image" alt="up" />{% endif %}{% endif %}
             {{ column }}</a></th>{% endfor %}
         </tr>
