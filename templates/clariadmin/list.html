@@ -8,12 +8,10 @@
   {{ block.super }}
   <script type="text/javascript" src="{{ MEDIA_URL }}js/clariadmin.js"></script>
   <script type="text/javascript" charset="utf-8">
-    dojo.require("dojox.grid.DataGrid");
     dojo.require("dijit.Menu");
     dojo.require('dijit.form.MultiSelect');
     dojo.require('dijit.form.CheckBox');
     dojo.require("dojox.validate");
-    dojo.require("dojox.fx");
     dojo.require("dijit.layout.ContentPane");
 
     dojo.addOnLoad(function(){
@@ -229,7 +227,7 @@
           {% if 'os' in columns %}<td>{{ row.os }}</td>{% endif %}
           {% if 'model' in columns %}<td>{{ row.supplier.name }}{% if row.model %} - {{ row.model }}{% endif %}</td>{% endif %}
           {% if 'status' in columns %}<td style='background-color:{{row.status_color}};'>{{ row.status_text }}</td>{% endif %}
-          {% if 'additionnal_fields' in columns %}<td>{% for f in row.additionnalfield_set.all %}{% if f.field.show %}<b>{{f.field.name}}:</b>{{f.value_readable}}, {% endif %}{% endfor %}</td>{% endif %}
+          {% if 'additionnal_fields' in columns %}<td>{% for f in row.additionnalfield_set.all %}{% if f.field.show and f.value_readable %}<b>{{f.field.name}}:</b>{{f.value_readable}}, {% endif %}{% endfor %}</td>{% endif %}
         </tr><tr class="dijitHidden" id="edit_row_{{row.id}}" ><td colspan="99"><div dojoType="dijit.layout.ContentPane" id="pane_row_{{row.id}}"></div></td></tr>{% endfor %}
       </tbody>
     </table>
