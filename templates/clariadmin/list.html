@@ -12,11 +12,10 @@
     dojo.require("dijit.Menu");
     dojo.require('dijit.form.MultiSelect');
     dojo.require('dijit.form.CheckBox');
-    dojo.require("dijit.Dialog");
-    dojo.require("dojo.parser");
     dojo.require("dojox.validate");
     dojo.require("dojox.fx");
     dojo.require("dijit.layout.ContentPane");
+
     dojo.addOnLoad(function(){
       dojo.forEach(dojo.query(".clickable_rows"), function(row)
       {
@@ -26,32 +25,45 @@
       var global_search = dojo.byId("id_global_search");
       if (global_search)
         global_search.focus();
+    
+      dojo.connect(dijit.byId("id_os"),"onKeyUp",validateIfEnter);
+      dojo.connect(dijit.byId("id_type"),"onKeyUp",validateIfEnter);
+      dojo.connect(dijit.byId("id_supplier"),"onKeyUp",validateIfEnter);
+      dojo.connect(dijit.byId("id_site"),"onKeyUp",validateIfEnter);
+      dojo.connect(dijit.byId("id_type"),"onChange",typeChanged);
     });
+
     var openedRow=null;
-    function showHostPane(e){
-      e = e || event;
-      var target = e.srcElement || e.target;
-      host_id = target.parentNode.id.replace('comp_','');
-      var hilighted_row=true;
-      highlight("comp_"+host_id, 500, '#ff6a6a', function(){hilighted_row=false;});
-      pane = dijit.byId('pane_row_'+host_id)
+    function clearOpenedRow(){
       if(openedRow){
         dojox.fx.wipeOut({
             node:openedRow,
             duration:200,
         }).play();
-        //openRow.classList.add('dijitHidden');
         dijit.byId(openedRow.children[0].children[0].id).set('content','');
-        if(openedRow == dojo.byId('edit_row_'+host_id))
-          return openedRow = null;
-      }
+        openedRow = null;
+     }
+    }
+ 
+    function showHostPane(e){
+      e = e || event;
+      var target = e.srcElement || e.target;
       if(! (target.children.length || target.tagName == 'A')){
+        host_id = target.parentNode.id.replace('comp_','');
+        var hilighted_row=true;
+        highlight("comp_"+host_id, 500, '#ff6a6a', function(){hilighted_row=false;});
+        if(openedRow == dojo.byId('edit_row_'+host_id))
+          return clearOpenedRow();
+        clearOpenedRow();
+        openedRow = dojo.byId('edit_row_'+host_id);
+        pane = dijit.byId('pane_row_'+host_id);
         dojo.xhrGet({
           url:"{% url clariadmin.views.modify -1 %}".replace('-1',host_id),
           load:function(data){
             pane.set('content',data);
             console.log("data loaded, start processing");
-            dojo.connect(dijit.byId("id_"+host_id+"-type"),"onchange",ajaxTypeChanged);
+            dojo.connect(dijit.byId("id_"+host_id+"-type"),"onChange",ajaxTypeChanged);
+            dojo.connect(dijit.byId("the_"+host_id+"_form"), "onsubmit", ajaxFormSubmit);
             openedRow.classList.remove('dijitHidden');
             dojox.fx.wipeTo({
                 node:openedRow,
@@ -64,24 +76,11 @@
               scrollAndHighlight(dojo.byId("comp_"+host_id), 200, 900);
           }
         });
-        openedRow = dojo.byId('edit_row_'+host_id);
       }
     }
 
-    function validateIfEnter(ievent) {
-      if (ievent.keyCode == 13) {
-        dojo.byId("search_form").submit();
-      }
-    }
-    dojo.addOnLoad(
-      function(){
-        dojo.connect(dijit.byId("id_os"),"onKeyUp",validateIfEnter);
-        dojo.connect(dijit.byId("id_type"),"onKeyUp",validateIfEnter);
-        dojo.connect(dijit.byId("id_supplier"),"onKeyUp",validateIfEnter);
-        dojo.connect(dijit.byId("id_site"),"onKeyUp",validateIfEnter);
-    });
-
-    function typeChanged(select_box){
+    function typeChanged(event){
+      var select_box = dijit.byId("id_type");
       dojo.xhrGet({
           url: "{% url clariadmin.views.ajax_extra_fields_form -1 '/b' %}".replace('-1',select_box.item.value?select_box.item.value:-1),
           handleAs: "text",
@@ -93,6 +92,7 @@
           }
       });
     }
+
     function create_menu(target_id, host_name) {
       pMenu = new dijit.Menu({
           targetNodeIds: [target_id,],
@@ -125,36 +125,56 @@
       }));
       pMenu.startup();
     }
-    function ajaxTypeChanged(evt){
-      alert("ajaxTypeChanged");
-        dojo.stopEvent(evt);
-        dojo.byId("ajaxextra_fieldset").classList.remove("dijitHidden");
+
+    function ajaxTypeChanged(event){
+      host_id=this.name.replace('-type','');
+      select_box=this;
+        dojo.byId(host_id+"extra_fieldset").classList.remove("dijitHidden");
         dojo.xhrGet({
-            url: "{% url clariadmin.views.ajax_extra_fields_form -1 %}".replace('-1',select_box.item.value?select_box.item.value:-1),
+            url:"{% url clariadmin.views.ajax_extra_fields_form host_type_id=-1 prefix=9467 %}"
+                    .replace('-1',select_box.item.value?select_box.item.value:-1)
+                    .replace('9467',host_id),
             load: function(data){
-                  tab = dojo.byId("ajaxextra_fields");
+                  tab = dojo.byId(host_id+"extra_fields");
                   dojo.forEach(dijit.findWidgets(tab), function(w) {w.destroyRecursive();});
                   tab.innerHTML = data;
                   dojo.parser.parse(tab);
                 }
             });
     }
-    function sendForm() {
-      var form = dojo.byId("the_ajax_form");
-      dojo.connect(form, "onsubmit", function(event) {
-        dojo.stopEvent(event);
+
+    // même en utilisant dojo.disconnect, il arrivait d'avoir plusieur formSubmit.
+    var post_running=false;
+    function ajaxFormSubmit(evt) {
+      if(!post_running){
+        post_running=true;
+        dojo.stopEvent(evt);
+        var form = evt.srcElement || evt.target;
+        console.log(form);
         dojo.xhrPost({
-            form: dojo.byId("the_ajax_form"),
+            form: form.id,
             handleAs: "text",
             load: function(data) {
-              dialog.hide();
+              console.log("formulaire envoyé, "+data);
+              if(data=="ok")
+                clearOpenedRow();
+              else
+                highlight(form, 500, '#ff6a6a', function(){return;});
+              post_running=false;
             }
         });
-      });
+      }
     }
+
     function confirmation_callback(myBool, form_id){
         if(myBool)
             postwith({delete: "true"}, dojo.byId(form_id));
+    }
+    
+    function validateIfEnter(ievent) {
+      if (ievent.keyCode == 13) {
+        dojo.byId("search_form").submit();
+      }
     }
   </script>
 

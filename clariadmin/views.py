@@ -234,7 +234,7 @@ def modify(request, host_id):
             form.delete()
             return redirect('list_hosts')
         if form.is_valid(): 
-            host = form.save(POST=POST)
+            host = form.save(POST=POST, prefix=prefix)
             if request.is_ajax():
                 return HttpResponse("ok")
             redir = POST.get('submit_button', False)
@@ -244,10 +244,12 @@ def modify(request, host_id):
                 pass
             elif redir == 'return':
                 return redirect('list_hosts')
+        elif request.is_ajax():
+            return HttpResponse("invalid")
     else:
         form = HostForm(request.user, request.META['REMOTE_ADDR'],
                         instance=host, prefix=prefix)
-        add_fields = AdditionnalFieldForm(host=host, prefix=prefix)
+    add_fields = AdditionnalFieldForm(host=host, prefix=prefix)
     form.log_action(u"consulté")
     return render_to_response(template, {
         "form": form,
@@ -257,7 +259,7 @@ def modify(request, host_id):
         "host": host}, context_instance=RequestContext(request))
 
 @permission_required("clariadmin.can_access_clariadmin")
-def ajax_extra_fields_form(request, host_type_id, blank=False):
+def ajax_extra_fields_form(request, host_type_id, prefix="", blank=False):
     """
     Return raw html (tr) AdditionnalFieldForm for given host_type_id.
     blank parametter allow to have empty fields instead of defaults.
@@ -266,5 +268,5 @@ def ajax_extra_fields_form(request, host_type_id, blank=False):
         host_type = get_object_or_404(HostType, pk=host_type_id)
     except:
         return HttpResponse("<tr></tr>")
-    form=AdditionnalFieldForm(host_type=host_type, blank=bool(blank))
+    form=AdditionnalFieldForm(host_type=host_type, blank=bool(blank), prefix=prefix)
     return HttpResponse(form.as_table())

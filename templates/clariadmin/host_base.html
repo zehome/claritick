@@ -1,4 +1,4 @@
-<form id="the_{{prefix}}_form" method="post">
+<form id="the_{{prefix}}_form" method="post" action="{%url modify_host host.id %}">
   {% csrf_token %}
   <div>
     <fieldset style="float:left;">
@@ -116,7 +116,7 @@
     {% else %} 
      <div>
       <button dojoType="dijit.form.Button" onclick='confirmDialog("Supression de l hote", "Êtes vous sûr de vouloir supprimer cette machine de la base?", confirmation_callback, "the_{{prefix}}_form")' iconClass="dijitEditorIcon dijitEditorIconDelete" type="button" value="true" class="default">Suprimer</button>
-      <button dojoType="dijit.form.Button" iconClass="dijitEditorIcon dijitEditorIconRightToLeft" type="submit" name="submit_button" value="return">Enregistrer et retourner à la liste</button>
+      <button dojoType="dijit.form.Button" iconClass="dijitEditorIcon dijitEditorIconSave" type="submit" name="submit_button" value="save">Enregistrer</button>
       <div class="right_buttons">
         <div dojoType="dijit.form.Button" iconClass="dijitEditorIcon claritickTicketMailAction" id="{{prefix}}id_trace_button" onClick="window.location = '{% url list_logs "host" form.instance.id %}';">Historique</div>
         <div dojoType="dijit.Tooltip" connectId="{{prefix}}id_trace_button">Voir l'historique de cette machine.</div>

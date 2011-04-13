@@ -110,7 +110,7 @@ class HostForm(df.ModelForm, FormSecurityChecker):
         model = Host
         widgets = {
             'os':df.FilteringSelect(attrs_filtering),
-            'type':df.FilteringSelect(attrs_filtering_and({'onchange':'typeChanged(this);'})),
+            'type':df.FilteringSelect(attrs_filtering),
             'site':df.FilteringSelect(attrs_filtering),
             'supplier':df.FilteringSelect(attrs_filtering),
             'status':df.FilteringSelect(attrs_filtering),
@@ -144,12 +144,12 @@ class HostForm(df.ModelForm, FormSecurityChecker):
         log.save()
         return log
 
-    def save(self, force_insert=False, force_update=False, commit=True, POST=None):
+    def save(self, force_insert=False, force_update=False, commit=True, POST=None, prefix=""):
         assert(self.security_can_save())
         if(self.new):
             inst = super(HostForm, self).save()
             if inst.type and POST:
-                extra_fields=AdditionnalFieldForm(POST,host=inst)
+                extra_fields=AdditionnalFieldForm(POST, host=inst, prefix=prefix)
                 if extra_fields.is_valid():
                     extra_fields.save()
             self.log_action(u"créé", inst)
@@ -161,7 +161,6 @@ class HostForm(df.ModelForm, FormSecurityChecker):
                 host_changes += u"Le champ Host.%s est passé de <%s> à <%s>\n"%(
                          elem, self.initial[elem], getattr(self.instance,elem))
             else:
-                print "type changed, delete old fields."
                 host_changes += u"Le champ Host.type est passé de <%s> à <%s>\n"%(
                         HostType.objects.get(pk=self.initial["type"]), self.instance.type)
                 for af in self.instance.additionnalfield_set.all():
@@ -170,7 +169,7 @@ class HostForm(df.ModelForm, FormSecurityChecker):
         old_fields=list(self.instance.additionnalfield_set.all())
         inst = super(HostForm, self).save()
         if inst.type and POST:
-            extra_fields=AdditionnalFieldForm(POST,host=inst)
+            extra_fields=AdditionnalFieldForm(POST,host=inst, prefix=prefix)
             if extra_fields.is_valid():
                 extra_fields.save()
             for cf in inst.additionnalfield_set.all():
@@ -363,7 +362,7 @@ class SearchHostForm(df.Form, ModelFormTableMixin, FormSecurityChecker):
             widget=df.FilteringSelect(attrs=attrs_filtering),  required=False, label=u'Client')
     # these ModelChoiceFields are initialised twice. once forvalidation and once after filtering
     type = df.ModelChoiceField(queryset = HostType.objects.all(),
-        widget=df.FilteringSelect(attrs=attrs_filtering_and({'onchange':'typeChanged(this);'})),
+        widget=df.FilteringSelect(attrs=attrs_filtering),
         empty_label='', required=False, label = u'Type')
     os = df.ModelChoiceField(queryset = OperatingSystem.objects.all(),
         widget=df.FilteringSelect(attrs=attrs_filtering), empty_label='', required=False, label=u'OS')
