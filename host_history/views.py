@@ -6,9 +6,8 @@ from common.diggpaginator import DiggPaginator
 from django.http import Http404
 
 from django.conf import settings
-from django.contrib.auth.models import User
 from django.template import RequestContext
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.contrib.auth.decorators import permission_required
 
 @permission_required("host_history.can_access_host_history")
@@ -25,6 +24,22 @@ def list_logs(request, filter_type=None, filter_key=None):
     sort_default='-date'
     columns = ["host","user","date","ip","action","message","version"]
     new_search = False
+
+    if request.GET.get("reset", "0") == "1":
+        try:
+            del request.session["lastpage_log_list"] 
+        except KeyError:
+            pass
+        try:
+            del request.session["search_log_list"] 
+        except KeyError:
+            pass
+        try:
+            del request.session["sort_log_list"] 
+        except KeyError:
+            pass
+        return redirect('list_logs')
+
 
     # Url filtering
     if filter_type:
