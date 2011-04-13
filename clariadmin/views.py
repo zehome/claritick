@@ -195,7 +195,7 @@ def new(request, from_host=False):
     if POST:
         form = HostForm(request.user,request.META['REMOTE_ADDR'], POST)
         if form.is_valid():
-            host = form.save(POST=POST)
+            host, add_fields = form.save(POST=POST)
             redir = POST.get('submit_button', False)
             if redir == 'new':
                 form = HostForm(request.user, request.META['REMOTE_ADDR'])
@@ -227,6 +227,7 @@ def modify(request, host_id):
     prefix = str(host_id)
     template = "clariadmin/ajax_host.html" if request.is_ajax() else "clariadmin/host.html"
 
+    add_fields = AdditionnalFieldForm(host=host, prefix=prefix)
     if POST:
         form = HostForm(request.user, request.META['REMOTE_ADDR'],
                         POST, instance=host, prefix=prefix)
@@ -234,9 +235,7 @@ def modify(request, host_id):
             form.delete()
             return redirect('list_hosts')
         if form.is_valid(): 
-            host = form.save(POST=POST, prefix=prefix)
-            if request.is_ajax():
-                return HttpResponse("ok")
+            host, add_fields = form.save(POST=POST, prefix=prefix)
             redir = POST.get('submit_button', False)
             if redir == 'new':
                 return redirect('new_host')
@@ -244,12 +243,9 @@ def modify(request, host_id):
                 pass
             elif redir == 'return':
                 return redirect('list_hosts')
-        elif request.is_ajax():
-            return HttpResponse("invalid")
     else:
         form = HostForm(request.user, request.META['REMOTE_ADDR'],
                         instance=host, prefix=prefix)
-    add_fields = AdditionnalFieldForm(host=host, prefix=prefix)
     form.log_action(u"consulté")
     return render_to_response(template, {
         "form": form,

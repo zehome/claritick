@@ -144,16 +144,15 @@ class HostForm(df.ModelForm, FormSecurityChecker):
         log.save()
         return log
 
-    def save(self, force_insert=False, force_update=False, commit=True, POST=None, prefix=""):
+    def save(self, force_insert=False, force_update=False, commit=True, POST={}, prefix=""):
         assert(self.security_can_save())
         if(self.new):
             inst = super(HostForm, self).save()
-            if inst.type and POST:
-                extra_fields=AdditionnalFieldForm(POST, host=inst, prefix=prefix)
-                if extra_fields.is_valid():
-                    extra_fields.save()
+            extra_fields=AdditionnalFieldForm(POST, host=inst, prefix=prefix)
+            if extra_fields.is_valid():
+                extra_fields.save()
             self.log_action(u"créé", inst)
-            return inst
+            return (inst, extra_fields)
         host_changes=u""
         fields_changes=u""
         for elem in self.changed_data:
@@ -168,10 +167,9 @@ class HostForm(df.ModelForm, FormSecurityChecker):
                     af.delete()
         old_fields=list(self.instance.additionnalfield_set.all())
         inst = super(HostForm, self).save()
-        if inst.type and POST:
-            extra_fields=AdditionnalFieldForm(POST,host=inst, prefix=prefix)
-            if extra_fields.is_valid():
-                extra_fields.save()
+        extra_fields=AdditionnalFieldForm(POST,host=inst, prefix=prefix)
+        if extra_fields.is_valid():
+            extra_fields.save()
             for cf in inst.additionnalfield_set.all():
                 try:
                     old= next((o for o in old_fields if cf.id == o.id))
@@ -182,7 +180,7 @@ class HostForm(df.ModelForm, FormSecurityChecker):
         if(host_changes or fields_changes):
             log = self.log_action(u"modifié", inst)
             HostVersion(host=host_changes, additionnal_fields=fields_changes, log_entry=log).save()
-        return inst
+        return (inst, extra_fields)
 
     def delete(self, *args, **kwargs):
         #assert(self.security_can_delete())
