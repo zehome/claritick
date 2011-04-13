@@ -144,32 +144,42 @@ class HostForm(df.ModelForm, FormSecurityChecker):
         log.save()
         return log
 
-    def save(self, force_insert=False, force_update=False, commit=True, extra_fields=None):
+    def save(self, force_insert=False, force_update=False, commit=True, POST=None):
         assert(self.security_can_save())
         if(self.new):
             inst = super(HostForm, self).save()
+            if inst.type and POST:
+                extra_fields=AdditionnalFieldForm(POST,host=inst)
+                if extra_fields.is_valid():
+                    extra_fields.save()
             self.log_action(u"créé", inst)
-            if extra_fields:
-                extra_fields.save()
             return inst
         host_changes=u""
         fields_changes=u""
         for elem in self.changed_data:
-            host_changes += u"Le champ Host.%s est passé de <%s> à <%s>\n"%(
+            if elem != "type":
+                host_changes += u"Le champ Host.%s est passé de <%s> à <%s>\n"%(
                          elem, self.initial[elem], getattr(self.instance,elem))
-            if elem == "type":
-                self.instance.additionnalfield_set.all().delete()
+            else:
+                print "type changed, delete old fields."
+                host_changes += u"Le champ Host.type est passé de <%s> à <%s>\n"%(
+                        HostType.objects.get(pk=self.initial["type"]), self.instance.type)
+                for af in self.instance.additionnalfield_set.all():
+                    fields_changes+=u"Le champ AdditionnalField nommé <%s> à <%s> a été supprimé\n"%(af.field.name,af.value)
+                    af.delete()
         old_fields=list(self.instance.additionnalfield_set.all())
         inst = super(HostForm, self).save()
-
-        extra_fields.save()
-        for cf in inst.additionnalfield_set.all():
-            try:
-                old= next((o for o in old_fields if cf.id == o.id))
-                if old.value != cf.value:
-                    fields_changes+=u"Le champ AdditionnalField nommé <%s> est passé de <%s> à <%s>\n"%(old.field.name,old.value,cf.value)
-            except StopIteration, e:
-                fields_changes+=u"Le champ AdditionnalField nommé <%s> est innitialisé à <%s>\n"%(cf.field.name,cf.value)
+        if inst.type and POST:
+            extra_fields=AdditionnalFieldForm(POST,host=inst)
+            if extra_fields.is_valid():
+                extra_fields.save()
+            for cf in inst.additionnalfield_set.all():
+                try:
+                    old= next((o for o in old_fields if cf.id == o.id))
+                    if old.value != cf.value:
+                        fields_changes+=u"Le champ AdditionnalField nommé <%s> est passé de <%s> à <%s>\n"%(old.field.name,old.value,cf.value)
+                except StopIteration, e:
+                    fields_changes+=u"Le champ AdditionnalField nommé <%s> est innitialisé à <%s>\n"%(cf.field.name,cf.value)
         if(host_changes or fields_changes):
             log = self.log_action(u"modifié", inst)
             HostVersion(host=host_changes, additionnal_fields=fields_changes, log_entry=log).save()
@@ -226,7 +236,7 @@ class AdditionnalFieldForm(df.Form):
                                for addf in host.additionnalfield_set.all()
                                if addf.field.id in c_fields.keys())
             self.host_fields = dict(('val_%s'%(k,),v) for k,v in host_fields.iteritems())
-            c_fields.update(host_fields)
+            c_fields.update(dict((k,v) for k,v in host_fields.iteritems() if k in c_fields.keys()))
         # Ajoute les champs dojango au formulaire
         if blank :
             args = lambda x,y:{'label':x.name,'initial':None,'required':False}

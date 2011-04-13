@@ -195,8 +195,7 @@ def new(request, from_host=False):
     if POST:
         form = HostForm(request.user,request.META['REMOTE_ADDR'], POST)
         if form.is_valid():
-            form_comp = AdditionnalFieldForm(POST, host_type=form.cleaned_data['type'])
-            host = form.save(extra_fields=add_fields)
+            host = form.save(POST=POST)
             redir = POST.get('submit_button', False)
             if redir == 'new':
                 form = HostForm(request.user, request.META['REMOTE_ADDR'])
@@ -234,9 +233,8 @@ def modify(request, host_id):
         if POST.get("delete", False):
             form.delete()
             return redirect('list_hosts')
-        add_fields = AdditionnalFieldForm(POST, host=host, prefix=prefix)
-        if form.is_valid() and add_fields.is_valid():
-            host = form.save(extra_fields=add_fields)
+        if form.is_valid(): 
+            host = form.save(POST=POST)
             if request.is_ajax():
                 return HttpResponse("ok")
             redir = POST.get('submit_button', False)
