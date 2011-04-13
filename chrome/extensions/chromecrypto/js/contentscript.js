@@ -37,9 +37,9 @@ function uncipherAndReplaceTagData(settings, tag)
             if (byValue)
             {
                 dojo.attr(tag, "value", unciphered);
-                dojo.place(imgTAG, tag, "before");
-            } else {
-                tag.innerHTML = imgTAG + " " + unciphered;
+                dojo.place(imgTAG, tag.parentNode.parentNode, "after");
+//            } else {
+//                tag.innerHTML = imgTAG + " " + unciphered;
             }
         }
    }
@@ -63,4 +63,4 @@ function uncipherData(settings, ciphered)
     return plain;
 }
 
-findAndDecrypt();
+window.setInterval("findAndDecrypt()", 1000);
