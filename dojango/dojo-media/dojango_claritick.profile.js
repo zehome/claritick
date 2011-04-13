@@ -13,6 +13,8 @@ dependencies ={
            "dijit.Dialog",
            "dijit.TooltipDialog",
            "dijit.form.Button",
+           "dijit.form.CheckBox",
+           "dijit.form.MultiSelect",
            "dijit.form.DropDownButton",
            "dijit.form.NumberSpinner",
            "dijit.form.NumberTextBox",
@@ -22,12 +24,14 @@ dependencies ={
            "dijit.form.ValidationTextBox",
            "dijit.form.ComboBox",
            "dijit.form.Slider",
-           "dijit.form.Checkbox",
            "dijit.form.FilteringSelect",
            "dijit.layout.ContentPane",
            "dijit.layout.TabContainer",
            "dojo.dnd.Source",
-           "dojo.nls.dojo_fr-fr"
+           "dojo.nls.dojo_fr-fr",
+           "dojox.fx",
+           "dojox.fx.scroll",
+           "dojox.validate"
        ]
        }
    ],
