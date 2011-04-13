@@ -3,7 +3,7 @@
 import os
 basepath = os.path.abspath(os.path.dirname(__file__))
 
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
@@ -207,7 +207,7 @@ SVNDOC_CONFIG = {
 
 # Where package files are stored
 PACKAGING_ROOT = os.path.join(basepath, 'packaging', 'filestorage')
-INTERNAL_IPS = ('127.0.0.1', '62.212.97.168', '213.41.134.36')
+INTERNAL_IPS = ('127.0.0.1', )
 CHROMECRYPTO_KEY = ""
 
 try:
