@@ -1,4 +1,4 @@
-<form id="the_{{prefix}}_form" method="post" {% if host.id %} action="{%url modify_host host.id %}" {% endif %} >
+<form id="the_{{prefix}}_form" method="post" {% if host.id %} action="{% url modify_host host.id %}" {% endif %} >
   {% csrf_token %}
   <div>
     <fieldset style="float:left;">
