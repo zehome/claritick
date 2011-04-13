@@ -90,9 +90,18 @@ def list_all(request, *args, **kw):
         lastpage_clariadmin : dernier numéreau de page
     """
     if request.GET.get("reset", "0") == "1":
-        request.session["search_host_form_fields"] = {}
-        request.session["additionnal_field_form_fields"] = {}
-        del request.session["sort_adm_list"] 
+        try:
+            del request.session["search_host_form_fields"] 
+        except KeyError:
+            pass
+        try:
+            del request.session["additionnal_field_form_fields"] 
+        except KeyError:
+            pass
+        try:
+            del request.session["sort_adm_list"] 
+        except KeyError:
+            pass
         return redirect('list_hosts')
 
     POST = HostForm.filter_querydict(request.user, request.POST)
