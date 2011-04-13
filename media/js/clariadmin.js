@@ -45,23 +45,23 @@ function postwith (inputs,post_url_or_form) {
 
 function scrollAndHighlight(target, scrollDuration, highlightDuration)
 {
-    dojox.fx.smoothScroll(
+  dojox.fx.smoothScroll(
 	{
 		node: target,
 		win: window,
 		duration: scrollDuration
-	}
-    ).play();
+	}).play();
+  if(highlightDuration)
     highlight(target, highlightDuration, '#ffd76a');
 }
 
-function highlight(target, highlightDuration, color) 
+function highlight(target, highlightDuration, color, endCallback) 
 {
-    dojox.fx.highlight(
+  dojox.fx.highlight(
 	{
-		node: target,
-		duration: highlightDuration,
-        color: color
-	}
-    ).play();
+    node: target,
+    duration: highlightDuration,
+    color: color,
+    onEnd: endCallback
+	}).play();
 }

@@ -32,7 +32,8 @@
       e = e || event;
       var target = e.srcElement || e.target;
       host_id = target.parentNode.id.replace('comp_','');
-      highlight("comp_"+host_id, 500, '#ff6a6a');
+      var hilighted_row=true;
+      highlight("comp_"+host_id, 500, '#ff6a6a', function(){hilighted_row=false;});
       pane = dijit.byId('pane_row_'+host_id)
       if(openedRow){
         dojox.fx.wipeOut({
@@ -57,7 +58,10 @@
                 duration: 600,
                 height: 500,
             }).play();
-            scrollAndHighlight(dojo.byId("comp_"+host_id), 200, 900);
+            if (hilighted_row)
+              scrollAndHighlight(dojo.byId("comp_"+host_id), 200,false);
+            else
+              scrollAndHighlight(dojo.byId("comp_"+host_id), 200, 900);
           }
         });
         openedRow = dojo.byId('edit_row_'+host_id);
