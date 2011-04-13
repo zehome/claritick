@@ -105,7 +105,6 @@ class FormSecurityChecker(object):
         return bool(self._security_deleted_fields)
 
 class HostForm(df.ModelForm, FormSecurityChecker):
-    date_start_prod=df.DateField(initial=datetime.date.today)
     class Meta:
         model = Host
         widgets = {

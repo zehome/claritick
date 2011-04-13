@@ -123,7 +123,7 @@
         <ul class="menu">
           <li><a href="{% url list_hosts %}?reset=1">Toutes les machines</a></li>
           <li><a href="{% url new_host %}">Nouvelle machine</a></li>
-          {% if perms.host_history.can_access_host_history %}<li><a href="{% url list_logs %}">Historique Machines</a></li>{% endif %}
+          {% if perms.host_history.can_access_host_history %}<li><a href="{% url list_logs %}?reset=1">Historique Machines</a></li>{% endif %}
         </ul>
         {% endif %}
         {% if perms.developpements.can_access_suividev and developpements_projects %}
@@ -164,7 +164,7 @@
             <p style="padding: 0; margin: 0; display: inline;">Utilisateur: {{ user.username }}</p>
           {% endif %}
           {% if user.is_authenticated %}
-          <p style="padding: 0; margin: 0;">        
+          <p style="padding: 0; margin: 0;">
             Aller au ticket # <input type="text" id="id_num_ticket" size="6" /> <button dojoType="dijit.form.Button" id="id_go_ticket">Go</button>
             {% if perms.clariadmin.can_access_clariadmin %}
               <br />Clariadmin: <input type="text" id="id_num_host" size="25" />
@@ -202,5 +202,4 @@
     {% endif %}
   </body>
 </html>
-
 

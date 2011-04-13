@@ -223,6 +223,7 @@ def new(request, from_host=False):
             form = HostForm(request.user,request.META['REMOTE_ADDR'])
     return render_to_response('clariadmin/host.html', {
             'form': form,
+            'prefix':'8',
             'additionnal_fields': add_fields},
             context_instance=RequestContext(request))
 
