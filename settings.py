@@ -3,7 +3,7 @@
 import os
 basepath = os.path.abspath(os.path.dirname(__file__))
 
-DEBUG = False
+DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
@@ -148,7 +148,7 @@ TIME_FORMAT = "H\hi"
 
 # Dojango config
 DOJANGO_DOJO_PROFILE = "local_release"
-DOJANGO_DOJO_VERSION = "custom_build_150"
+DOJANGO_DOJO_VERSION = "custom_build_160"
 DOJANGO_DOJO_THEME = "claro"
 DOJO_BUILD_JAVA_EXEC = "/usr/bin/java"
 DOJANGO_BASE_MEDIA_ROOT = os.path.join(basepath, 'dojango', 'dojo-media')
@@ -207,7 +207,7 @@ SVNDOC_CONFIG = {
 
 # Where package files are stored
 PACKAGING_ROOT = os.path.join(basepath, 'packaging', 'filestorage')
-INTERNAL_IPS = ('127.0.0.1',)
+INTERNAL_IPS = ('127.0.0.1', '62.212.97.168', '213.41.134.36')
 CHROMECRYPTO_KEY = ""
 
 try:

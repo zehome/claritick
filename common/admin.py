@@ -33,7 +33,7 @@ class UserAdmin(DjangoUserAdmin):
         ),
     )
     add_form = ClaritickUserCreationForm
-    ordering = [ "client", "first_name", "last_name" ]
+#    ordering = [ "client", "first_name", "last_name" ]
     actions_on_bottom = True
     list_per_page = 200
 
