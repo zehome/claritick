@@ -44,13 +44,13 @@
         openedRow = null;
      }
     }
- 
+     var hilighted_row=false;
     function showHostPane(e){
       e = e || event;
       var target = e.srcElement || e.target;
-      if(! (target.children.length || target.tagName == 'A')){
+      if(! (target.children.length || target.tagName == 'A' || hilighted_row)){
         host_id = target.parentNode.id.replace('comp_','');
-        var hilighted_row=true;
+        hilighted_row=true;
         highlight("comp_"+host_id, 500, '#ff6a6a', function(){hilighted_row=false;});
         if(openedRow == dojo.byId('edit_row_'+host_id))
           return clearOpenedRow();
@@ -61,7 +61,6 @@
           url:"{% url clariadmin.views.modify -1 %}".replace('-1',host_id),
           load:function(data){
             pane.set('content',data);
-            console.log("data loaded, start processing");
             dojo.connect(dijit.byId("id_"+host_id+"-type"),"onChange",ajaxTypeChanged);
             dojo.connect(dijit.byId("the_"+host_id+"_form"), "onsubmit", ajaxFormSubmit);
             openedRow.classList.remove('dijitHidden');
@@ -150,16 +149,21 @@
         post_running=true;
         dojo.stopEvent(evt);
         var form = evt.srcElement || evt.target;
+        host_id = form.id.replace('the_','').replace('_form','');
+        pane = dijit.byId('pane_row_'+host_id);
         console.log(form);
         dojo.xhrPost({
             form: form.id,
             handleAs: "text",
             load: function(data) {
-              console.log("formulaire envoyé, "+data);
-              if(data=="ok")
-                clearOpenedRow();
+              pane.set('content',data);
+              dojo.connect(dijit.byId("id_"+host_id+"-type"),"onChange",ajaxTypeChanged);
+              dojo.connect(dijit.byId("the_"+host_id+"_form"), "onsubmit", ajaxFormSubmit);
+              console.log(dojo.query("#"+pane.id+" ul.errorlist"))
+              if(dojo.query("#"+pane.id+" ul.errorlist")[0])
+                highlight(pane.id, 500, '#ff6a6a', function(){});
               else
-                highlight(form, 500, '#ff6a6a', function(){return;});
+                highlight(pane.id, 800, '#6aff6a', function(){});
               post_running=false;
             }
         });
