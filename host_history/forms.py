@@ -14,7 +14,7 @@ class SearchLogForm(df.Form, ModelFormTableMixin):
             widget=df.FilteringSelect(attrs=attrs_filtering),  required=False, label=u'Client')
     # these ModelChoiceFields are initialised twice. once forvalidation and once after filtering
     action = df.MultipleChoiceField(choices = ((i,s) for i,s,c in ACTIONS_LOG),
-        required=False, 
+        required=False,
         label = u'Sauf les actions')
     message = df.CharField(required=False)
     ip = df.CharField(required=False)
@@ -32,7 +32,7 @@ class SearchLogForm(df.Form, ModelFormTableMixin):
         if cd['hostname']:
             qs = qs.filter(host__hostname__icontains = cd['hostname'])
         if cd['username']:
-            qs = qs.filter(user__username__icontains = cd['username'])
+            qs = qs.filter(username__icontains = cd['username'])
         if cd['action']:
             qs = qs.exclude(action__in = cd['action'])
         if cd['ip']:

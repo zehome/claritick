@@ -40,7 +40,7 @@
 {% for row in page.object_list %}
     <tr id="comp_{{ row.id }}" class="{% cycle 'row1' 'row2'%}">
         {% if 'host' in columns %}<td>{% if row.host %}<a href="{% url modify_host row.host.id %}">{{ row.host.hostname }}</a>{% else %}<i style="color:red;">Deleted</i> {% endif %}</td>{% endif %}
-        {% if 'user' in columns %}<td>{{ row.user.username }}</td>{% endif %}
+        {% if 'user' in columns %}<td>{{ row.username }}</td>{% endif %}
         {% if 'date' in columns %}<td>{{ row.date }}</td>{% endif %}
         {% if 'ip' in columns %}<td>{{ row.ip }}</td>{% endif %}
         {% if 'action' in columns %}<td style='background-color:{{row.color}}'>{{ row.action_text }}</td>{% endif %}

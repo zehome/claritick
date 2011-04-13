@@ -30,17 +30,13 @@ def list_logs(request, filter_type=None, filter_key=None):
     if filter_type:
         if filter_type == 'host' and filter_key == 'deleted':
             qs = HostEditLog.objects.filter(host__exact=None)
-        elif filter_type == 'user' and filter_key == 'deleted':
-            qs = HostEditLog.objects.filter(user__exact=None)
         elif filter_type == 'host':
             qs = get_object_or_404(Host, pk=filter_key).hosteditlog_set
-        elif filter_type == 'user':
-            qs = get_object_or_404(User, pk=filter_key).hosteditlog_set
         else:
             raise Http404
     else:
         qs = HostEditLog.objects.all()
-    qs = qs.select_related('host','user','hostrevision')
+    qs = qs.select_related('host','hostrevision')
 
     # Reset button
     if request.POST.get("filter_reset",False):
