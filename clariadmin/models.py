@@ -51,6 +51,18 @@ class HostType(models.Model):
     def __unicode__(self):
         return u"%s" % (self.text,)
 
+class HostStatus(models.Model):
+    class Meta:
+        verbose_name = u"Status d'hôte"
+        ordering = ['name']
+    name = models.CharField("Nom",max_length=64, unique=True, blank=False)
+    description = models.TextField("Description", blank=True)
+    color_fg = ColorField(name="Couleur texte", blank=True, null=True)
+    color_bg = ColorField(name="Couleur fond", blank=True, null=True)
+    def __unicode__(self):
+        return u"%s" % (self.name,)
+
+
 class Supplier(models.Model):
     class Meta:
         verbose_name = u"Fournisseur"
@@ -143,22 +155,15 @@ class Host(models.Model):
     serial = models.CharField(u"Numéro de série", blank=True, max_length=128, null=True)
     inventory = models.CharField(u"Numéro d'inventaire", blank=True, max_length=128, null=True)
 
-    status = models.CharField(u"Statut", choices=((i,s) for i,s,c in HOST_STATUS)
-                         , max_length=32, blank=False, default="Service", null=False)
+    status = models.ForeignKey(HostStatus, verbose_name=u"Statut", null=False)
 
     @property
     def status_color(self):
-        try:
-            return next(c for i,s,c in HOST_STATUS if i == self.status)
-        except StopIteration:
-            return u"no"
+        return self.status.color_bg
 
     @property
     def status_text(self):
-        try:
-            return next(s for i,s,c in HOST_STATUS if i == self.status)
-        except StopIteration:
-            return u"Non défini"
+        return self.status.name
 
     def get_absolute_url(self):
         return "/clariadmin/modify/%i" % (self.id,)

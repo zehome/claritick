@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.contrib import admin
 from django.http import HttpResponse
-from clariadmin.models import OperatingSystem, HostType, Supplier, ParamAdditionnalField
+from clariadmin.models import OperatingSystem, HostType, Supplier, ParamAdditionnalField, HostStatus
 from clariadmin.forms import ParamAdditionnalFieldAdminForm
 from common.widgets import ColorPickerWidget
 from common.models import ColorField
@@ -76,4 +76,5 @@ class HostTypeAdmin(admin.ModelAdmin):
 admin.site.register(ParamAdditionnalField,ExtraFieldAdmin)
 admin.site.register(OperatingSystem)
 admin.site.register(HostType, HostTypeAdmin)
+admin.site.register(HostStatus)
 admin.site.register(Supplier)

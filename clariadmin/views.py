@@ -20,7 +20,6 @@ def filter_hosts(qs, user, sorting, search, search_extra={}):
     search_mapping={'ip': 'contains',
         'hostname': 'icontains',
         'commentaire': 'icontains',
-        'status': 'icontains'
         }
     for key, value in search.iteritems():
         if value:
@@ -45,7 +44,8 @@ def global_search(user, search, qs):
     fks = {'os': 'name',
            'site':'label',
            'supplier':'name',
-           'type':'text'}
+           'type':'text',
+           'status':'name'}
     # Filtre les foreign key en fonction du niveau de securite.
     authorized_keys = SearchHostForm.filter_list(user,fks.keys())
     fks = dict([(k,v) for k,v in fks.iteritems()

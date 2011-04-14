@@ -1,3 +1,14 @@
+r707
+    - syncdb
+    //!\\ Attention, les deux requêtes UPDATE n'ont pas été testées.
+    INSERT INTO clariadmin_hoststatus (id,name,description,color_fg,color_bg) values (1,'Service','Machine en état nominal de fonctionnement, opérationnelle, chez le client.', '#000000', '#77FF77');
+    INSERT INTO clariadmin_hoststatus (id,name,description,color_fg,color_bg) values (2,'Stock','Machine en état potentiel de fonctionnement, opérationnelle, innutilisée.', '#000000', '#77FF77');
+    INSERT INTO clariadmin_hoststatus (id,name,description,color_fg,color_bg) values (3,'Hors Service','Machine hors d'état de fonctionnement.', '#000000', '#77FF77');
+    ALTER TABLE clariadmin_host ADD COLUMN "status_id" integer NOT NULL DEFAULT 1 REFERENCES "clariadmin_hoststatus" ("id") DEFERRABLE INITIALLY DEFERRED;
+    ALTER TABLE clariadmin_host ALTER column "status_id" DROP DEFAULT;
+    UPDATE clariadmin_host SET status_id=2 WHERE status='Stock';
+    UPDATE clariadmin_host SET status_id=3 WHERE status='Hors Service';
+    ALTER TABLE clariadmin_host DROP COLUMN status;
 r667
     Des objets étaient stoqués en DB en repr au lieu de json., corrige en enlevent les signes d'unicode.
     UPDATE clariadmin_additionnalfield SET value = regexp_replace(value, 'u''','''','g');

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import dojango.forms as df
-from clariadmin.models import Host, OperatingSystem, HostType, HOST_STATUS
+from clariadmin.models import Host, OperatingSystem, HostType, HostStatus
 from clariadmin.models import AdditionnalField, ParamAdditionnalField, Supplier
 from host_history.models import HostEditLog, HostVersion
 from common.models import Client
@@ -366,8 +366,8 @@ class SearchHostForm(df.Form, ModelFormTableMixin, FormSecurityChecker):
         widget=df.FilteringSelect(attrs=attrs_filtering), empty_label='', required=False, label=u'OS')
     supplier = df.ModelChoiceField(queryset = Supplier.objects.all(),
         widget=df.FilteringSelect(attrs=attrs_filtering), empty_label='', required=False, label=u'Fournisseur')
-    status = df.ChoiceField(choices=chain((('', ''),),((k,v) for k,v,s in HOST_STATUS)) ,
-            widget=df.FilteringSelect(attrs=attrs_filtering),  required=False)
+    status = df.ModelChoiceField(queryset = HostStatus.objects.all(),
+        widget=df.FilteringSelect(attrs=attrs_filtering), empty_label='', required=False, label=u'Status')
     inventory = df.CharField(required=False, label=u'Inventaire')
     commentaire = df.CharField(required=False)
 
@@ -383,6 +383,9 @@ class SearchHostForm(df.Form, ModelFormTableMixin, FormSecurityChecker):
         if self.fields.has_key('os') and not self.cleaned_data['os']:
             self.fields['os'].queryset = OperatingSystem.objects.filter(host__in=hosts) \
                                         .only('id', 'name', 'version').distinct()
+        if self.fields.has_key('status') and not self.cleaned_data['status']:
+            self.fields['status'].queryset = HostStatus.objects.filter(host__in=hosts) \
+                                                .only('id', 'name').distinct()
         if self.fields.has_key('supplier') and not self.cleaned_data['supplier']:
             self.fields['supplier'].queryset = Supplier.objects.filter(host__in=hosts) \
                                                 .only('id', 'name').distinct()
