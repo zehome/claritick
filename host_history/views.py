@@ -53,13 +53,6 @@ def list_logs(request, filter_type=None, filter_key=None):
         qs = HostEditLog.objects.all()
     qs = qs.select_related('host','hostrevision')
 
-    # Reset button
-    if request.POST.get("filter_reset",False):
-        form = SearchLogForm(request.user,{})
-        del(request.session["lastpage_log_list"])
-        del(request.session["search_log_list"])
-        del(request.session["sort_log_list"])
-
     # Handle SearchForm filtering
     form = SearchLogForm(request.user, request.POST or
                                      request.session.get("search_log_list",{}))
