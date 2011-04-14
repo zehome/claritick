@@ -159,10 +159,11 @@ class HostForm(df.ModelForm, FormSecurityChecker):
                 host_changes += u"Le champ Host.%s est passé de <%s> à <%s>\n"%(
                          elem, self.initial[elem], getattr(self.instance,elem))
             else:
+                old_type = HostType.objects.get(pk=self.initial["type"]) if self.initial["type"] else 'None'
                 host_changes += u"Le champ Host.type est passé de <%s> à <%s>\n"%(
-                        HostType.objects.get(pk=self.initial["type"]), self.instance.type)
+                                  old_type, self.instance.type)
                 for af in self.instance.additionnalfield_set.all():
-                    fields_changes+=u"Le champ AdditionnalField nommé <%s> à <%s> a été supprimé\n"%(af.field.name,af.value)
+                    fields_changes+=u"Le champ AdditionnalField nommé <%s> à <%s> a été supprimé\n"%(af.field.name,af.value_readable)
                     af.delete()
         old_fields=list(self.instance.additionnalfield_set.all())
         inst = super(HostForm, self).save()
@@ -173,9 +174,9 @@ class HostForm(df.ModelForm, FormSecurityChecker):
                 try:
                     old= next((o for o in old_fields if cf.id == o.id))
                     if old.value != cf.value:
-                        fields_changes+=u"Le champ AdditionnalField nommé <%s> est passé de <%s> à <%s>\n"%(old.field.name,old.value,cf.value)
+                        fields_changes+=u"Le champ AdditionnalField nommé <%s> est passé de <%s> à <%s>\n"%(old.field.name,old.value_readable,cf.value_readable)
                 except StopIteration, e:
-                    fields_changes+=u"Le champ AdditionnalField nommé <%s> est innitialisé à <%s>\n"%(cf.field.name,cf.value)
+                    fields_changes+=u"Le champ AdditionnalField nommé <%s> est innitialisé à <%s>\n"%(cf.field.name,cf.value_readable)
         if(host_changes or fields_changes):
             log = self.log_action(u"modifié", inst)
             HostVersion(host=host_changes, additionnal_fields=fields_changes, log_entry=log).save()
