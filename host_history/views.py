@@ -102,7 +102,6 @@ def list_logs(request, filter_type=None, filter_key=None):
 def view_changes(request, rev_id):
     version = get_object_or_404(HostVersion, pk = rev_id)
     log = version.log_entry
-    print log.message
     message_infos = log.parse_message()
     # Removing last item because it's an empty line.
     host_changes = version.host.split('\n')[:-1]
