@@ -34,8 +34,8 @@ class HostEditLog(models.Model):
     message_format = u"Le poste %s a été %s par %s (sec:%s, ip:%s) le %s"
 
     def parse_message(self):
-        infos = re.match(ur"Le poste ([\w\W]+) a été ([\wé]+) par (\w+) " +
-                  ur"\(sec:(\d+), ip:(\d?\d?\d.\d?\d?\d.\d?\d?\d.\d?\d?\d)\)" +
+        infos = re.match(ur"Le poste ([\w\W]+) a été ([\wé]+) par ([\w\W]+) " +
+                  ur"\(sec:(\d+), ip:([\w\W]+)\)" +
                   ur" le (\d?\d/\d?\d/\d?\d?\d\d \d?\d:\d?\d)\Z",self.message)
         if infos:
             return infos
