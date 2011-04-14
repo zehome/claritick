@@ -53,7 +53,7 @@
     function showHostPane(e){
       e = e || event;
       var target = e.srcElement || e.target;
-      if(! (target.children.length || target.tagName == 'A' || hilighted_row)){
+      if(! (hilighted_row)){
         host_id = target.parentNode.id.replace('comp_','');
         hilighted_row=true;
         highlight("comp_"+host_id, 500, '#ff6a6a', function(){hilighted_row=false;});
