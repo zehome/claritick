@@ -14,11 +14,18 @@
     dojo.require("dojox.validate");
     dojo.require("dijit.layout.ContentPane");
 
-    dojo.addOnLoad(function(){
+    dojo.addOnLoad(function()
+    {
       dojo.forEach(dojo.query(".clickable_rows"), function(row)
       {
         create_menu(row.id, row.children[0].textContent);
-        dojo.connect(row, "onclick", showHostPane);
+        dojo.forEach(row.getElementsByTagName("td"), function( elem )
+        {
+            if (! dojo.hasClass(elem, "unclickable")) 
+            { 
+                dojo.connect(elem, "onclick", showHostPane);
+            }
+        });
       });
       var global_search = dojo.byId("id_global_search");
       if (global_search)
@@ -220,8 +227,8 @@
       <tbody id="context_lines">
           {% for row in page.object_list %}
           <tr id='comp_{{ row.id }}' class='{% cycle 'row1' 'row2'%} clickable_rows'>
-          {% if 'hostname' in columns %}<td><a href='{% url clariadmin.views.modify row.id %}'>{{ row.hostname }}</a></td>{% endif %}
-          {% if 'ip' in columns %}<td>{{ row.ip }}</td>{% endif %}
+          {% if 'hostname' in columns %}<td class="unclickable"><a href='{% url clariadmin.views.modify row.id %}'>{{ row.hostname }}</a></td>{% endif %}
+          {% if 'ip' in columns %}<td class="unclickable">{{ row.ip }}</td>{% endif %}
           {% if 'site' in columns %}<td>{{ row.site }}</td>{% endif %}
           {% if 'type' in columns %}<td style='color:{{row.type.color_fg}};background-color:{{row.type.color_bg}}'>{{ row.type }}</td>{% endif %}
           {% if 'os' in columns %}<td>{{ row.os }}</td>{% endif %}
