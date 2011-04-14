@@ -90,16 +90,11 @@ def list_all(request, *args, **kw):
         lastpage_clariadmin : dernier numéreau de page
     """
     if request.GET.get("reset", "0") == "1":
-        try:
-            del request.session["search_host_form_fields"] 
-        except KeyError:
-            pass
-        try:
-            del request.session["additionnal_field_form_fields"] 
-        except KeyError:
-            pass
-        try:
-            del request.session["sort_adm_list"] 
+        try: # ordre de nettoyage de session logique.
+            del request.session["lastpage_clariadmin"]
+            del request.session["sort_adm_list"]
+            del request.session["search_host_form_fields"]
+            del request.session["additionnal_field_form_fields"]
         except KeyError:
             pass
         return redirect('list_hosts')
@@ -111,7 +106,6 @@ def list_all(request, *args, **kw):
     columns = HostForm.filter_list(request.user, ("hostname", "ip", "site",
                       "type", "os", "model", "status","additionnal_fields"))
 
-    # Récupère le type d'hote pour adapter si besoin l'AdditionnalFieldForm.
     if POST:
         # Init forms
         form = SearchHostForm(request.user, POST )
@@ -169,9 +163,6 @@ def list_all(request, *args, **kw):
             else:
                 qs = filter_hosts(qs, request.user, sorting, form.cleaned_data)
             form.update(qs)
-
-    if(qs.count()==1):
-        return redirect(qs[0])
 
     # fill paginator
     paginator = DiggPaginator(qs, settings.HOSTS_PER_PAGE, body=5, tail=2, padding=2)
