@@ -1,4 +1,17 @@
 {% extends "base.html" %}
+{% block extrajs %}
+<script type="text/javascript" charset="utf-8">
+  dojo.addOnLoad(function(){
+    dojo.connect(dijit.byId('id_gateway'),'onChange',function(event){
+      dijit.byId('id_dns1').setValue(dijit.byId('id_gateway').value);
+    });
+    dojo.connect(dijit.byId('id_serial'),'onChange',function(event){
+      dijit.byId('id_hostname').setValue('fai-'+dijit.byId('id_serial').value);
+    });
+
+  })
+</script>
+{% endblock %}
 {% block content %}
 <form method="POST">
 {% csrf_token %}

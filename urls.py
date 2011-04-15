@@ -74,7 +74,7 @@ urlpatterns = patterns('',
     (r'^lock/', include(lock.urls)),
     (r'^clariadmin/', include(clariadmin.urls)),
     (r'^host-history/', include(host_history.urls)),
-    (r'^host-install-order/',include(host_install.urls)),
+    (r'^host-install/',include(host_install.urls)),
     (r'^developpements/', include(developpements.urls)),
     (r'^agenda/$', agenda),
     (r'^dojango/', include('dojango.urls')), # Dojango requires
