@@ -20,7 +20,7 @@ import chuser.urls
 import lock.urls
 import packaging.urls
 import host_history.urls
-import host_install_queue.urls
+import host_install.urls
 
 # Init code
 admin.autodiscover()
@@ -74,7 +74,7 @@ urlpatterns = patterns('',
     (r'^lock/', include(lock.urls)),
     (r'^clariadmin/', include(clariadmin.urls)),
     (r'^host-history/', include(host_history.urls)),
-    (r'^host-install-order/',include(host_install_queue.urls)),
+    (r'^host-install-order/',include(host_install.urls)),
     (r'^developpements/', include(developpements.urls)),
     (r'^agenda/$', agenda),
     (r'^dojango/', include('dojango.urls')), # Dojango requires

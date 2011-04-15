@@ -4,7 +4,6 @@ from django.db import models
 from clariadmin.models import Supplier
 from common.models import ClientField, Client
 
-
 class InstallationOrder(models.Model):
     serial = models.CharField("Numéreau de série",blank=False,null=False,max_length=64)
     hostname = models.CharField("nom d'hote",max_length=128,null=True,blank=True)
@@ -24,23 +23,3 @@ class InstallationOrder(models.Model):
     rootpw = models.CharField("mot de passe",max_length=64)
     #model = models.CharField("modele",max_length=64)
 
-
-#; => model?
-#; -> status, date_add, date_start_prod
-#*>serial        =      ; -> hostname
-#*>fai_classes   =      ; -> type, os
-#*>site          = (fk) ; -> IP_MCA, IP_CLARILAB, dns1, dns2, gateway
-#*>ip            =      ; contrôle d'unicité ?
-#*>netmask       =      ; prompt pas obligatoire si déductible par classes d'ips
-#*>gateway       =      ; -> dns1
-#>supplier       = (fk) ; ??
-#>inventory      =      ;
-#>commentaire    =      ; ??
-#>model          =      ; ??
-#>location       =      ; ??
-#rootpw          =      ;
-#*>dns1          =
-#>dns2           =
-#>ip_mca         =
-#>ip_clarilab    =
-#;>hostname

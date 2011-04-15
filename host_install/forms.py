@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import dojango.forms as df
-from host_install_queue.models import InstallationOrder
+from host_install.models import InstallationOrder
 import random
 
 attrs_filtering={'queryExpr':'*${0}*','highlightMatch':'all','ignoreCase':'true','autoComplete':'false'}
