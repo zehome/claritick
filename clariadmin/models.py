@@ -76,9 +76,10 @@ class Supplier(models.Model):
 
 class HostQuerySet(models.query.QuerySet):
     def filter_by_site(self, site):
-        return self.filter(Q(site__exact=site)
-                        |Q(site__parent__exact=site)
-                        |Q(site__parent__parent__exact=site))
+        if site:
+            clients = Client.objects.get_childs("parent", int(site))
+            return self.filter(models.Q(site__in=[ c.id for c in clients ]))
+        return self
 
     def filter_by_user(self, user):
         return self.filter(site__in=user.clients)
