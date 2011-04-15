@@ -158,14 +158,6 @@ class Host(models.Model):
 
     status = models.ForeignKey(HostStatus, verbose_name=u"Statut", null=False)
 
-    @property
-    def status_color(self):
-        return self.status.color_bg
-
-    @property
-    def status_text(self):
-        return self.status.name
-
     def get_absolute_url(self):
         return "/clariadmin/modify/%i" % (self.id,)
 
