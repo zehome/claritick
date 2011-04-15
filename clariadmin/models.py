@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 from django.db import models
-from django.db.models import Q
 from django.template.loader import get_template
 from django.template import Context
 from django.utils.datastructures import SortedDict
@@ -20,13 +19,6 @@ FIELD_TYPES = (
    (u'5',u'date'),              # DateField
    (u'6',u'choix multiple'),    # MultipleChoiceField
    )
-
-HOST_STATUS = [
-    (u'Stock', u"Stock", "#AAAAAA"),
-    (u'Service', u"Service", "#77FF77"),
-    (u'Hors Service', u"Hors Service", "#FF7777"),
-    #(3, u"Obsolete", "#FFFF77"),
-]
 
 class OperatingSystem(models.Model):
     class Meta:
@@ -88,7 +80,7 @@ class HostManager(models.Manager):
     def get_query_set(self):
         return HostQuerySet(self.model).\
             select_related("site", "site__parent", "site__parent__parent",
-                "type", "os", "supplier")
+                           "status", "type", "os", "supplier")
     def filter_by_user(self, user):
         return self.all().filter_by_user(user)
 
