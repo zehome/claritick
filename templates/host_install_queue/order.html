@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+<form method="POST">
+{% csrf_token %}
+<table class="clariadmin_form">
+  {% for field in form %}
+  <tr>
+    <th>{{field.label}}</th>
+    <td>{{field}}</td>
+    <td>{{field.errors}}</td>
+  </tr>
+  {% endfor %}
+</table>
+<div id="save_buttons">
+      <button dojoType="dijit.form.Button" iconClass="dijitEditorIcon dijitEditorIconSave" type="submit" name="submit_button" value="save">Enregistrer</button>
+</div>
+</form>
+{% endblock %}
