@@ -14,7 +14,14 @@ class InstallationOrderForm(df.ModelForm):
                 "location","commentaire",)
                 #"rootpw",
         widgets={'site':df.FilteringSelect(attrs_filtering),
-                 'supplier':df.FilteringSelect(attrs_filtering)
+                 'supplier':df.FilteringSelect(attrs_filtering),
+                 'ip':df.IPAddressTextInput(),
+                 'gateway':df.IPAddressTextInput(),
+                 'dns1':df.IPAddressTextInput(),
+                 'dns2':df.IPAddressTextInput(),
+                 'ip_mca':df.IPAddressTextInput(),
+                 'ip_clarilab':df.IPAddressTextInput(),
+                 'netmask':df.IPAddressTextInput(),
                 }
     def __init__(self, *args, **kwargs):
         super(df.ModelForm,InstallationOrderForm).__init__(self,*args,**kwargs)
