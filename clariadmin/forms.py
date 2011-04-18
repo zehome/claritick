@@ -25,7 +25,6 @@ class FormSecurityChecker(object):
     Will remove items user when user has a security level higher
     than the configured security level.
     """
-
     # This flags is set to False if a required field
     # is removed by the mixin.
     _security_can_save = True
@@ -40,7 +39,7 @@ class FormSecurityChecker(object):
     # Cache the user_profile security_level in the instance of the form.
     _security_userlevel = None
 
-    def _security_filter(self, user, formName, security = {}):
+    def _security_filter(self, user, formName=None, security = {}):
         """
         Will delete fields from the form if user has no access to them.
         deleted fields are placed in _security_deleted_fields.
@@ -49,6 +48,8 @@ class FormSecurityChecker(object):
         switched to False.
         """
         self._security_userlevel = user.get_profile().get_security_level()
+        if formName is None:
+            formName=self.__class__.__name__
         if not security:
             self._security_settings = settings.SECURITY.get(formName, {})
         else:
@@ -121,14 +122,17 @@ class HostForm(df.ModelForm, FormSecurityChecker):
             "status","commentaire")
 
     def __init__(self, user, ip, *args, **kwargs):
+        "Save some data for logging and initialise fields"
         super(HostForm, self).__init__(*args, **kwargs)
         self.fields['site'].choices = ((c.id, str(c)) for c in sort_queryset(Client.objects.filter(id__in=(c.id for c in user.clients))))
-        self._security_filter(user = user, formName = 'Host')
+        self.initial["date_start_prod"]=datetime.date.today()
+        self._security_filter(user)
         self.user = user
         self.user_ip = ip
         self.new = self.instance.pk is None
 
     def log_action(self, action, instance=None):
+        "Format and write the Host access in a HostEditLog"
         if instance is None:
             instance = self.instance
         message = HostEditLog.message_format%(
@@ -144,6 +148,7 @@ class HostForm(df.ModelForm, FormSecurityChecker):
         return log
 
     def save(self, force_insert=False, force_update=False, commit=True, POST={}, prefix=""):
+        "Write the Host diff in HostVersion. It creates AdditionnalFieldForm and save it"
         assert(self.security_can_save())
         if(self.new):
             inst = super(HostForm, self).save()
@@ -183,6 +188,7 @@ class HostForm(df.ModelForm, FormSecurityChecker):
         return (inst, extra_fields)
 
     def delete(self, *args, **kwargs):
+        "save old values in a HostVersion and delete the host"
         #assert(self.security_can_delete())
         host_changes=u"L'hote %s a été suprimé:\n"%self.instance.hostname
         for key in self.fields.iterkeys():
@@ -198,10 +204,10 @@ class HostForm(df.ModelForm, FormSecurityChecker):
         HostVersion(host=host_changes, additionnal_fields=fields_changes, log_entry=log).save()
         return ret
 
-    def is_valid(self):
+    def clean(self):
+        "Turn form invalid on submition if user rights are not sufficents"
         if not self.security_can_save():
-            print "return False!"
-            return False
+            raise df.ValidationError("You are not habilited to save this form")
         return super(HostForm, self).is_valid()
 
 class AdditionnalFieldForm(df.Form):
@@ -222,7 +228,8 @@ class AdditionnalFieldForm(df.Form):
         if host:
             host_type=host.type
             self.host=host
-        if not host_type:
+        if not host_type: #Aucun argument pour l'initialisation des champs.
+            self.__nonzero__=lambda:False
             return
         # Récupère la liste des champs propre au type d'hote
         self.avail_fields=ParamAdditionnalField.objects.filter(host_type=host_type.id)[:]
@@ -375,7 +382,7 @@ class SearchHostForm(df.Form, ModelFormTableMixin, FormSecurityChecker):
         super(SearchHostForm, self).__init__(*args, **kwargs)
         ordered_clients = sort_queryset(Client.objects.filter(id__in=(c.id for c in user.clients)))
         self.fields['site'].choices=[('','')]+[(c.id, unicode(c)) for c in ordered_clients]
-        self._security_filter(user = user, formName = 'SearchHost')
+        self._security_filter(user)
 
     def update(self, hosts):
         """Restrict `ModelChoiceFields` to values existing in hosts queryset"""

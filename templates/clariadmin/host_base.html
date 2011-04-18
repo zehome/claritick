@@ -2,6 +2,7 @@
   {% csrf_token %}
   <div>
     <fieldset style="float:left;">
+      {{ form.non_field_errors }}
         <table  class="clariadmin_form better">
             <tr>
                 <th>{{ form.site.label_tag }}</th><td class="no_border">{{ form.site }}</td><td class="no_border">{{ form.site.errors }}</td>
@@ -113,7 +114,7 @@
         <div dojoType="dijit.Tooltip" connectId="id_trace_button">Voir l'historique de cette machine.</div>
       </div>
     </div>
-    {% else %} 
+    {% else %}
      <div>
       <button dojoType="dijit.form.Button" onclick='confirmDialog("Supression de l hote", "Êtes vous sûr de vouloir supprimer cette machine de la base?", confirmation_callback, "the_{{prefix}}_form")' iconClass="dijitEditorIcon dijitEditorIconDelete" type="button" value="true" class="default">Suprimer</button>
       <button dojoType="dijit.form.Button" iconClass="dijitEditorIcon dijitEditorIconSave" type="submit" name="submit_button" value="save">Enregistrer</button>
