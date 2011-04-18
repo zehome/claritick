@@ -1,5 +1,3 @@
-r712
-    - syncdb
 r707
     - syncdb
     //!\\ Attention, les deux requêtes UPDATE n'ont pas été testées.
