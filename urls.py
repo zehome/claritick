@@ -20,6 +20,7 @@ import chuser.urls
 import lock.urls
 import packaging.urls
 import host_history.urls
+import host_install.urls
 
 # Init code
 admin.autodiscover()
@@ -51,7 +52,7 @@ def agenda(request, data={}):
             data["google_account"] = profile.google_account
         except:
             pass
-    
+
     return render_to_response(template, data, context_instance=RequestContext(request))
 
 def ovh_cert(request, data={}):
@@ -73,23 +74,24 @@ urlpatterns = patterns('',
     (r'^lock/', include(lock.urls)),
     (r'^clariadmin/', include(clariadmin.urls)),
     (r'^host-history/', include(host_history.urls)),
+    (r'^host-install/',include(host_install.urls)),
     (r'^developpements/', include(developpements.urls)),
     (r'^agenda/$', agenda),
     (r'^dojango/', include('dojango.urls')), # Dojango requires
-    
+
     ## Packaging
     (r'^packaging/', include(packaging.urls)),
-    
+
     ## Auth
     (r'^accounts/$', 'django.contrib.auth.views.login'),
     (r'^accounts/', include('django.contrib.auth.urls')),
-    
+
     ## Reporting
     (r'^reporting/', include('reporting.urls')),
-    
+
     ## Error testing
     (r'^error/', raise_trial_exception),
-    
+
     ## Web services
     (r'^ws/', include(ws.urls)),
 
