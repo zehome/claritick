@@ -469,7 +469,7 @@ class Ticket(models.Model):
                 send_fax_reasons = [ r, ]
             else:
                 if old_ticket.state and old_ticket.state != self.state:
-                    r = u"Status modifié: %s => %s" % (old_ticket.state, self.state)
+                    r = u"Statut modifié: %s => %s" % (old_ticket.state, self.state)
                     send_email_reasons.append(r)
                     send_fax_reasons.append(r)
                 if old_ticket.client and old_ticket.client != self.client:

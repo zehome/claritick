@@ -1,5 +1,5 @@
 {%autoescape off %}{% load comments %}+------------------------------------------------------------------------------------+
-| Ticket n°{{ ticket.id|ljust:'6' }}: [ {{ ticket.state }} ]  
+| Ticket n°{{ ticket.id|ljust:'6' }}: [ {{ ticket.state }} ]
 | Objet: {{ ticket.title|striptags|wordwrap:80 }}
 +------------------------------------------------------------------------------------+
 Date d'ouverture:      {{ ticket.date_open|date:'d/m/Y H\hi' }}
@@ -23,7 +23,7 @@ Contact:               {% if ticket.contact %}{{ ticket.contact }}{% else %}{{ t
 
 {% for child in childs %}
 +------------------------------------------------------------------------------------+
-| Ticket fils n°{{ child.id|ljust:'6' }}: [ {{ child.state }} ]  
+| Ticket fils n°{{ child.id|ljust:'6' }}: [ {{ child.state }} ]
 | Objet: {{ child.title|striptags|wordwrap:80 }}
 +------------------------------------------------------------------------------------+
 
@@ -44,12 +44,12 @@ Contact:               {% if ticket.contact %}{{ ticket.contact }}{% else %}{{ t
 | la production.                                                      |
 +---------------------------------------------------------------------+
 
--- 
+--
 CLARISYS Informatique        http://www.clarisys.fr/
 6, rue Jean Monnet           31240 SAINT JEAN
 Téléphone: 09 72 11 43 60    Fax: 09 72 11 33 88
 
 Email généré automatiquement par le système de suivi CLARITICK.
-Cet email vous est transmi pour la/les raison(s) suivante: 
+Cet email vous est transmis pour la/les raison(s) suivante(s):
 {% for reason in reasons %}{{ reason }}
 {% endfor %}{% endautoescape %}
