@@ -1,4 +1,4 @@
-{%autoescape off %}{% load comments %}+------------------------------------------------------------------------------------+
+{% autoescape off %}{% load comments %}+------------------------------------------------------------------------------------+
 | Ticket n°{{ ticket.id|ljust:'6' }}: [ {{ ticket.state }} ]
 | Objet: {{ ticket.title|striptags|wordwrap:80 }}
 +------------------------------------------------------------------------------------+
@@ -23,7 +23,7 @@ Contact:               {% if ticket.contact %}{{ ticket.contact }}{% else %}{{ t
 
 {% for child in childs %}
 +------------------------------------------------------------------------------------+
-| Ticket fils n°{{ child.id|ljust:'6' }}: [ {{ child.state }} ]
+| Ticket n°{{ child.id|ljust:'6' }}: [ {{ child.state }} ]
 | Objet: {{ child.title|striptags|wordwrap:80 }}
 +------------------------------------------------------------------------------------+
 
@@ -44,7 +44,7 @@ Contact:               {% if ticket.contact %}{{ ticket.contact }}{% else %}{{ t
 | la production.                                                      |
 +---------------------------------------------------------------------+
 
---
+-- 
 CLARISYS Informatique        http://www.clarisys.fr/
 6, rue Jean Monnet           31240 SAINT JEAN
 Téléphone: 09 72 11 43 60    Fax: 09 72 11 33 88
