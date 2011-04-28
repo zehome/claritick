@@ -183,25 +183,6 @@ class HostForm(df.ModelForm, FormSecurityChecker):
             HostVersion(host=host_changes, additionnal_fields=fields_changes, log_entry=log).save()
         return (inst, extra_fields)
 
-    def delete(self, *args, **kwargs):
-        "save old values in a HostVersion and delete the host"
-        #assert(self.security_can_delete())
-        host_changes = u"L'hote %s a été suprimé:\n" % (self.instance.hostname,)
-        fields_changes = ""
-
-        for key in self.fields.iterkeys():
-            val = getattr(self.instance, key)
-            if val:
-                host_changes += u"%s valait <%s>\n" % (key, val)
-
-        for f in self.instance.additionnalfield_set.all():
-            fields_changes+=u"Le champ additionnel %s vallait %s\n" % (
-                            f.field.name, f.value)
-        ret = self.instance.delete(*args, **kwargs)
-        log = self.log_action(u"supprimé")
-        HostVersion(host=host_changes, additionnal_fields=fields_changes, log_entry=log).save()
-        return ret
-
     def clean(self):
         "Turn form invalid on submition if user rights are not sufficents"
         if not self.security_can_save():
