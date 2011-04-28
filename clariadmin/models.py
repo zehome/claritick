@@ -12,12 +12,12 @@ from django.utils import simplejson as json
 import datetime
 
 FIELD_TYPES = (
-   (u'1', u"texte"),            # CharField
+   (u'1', u"texte"),             # CharField
    (u'2', u"booléen"),          # BooleanField
-   (u'3', u"choix" ),           # ChoiceField
-   (u'4', u"nombre"),           # IntegerField
-   (u'5',u'date'),              # DateField
-   (u'6',u'choix multiple'),    # MultipleChoiceField
+   (u'3', u"choix" ),            # ChoiceField
+   (u'4', u"nombre"),            # IntegerField
+   (u'5', u'date'),              # DateField
+   (u'6', u'choix multiple'),    # MultipleChoiceField
    )
 
 class OperatingSystem(models.Model):
@@ -173,7 +173,7 @@ class Host(models.Model):
         afs=SortedDict()
         for af in self.additionnalfield_set.all():
             AdditionnalField(field=af.field, host=h, value=af.value)#.save()
-            afs['val_'+str(af.field.id)]=af.value
+            afs['val_'+str(af.field.id)] = af.value
         return (h, afs)
 
     def available_for(self, user):
@@ -218,10 +218,11 @@ class AdditionnalField(models.Model):
             return self.value
         if self.field.data_type == u"3":
             return self.field.default_values[int(self.value)] if self.value else "False"
+        dataLoaded = json.loads(self.value)
         val = ""
-        for e in json.loads(self.value):
-            val += self.field.default_values[int(e)] +","
-        return val if not val else val[:-1]
+        if dataLoaded:
+            val = ",".join( self.field.default_values[int(e)] for e in dataLoaded )
+        return val
 
     def render_clean(self):
-        return u'<b>%s:</b>%s'%(self.field.name, self.value_readable)
+        return u'<b>%s:</b> %s' % (self.field.name, self.value_readable)

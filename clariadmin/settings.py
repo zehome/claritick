@@ -8,7 +8,7 @@ SECURITY = {
     # 0: Highest security level
     # 99: Lowest security level
     "DEFAULT_USER_LEVEL": 99,
-    "DEFAULT_LEVEL": 50,
+    "DEFAULT_LEVEL": 10,
     # Permits to chose which field in the clariadmin/models.py Host
     # needs which security level at the minimum.
     "HostForm": {
