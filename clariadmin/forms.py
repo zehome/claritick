@@ -125,6 +125,11 @@ class HostForm(df.ModelForm, FormSecurityChecker):
         self.user_ip = ip
         self.is_new = self.instance.pk is None
 
+        # LC: On filtre les colones "depleted"
+        if self.is_new:
+            self.fields['os'].queryset = self.fields['os'].queryset.filter(depleted=False)
+            self.fields['supplier'].queryset = self.fields['supplier'].queryset.filter(depleted=False)
+
     def log_action(self, action, instance=None):
         "Format and write the Host access in a HostEditLog"
         if instance is None:
