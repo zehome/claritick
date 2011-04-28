@@ -149,7 +149,7 @@ TIME_FORMAT = "H\hi"
 # Dojango config
 DOJANGO_DOJO_PROFILE = "local_release"
 DOJANGO_DOJO_VERSION = "custom_build_160"
-DOJANGO_DOJO_THEME = "claro"
+DOJANGO_DOJO_THEME = "tundra"
 DOJO_BUILD_JAVA_EXEC = "/usr/bin/java"
 DOJANGO_BASE_MEDIA_ROOT = os.path.join(basepath, 'dojango', 'dojo-media')
 DOJANGO_BASE_MEDIA_URL = "/dojango/dojo-media"
