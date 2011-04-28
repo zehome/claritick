@@ -73,8 +73,13 @@ class HostTypeAdmin(admin.ModelAdmin):
     def change_view(self, request, object_id, extra_context=None):
         return super(HostTypeAdmin, self).change_view(request, object_id, extra_context)
 
+class OperatingSystemAdmin(admin.ModelAdmin):
+    search_fields = ('name', 'version')
+    list_display = ('name', 'version', 'depleted')
+    list_editable = ['depleted',]
+
 admin.site.register(ParamAdditionnalField,ExtraFieldAdmin)
-admin.site.register(OperatingSystem)
+admin.site.register(OperatingSystem, OperatingSystemAdmin)
 admin.site.register(HostType, HostTypeAdmin)
 admin.site.register(HostStatus)
 admin.site.register(Supplier)
