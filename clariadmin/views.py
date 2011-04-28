@@ -108,7 +108,7 @@ def list_all(request, *args, **kw):
 
     if POST:
         # Init forms
-        form = SearchHostForm(request.user, POST )
+        form = SearchHostForm(request.user, POST)
         if form.is_valid():
             # récupère les éléments de POST propre à SearchHostForm
             post_filtred = dict((k, v) for k, v in POST.iteritems()
@@ -192,9 +192,9 @@ def new(request, from_host=False):
     add_fields = None
 
     if POST:
-        form = HostForm(request.user,request.META['REMOTE_ADDR'], POST)
+        form = HostForm(request.user, request.META['REMOTE_ADDR'], POST)
         if form.is_valid():
-            host, add_fields = form.save(POST=POST)
+            host, add_fields = form.save(POST = POST)
             redir = POST.get('submit_button', False)
             if redir == 'new':
                 form = HostForm(request.user, request.META['REMOTE_ADDR'])
@@ -206,14 +206,14 @@ def new(request, from_host=False):
         if from_host:
             from_host = get_host_or_404(request.user, pk = from_host)
             inst, comp = from_host.copy_instance()
-            form = HostForm(request.user,request.META['REMOTE_ADDR'] ,instance = inst)
+            form = HostForm(request.user, request.META['REMOTE_ADDR'], instance = inst)
             form.log_action(u"consulté", from_host)
             add_fields = AdditionnalFieldForm(comp, host = inst)
         else:
-            form = HostForm(request.user,request.META['REMOTE_ADDR'])
+            form = HostForm(request.user, request.META['REMOTE_ADDR'])
     return render_to_response('clariadmin/host.html', {
             'form': form,
-            'prefix':'8',
+            'prefix': '8',
             'additionnal_fields': add_fields},
             context_instance=RequestContext(request))
 
@@ -231,9 +231,6 @@ def modify(request, host_id):
     if POST:
         form = HostForm(request.user, request.META['REMOTE_ADDR'],
                         POST, instance=host, prefix=prefix)
-        if POST.get("delete", False):
-            form.delete()
-            return redirect('list_hosts')
         if form.is_valid(): 
             host, add_fields = form.save(POST=POST, prefix=prefix)
             redir = POST.get('submit_button', False)
@@ -264,5 +261,5 @@ def ajax_extra_fields_form(request, host_type_id, prefix="", blank=False):
         host_type = get_object_or_404(HostType, pk=host_type_id)
     except:
         return HttpResponse("<tr></tr>")
-    form=AdditionnalFieldForm(host_type=host_type, blank=bool(blank), prefix=prefix)
+    form = AdditionnalFieldForm(host_type=host_type, blank=bool(blank), prefix=prefix)
     return HttpResponse(form.as_table())

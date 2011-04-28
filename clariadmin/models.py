@@ -46,13 +46,14 @@ class HostType(models.Model):
 class HostStatus(models.Model):
     class Meta:
         verbose_name = u"Status d'hôte"
-        ordering = ['name']
-    name = models.CharField("Nom",max_length=64, unique=True, blank=False)
+        ordering = ['id']
+
+    name = models.CharField("Nom", max_length=64, unique=True, blank=False)
     description = models.TextField("Description", blank=True)
     color_fg = ColorField(name="Couleur texte", blank=True, null=True)
     color_bg = ColorField(name="Couleur fond", blank=True, null=True)
     def __unicode__(self):
-        return u"%s" % (self.name,)
+        return u"%s" % (self.name, )
 
 
 class Supplier(models.Model):
@@ -83,7 +84,6 @@ class HostManager(models.Manager):
                            "status", "type", "os", "supplier")
     def filter_by_user(self, user):
         return self.all().filter_by_user(user)
-
 
 class ChromeCryptoStr(object):
     def __init__(self, data):
@@ -176,7 +176,7 @@ class Host(models.Model):
             afs['val_'+str(af.field.id)]=af.value
         return (h, afs)
 
-    def available_for(self,user):
+    def available_for(self, user):
         return (self.site in user.clients)
 
 class ParamAdditionnalField(models.Model):
@@ -196,7 +196,7 @@ class ParamAdditionnalField(models.Model):
     def __unicode__(self):
         if self.host_type:
             return u"%s [%s]" % (self.name, self.host_type)
-        return u"%s" % (self.name,)
+        return u"%s" % (self.name, )
 
 class AdditionnalFieldManager(models.Manager):
     def get_query_set(self):

@@ -122,3 +122,16 @@ class CoordinateForm(df.ModelForm, ModelFormTableMixin):
     
     class Meta:
         model = Coordinate
+
+class MyDojoFilteringSelect(df.FilteringSelect):
+    def __init__(self, *args, **kwargs):
+        params = {
+            'queryExpr': '*${0}*',
+            'highlightMatch': 'all',
+            'ignoreCase': 'true',
+            'autoComplete': 'false'
+        }
+        params.update(kwargs.get("attrs", {}))
+        kwargs["attrs"] = params
+        super(MyDojoFilteringSelect, self).__init__(*args, **kwargs)
+

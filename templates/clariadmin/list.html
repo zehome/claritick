@@ -109,18 +109,6 @@
               document.location.href = "{% url clariadmin.views.modify -1 %}".replace("-1", target_id);},
       }));
       pMenu.addChild(new dijit.MenuItem({
-            label: "Suprimer "+host_name,
-            iconClass: "dijitEditorIcon dijitEditorIconDelete",
-            onClick: function() {
-              confirmDialog("Supression de l hote", "Êtes vous sûr de vouloir supprimer cette machine de la base?",
-                function(arg, url){
-                  if(arg)
-                    postwith({delete: "true"}, url);
-                },
-                "{% url clariadmin.views.modify -1 %}".replace("-1", target_id)
-            )},
-      }));
-      pMenu.addChild(new dijit.MenuItem({
             label: "Éditer une copie de "+host_name,
             iconClass: "dijitEditorIcon dijitEditorIconCopy",
             onClick: function() {

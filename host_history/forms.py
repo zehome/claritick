@@ -1,17 +1,17 @@
 # -*- coding: utf-8 -*-
 import dojango.forms as df
 from host_history.models import ACTIONS_LOG
-from clariadmin.forms import attrs_filtering
 from common.models import Client
 from common.utils import sort_queryset
 from common.forms import ModelFormTableMixin
+from common.forms import MyDojoFilteringSelect
 from django.db.models import Q
 
 class SearchLogForm(df.Form, ModelFormTableMixin):
     hostname = df.CharField(required=False, label=u'Nom de la machine')
     username = df.CharField(required=False, label=u"Nom d'utilisateur")
     site = df.ChoiceField(choices = (('',''),),
-            widget=df.FilteringSelect(attrs=attrs_filtering),  required=False, label=u'Client')
+            widget=MyDojoFilteringSelect,  required=False, label=u'Client')
     # these ModelChoiceFields are initialised twice. once forvalidation and once after filtering
     action = df.MultipleChoiceField(choices = ((i,s) for i,s,c in ACTIONS_LOG),
         required=False,

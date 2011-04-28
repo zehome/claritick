@@ -5,18 +5,12 @@ from clariadmin.models import AdditionnalField, ParamAdditionnalField, Supplier
 from host_history.models import HostEditLog, HostVersion
 from common.models import Client
 from common.utils import sort_queryset
-from common.forms import ModelFormTableMixin
+from common.forms import ModelFormTableMixin, MyDojoFilteringSelect
 from django.utils import simplejson as json
 from django.utils.datastructures import SortedDict
 from django.conf import settings
 from itertools import chain
 import datetime
-
-attrs_filtering={'queryExpr':'*${0}*','highlightMatch':'all','ignoreCase':'true','autoComplete':'false'}
-def attrs_filtering_and(a):
-    d=attrs_filtering.copy()
-    d.update(a)
-    return d
 
 class FormSecurityChecker(object):
     """
@@ -74,7 +68,6 @@ class FormSecurityChecker(object):
         security_settings = settings.SECURITY.get(cls.__name__, {})
         security_default_level = security_settings.get("__default__", settings.SECURITY["DEFAULT_LEVEL"])
         filtred_querydict = querydict.copy()
-        #filtred_querydict._mutable=True
         for key in filtred_querydict.keys():
             required_level = security_settings.get(key, security_default_level)
             if required_level < userlevel:
@@ -106,36 +99,37 @@ class FormSecurityChecker(object):
         return bool(self._security_deleted_fields)
 
 class HostForm(df.ModelForm, FormSecurityChecker):
+    status = df.ModelChoiceField(queryset = HostStatus.objects.all(),
+        widget=MyDojoFilteringSelect(), empty_label=None, required=True, label=u'Status')
     class Meta:
         model = Host
         widgets = {
-            'os':df.FilteringSelect(attrs_filtering),
-            'type':df.FilteringSelect(attrs_filtering),
-            'site':df.FilteringSelect(attrs_filtering),
-            'supplier':df.FilteringSelect(attrs_filtering),
-            'status':df.FilteringSelect(attrs_filtering),
-            'ip':df.IPAddressTextInput(),
-            'commentaire':df.Textarea({"class":'comment_field'})
+            'os':       MyDojoFilteringSelect(),
+            'type':     MyDojoFilteringSelect(),
+            'site':     MyDojoFilteringSelect(),
+            'supplier': MyDojoFilteringSelect(),
+            'ip':       df.IPAddressTextInput(),
+            'commentaire': df.Textarea({"class":'comment_field'})
         }
-        fields = ("site","hostname","ip","os","rootpw","supplier", "model",
-            "type","location","serial","inventory", "date_start_prod","date_end_prod",
-            "status","commentaire")
+        fields = ("site", "hostname", "ip", "os", "rootpw", "supplier", "model",
+            "type", "location", "serial", "inventory", "date_start_prod", "date_end_prod",
+            "status", "commentaire")
 
     def __init__(self, user, ip, *args, **kwargs):
         "Save some data for logging and initialise fields"
         super(HostForm, self).__init__(*args, **kwargs)
         self.fields['site'].choices = ((c.id, str(c)) for c in sort_queryset(Client.objects.filter(id__in=(c.id for c in user.clients))))
-        self.initial["date_start_prod"]=datetime.date.today()
+        self.initial["date_start_prod"] = datetime.date.today()
         self._security_filter(user)
         self.user = user
         self.user_ip = ip
-        self.new = self.instance.pk is None
+        self.is_new = self.instance.pk is None
 
     def log_action(self, action, instance=None):
         "Format and write the Host access in a HostEditLog"
         if instance is None:
             instance = self.instance
-        message = HostEditLog.message_format%(
+        message = HostEditLog.message_format % (
                 instance.hostname,
                 action,
                 self.user.username,
@@ -150,39 +144,41 @@ class HostForm(df.ModelForm, FormSecurityChecker):
     def save(self, force_insert=False, force_update=False, commit=True, POST={}, prefix=""):
         "Write the Host diff in HostVersion. It creates AdditionnalFieldForm and save it"
         assert(self.security_can_save())
-        if(self.new):
+        host_changes = u""
+        fields_changes = u""
+
+        if self.is_new:
             inst = super(HostForm, self).save()
-            extra_fields=AdditionnalFieldForm(POST, host=inst, prefix=prefix)
+            extra_fields = AdditionnalFieldForm(POST, host=inst, prefix=prefix)
             if extra_fields.is_valid():
                 extra_fields.save()
             self.log_action(u"créé", inst)
             return (inst, extra_fields)
-        host_changes=u""
-        fields_changes=u""
         for elem in self.changed_data:
             if elem != "type":
                 host_changes += u"Le champ Host.%s est passé de <%s> à <%s>\n"%(
                          elem, self.initial[elem], getattr(self.instance,elem))
             else:
+                # LC: TODO: REMOVE THIS FUCKING inline if !!!!!!!!!!!!
                 old_type = HostType.objects.get(pk=self.initial["type"]) if self.initial["type"] else 'None'
-                host_changes += u"Le champ Host.type est passé de <%s> à <%s>\n"%(
+                host_changes += u"Le champ Host.type est passé de <%s> à <%s>\n" % (
                                   old_type, self.instance.type)
                 for af in self.instance.additionnalfield_set.all():
-                    fields_changes+=u"Le champ AdditionnalField nommé <%s> à <%s> a été supprimé\n"%(af.field.name,af.value_readable)
+                    fields_changes += u"Le champ AdditionnalField nommé <%s> à <%s> a été supprimé\n" % (af.field.name, af.value_readable)
                     af.delete()
-        old_fields=list(self.instance.additionnalfield_set.all())
+        old_fields = list(self.instance.additionnalfield_set.all())
         inst = super(HostForm, self).save()
-        extra_fields=AdditionnalFieldForm(POST,host=inst, prefix=prefix)
+        extra_fields = AdditionnalFieldForm(POST, host=inst, prefix=prefix)
         if extra_fields.is_valid():
             extra_fields.save()
             for cf in inst.additionnalfield_set.all():
                 try:
-                    old= next((o for o in old_fields if cf.id == o.id))
+                    old = next((o for o in old_fields if cf.id == o.id))
                     if old.value != cf.value:
-                        fields_changes+=u"Le champ AdditionnalField nommé <%s> est passé de <%s> à <%s>\n"%(old.field.name,old.value_readable,cf.value_readable)
+                        fields_changes += u"Le champ AdditionnalField nommé <%s> est passé de <%s> à <%s>\n" % (old.field.name, old.value_readable, cf.value_readable)
                 except StopIteration, e:
-                    fields_changes+=u"Le champ AdditionnalField nommé <%s> est innitialisé à <%s>\n"%(cf.field.name,cf.value_readable)
-        if(host_changes or fields_changes):
+                    fields_changes += u"Le champ AdditionnalField nommé <%s> est innitialisé à <%s>\n" % (cf.field.name, cf.value_readable)
+        if (host_changes or fields_changes):
             log = self.log_action(u"modifié", inst)
             HostVersion(host=host_changes, additionnal_fields=fields_changes, log_entry=log).save()
         return (inst, extra_fields)
@@ -190,14 +186,16 @@ class HostForm(df.ModelForm, FormSecurityChecker):
     def delete(self, *args, **kwargs):
         "save old values in a HostVersion and delete the host"
         #assert(self.security_can_delete())
-        host_changes=u"L'hote %s a été suprimé:\n"%self.instance.hostname
+        host_changes = u"L'hote %s a été suprimé:\n" % (self.instance.hostname,)
+        fields_changes = ""
+
         for key in self.fields.iterkeys():
             val = getattr(self.instance, key)
             if val:
-                host_changes += u"%s valait <%s>\n"%(key, val)
-        fields_changes=""
+                host_changes += u"%s valait <%s>\n" % (key, val)
+
         for f in self.instance.additionnalfield_set.all():
-            fields_changes+=u"Le champ additionnel %s vallait %s\n"%(
+            fields_changes+=u"Le champ additionnel %s vallait %s\n" % (
                             f.field.name, f.value)
         ret = self.instance.delete(*args, **kwargs)
         log = self.log_action(u"supprimé")
@@ -208,7 +206,7 @@ class HostForm(df.ModelForm, FormSecurityChecker):
         "Turn form invalid on submition if user rights are not sufficents"
         if not self.security_can_save():
             raise df.ValidationError("You are not habilited to save this form")
-        return super(HostForm, self).is_valid()
+        return super(HostForm, self).clean()
 
 class AdditionnalFieldForm(df.Form):
     def __init__(self, *args, **kwargs):
@@ -219,35 +217,35 @@ class AdditionnalFieldForm(df.Form):
             blank: provide a form with no values
         It Adapt and fill the form dynamically.
         """
-        host=kwargs.pop('host',False)
-        host_type=kwargs.pop('host_type',False)
-        blank=kwargs.pop('blank',False)
+        host = kwargs.pop('host', False)
+        host_type = kwargs.pop('host_type', False)
+        blank = kwargs.pop('blank', False)
         super(AdditionnalFieldForm, self).__init__(*args, **kwargs)
 
         # Rapide controle des arguments
         if host:
-            host_type=host.type
-            self.host=host
+            host_type = host.type
+            self.host = host
         if not host_type: #Aucun argument pour l'initialisation des champs.
-            self.__nonzero__=lambda:False
             return
         # Récupère la liste des champs propre au type d'hote
-        self.avail_fields=ParamAdditionnalField.objects.filter(host_type=host_type.id)[:]
+        self.avail_fields = ParamAdditionnalField.objects.filter(host_type = host_type.id)[:]
         # Détermine la liste des champs et leurs valeurs courrante (défaut puis établi si existant)
         c_fields = dict((v.id, v.default_values ) for v in (self.avail_fields))
         if host:
-            host_fields = dict((addf.field.id,addf.value)
+            host_fields = dict((addf.field.id, addf.value)
                                for addf in host.additionnalfield_set.all()
                                if addf.field.id in c_fields.keys())
-            self.host_fields = dict(('val_%s'%(k,),v) for k,v in host_fields.iteritems())
-            c_fields.update(dict((k,v) for k,v in host_fields.iteritems() if k in c_fields.keys()))
+            self.host_fields = dict(('val_%s' % (k,), v) for k, v in host_fields.iteritems())
+            c_fields.update(dict((k, v) for k, v in host_fields.iteritems() if k in c_fields.keys()))
         # Ajoute les champs dojango au formulaire
-        if blank :
-            args = lambda x,y:{'label':x.name,'initial':None,'required':False}
+        # LC: TODO: THIS CODE IS UGGLY
+        if blank: 
+            args = lambda x, y: {'label':x.name, 'initial': None, 'required': False}
         else:
-            args = lambda x,y:{'label':x.name,'initial':y[x.id],'required':False}
+            args = lambda x, y: {'label':x.name, 'initial': y[x.id], 'required': False}
         self.fields.update(SortedDict(
-            (   'val_%s'%(field.id,),
+            ('val_%s' % (field.id, ),
                 (df.CharField(**args(field,c_fields))
                     if field.data_type == '1' else
                  df.BooleanField(**args(field,c_fields))
@@ -256,11 +254,11 @@ class AdditionnalFieldForm(df.Form):
                     if field.data_type == '4' else
                  df.DateField(**args(field,c_fields))
                     if field.data_type == '5' else
-                 df.ChoiceField(widget=df.FilteringSelect(attrs=attrs_filtering),
+                 df.ChoiceField(widget=MyDojoFilteringSelect(),
                     choices=[(-1,'')]+list(enumerate(field.default_values)), **args(field,c_fields))
                     if field.data_type == '3' else
                  df.MultipleChoiceField(choices=enumerate(field.default_values), **args(field,c_fields)))
-            )for field in self.avail_fields))
+            ) for field in self.avail_fields))
 
     def save(self, force_insert=False, force_update=False, commit=True):
         """To use used like the ModelFrom save method"""
@@ -311,8 +309,8 @@ class ParamAdditionnalFieldAdminForm(df.ModelForm):
     class Meta:
         model = ParamAdditionnalField
         widgets = {
-            'data_type':df.FilteringSelect(attrs=attrs_filtering_and({'onchange':'typeChanged(this);'}))
-            }
+            'data_type': MyDojoFilteringSelect(attrs = {'onchange': 'typeChanged(this);'}),
+        }
 
     def __init__(self, *args, **kwargs):
         super(ParamAdditionnalFieldAdminForm, self).__init__(*args, **kwargs)
@@ -343,12 +341,10 @@ class ParamAdditionnalFieldAdminForm(df.ModelForm):
         inst = super(ParamAdditionnalFieldAdminForm, self).save(commit=False)
         cd = self.cleaned_data
         normal_fields = {'1': 'text_val', '2': 'bool_val', '4': 'int_val', '5': 'date_val'}
-        if normal_fields.get(cd['data_type'],False):
+        if normal_fields.get(cd['data_type'], False):
             dv = cd[normal_fields[cd['data_type']]]
         else:
-            dv = [cd[e] for e in
-                    ("choice%s_val"%(str(i).rjust(2,'0')) for i in range(1,16))
-                    if cd[e]]
+            dv = [ cd[e] for e in ("choice%s_val" % (str(i).rjust(2,'0'),) for i in range(1,16)) if cd[e] ]
         inst.default_values = dv
         if commit:
             inst.save()
@@ -364,17 +360,17 @@ class SearchHostForm(df.Form, ModelFormTableMixin, FormSecurityChecker):
     ip = df.CharField(required=False)
     hostname = df.CharField(required=False, label=u'Nom')
     site = df.ChoiceField(choices = (('',''),),
-            widget=df.FilteringSelect(attrs=attrs_filtering),  required=False, label=u'Client')
+            widget=MyDojoFilteringSelect(), required=False, label=u'Client')
     # these ModelChoiceFields are initialised twice. once forvalidation and once after filtering
     type = df.ModelChoiceField(queryset = HostType.objects.all(),
-        widget=df.FilteringSelect(attrs=attrs_filtering),
+        widget=MyDojoFilteringSelect(),
         empty_label='', required=False, label = u'Type')
     os = df.ModelChoiceField(queryset = OperatingSystem.objects.all(),
-        widget=df.FilteringSelect(attrs=attrs_filtering), empty_label='', required=False, label=u'OS')
+        widget=MyDojoFilteringSelect(), empty_label='', required=False, label=u'OS')
     supplier = df.ModelChoiceField(queryset = Supplier.objects.all(),
-        widget=df.FilteringSelect(attrs=attrs_filtering), empty_label='', required=False, label=u'Fournisseur')
+        widget=MyDojoFilteringSelect(), empty_label='', required=False, label=u'Fournisseur')
     status = df.ModelChoiceField(queryset = HostStatus.objects.all(),
-        widget=df.FilteringSelect(attrs=attrs_filtering), empty_label='', required=False, label=u'Status')
+        widget=MyDojoFilteringSelect(), empty_label='', required=False, label=u'Status')
     inventory = df.CharField(required=False, label=u'Inventaire')
     commentaire = df.CharField(required=False)
 
