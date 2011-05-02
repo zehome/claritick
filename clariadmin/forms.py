@@ -164,8 +164,10 @@ class HostForm(df.ModelForm, FormSecurityChecker):
                 host_changes += u"Le champ Host.%s est passé de <%s> à <%s>\n"%(
                          elem, self.initial[elem], getattr(self.instance,elem))
             else:
-                # LC: TODO: REMOVE THIS FUCKING inline if !!!!!!!!!!!!
-                old_type = HostType.objects.get(pk=self.initial["type"]) if self.initial["type"] else 'None'
+                if self.initial["type"]:
+                    old_type = HostType.objects.get(pk=self.initial["type"])
+                else:
+                    old_type = 'None'
                 host_changes += u"Le champ Host.type est passé de <%s> à <%s>\n" % (
                                   old_type, self.instance.type)
                 for af in self.instance.additionnalfield_set.all():
@@ -194,6 +196,22 @@ class HostForm(df.ModelForm, FormSecurityChecker):
             raise df.ValidationError("You are not habilited to save this form")
         return super(HostForm, self).clean()
 
+def _init_field(field, initial):
+    args = {'label':field.name,'initial':initial, 'required':False}
+    if field.data_type == '1':
+        return df.CharField(**args)
+    elif field.data_type == '2':
+        return df.BooleanField(**args)
+    elif field.data_type == '4':
+        return df.IntegerField(**args)
+    elif field.data_type == '5':
+        return df.DateField(**args)
+    elif field.data_type == '3':
+        return df.ChoiceField(widget=MyDojoFilteringSelect(),
+                choices=[(-1,'')]+list(enumerate(field.default_values)), **args)
+    else:
+        return df.MultipleChoiceField(choices=enumerate(field.default_values), **args)
+
 class AdditionnalFieldForm(df.Form):
     def __init__(self, *args, **kwargs):
         """
@@ -217,34 +235,21 @@ class AdditionnalFieldForm(df.Form):
         # Récupère la liste des champs propre au type d'hote
         self.avail_fields = ParamAdditionnalField.objects.filter(host_type = host_type.id)[:]
         # Détermine la liste des champs et leurs valeurs courrante (défaut puis établi si existant)
-        c_fields = dict((v.id, v.default_values ) for v in (self.avail_fields))
+        if blank:
+            c_fields = None
+        else:
+            c_fields = dict((v.id, v.default_values ) for v in (self.avail_fields))
         if host:
             host_fields = dict((addf.field.id, addf.value)
                                for addf in host.additionnalfield_set.all()
                                if addf.field.id in c_fields.keys())
             self.host_fields = dict(('val_%s' % (k,), v) for k, v in host_fields.iteritems())
-            c_fields.update(dict((k, v) for k, v in host_fields.iteritems() if k in c_fields.keys()))
+            if not blank:
+                c_fields.update(dict((k, v) for k, v in host_fields.iteritems() if k in c_fields.keys()))
         # Ajoute les champs dojango au formulaire
-        # LC: TODO: THIS CODE IS UGGLY
-        if blank: 
-            args = lambda x, y: {'label':x.name, 'initial': None, 'required': False}
-        else:
-            args = lambda x, y: {'label':x.name, 'initial': y[x.id], 'required': False}
-        self.fields.update(SortedDict(
-            ('val_%s' % (field.id, ),
-                (df.CharField(**args(field,c_fields))
-                    if field.data_type == '1' else
-                 df.BooleanField(**args(field,c_fields))
-                    if field.data_type == '2' else
-                 df.IntegerField(**args(field,c_fields))
-                    if field.data_type == '4' else
-                 df.DateField(**args(field,c_fields))
-                    if field.data_type == '5' else
-                 df.ChoiceField(widget=MyDojoFilteringSelect(),
-                    choices=[(-1,'')]+list(enumerate(field.default_values)), **args(field,c_fields))
-                    if field.data_type == '3' else
-                 df.MultipleChoiceField(choices=enumerate(field.default_values), **args(field,c_fields)))
-            ) for field in self.avail_fields))
+
+        for field in self.avail_fields:
+            self.fields['val_%s' % (field.id, )] = _init_field(field, c_fields and c_fields[field.id])
 
     def save(self, force_insert=False, force_update=False, commit=True):
         """To use used like the ModelFrom save method"""
