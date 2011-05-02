@@ -417,6 +417,9 @@ def modify(request, ticket_id):
             and ticket.validated_by is None:
             ticket.validated_by = request.user
             ticket.save()
+        # Instanciating the TicketForm changes ticket... So we need to store it
+        # Before in order to do permission checking.
+        ticket_old_assigned_to_pk = ticket.assigned_to.pk
 
         form = TicketForm(request.POST, request.FILES, instance=ticket, user=request.user)
 
@@ -453,8 +456,10 @@ def modify(request, ticket_id):
 
         if form.is_valid():
             # Si l'utilisateur peut assigner ce ticket à l'utilisateur passé en POST
-            if not request.user.is_superuser and form.cleaned_data["assigned_to"] and form.cleaned_data["assigned_to"]\
-                    not in ClaritickUser.objects.get(pk=request.user.pk).get_child_users():
+            if not request.user.is_superuser and \
+                    form.cleaned_data["assigned_to"] and \
+                    ticket_old_assigned_to_pk != form.cleaned_data["assigned_to"].login and \
+                    form.cleaned_data["assigned_to"] not in ClaritickUser.objects.get(pk=request.user.pk).get_child_users():
                 raise PermissionDenied()
 
             form.save()

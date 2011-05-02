@@ -22,9 +22,27 @@ def user_has_perms_on_client(user, client):
 
     return True
 
-def filter_form_for_user(form, user, keywords=("client", "assigned_to")):
-    if user:
+
+def filter_form_for_user(form, user, keywords = ("client", "assigned_to")):
+     if user:
         for key,qs in zip(keywords, [sort_queryset(user.clients), user.childs]):
             if key in form.base_fields:
                 form.base_fields[key].choices = [(x.pk, x) for x in qs]
                 form.base_fields[key].choices.insert(0, ("", ""))
+
+def filter_ticket_for_user(form, user, current_assigned_to):
+    if user:
+        key = "client"
+        qs = sort_queryset(user.clients)
+        if key in form.base_fields:
+            form.base_fields[key].choices = [(x.pk, x) for x in qs]
+            form.base_fields[key].choices.insert(0, ("", ""))
+
+        key = "assigned_to"
+        qs = user.childs
+        if key in form.base_fields:
+            form.base_fields[key].choices = [(x.pk, x) for x in qs]
+            form.base_fields[key].choices.insert(0, ("", ""))
+            if current_assigned_to.pk not in form.base_fields[key].choices:
+                # We want to insert this in first place
+                form.base_fields[key].choices.insert(0, (current_assigned_to.pk, current_assigned_to))

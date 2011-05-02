@@ -14,7 +14,7 @@ from common.forms import ModelFormTableMixin
 from common.models import UserProfile
 from common.exceptions import NoProfileException
 from common.models import UserProfile, ClaritickUser
-from common.utils import filter_form_for_user, sort_queryset
+from common.utils import filter_form_for_user, filter_ticket_for_user, sort_queryset
 from common.widgets import FilteringSelect
 
 class CustomModelForm(forms.ModelForm):
@@ -47,7 +47,12 @@ class NewTicketForm(CustomModelForm):
         exclude = ("opened_by", "validated_by", "diffusion", "alarm", )
 
     def __init__(self, *args, **kwargs):
-        filter_form_for_user(self, kwargs.pop("user", None))
+        # LC: Get the instance / Assigned to for permission workaround:
+        # If a ticket is assigned to a user which the current modifying user
+        # can't view/assign to, then display it anyway in order to keep it.
+        instance = kwargs.get("instance", None)
+        current_assigned_to = instance and instance.assigned_to or None
+        filter_ticket_for_user(self, kwargs.pop("user", None), current_assigned_to)
         super(NewTicketForm, self).__init__(*args, **kwargs)
 
 class NewTicketSmallForm(NewTicketForm):
