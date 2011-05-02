@@ -458,7 +458,7 @@ def modify(request, ticket_id):
             # Si l'utilisateur peut assigner ce ticket à l'utilisateur passé en POST
             if not request.user.is_superuser and \
                     form.cleaned_data["assigned_to"] and \
-                    ticket_old_assigned_to_pk != form.cleaned_data["assigned_to"].login and \
+                    ticket_old_assigned_to_pk != form.cleaned_data["assigned_to"].pk and \
                     form.cleaned_data["assigned_to"] not in ClaritickUser.objects.get(pk=request.user.pk).get_child_users():
                 raise PermissionDenied()
 
