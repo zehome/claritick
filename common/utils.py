@@ -43,6 +43,6 @@ def filter_ticket_for_user(form, user, current_assigned_to):
         if key in form.base_fields:
             form.base_fields[key].choices = [(x.pk, x) for x in qs]
             form.base_fields[key].choices.insert(0, ("", ""))
-            if current_assigned_to.pk not in form.base_fields[key].choices:
+            if current_assigned_to and current_assigned_to.pk not in form.base_fields[key].choices:
                 # We want to insert this in first place
                 form.base_fields[key].choices.insert(0, (current_assigned_to.pk, current_assigned_to))
