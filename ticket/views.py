@@ -419,7 +419,7 @@ def modify(request, ticket_id):
             ticket.save()
         # Instanciating the TicketForm changes ticket... So we need to store it
         # Before in order to do permission checking.
-        ticket_old_assigned_to_pk = ticket.assigned_to.pk
+        ticket_old_assigned_to_pk = ticket.assigned_to and ticket.assigned_to.pk or None
 
         form = TicketForm(request.POST, request.FILES, instance=ticket, user=request.user)
 
