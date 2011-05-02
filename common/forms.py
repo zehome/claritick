@@ -34,7 +34,7 @@ class ModelFormTableMixin(object):
         top_errors = self.non_field_errors() # Errors that should be displayed above all fields.
         output, hidden_fields = [], []
         idx=1
-        
+
         for name, field in self.fields.items():
             bf = BoundField(self, field, name)
             bf_errors = self.error_class([conditional_escape(error) for error in bf.errors]) # Escape and cache in local variable.
@@ -59,20 +59,20 @@ class ModelFormTableMixin(object):
                     help_text = help_text_html % force_unicode(field.help_text)
                 else:
                     help_text = u''
-                
+
                 normal_row2 = normal_row
                 if idx == 1:
                     normal_row2 = "<tr>%s" % (normal_row,)
                 elif idx >= cols:
                     idx = 0
                     normal_row2 = "%s</tr>" % (normal_row,)
-                
+
                 idx += 1
                 output.append(normal_row2 % {'errors': force_unicode(bf_errors), 'label': force_unicode(label), 'field': unicode(bf), 'help_text': help_text})
-        
+
         if idx < cols:
             output.append("<td></td>" * (cols-idx) + "</tr>")
-        
+
         if top_errors:
             output.insert(0, error_row % force_unicode(top_errors))
         if hidden_fields: # Insert any hidden fields in the last row.
@@ -119,19 +119,19 @@ class CoordinateForm(df.ModelForm, ModelFormTableMixin):
     city = df.CharField(required=False,label='Ville', widget=df.TextInput())
     email = df.CharField(required=False, label = 'Email principal', widget=df.EmailTextInput())
     more = df.CharField(required=False, label=u'Informations complémentaires', widget=forms.Textarea())
-    
+
     class Meta:
         model = Coordinate
 
 class MyDojoFilteringSelect(df.FilteringSelect):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, attrs={}, *args, **kwargs):
         params = {
             'queryExpr': '*${0}*',
             'highlightMatch': 'all',
             'ignoreCase': 'true',
             'autoComplete': 'false'
         }
-        params.update(kwargs.get("attrs", {}))
+        params.update(attrs)
         kwargs["attrs"] = params
         super(MyDojoFilteringSelect, self).__init__(*args, **kwargs)
 
