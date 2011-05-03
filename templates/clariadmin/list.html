@@ -21,8 +21,8 @@
         create_menu(row.id, row.children[0].textContent);
         dojo.forEach(row.getElementsByTagName("td"), function( elem )
         {
-            if (! dojo.hasClass(elem, "unclickable")) 
-            { 
+            if (! dojo.hasClass(elem, "unclickable"))
+            {
                 dojo.connect(elem, "onclick", showHostPane);
             }
         });
@@ -30,7 +30,7 @@
       var global_search = dojo.byId("id_global_search");
       if (global_search)
         global_search.focus();
-    
+
       dojo.connect(dijit.byId("id_os"),"onKeyUp",validateIfEnter);
       dojo.connect(dijit.byId("id_type"),"onKeyUp",validateIfEnter);
       dojo.connect(dijit.byId("id_supplier"),"onKeyUp",validateIfEnter);
@@ -109,6 +109,15 @@
               document.location.href = "{% url clariadmin.views.modify -1 %}".replace("-1", target_id);},
       }));
       pMenu.addChild(new dijit.MenuItem({
+          label: "Suprimer "+host_name,
+          iconClass: "dijitEditorIcon dijitEditorIconDelete",
+          onClick: function() {
+              confirmDialog("Supression de l'hote", "êtes vous sûr de vouloir supprimer cette machine de la base?",
+                            confirmation_callback,
+                            "{% url clariadmin.views.modify -1 %}".replace("-1", target_id));
+          }
+      }));
+      pMenu.addChild(new dijit.MenuItem({
             label: "Éditer une copie de "+host_name,
             iconClass: "dijitEditorIcon dijitEditorIconCopy",
             onClick: function() {
@@ -163,11 +172,11 @@
       }
     }
 
-    function confirmation_callback(myBool, form_id){
+    function confirmation_callback(myBool, form_url){
         if(myBool)
-            postwith({delete: "true"}, dojo.byId(form_id));
+            postwith({delete: "true"}, form_url);
     }
-    
+
     function validateIfEnter(ievent) {
       if (ievent.keyCode == 13) {
         dojo.byId("search_form").submit();

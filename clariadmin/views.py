@@ -231,7 +231,10 @@ def modify(request, host_id):
     if POST:
         form = HostForm(request.user, request.META['REMOTE_ADDR'],
                         POST, instance=host, prefix=prefix)
-        if form.is_valid(): 
+        if POST.get("delete", False):
+            form.delete()
+            return redirect('list_hosts')
+        if form.is_valid():
             host, add_fields = form.save(POST=POST, prefix=prefix)
             redir = POST.get('submit_button', False)
             if redir == 'new':

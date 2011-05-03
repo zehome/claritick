@@ -104,6 +104,8 @@
     <hr />
     {% if not ajax %}
     <div id="save_buttons">
+      {% if host %}<button dojoType="dijit.form.Button" onclick='confirmDialog("Supression de l hote", "Êtes vous sûr de vouloir supprimer cette machine de la base?", confirmation_callback, "the_{{prefix}}_form")'
+          iconClass="dijitEditorIcon dijitEditorIconDelete" type="button" value="true" class="default">Suprimer</button>{% endif %}
       <button dojoType="dijit.form.Button" iconClass="dijitEditorIcon dijitEditorIconUndo" type="button" onclick='window.location = ".."'>Retourner à la liste</button>
       <button dojoType="dijit.form.Button" iconClass="dijitEditorIcon dijitEditorIconSave" type="submit" name="submit_button" value="save">Enregistrer</button>
       <button dojoType="dijit.form.Button" iconClass="dijitEditorIcon dijitEditorIconNewPage" type="submit" name="submit_button" value="new">Enregistrer et ajouter un nouveau</button>
@@ -115,6 +117,8 @@
     </div>
     {% else %}
      <div>
+       <button dojoType="dijit.form.Button" onclick='confirmDialog("Supression de l hote", "Êtes vous sûr de vouloir supprimer cette machine de la base?", confirmation_callback, "the_{{prefix}}_form")'
+           iconClass="dijitEditorIcon dijitEditorIconDelete" type="button" value="true" class="default">Suprimer</button>
       <button dojoType="dijit.form.Button" iconClass="dijitEditorIcon dijitEditorIconSave" type="submit" name="submit_button" value="save">Enregistrer</button>
       <div class="right_buttons">
         <div dojoType="dijit.form.Button" iconClass="dijitEditorIcon claritickTicketMailAction" id="{{prefix}}id_trace_button" onClick="window.location = '{% url list_logs "host" form.instance.id %}';">Historique</div>

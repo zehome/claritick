@@ -7,7 +7,6 @@ from common.models import Client
 from common.utils import sort_queryset
 from common.forms import ModelFormTableMixin, MyDojoFilteringSelect
 from django.utils import simplejson as json
-from django.utils.datastructures import SortedDict
 from django.conf import settings
 from itertools import chain
 import datetime
@@ -189,6 +188,23 @@ class HostForm(df.ModelForm, FormSecurityChecker):
             log = self.log_action(u"modifié", inst)
             HostVersion(host=host_changes, additionnal_fields=fields_changes, log_entry=log).save()
         return (inst, extra_fields)
+
+    def delete(self, *args, **kwargs):
+        "save old values in a HostVersion and delete the host"
+        #assert(self.security_can_delete())
+        host_changes=u"L'hote %s a été suprimé:\n"%self.instance.hostname
+        for key in self.fields.iterkeys():
+            val = getattr(self.instance, key)
+            if val:
+                host_changes += u"%s valait <%s>\n"%(key, val)
+        fields_changes=""
+        for f in self.instance.additionnalfield_set.all():
+            fields_changes+=u"Le champ additionnel %s vallait %s\n"%(
+                              f.field.name, f.value)
+        ret = self.instance.delete(*args, **kwargs)
+        log = self.log_action(u"supprimé")
+        HostVersion(host=host_changes, additionnal_fields=fields_changes, log_entry=log).save()
+        return ret
 
     def clean(self):
         "Turn form invalid on submition if user rights are not sufficents"
