@@ -13,14 +13,16 @@ import datetime
 
 FIELD_TYPES = (
    (u'1', u"texte"),             # CharField
-   (u'2', u"booléen"),          # BooleanField
-   (u'3', u"choix" ),            # ChoiceField
+   (u'2', u"booléen"),           # BooleanField
+   (u'3', u"choix"),             # ChoiceField
    (u'4', u"nombre"),            # IntegerField
    (u'5', u'date'),              # DateField
    (u'6', u'choix multiple'),    # MultipleChoiceField
    )
 
+
 class OperatingSystem(models.Model):
+
     class Meta:
         verbose_name = u"Système d'exploitation"
         ordering = ['name', 'version']
@@ -32,18 +34,24 @@ class OperatingSystem(models.Model):
     def __unicode__(self):
         return "%s %s" % (self.name, self.version)
 
+
 class HostType(models.Model):
+
     class Meta:
         verbose_name = u"Type d'hôte"
         ordering = ['text']
+
     gateway = models.BooleanField("Gateway", default=False)
     text = models.TextField("Description", blank=True)
     color_fg = ColorField(name="Couleur texte", blank=True, null=True)
     color_bg = ColorField(name="Couleur fond", blank=True, null=True)
+
     def __unicode__(self):
         return u"%s" % (self.text,)
 
+
 class HostStatus(models.Model):
+
     class Meta:
         verbose_name = u"Status d'hôte"
         ordering = ['id']
@@ -52,11 +60,13 @@ class HostStatus(models.Model):
     description = models.TextField("Description", blank=True)
     color_fg = ColorField(name="Couleur texte", blank=True, null=True)
     color_bg = ColorField(name="Couleur fond", blank=True, null=True)
+
     def __unicode__(self):
         return u"%s" % (self.name, )
 
 
 class Supplier(models.Model):
+
     class Meta:
         verbose_name = u"Fournisseur"
         ordering = ['name']
@@ -67,46 +77,58 @@ class Supplier(models.Model):
     def __unicode__(self):
         return u"%s" % (self.name,)
 
+
 class HostQuerySet(models.query.QuerySet):
     def filter_by_site(self, site):
         if site:
             clients = Client.objects.get_childs("parent", int(site))
-            return self.filter(models.Q(site__in=[ c.id for c in clients ]))
+            return self.filter(models.Q(site__in=[c.id for c in clients]))
         return self
 
     def filter_by_user(self, user):
         return self.filter(site__in=user.clients)
+
 
 class HostManager(models.Manager):
     def get_query_set(self):
         return HostQuerySet(self.model).\
             select_related("site", "site__parent", "site__parent__parent",
                            "status", "type", "os", "supplier")
+
     def filter_by_user(self, user):
         return self.all().filter_by_user(user)
+
 
 class ChromeCryptoStr(object):
     def __init__(self, data):
         self.data = data
+
     def __len__(self):
         return len(self.data)
+
     def __eq__(self, other):
         return self.data == other
+
     def __cmp__(self, other):
         return cmp(self.data, other)
+
     def __adapt__(self):
         pass
+
     def __unicode__(self):
         return u"{chromecrypto:%s}" % (self.data,)
+
     def __repr__(self):
         return u"{chromecrypto:%s}" % (self.data,)
+
 
 class ChromeCryptoField(models.CharField):
 
     __metaclass__ = models.SubfieldBase
 
     def to_python(self, value):
-        if value is None: return value
+        if value is None:
+            return value
         if isinstance(value, ChromeCryptoStr):
             return value
         return ChromeCryptoStr(value)
@@ -119,6 +141,7 @@ class ChromeCryptoField(models.CharField):
             return value.data[14:-1]
         return self._encrypt(value.data)
 
+
 class Host(models.Model):
     class Meta:
         verbose_name = u"Machine"
@@ -129,7 +152,7 @@ class Host(models.Model):
 
     objects = HostManager()
 
-    site = ClientField(Client, verbose_name="Client", limit_choices_to={ 'parent__isnull': False })
+    site = ClientField(Client, verbose_name="Client", limit_choices_to={'parent__isnull': False})
     type = models.ForeignKey(HostType, verbose_name=u"Type d'hôte", blank=True, null=True)
     os = models.ForeignKey(OperatingSystem, verbose_name=u"Système d'exploitation", blank=True, null=True)
     hostname = models.CharField(u"Nom d'hôte", max_length=64)
@@ -159,33 +182,37 @@ class Host(models.Model):
     def get_text(self):
         """ Text representation for dialog based app """
         template = get_template("clariadmin/host.txt")
-        context = Context({"host": self })
+        context = Context({"host": self})
         return template.render(context)
 
     def copy_instance(self):
         """Return an unsaved copy of self and self's `AdditionnalFlied`s"""
-        h = Host(site=self.site, type=self.type, hostname=self.hostname+'_copy',
-            os=self.os, status=self.status, date_end_prod=self.date_end_prod,
-            supplier=self.supplier, commentaire=self.commentaire +
-            u"\n -> Copie de la machine %s(ip:%s, le:%s)"%(self.hostname, self.ip, datetime.date.today()),
-             date_start_prod=self.date_start_prod
-             , model=self.model, location=self.location)
-        afs=SortedDict()
+        h = Host(site=self.site, type=self.type, hostname=self.hostname + '_copy',
+                 os=self.os, status=self.status, date_end_prod=self.date_end_prod,
+                 supplier=self.supplier, commentaire=self.commentaire +
+                 u"\n -> Copie de la machine %s(ip:%s, le:%s)" % (
+                     self.hostname, self.ip, datetime.date.today()),
+                 date_start_prod=self.date_start_prod,
+                 model=self.model, location=self.location)
+        afs = SortedDict()
         for af in self.additionnalfield_set.all():
-            AdditionnalField(field=af.field, host=h, value=af.value)#.save()
-            afs['val_'+str(af.field.id)] = af.value
+            AdditionnalField(field=af.field, host=h, value=af.value)
+            afs['val_' + str(af.field.id)] = af.value
         return (h, afs)
 
     def available_for(self, user):
         return (self.site in user.clients)
 
+
 class ParamAdditionnalField(models.Model):
+
     class Meta:
         verbose_name = u"Définition de champs complémentaires"
-        ordering = (u"host_type",u"sorting_priority")
+        ordering = (u"host_type", u"sorting_priority")
+
     host_type = models.ForeignKey(HostType, verbose_name=u"Type d'hôte")
     name = models.CharField(u"Nom", max_length=32)
-    data_type = models.CharField(u"Type de donnée", max_length=4 , choices=FIELD_TYPES)
+    data_type = models.CharField(u"Type de donnée", max_length=4, choices=FIELD_TYPES)
     # dans un cas de choices il sera stocké en json non indenté. ex: ["a","b","c"]
     default_values = JsonField(u"Valeur par défaut/choix", max_length=8192)
     fast_search = models.BooleanField(u"Champ recherché par défaut", default=False)
@@ -198,30 +225,33 @@ class ParamAdditionnalField(models.Model):
             return u"%s [%s]" % (self.name, self.host_type)
         return u"%s" % (self.name, )
 
+
 class AdditionnalFieldManager(models.Manager):
     def get_query_set(self):
-        return super(AdditionnalFieldManager,self).get_query_set().\
-            select_related("field")
+        return super(AdditionnalFieldManager, self).get_query_set().select_related("field")
+
 
 class AdditionnalField(models.Model):
-    objects = AdditionnalFieldManager()
+
     class Meta:
         verbose_name = u"Champs complémentaires"
-        ordering = (u"field__sorting_priority",u"field__name")
+        ordering = (u"field__sorting_priority", u"field__name")
+
+    objects = AdditionnalFieldManager()
     field = models.ForeignKey(ParamAdditionnalField, verbose_name="Origine du champ")
     value = models.CharField(u"Valeur", max_length=512)
     host = models.ForeignKey(Host, verbose_name=u"")
 
     @property
     def value_readable(self):
-        if self.field.data_type in (u"1",u"2",u"4",u"5"):
+        if self.field.data_type in (u"1", u"2", u"4", u"5"):
             return self.value
         if self.field.data_type == u"3":
             return self.field.default_values[int(self.value)] if self.value else "False"
         dataLoaded = json.loads(self.value)
         val = ""
         if dataLoaded:
-            val = ",".join( self.field.default_values[int(e)] for e in dataLoaded )
+            val = ",".join(self.field.default_values[int(e)] for e in dataLoaded)
         return val
 
     def render_clean(self):

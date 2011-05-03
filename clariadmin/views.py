@@ -12,18 +12,19 @@ from clariadmin.forms import HostForm, SearchHostForm, AdditionnalFieldForm
 from common.diggpaginator import DiggPaginator
 from operator import ior
 
+
 def filter_hosts(qs, user, sorting, search, search_extra={}):
     """
     Returns results according to search and search_extra dictionnays.
     It will look in fields related to the keyword.
     """
-    search_mapping={'ip': 'contains',
+    search_mapping = {'ip': 'contains',
         'hostname': 'icontains',
         'commentaire': 'icontains',
         }
     for key, value in search.iteritems():
         if value:
-            lookup = search_mapping.get(key,'exact')
+            lookup = search_mapping.get(key, 'exact')
             if key == 'site':
                 qs = qs.filter_by_site(value)
             elif key == 'global_search':
@@ -32,9 +33,10 @@ def filter_hosts(qs, user, sorting, search, search_extra={}):
                 qs = qs.filter(**{"%s__%s" % (key, lookup): value})
     for key, value in search_extra.iteritems():
         if value:
-            qs = qs.filter(Q(additionnalfield__field__id__exact=key.replace("val_",""))
+            qs = qs.filter(Q(additionnalfield__field__id__exact=key.replace("val_", ""))
                          & Q(additionnalfield__value__icontains=value))
     return qs.order_by(sorting)
+
 
 def global_search(user, search, qs):
     """
@@ -42,13 +44,13 @@ def global_search(user, search, qs):
     It will look in all available fields.
     """
     fks = {'os': 'name',
-           'site':'label',
-           'supplier':'name',
-           'type':'text',
-           'status':'name'}
+           'site': 'label',
+           'supplier': 'name',
+           'type': 'text',
+           'status': 'name'}
     # Filtre les foreign key en fonction du niveau de securite.
-    authorized_keys = SearchHostForm.filter_list(user,fks.keys())
-    fks = dict([(k,v) for k,v in fks.iteritems()
+    authorized_keys = SearchHostForm.filter_list(user, fks.keys())
+    fks = dict([(k, v) for k, v in fks.iteritems()
         if k in authorized_keys])
 
     # Filter local fields
@@ -57,20 +59,21 @@ def global_search(user, search, qs):
         (
             # Do search on extra_fields
             Q(additionnalfield__field__fast_search__exact=True)
-            & ~Q(additionnalfield__field__data_type__in=('2','3','6'))
+            & ~Q(additionnalfield__field__data_type__in=('2', '3', '6'))
             & Q(additionnalfield__value__icontains=search)
         ) | (
             # Do search only for local fields
-            reduce(ior,(Q(**{"%s__icontains" % (key,): search})
+            reduce(ior, (Q(**{"%s__icontains" % (key,): search})
                      for key in fields if key not in fks.keys()))
         ) | (
             # Do search on filtered foreign keys
-            reduce(ior,(Q(**{"%s__%s__icontains" % (key, value): search})
+            reduce(ior, (Q(**{"%s__%s__icontains" % (key, value): search})
                      for key, value in fks.iteritems()))
         )
     )
     # Distict is needed because could match 2 fields in the or just above
     return qs.distinct()
+
 
 def get_host_or_404(user, *args, **kw):
     """wrap get_object_or_404 to restrict access by user"""
@@ -78,6 +81,7 @@ def get_host_or_404(user, *args, **kw):
     if not h.available_for(user):
         raise Http404
     return h
+
 
 @permission_required("clariadmin.can_access_clariadmin")
 def list_all(request, *args, **kw):
@@ -90,7 +94,7 @@ def list_all(request, *args, **kw):
         lastpage_clariadmin : dernier numéreau de page
     """
     if request.GET.get("reset", "0") == "1":
-        try: # ordre de nettoyage de session logique.
+        try:  # ordre de nettoyage de session logique.
             del request.session["lastpage_clariadmin"]
             del request.session["sort_adm_list"]
             del request.session["search_host_form_fields"]
@@ -124,9 +128,9 @@ def list_all(request, *args, **kw):
                 form_extra = AdditionnalFieldForm(POST,
                              host_type=HostType.objects.get(pk=host_type))
                 # if search != last search => page 1 and update session
-                post_filtred = dict([(k,v) for k,v in POST.iteritems()
+                post_filtred = dict([(k, v) for k, v in POST.iteritems()
                                         if k in form_extra.fields.keys()])
-                if request.session.get('additionnal_field_form_fields',{}) != post_filtred:
+                if request.session.get('additionnal_field_form_fields', {}) != post_filtred:
                     new_search = True
                     request.session['additionnal_field_form_fields'] = post_filtred
                 form_extra.is_valid()
@@ -135,7 +139,7 @@ def list_all(request, *args, **kw):
         form = SearchHostForm(request.user, request.session.get('search_host_form_fields', {}))
         if host_type:
             form_extra = AdditionnalFieldForm(
-                        request.session.get('additionnal_field_form_fields',{}),
+                        request.session.get('additionnal_field_form_fields', {}),
                         host_type=HostType.objects.get(pk=host_type))
             form_extra.is_valid()
 
@@ -183,6 +187,7 @@ def list_all(request, *args, **kw):
         "form_extra": form_extra,
     }, context_instance=RequestContext(request))
 
+
 @permission_required("clariadmin.can_access_clariadmin")
 def new(request, from_host=False):
     """
@@ -194,7 +199,7 @@ def new(request, from_host=False):
     if POST:
         form = HostForm(request.user, request.META['REMOTE_ADDR'], POST)
         if form.is_valid():
-            host, add_fields = form.save(POST = POST)
+            host, add_fields = form.save(POST=POST)
             redir = POST.get('submit_button', False)
             if redir == 'new':
                 form = HostForm(request.user, request.META['REMOTE_ADDR'])
@@ -204,11 +209,11 @@ def new(request, from_host=False):
                 return redirect('list_hosts')
     else:
         if from_host:
-            from_host = get_host_or_404(request.user, pk = from_host)
+            from_host = get_host_or_404(request.user, pk=from_host)
             inst, comp = from_host.copy_instance()
-            form = HostForm(request.user, request.META['REMOTE_ADDR'], instance = inst)
+            form = HostForm(request.user, request.META['REMOTE_ADDR'], instance=inst)
             form.log_action(u"consulté", from_host)
-            add_fields = AdditionnalFieldForm(comp, host = inst)
+            add_fields = AdditionnalFieldForm(comp, host=inst)
         else:
             form = HostForm(request.user, request.META['REMOTE_ADDR'])
     return render_to_response('clariadmin/host.html', {
@@ -216,6 +221,7 @@ def new(request, from_host=False):
             'prefix': '8',
             'additionnal_fields': add_fields},
             context_instance=RequestContext(request))
+
 
 @permission_required("clariadmin.can_access_clariadmin")
 def modify(request, host_id):
@@ -250,9 +256,10 @@ def modify(request, host_id):
     return render_to_response(template, {
         "form": form,
         'additionnal_fields': add_fields,
-        'prefix':prefix,
-        'ajax':request.is_ajax(),
+        'prefix': prefix,
+        'ajax': request.is_ajax(),
         "host": host}, context_instance=RequestContext(request))
+
 
 @permission_required("clariadmin.can_access_clariadmin")
 def ajax_extra_fields_form(request, host_type_id, prefix="", blank=False):
