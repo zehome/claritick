@@ -10,6 +10,7 @@ from django.template import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.contrib.auth.decorators import permission_required
 
+
 @permission_required("host_history.can_access_host_history")
 @permission_required("clariadmin.can_access_clariadmin")
 def list_logs(request, filter_type=None, filter_key=None):
@@ -21,25 +22,24 @@ def list_logs(request, filter_type=None, filter_key=None):
         - search_log_list: recherche courrante
         - sort_log_list: garde l'ordre courrent
     """
-    sort_default='-date'
-    columns = ["host","user","date","ip","action","message","version"]
+    sort_default = '-date'
+    columns = ["host", "user", "date", "ip", "action", "message", "version"]
     new_search = False
 
     if request.GET.get("reset", "0") == "1":
         try:
-            del request.session["lastpage_log_list"] 
+            del request.session["lastpage_log_list"]
         except KeyError:
             pass
         try:
-            del request.session["search_log_list"] 
+            del request.session["search_log_list"]
         except KeyError:
             pass
         try:
-            del request.session["sort_log_list"] 
+            del request.session["sort_log_list"]
         except KeyError:
             pass
         return redirect('list_logs')
-
 
     # Url filtering
     if filter_type:
@@ -51,11 +51,11 @@ def list_logs(request, filter_type=None, filter_key=None):
             raise Http404
     else:
         qs = HostEditLog.objects.all()
-    qs = qs.select_related('host','hostrevision')
+    qs = qs.select_related('host', 'hostrevision')
 
     # Handle SearchForm filtering
     form = SearchLogForm(request.user, request.POST or
-                                     request.session.get("search_log_list",{}))
+                                     request.session.get("search_log_list", {}))
     if form.is_valid():
         request.session["search_log_list"] = form.cleaned_data
         qs = form.search(qs)
@@ -90,21 +90,22 @@ def list_logs(request, filter_type=None, filter_key=None):
          "form": form},
         context_instance=RequestContext(request))
 
+
 @permission_required("host_history.can_access_host_history")
 @permission_required("clariadmin.can_access_clariadmin")
 def view_changes(request, rev_id):
-    version = get_object_or_404(HostVersion, pk = rev_id)
+    version = get_object_or_404(HostVersion, pk=rev_id)
     log = version.log_entry
     message_infos = log.parse_message()
     # Removing last item because it's an empty line.
     host_changes = version.host.split('\n')[:-1]
     fields_changes = version.additionnal_fields.split('\n')[:-1]
-    return render_to_response('host_history/view.html',
-        {   "host_changes": host_changes,
+    return render_to_response('host_history/view.html', {
+            "host_changes": host_changes,
             "fields_changes": fields_changes,
             "old_hostname": message_infos.group(1),
             "date": log.date,
             "user": log.username,
             "action": message_infos.group(2),
-            "log":log,
-        },context_instance=RequestContext(request))
+            "log": log,
+        }, context_instance=RequestContext(request))
