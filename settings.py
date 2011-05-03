@@ -13,6 +13,11 @@ ADMINS = (
 MANAGERS = ADMINS
 DATABASES = {
     "default": {
+        # to use unaccentued search, install:
+        #    https://launchpad.net/postgresql-unaccent
+        # and use:
+        # "ENGINE": 'common.unaccent_postgres_psycopg2',
+
         "ENGINE": 'django.db.backends.postgresql_psycopg2',
         "NAME": 'claritick',
         "USER": 'claritick',
