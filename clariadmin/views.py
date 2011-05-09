@@ -84,7 +84,7 @@ def get_host_or_404(user, *args, **kw):
 
 
 @permission_required("clariadmin.can_access_clariadmin")
-def list_all(request, *args, **kw):
+def list_all(request, target_client=None, *args, **kw):
     """
     Vue permettant de lister les machines recherchées.
     Variables de session utilisées:
@@ -93,6 +93,7 @@ def list_all(request, *args, **kw):
         sort_adm_list : dernier tri
         lastpage_clariadmin : dernier numéreau de page
     """
+    print "Start:", request.session["search_host_form_fields"]
     if request.GET.get("reset", "0") == "1":
         try:  # ordre de nettoyage de session logique.
             del request.session["lastpage_clariadmin"]
@@ -101,6 +102,12 @@ def list_all(request, *args, **kw):
             del request.session["additionnal_field_form_fields"]
         except KeyError:
             pass
+        return redirect('list_hosts')
+
+    if target_client:
+        tmp = request.session["search_host_form_fields"]
+        tmp["site"] = target_client
+        request.session["search_host_form_fields"] = tmp
         return redirect('list_hosts')
 
     POST = HostForm.filter_querydict(request.user, request.POST)
