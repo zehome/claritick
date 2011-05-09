@@ -115,7 +115,7 @@ TEMPLATE_DIRS = (
 
 INSTALLED_APPS = (
     'django.contrib.auth',
-    'django.contrib.sites', # Needed for comment
+    'django.contrib.sites',    # Needed for comment
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'reporting',               # Override admin templates
@@ -182,7 +182,6 @@ SUMMARY_TICKETS=15 # Nombre de tickets affichés sur la page d'accueil
 EMAIL_INTERNAL_COMMENTS = False # Ne transmet pas d'email lorsque l'on poste un commentaire interne
 COMMENT_MAX_LENGTH = 65535 * 4
 
-TICKET_PRIORITY_NORMAL = 2 # pk de la prioritÃ© normale
 POSTGRESQL_VERSION = 8.4
 
 # Autologout default in minutes
