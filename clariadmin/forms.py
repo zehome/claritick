@@ -365,7 +365,7 @@ class ParamAdditionnalFieldAdminForm(df.ModelForm):
             dv = cd[normal_fields[cd['data_type']]]
         else:
             dv = [cd[e] for e in ("choice%s_val" % (str(i).rjust(2, '0'),) for i in range(1, 16)) if cd[e]]
-        inst.default_values = dv
+        inst.default_values = json.dumps(dv)
         if commit:
             inst.save()
         return inst
