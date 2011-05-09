@@ -35,7 +35,9 @@ var lock_settings = {{ lock_settings|safe }};
   <legend>Contact</legend>
   <table>
     <tr>
-        <td class="large">{{ form.client.label_tag }}</td><td>{{ form.client }}</td>
+        <td class="large">{{ form.client.label_tag }}</td><td>{{ form.client }}
+            <a href={% url list_hosts form.instance.client.id %}>
+                <img alt="postes" src="{{ MEDIA_URL }}images/oxygen/computer_small.png" /></a></td>
         <td class="large right">{{ form.assigned_to.label_tag }}</td><td>{{ form.assigned_to }}</td>
     </tr>
     <tr>

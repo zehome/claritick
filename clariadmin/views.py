@@ -93,7 +93,6 @@ def list_all(request, target_client=None, *args, **kw):
         sort_adm_list : dernier tri
         lastpage_clariadmin : dernier numéreau de page
     """
-    print "Start:", request.session["search_host_form_fields"]
     if request.GET.get("reset", "0") == "1":
         try:  # ordre de nettoyage de session logique.
             del request.session["lastpage_clariadmin"]
