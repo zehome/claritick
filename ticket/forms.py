@@ -38,7 +38,7 @@ class NewTicketForm(CustomModelForm):
     assigned_to = df.ModelChoiceField(label=u'Assigné à', widget=FilteringSelect(attrs={'onChange': 'modif_ticket();'}), queryset=ClaritickUser.objects.all(), required=False)
     #validated_by = df.ModelChoiceField(widget=FilteringSelect(), queryset=ClaritickUser.objects.all(), required=False)
     file = df.FileField(label='Fichier joint', required=False)
-    comment = df.CharField(widget=forms.Textarea(), required=False)
+    comment = df.CharField(widget=forms.Textarea(attrs={'cols':'80','style':'margin:10px;'}), required=False)
     internal = forms.BooleanField(widget=df.widgets.CheckboxInput(attrs={'onChange': 'modif_ticket(); toggleComment(this);'}), initial=True, required=False)
     appel = forms.BooleanField(label=u"Signaler un (r)appel du client", widget=df.widgets.CheckboxInput(attrs={'onChange': 'modif_ticket();'}), initial=False, required=False)
 

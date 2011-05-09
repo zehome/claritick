@@ -39,7 +39,7 @@
 
 {% block comment_form %}
     <div class="no_print">
-        <p>Nouvelle réponse: {{ form_to_comment.comment }}</p>
+      <p>Nouvelle réponse:<br/> {{ form_to_comment.comment }}</p>
         {% if perms.ticket.can_view_internal_comments %}
         <div dojoType="dijit.Tooltip" connectId="{{ form_to_comment.get_exact_id|interpret:"comment" }}" position="after" id="{{ form_to_comment.get_exact_id|interpret:"internal"}}-tooltip">
             <div style="display: none;">
