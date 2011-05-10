@@ -297,12 +297,25 @@ function modif_ticket() {
     }});
 }
 
+function refresh_page(){
+    dojo.cookie("current_comment",dojo.byId("id_comment").value);
+    dojo.global.location.reload();
+}
+function load_current_comment(){
+    if(c=dojo.cookie("current_comment"))
+    {
+        dojo.byId("id_comment").value = c;
+        dojo.cookie("current_comment", false, {expires: -1});
+    }
+}
+
 var locker_fields;
 var connections = [];
 
 dojo.addOnLoad(function () {
         locker_fields = dojo.query("textarea[name$='text'], input[name$='title'], input[name$='keywords']");
         locker_fields_onchange = dojo.query("select");
+        load_current_comment();
         dojo.forEach(locker_fields, function (f) {
             connections.push(dojo.connect(f, 'onkeypress', modif_ticket));
             });
@@ -310,6 +323,4 @@ dojo.addOnLoad(function () {
             connections.push(dojo.connect(f, 'onchange', modif_ticket));
             });
 });
-
-
 
