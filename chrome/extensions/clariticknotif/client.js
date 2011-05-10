@@ -137,10 +137,11 @@ function setup_websocket()
                 console.error("Unable to decode message");
                 return;
             }
+            console.log("action:" + data.action);
             if (data.action && data.action == "notification")
             {
-                var n = createHTMLNotification(django_notifications_get_url + data.id_notification);
-                n.show();
+                createHTMLNotification(django_notifications_get_url + data.id_notification, 
+                    getOption("notificationTimeout")).show();
             }
         }
     );

@@ -47,6 +47,12 @@ function loadSettings()
     }
 }
 
+/* Returns the javascript data */
+function getOption(name)
+{
+    return JSON.parse(localStorage[name]);
+}
+
 function resetSettings()
 {
     for (var i=0; i < options_widgets.text.length; i++)
