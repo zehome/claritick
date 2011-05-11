@@ -109,11 +109,12 @@ function loadOptionPage()
         var widget = options[widgetOption.name];
         var onchange = function(widget, widgetOption) {
             return function() {
-                localStorage[widgetOption.name] = options[widgetOption.name].checked;
+                localStorage[widgetOption.name] = JSON.stringify(options[widgetOption.name].value);
                 if (widgetOption.onchange_callback) {
                     widgetOption.onchange_callback();
                 }
             }
         };
+        widget.onchange = onchange(widget, widgetOption);
     }
 }
