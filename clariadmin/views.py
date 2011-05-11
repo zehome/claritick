@@ -104,7 +104,7 @@ def list_all(request, target_client=None, *args, **kw):
         return redirect('list_hosts')
 
     if target_client:
-        tmp = request.session["search_host_form_fields"]
+        tmp = request.session.get("search_host_form_fields", {})
         tmp["site"] = target_client
         request.session["search_host_form_fields"] = tmp
         return redirect('list_hosts')
