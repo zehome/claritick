@@ -1,5 +1,7 @@
 <html>
 <head>
+    <script src="socket.io.min.js" type="text/javascript"></script>
+    <script src="client.js" type="text/javascript"></script>
     <script src="options.js" type="text/javascript"></script>
     <title>Claritick Notifications</title>
     <style>
@@ -31,12 +33,11 @@ onload = function()
     <input type="checkbox" name="isSecure" checked /> Connexion sécurisée (wss://)<br />
     URL Django notifications <input type="text" size="64" name="djangoURL" /><br />
   </p>
-  <h2>Activer / Désactiver les notifications pour</h2>
+  <h2>Tags</h2>
   <p>
-    <input type="checkbox" name="onNewTicket" checked /> Nouveau ticket<br />
-    <input type="checkbox" name="onNewTicketAssignedTo" checked /> Nouvelle assignation de ticket<br />
-    <input type="checkbox" name="onNewAnswer" checked /> Nouvelle réponse<br />
+    <input type="button" name="getTagsButton" value="Get tags" onclick="options_get_tags();" /> <div id="get_tags_progress"></div><br />
   </p>
+  <div id="tag_checkboxes"></div>
   <h2>Options avancées</h2>
   <p>
     Durée d'affichage <input type="number" name="notificationTimeout" /> seconds.<br />

@@ -2,11 +2,40 @@ var pending_notifications = [];
 var django_notifications_url = JSON.parse(localStorage.djangoURL);
 var django_notifications_get_url = django_notifications_url + 'get/';
 var django_notifications_check_url = django_notifications_url + 'is_authenticated/';
+var django_notifications_tags_url = django_notifications_url + 'get_tags/';
 var is_loggedin = false;
 var current_username = null;
 var n_socket;
 
 const CHECK_LOGIN_TIMEOUT = 60 * 1000; /* Every minute */
+
+/* Will download on the django_notification_url the possible tags 
+ * First argument is the function to call with the json parsed data
+ */
+function getOptionTags(onReadyCallback, errorCallback)
+{
+    /* Login is required before anything. */
+    if (! is_loggedin)
+        errorCallback();
+
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", django_notifications_tags_url, true);
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState == 4) {
+            var resp = xhr.responseText;
+            var status = xhr.status;
+            if (status == 200)
+            {
+                onReadyCallback(JSON.parse(resp));
+            } else {
+                errorCallback(xhr.status, resp);
+            }
+        } else {
+            errorCallback();
+        }
+    }
+    xhr.send();
+}
 
 /* This will create a timeouting notifications (in seconds) */
 function createNotification(image, title, content, timeout)
@@ -73,11 +102,23 @@ function check_auth(first_time)
 {
     var xhr = new XMLHttpRequest();
     xhr.open("GET", django_notifications_check_url, true);
+    
+    var logout = function() {
+        is_loggedin = false;
+        current_username = null;
+        var notification = createNotification(chrome.extension.getURL("64.png"), 
+            "Not logged in", 
+            "You are logged out. You will not receive notifications :(", 5);
+        notification.show();
+    };
+    
     xhr.onreadystatechange = function()
     {
         if (xhr.readyState == 4) 
         {
-            // JSON.parse does not evaluate the attacker's scripts.
+            if (xhr.status != 200)
+                return logout();
+
             var resp = xhr.responseText;
             if (resp != "0")
             {
@@ -86,15 +127,14 @@ function check_auth(first_time)
                 is_loggedin = true;
                 if (first_time)
                 {
-                    var notification = createNotification(null, "Sucessfully registered: "+current_username, current_username + ": logged in. You will receive notifications.", 3);
+                    var notification = createNotification(chrome.extension.getURL("64.png"), 
+                        "Sucessfully registered: "+current_username, 
+                        current_username + ": logged in. You will receive notifications.", 3);
                     setup_websocket();
                     notification.show();
                 }
             } else {
-                is_loggedin = false;
-                current_username = null;
-                var notification = createNotification(null, "Not logged in", "You are not loggedin. You will not receive notifications :(", 10);
-                notification.show();
+                return logout();
             }
         }
     }
