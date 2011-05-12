@@ -167,7 +167,7 @@ function options_load_tags()
             return function() {
                 console.log("onchange widget: "+widget + " tagid: " + tagid);
                 var lsTags = localStorage.getObject('tags');
-                lsTags[tagid].value = widget.checked;
+                lsTags[tagid].value = options["tag_"+tagid].checked;
                 localStorage.setObject('tags', lsTags);
             }
         };

@@ -48,7 +48,8 @@ function createNotification(image, title, content, timeout)
             notification.cancel();
         };
     };
-    setTimeout(notification_timeout_callback(n), timeout * 1000);
+    if (timeout)
+        setTimeout(notification_timeout_callback(n), timeout * 1000);
     return n;
 }
 
@@ -62,7 +63,8 @@ function createHTMLNotification(url, timeout)
             notification.cancel();
         };
     };
-    setTimeout(notification_timeout_callback(n), timeout * 1000);
+    if (timeout)
+        setTimeout(notification_timeout_callback(n), timeout * 1000);
     return n;    
 }
 
@@ -164,8 +166,7 @@ function setup_websocket()
     n_socket.on('message', function(evt) 
         {
             /* Ack ? */
-            if (! evt || evt == "ack")
-            {
+            if (! evt || evt == "ack") {
                 console.log("ack received.");
                 return;
             }
@@ -178,10 +179,30 @@ function setup_websocket()
                 return;
             }
             console.log("action:" + data.action);
-            if (data.action && data.action == "notification")
-            {
-                createHTMLNotification(django_notifications_get_url + data.id_notification, 
-                    getOption("notificationTimeout")).show();
+            
+            if (data.action && data.action == "notification") {
+                var display_notification = true;
+                var autoclose_delay = getOption("notificationTimeout");
+                /* Check for tags */
+                if (data.tag) {
+                    var lsTags = localStorage.getObject('tags');
+                    var tag = lsTags[data.tag];
+                    if (tag && !tag.value)
+                    {
+                        console.log("Notification tag: "+data.tag+" mytag value: "+ tag.value + "(tag: "+tag+")");
+                        display_notification = false;
+                    }
+                }
+                if (data.autoclose_delay != -1) {
+                    autoclose_delay = data.autoclose_delay;
+                }
+                
+                if (! display_notification) {
+                    console.log("Not displaying notification: "+data.id_notification);
+                } else {
+                    createHTMLNotification(django_notifications_get_url + data.id_notification, 
+                        autoclose_delay).show();
+                }
             }
         }
     );
