@@ -24,6 +24,9 @@ from django.db.models import AutoField
 # Lock
 from lock.decorators import locked_content
 
+# Desktop notifications
+from desktopnotifications.models import DesktopNotification
+
 def copy_model_instance(obj):
     initial = dict([(f.name, getattr(obj, f.name))
                     for f in obj._meta.fields
@@ -423,6 +426,7 @@ class Ticket(models.Model):
             send_email_reasons = [ u"Nouvelle réponse%s" % (comment.internal and " (Diffusion interne seulement)" or ''), ]
             #ticket.send_email(reasons=send_email_reasons)
             ticket.ticketmailaction_set.create(reasons=send_email_reasons)
+        ticket.send_desktop_notification("TNR")
     
     @staticmethod
     def handle_ticket_presave_signal(sender, **kwargs):
@@ -438,6 +442,24 @@ class Ticket(models.Model):
     def clean(self):
         if self.state_id == settings.TICKET_STATE_CLOSED and self.child.exclude(state=self.state).exists():
             raise ValidationError("Impossible de fermer le ticket si tous les tickets fils ne sont pas fermés")
+
+    def send_desktop_notification(self, tag):
+        def get_desktop_notification_html(n):
+            return "<h3>[%s]</h3><p>%s: %s<a target=\"_new\" href=\"https://claritick.clarisys.fr/ticket/modify/%s/\">Go</a></p>" % (self.id, tag, n.get_tag_display(), self.id)
+        dests = set()
+        # La personne qui a ouvert
+        if self.opened_by:
+            dests.add(self.opened_by)
+        # La personne sur qui le ticket est assignée
+        if self.assigned_to:
+            dests.add(self.assigned_to)
+        # Ceux qui ont participé (comments)
+        dests = dests.union( set([ c.user for c in django.contrib.comments.get_model().objects.filter(content_type__model="ticket", object_pk=str(self.id)) if c.user ]))
+        for dest in dests:
+            notification = DesktopNotification(user=dest)
+            notification.tag = tag
+            notification.content = get_desktop_notification_html(notification)
+            notification.save()
 
     @locked_content
     def save(self, *a, **kw):
@@ -461,17 +483,25 @@ class Ticket(models.Model):
         ret = super(Ticket, self).save(*a, **kw)
         send_fax_reasons = []
         send_email_reasons = []
+        send_desktop_notifications = []
 
         if self.is_valid():
             if old_ticket is None:
                 r = u"Création du ticket"
                 send_email_reasons = [ r, ]
                 send_fax_reasons = [ r, ]
+                if not self.assigned_to:
+                    send_desktop_notifications.append("TU")
+                else:
+                    send_desktop_notifications.append("TC")
             else:
                 if old_ticket.state and old_ticket.state != self.state:
                     r = u"Statut modifié: %s => %s" % (old_ticket.state, self.state)
                     send_email_reasons.append(r)
                     send_fax_reasons.append(r)
+
+                    if (self.state == settings.TICKET_STATE_CLOSED):
+                        send_dekstop_notifications.append("TCL")
                 if old_ticket.client and old_ticket.client != self.client:
                     r = u"Erreur d'affectation client"
                     send_email_reasons.append(r)
@@ -481,8 +511,10 @@ class Ticket(models.Model):
                 if (old_ticket.assigned_to and old_ticket.assigned_to != self.assigned_to):
                     if old_ticket.assigned_to and self.assigned_to and old_ticket.assigned_to.pk != self.assigned_to.pk:
                         send_email_reasons.append(u"Ticket re-affecté à %s" % (self.assigned_to,))
+                        send_desktop_notifications.append("TA")
                 elif (not old_ticket.assigned_to and self.assigned_to):
                     send_email_reasons.append(u"Ticket affecté à %s" % (self.assigned_to,))
+                    send_desktop_notifications.append("TA")
             # Copie des paramêtres du père à reporter sur les fils
             # (Temporaire ?)
             if old_ticket and self.child:
@@ -517,6 +549,9 @@ class Ticket(models.Model):
                 target_ticket.ticketmailaction_set.create(reasons=send_email_reasons)
             if send_fax_reasons:
                 target_ticket.send_fax(send_fax_reasons)
+        
+        for tag in send_desktop_notifications:
+            self.send_desktop_notification(tag)
 
         return ret
 

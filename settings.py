@@ -135,6 +135,7 @@ INSTALLED_APPS = (
     'packaging',               # Clarideploy tools
     'importv1',
     'debug_toolbar',
+    'desktopnotifications',
 )
 
 COMMENTS_APP = 'ticket_comments'
@@ -213,6 +214,16 @@ SVNDOC_CONFIG = {
 PACKAGING_ROOT = os.path.join(basepath, 'packaging', 'filestorage')
 INTERNAL_IPS = ('127.0.0.1', )
 CHROMECRYPTO_KEY = ""
+
+DESKTOP_NOTIFICATION_TAGS = (
+    (u"UN", u"Nouvel utilisateur"),
+    (u"TA", u"Ticket affecté"),
+    (u"TM", u"Ticket modifié"),
+    (u"TC", u"Ticket créer"),
+    (u"TU", u"Ticket non affecté moidfié"),
+    (u"TNR", u"Nouvelle réponse"),
+    (u"TCL", u"Ticket fermé"),
+)
 
 try:
     from local_settings import *

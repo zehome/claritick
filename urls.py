@@ -20,6 +20,7 @@ import chuser.urls
 import lock.urls
 import packaging.urls
 import host_history.urls
+import desktopnotifications.urls
 
 # Init code
 admin.autodiscover()
@@ -95,4 +96,7 @@ urlpatterns = patterns('',
 
     ## Ovh cert
     (r'^ovh-cert.txt', ovh_cert),
+
+    ## Desktop notifications
+    url(r'^notifications/', include(desktopnotifications.urls)),
 )
