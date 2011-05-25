@@ -12,6 +12,7 @@ except ImportError:
 from django.contrib.auth.models import User, Group
 from django.db import models
 from django.utils import simplejson as json
+from django import forms
 
 # On charge psycopg2 pour ByteaField
 try:
@@ -102,6 +103,17 @@ class TelephoneField(models.CharField):
         kw["blank"] = True
         kw["null"] = True
         super(TelephoneField, self).__init__(*args,**kw)
+
+class OneLineTextField(models.TextField):
+    """
+        Un TextField au niveau db qui s'affiche comme un CharField dans les formulaires.
+    """
+    def formfield(self, **kwargs):
+        defaults = {
+            "widget": forms.TextInput
+        }
+        defaults.update(kwargs)
+        return super(OneLineTextField, self).formfield(**defaults)
 
 class Coordinate(models.Model):
     class Meta:

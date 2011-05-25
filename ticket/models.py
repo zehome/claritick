@@ -37,7 +37,7 @@ def copy_model_instance(obj):
 
 class Priority(models.Model):
     class Meta:
-        verbose_name = "Priorité"
+        verbose_name = u"Priorité"
         ordering = ['warning_duration', 'label']
 
     label = models.CharField("Libellé", max_length=64, blank=True)

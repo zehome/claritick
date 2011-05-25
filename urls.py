@@ -21,6 +21,7 @@ import lock.urls
 import packaging.urls
 import host_history.urls
 import desktopnotifications.urls
+import bondecommande.urls
 
 # Init code
 admin.autodiscover()
@@ -99,4 +100,7 @@ urlpatterns = patterns('',
 
     ## Desktop notifications
     url(r'^notifications/', include(desktopnotifications.urls)),
+    
+    ## Bon de commandes
+    url(r'^bondecommande/', include(bondecommande.urls)),
 )

@@ -136,6 +136,7 @@ INSTALLED_APPS = (
     'importv1',
     'debug_toolbar',
     'desktopnotifications',
+    'bondecommande',
 )
 
 COMMENTS_APP = 'ticket_comments'

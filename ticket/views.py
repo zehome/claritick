@@ -489,7 +489,16 @@ def modify(request, ticket_id):
                     data = file.read()
                 ticket_file.data = data
                 ticket_file.save()
-
+            
+            # BonDeCommande
+            if form.cleaned_data["bondecommande"]:
+                bdc = form.cleaned_data["bondecommande"]
+                if bdc.ticket:
+                    raise PermissionDenied()
+                if ticket.client and bdc.client != ticket.client:
+                    raise PermissionDenied("Etes vous sur de vouloir faire ça ? Ce n'est pas le meme client.")
+                bdc.ticket = ticket
+                bdc.save()
             return exit_action()
     else:
         form = TicketForm(instance=ticket, user=request.user)
@@ -511,9 +520,16 @@ def modify(request, ticket_id):
                     f.instance.comment.append(c)
     
     update_ticket_last_seen(request, ticket.pk)
-
-    return render_to_response(template_name,
-            { "form": form, "child_formset": child_formset },
+    
+    # Bon de commande
+    bondecommades = BonDeCommande.objects.all().filter_by_user(request.user).filter(ticket=ticket.pk)
+    
+    return render_to_response(template_name, 
+        { 
+            "form": form, 
+            "child_formset": child_formset,
+            "bondecommandes": bondecommades
+        },
         context_instance=RequestContext(request))
 
 @login_required

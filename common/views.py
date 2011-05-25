@@ -9,11 +9,12 @@ from django.http import HttpResponse, HttpResponseBadRequest
 from django.core.exceptions import PermissionDenied
 from django.forms.models import modelformset_factory
 from django.views.decorators.csrf import csrf_exempt
+from django.utils import simplejson as json
 
 from common.models import Client, Coordinate
 from common.forms import ClientForm, CoordinateForm
 from common.utils import user_has_perms_on_client
-from django.utils import simplejson as json
+from bondecommande.models import BonDeCommande
 
 try:
     from chuser.forms import ChuserForm
@@ -48,12 +49,15 @@ def infos_login(request):
     chuserform = None
     if request.user.is_superuser or request.session.get('was_superuser', False) and ChuserForm:
         chuserform = ChuserForm(initial={'user': request.user.pk})
-
+    
+    bondecommandes = BonDeCommande.objects.all().filter_by_user(request.user)
+    
     return render_to_response("common/client/infos.html", {
         "client": client,
         "clients": client_qs,
         "packageauth": packageauth,
         "chuserform": chuserform,
+        "bondecommandes": bondecommandes,
     }, context_instance=RequestContext(request))
 
 @login_required

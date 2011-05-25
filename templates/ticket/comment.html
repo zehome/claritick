@@ -51,7 +51,19 @@
                 <p>La réponse sera conservée en interne</p>
             </div>
         </div>
-        <p>{{ form_to_comment.internal }} Commentaire <b>Interne</b> (Si cette case est cochée, la réponse ne sera pas transmise au client final) </p>
+        <p>{{ form_to_comment.internal }}<span id="checkbox_internal_comment"> Commentaire <b>Interne</b> (Si cette case est cochée, la réponse ne sera pas transmise au client final)</span></p>
         {% endif %}
     </div>
 {% endblock comment_form %}
+
+<script type="text/javascript">
+<!-- Connexion du checkbox_internal_comment ->
+dojo.addOnLoad( function() 
+{
+    dojo.connect(dojo.byId("checkbox_internal_comment"), "onclick", function() {
+        /* check or uncheck the form cb */
+        var w = dijit.byId("id_internal");
+        w.set("checked", !w.checked);
+    });
+});
+</script>

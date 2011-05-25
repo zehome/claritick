@@ -851,3 +851,19 @@ ol#pagination-digg {
 #contenu .dojoxMultiSelectItem {
     text-align: left;
 }
+
+#contenu p {
+	margin-bottom: auto;
+	margin-top: auto;
+}
+
+/* Admin override */
+td.original p {
+	font-size: 1em !important;
+	position: relative !important;
+}
+
+#contenu ul li ul li {
+	font-size: 1em;
+}
+

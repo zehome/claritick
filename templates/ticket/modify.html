@@ -1,10 +1,13 @@
-<!-- <?xml version='1.0' encoding='utf-8'?> -->
 {% extends "base.html" %}
+{% load adminmedia %}
 {% block extrastyle %}
   {{ block.super }}
   <link rel="stylesheet" type="text/css" href="{{MEDIA_URL}}print_ticket.css" media="print" />
 {% endblock %}
-{% block extrajs %}<script type="text/javascript" src="{{ MEDIA_URL }}javascript/modify.js"></script>{% endblock %}
+{% block extrajs %}
+<script type="text/javascript" src="{{ MEDIA_URL }}javascript/modify.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}js/DijitRelatedObjectLookups.js"></script>
+{% endblock %}
 
 {% block title %}Ticket numéro {{ form.instance.id }}{% endblock %}
 {% block content_title %}Ticket numéro {{ form.instance.id }}{% endblock %}
@@ -71,11 +74,11 @@ var lock_settings = {{ lock_settings|safe }};
   <legend>Contenu</legend>
   <table class="print_title">
     <tr>
-        <th class="large print_bottom_padding">{{ form.title.label_tag }}</th>
+        <th class="large print_bottom_padding">{{ form.title.label_tag }} {{ form.title.errors }}</th>
         <td class="large right print_bottom_padding">{{ form.title }}</td>
     </tr>
     <tr>
-        <th></th>
+        <th>{{ form.text.errors }}</th>
         <td class="right">{{ form.text }}</td>
     </tr>
     <tr>
@@ -133,6 +136,35 @@ var lock_settings = {{ lock_settings|safe }};
         </tr>
     </table>
 </fieldset>
+
+<fieldset class="block form no_print">
+    <legend>Bon de commande</legend>
+    {% if bondecommandes %}
+    <ul>
+    {% for bdc in bondecommandes %}
+        <li{% if bdc.is_closed %} style="text-decoration:line-through"{% endif %}>
+            {% if perms.bondecommande.can_change_bondecommande %}
+              <a href="{% url admin:bondecommande_bondecommande_change bdc.id %}">{{ bdc }}</a>
+            {% else %}
+              {{ bdc }}
+            {% endif %}
+            le {{ bdc.date_creation }}: {{ bdc.comment }}
+            
+            {% if bdc.bondecommandefile_set.all %}<ul>{% for f in bdc.bondecommandefile_set.all %}
+            <li>{{ f }}</li>
+            {% endfor %}</ul>{% endif %}
+        </li>
+    {% endfor %}
+    </ul>
+    {% endif %}
+    {% if perms.bondecommande.can_add_bondecommande %}
+    <h3>Lier un bon de commande:</h3>
+    {{ form.bondecommande }}
+        <a id='add_id_bondecommande' class="add-another" href="{% url admin:bondecommande_bondecommande_add %}?client={{ form.instance.client.id }}" onclick="return showAddAnotherPopup(this);">
+            <img width="10" height="10" alt="Ajouter un autre" src="{% admin_media_prefix %}img/admin/icon_addlink.gif" />
+        </a>
+    {% endif %}
+</fieldset>
 <hr />
 
 {% endblock content_ticket %}
@@ -178,19 +210,18 @@ var lock_settings = {{ lock_settings|safe }};
     <script type="text/javascript">
         {% if alarm %}
         dojo.addOnLoad(function () {
-                dijit.byId('alarm_dialog').show();
+            dijit.byId('alarm_dialog').show();
         });
         {% endif %}
     </script>
     {% endwith %}
 
-        <button dojoType="dijit.form.Button" iconClass="dijitEditorIcon dijitEditorIconSave" type="submit" name="savebutton" value="save">Enregistrer</button>
-          <button dojoType="dijit.form.Button" iconClass="dijitEditorIcon dijitEditorIconSave" type="submit" name="savebutton" value="new">Enregistrer et ajouter un nouveau</button>
-        <button dojoType="dijit.form.Button" iconClass="dijitEditorIcon dijitEditorIconSave" type="submit" name="savebutton" value="return" class="default">Enregistrer et retourner à la liste</button>
-        {% if perms.ticket.can_add_child %}
-        <button dojoType="dijit.form.Button" iconClass="dijitEditorIcon claritickNewChild" onClick="loadChild('{% url ajax_load_child form.instance.id %}', {% if perms.ticket.add_ticket_full %}true{% else %}false{% endif %}, {{ settings.TICKET_STATE_NEW }}, {{ settings.TICKET_STATE_CLOSED }}, {{ settings.TICKET_STATE_ACTIVE }});" id="button_add_child">Ajouter un fils</button>
-        {% endif %}
-
+    <button dojoType="dijit.form.Button" iconClass="dijitEditorIcon dijitEditorIconSave" type="submit" name="savebutton" value="save">Enregistrer</button>
+      <button dojoType="dijit.form.Button" iconClass="dijitEditorIcon dijitEditorIconSave" type="submit" name="savebutton" value="new">Enregistrer et ajouter un nouveau</button>
+    <button dojoType="dijit.form.Button" iconClass="dijitEditorIcon dijitEditorIconSave" type="submit" name="savebutton" value="return" class="default">Enregistrer et retourner à la liste</button>
+    {% if perms.ticket.can_add_child %}
+    <button dojoType="dijit.form.Button" iconClass="dijitEditorIcon claritickNewChild" onClick="loadChild('{% url ajax_load_child form.instance.id %}', {% if perms.ticket.add_ticket_full %}true{% else %}false{% endif %}, {{ settings.TICKET_STATE_NEW }}, {{ settings.TICKET_STATE_CLOSED }}, {{ settings.TICKET_STATE_ACTIVE }});" id="button_add_child">Ajouter un fils</button>
+    {% endif %}
 
     <div class="right_buttons">
     {% if form.instance.ticketmailtrace_set.count %}

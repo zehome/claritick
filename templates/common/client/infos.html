@@ -24,6 +24,38 @@
     </ul>
 </fieldset>
 
+{% if bondecommandes %}
+<fieldset class="block form">
+    <legend>Mes bons de commande</legend>
+    <table class="exportable resultat">
+        <thead>
+            <tr>
+                <th>N°</th>
+                <th>Date</th>
+                <th>Client</th>
+                <th>Ticket</th>
+                <th>Commentaire</th>
+                <th>Fichiers</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for bdc in bondecommandes %}
+            <tr class="bigrow {% cycle 'row1' 'row2' %}">
+                <td style="font-size: 1.4em; font-weight: bold;">{{ bdc.id }}</td>
+                <td style="font-size: 1.2em;">{{ bdc.date_creation }}</td>
+                <td>{{ bdc.client }}</td>
+                <td{% if bdc.is_closed %} style="text-decoration: line-through"{% endif %}>
+                    {% if bdc.ticket %}<a href="{% url ticket_modify bdc.ticket.id %}">{{ bdc.ticket.id }}</a>{% else %}Aucun ticket{% endif %}
+                </td>
+                <td>{{ bdc.comment }}</td>
+                <td>{% if bdc.bondecommandefile_set.all %}{% for f in bdc.bondecommandefile_set.all %}{{ f }} {% endfor %}{% else %}Aucun fichier{% endif %}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</fieldset>
+{% endif %}
+
 <fieldset class="block form">
     <legend>Mes laboratoires</legend>
     <ul>{% for client in clients %}

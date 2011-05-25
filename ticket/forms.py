@@ -17,6 +17,12 @@ from common.models import UserProfile, ClaritickUser
 from common.utils import filter_form_for_user, filter_ticket_for_user, sort_queryset
 from common.widgets import FilteringSelect
 
+from bondecommande.models import BonDeCommande
+
+class BonDeCommandeModelChoiceField(df.ModelChoiceField):
+    def label_from_instance(self, obj):
+        return u"n°%s pour %s (le %s)" % (obj.id, obj.client, obj.date_creation.strftime("%Y/%m/%d"))
+
 class CustomModelForm(forms.ModelForm):
     def get_exact_id(self):
         prefix = self.prefix + '-' if self.prefix else ''
@@ -41,7 +47,10 @@ class NewTicketForm(CustomModelForm):
     comment = df.CharField(widget=forms.Textarea(attrs={'cols':'80','style':'margin:10px;'}), required=False)
     internal = forms.BooleanField(widget=df.widgets.CheckboxInput(attrs={'onChange': 'modif_ticket(); toggleComment(this);'}), initial=True, required=False)
     appel = forms.BooleanField(label=u"Signaler un (r)appel du client", widget=df.widgets.CheckboxInput(attrs={'onChange': 'modif_ticket();'}), initial=False, required=False)
-
+    bondecommande = BonDeCommandeModelChoiceField(label=u'Bon de commande', 
+        widget=FilteringSelect(attrs={'onChange': 'modif_ticket();', 'style': 'width:400px'}),
+        queryset=BonDeCommande.objects.filter(ticket=None), required=False)
+    
     class Meta:
         model = Ticket
         exclude = ("opened_by", "validated_by", "diffusion", "alarm", )

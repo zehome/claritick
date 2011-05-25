@@ -1,3 +1,4 @@
+{% load adminmedia %}
 <form id="the_{{prefix}}_form" method="post" {% if host.id %} action="{% url modify_host host.id %}" {% endif %} >
   {% csrf_token %}
   <div>
@@ -8,8 +9,8 @@
                 <th>{{ form.site.label_tag }}</th><td class="no_border">{{ form.site }}</td><td class="no_border">{{ form.site.errors }}</td>
                 <td>
                     {% if perms.common.add_client %}
-                    <a id='add_id_{{form.site.name}}' class="add-another" href="/admin/common/client/add" onclick="return showAddAnotherPopup(this);">
-                        <img width="10" height="10" alt="Ajouter un autre" src="/adm_media/img/admin/icon_addlink.gif" />
+                    <a id='add_id_{{form.site.name}}' class="add-another" href="{% url admin:common_client_add %}" onclick="return showAddAnotherPopup(this);">
+                        <img width="10" height="10" alt="Ajouter un autre" src="{% admin_media_prefix %}img/admin/icon_addlink.gif" />
                     </a>{% endif %}
                 </td>
             </tr>
@@ -25,8 +26,8 @@
                 <th>{{ form.os.label_tag }}</th><td class="no_border">{{ form.os }}</td><td class="no_border">{{ form.os.errors }}</td>
                 <td>
                     {% if perms.clariadmin.add_supplier %}
-                    <a id='add_id_{{form.os.name}}' class="add-another" href="/admin/clariadmin/operatingsystem/add" onclick="return showAddAnotherPopup(this);">
-                        <img width="10" height="10" alt="Ajouter un autre" src="/adm_media/img/admin/icon_addlink.gif" />
+                    <a id='add_id_{{form.os.name}}' class="add-another" href="{% url admin:clariadmin_operatingsystem_add %}" onclick="return showAddAnotherPopup(this);">
+                        <img width="10" height="10" alt="Ajouter un autre" src="{% admin_media_prefix %}img/admin/icon_addlink.gif" />
                     </a>{% endif %}
                 </td>
             </tr>
@@ -38,8 +39,8 @@
                 <th>{{ form.supplier.label_tag }}</th><td class="no_border">{{ form.supplier }}</td><td class="no_border">{{ form.supplier.errors }}</td>
                 <td>
                     {% if perms.clariadmin.add_supplier %}
-                    <a id='add_id_{{form.supplier.name}}' class="add-another" href="/admin/clariadmin/supplier/add" onclick="return showAddAnotherPopup(this);">
-                        <img width="10" height="10" alt="Ajouter un autre" src="/adm_media/img/admin/icon_addlink.gif" />
+                    <a id='add_id_{{form.supplier.name}}' class="add-another" href="{% url admin:clariadmin_supplier_add %}" onclick="return showAddAnotherPopup(this);">
+                        <img width="10" height="10" alt="Ajouter un autre" src="{% admin_media_prefix %}img/admin/icon_addlink.gif" />
                     </a>{% endif %}
                 </td>
             </tr>
@@ -51,8 +52,8 @@
                 <th>{{ form.type.label_tag }}</th><td class="no_border">{{ form.type }}</td><td class="no_border">{{ form.type.errors }}</td>
                 <td>
                     {% if perms.clariadmin.add_hosttype %}
-                    <a id='add_id_{{form.type.name}}' class="add-another" href="/admin/clariadmin/hosttype/add" onclick="return showAddAnotherPopup(this);">
-                        <img width="10" height="10" alt="Ajouter un autre" src="/adm_media/img/admin/icon_addlink.gif" />
+                    <a id='add_id_{{form.type.name}}' class="add-another" href="{% url admin:clariadmin_hosttype_add %}" onclick="return showAddAnotherPopup(this);">
+                        <img width="10" height="10" alt="Ajouter un autre" src="{% admin_media_prefix %}img/admin/icon_addlink.gif" />
                     </a>{% endif %}
                 </td>
             </tr>
