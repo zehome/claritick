@@ -137,12 +137,14 @@ INSTALLED_APPS = (
     'debug_toolbar',
     'desktopnotifications',
     'bondecommande',
+    'etiquette_printer',       # Impression d'étiquettes codebarre
 )
 
 COMMENTS_APP = 'ticket_comments'
 
 AUTH_PROFILE_MODULE = 'common.UserProfile'
 LOGIN_REDIRECT_URL = '/'
+LOGIN_URL = '/accounts/login/'
 
 # Paramètres application "comment"
 COMMENTS_HIDE_REMOVED=True
@@ -180,7 +182,7 @@ TICKET_PRIORITY_NORMAL = 2 # pk de la priorité normale
 HOSTS_PER_PAGE = 50
 HOST_DEFAULT_ORDER = '-id'
 
-SUMMARY_TICKETS=15 # Nombre de tickets affich�s sur la page d'accueil
+SUMMARY_TICKETS=15 # Nombre de tickets affichés sur la page d'accueil
 EMAIL_INTERNAL_COMMENTS = False # Ne transmet pas d'email lorsque l'on poste un commentaire interne
 COMMENT_MAX_LENGTH = 65535 * 4
 
@@ -239,4 +241,3 @@ try:
 except ImportError:
     print "Unable to load clariadmin settings."
     raise
-

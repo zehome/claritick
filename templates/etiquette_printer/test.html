@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block title %}
+print from ticket
+{% endblock %}
+{% block extrajs %}
+<script type='text/javascript' charset='utf-8'>
+  dojo.require("dijit.Dialog");
+  var print_dialog;
+  function get_print_dialog()
+  {
+    dojo.xhrGet({
+        url: "{% url etiquette_printer.print %}",
+        handleAs: "text",
+        load: function(data) 
+        {
+            print_dialog = new dijit.Dialog({
+                title: "impression d'etiquette",
+                style: "width: 300px"});
+            print_dialog.set('content', data);
+            dojo.connect(dojo.byId('printer_form'), "onsubmit", function(event) {
+                dojo.stopEvent(event);
+                dojo.xhrPost({
+                    form: dojo.byId('printer_form'),
+                    handleAs: "text",
+                    load: function(post_data) 
+                    {
+                        print_dialog.set('content', post_data);
+                    }
+                });
+            });
+            print_dialog.show();
+        }
+    });
+  }
+</script>
+{% endblock %}
+{% block content %}
+{% endblock %}

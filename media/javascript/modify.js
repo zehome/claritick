@@ -1,3 +1,4 @@
+dojo.require("dijit.Dialog");
 /*
  * Change la classe du node 'id' de 'before_class' à 'after_class'
  * lorsque que l'on est en dessus de 'yoffset' pixels du début de page.
@@ -307,6 +308,50 @@ function load_current_comment(){
         dojo.byId("id_comment").value = c;
         dojo.cookie("current_comment", false, {expires: -1});
     }
+}
+
+var etiquette_print_dialog;
+function get_print_dialog(get_etiquette_form_url, ticket_id)
+{
+    if ( ! etiquette_print_dialog )
+    {
+        etiquette_print_dialog = new dijit.Dialog(
+        {
+            title: "impression d'étiquette",
+            style: "width: 300px"
+        });
+    }
+    
+    etiquette_print_dialog.set("Chargement...");
+    dojo.xhrPost(
+    {
+        url: get_etiquette_form_url,
+        handleAs: "text",
+        load: function(data) 
+        {
+            etiquette_print_dialog.set('content', data);
+            var printer_form = dojo.byId('printer_form');
+            dojo.create("input", {
+                "type": "hidden",
+                "name": "obj_pk",
+                "value": ticket_id
+            }, printer_form, "last");
+            dojo.connect(dojo.byId('printer_form'), "onsubmit", function(event) 
+            {
+                dojo.stopEvent(event);
+                dojo.xhrPost(
+                {
+                    form: printer_form,
+                    handleAs: "text",
+                    load: function(post_data) 
+                    {
+                        etiquette_print_dialog.set('content', post_data);
+                    }
+                });
+            });
+        }
+    });
+    return etiquette_print_dialog;
 }
 
 var locker_fields;

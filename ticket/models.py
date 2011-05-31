@@ -259,7 +259,7 @@ class BaseTicketManager(QuerySetManager):
             "priority", "state", "validated_by", "category", "project", "parent__id",
             "client", "client__coordinates", "client__parent", "client__parent__coordinates", "client__parent__parent")
         return qs
-
+    
 class TicketManager(BaseTicketManager):
     def get_query_set(self):
         qs = super(TicketManager, self).get_query_set()

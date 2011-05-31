@@ -192,13 +192,24 @@ var lock_settings = {{ lock_settings|safe }};
 <div id="save_buttons">
     {% with form.instance.get_current_alarm as alarm %}
     <div class="left_buttons">
-        <div dojoType="dijit.form.Button" id="alarm_button" iconClass="dijitEditorIcon claritick{% if not alarm %}No{% endif %}TicketAlarm" onClick="dijit.byId('alarm_dialog').show();">Alarme</div>
+        <div dojoType="dijit.form.Button" id="alarm_button" 
+            iconClass="dijitEditorIcon claritick{% if not alarm %}No{% endif %}TicketAlarm" 
+            onClick="dijit.byId('alarm_dialog').show();">Alarme</div>
         <div dojoType="dijit.Tooltip" connectId="alarm_button">
             <h3>Alarme</h3>
             <p>En mettant une alarme sur ce ticket, il sera marqué comme urgence.</p>
         </div>
     </div>
-
+    <div class="left_buttons">
+        <div dojoType="dijit.form.Button" id="etiquette_button" 
+            iconClass="dijitEditorIcon claritickEtiquettePrintIcon" 
+            onClick='get_print_dialog("{% url etiquette_printer.print %}", "{{ form.instance.id }}").show();'>Etiquette</div>
+        <div dojoType="dijit.Tooltip" connectId="etiquette_button">
+            <h3>Etiquette</h3>
+            <p>Permet d'imprimer des étiquettes relatives à ce ticket. (Identification de carton, matériel, ...)</p>
+        </div>
+    </div>
+    
     <div dojoType="dijit.Dialog" id="alarm_dialog" title="{{ alarm.title_string|default:"Nouvelle Alarme" }}">
         <label for="id_alarm">Raison </label><br /><textarea rows="12" cols="32" id="id_alarm" name="alarm_reason">{{ alarm.reason }}</textarea>
         <div style="text-align: center;">
@@ -206,7 +217,6 @@ var lock_settings = {{ lock_settings|safe }};
             <button dojoType="dijit.form.Button" onClick="setTicketAlarm('{% url ajax_set_alarm form.instance.id %}');">Valider</button>
         </div>
     </div>
-
     <script type="text/javascript">
         {% if alarm %}
         dojo.addOnLoad(function () {
