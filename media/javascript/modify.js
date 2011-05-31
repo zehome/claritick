@@ -336,7 +336,7 @@ function get_print_dialog(get_etiquette_form_url, ticket_id)
                 "name": "obj_pk",
                 "value": ticket_id
             }, printer_form, "last");
-            dojo.connect(dojo.byId('printer_form'), "onsubmit", function(event) 
+            dojo.connect(printer_form, "onsubmit", function(event) 
             {
                 dojo.stopEvent(event);
                 dojo.xhrPost(
@@ -346,10 +346,12 @@ function get_print_dialog(get_etiquette_form_url, ticket_id)
                     load: function(post_data) 
                     {
                         etiquette_print_dialog.set('content', post_data);
-                    }
+                    },
+                    error: function(error) { console.error("Error: "+error); }
                 });
             });
-        }
+        },
+        error: function(error) { console.error("Error: "+error); }
     });
     return etiquette_print_dialog;
 }
