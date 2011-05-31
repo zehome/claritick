@@ -16,24 +16,33 @@ class PermissionDenied(Exception):
     pass
 
 class PrintOrderForm(df.Form):
-    template = df.ModelChoiceField(queryset=EtiquetteTemplate.objects.all(),
-            widget=MyDojoFilteringSelect(), label=u'Template')
+    template = df.ModelChoiceField(queryset=EtiquetteTemplate.objects.all(), widget=MyDojoFilteringSelect(), empty_label=None, label=u'Template')
     nombre_etiquettes = df.IntegerField(label=u'Nombre d\'étiquettes', initial=1)
+    
+    def __init__(self, *args, **kwargs):
+        app_name = kwargs.pop("app_name", None)
+        model_name = kwargs.pop("model_name", None)
+        if app_name and model_name:
+            qs = self.base_fields["template"].queryset
+            self.base_fields["template"].queryset = qs.filter(app_name=app_name, model_name=model_name)
+        super(PrintOrderForm, self).__init__(*args, **kwargs)
     
     def get_output(self, pk, user):
         assert(self.is_valid())
         try:
             model = db.models.get_model(self.cleaned_data['template'].app_name, self.cleaned_data['template'].model_name)
         except:
+            traceback.print_exc()
             raise PermissionDenied
         
         # LC: Uggly.
-        print pk
         try:
-            instance = model.objects.filter(pk=pk).filter_ticket_by_user(user)[0]
+            instance = model.objects.filter(pk=pk).filter_by_user(user)[0]
         except IndexError:
+            traceback.print_exc()
             raise PermissionDenied("No ticket orresponding.")
         except:
+            traceback.print_exc()
             raise PermissionDenied
         
         tmplt = Template(self.cleaned_data['template'].template)

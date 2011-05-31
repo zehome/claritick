@@ -107,6 +107,12 @@
     <div id="save_buttons">
       {% if host %}<button dojoType="dijit.form.Button" onclick='confirmDialog("Supression de l hote", "Êtes vous sûr de vouloir supprimer cette machine de la base?", confirmation_callback, "the_{{prefix}}_form")'
           iconClass="dijitEditorIcon dijitEditorIconDelete" type="button" value="true" class="default">Suprimer</button>{% endif %}
+        
+        
+      <button dojoType="dijit.form.Button" id="etiquette_button"  type="button"
+              iconClass="dijitEditorIcon claritickEtiquettePrintIcon" 
+              onClick='get_print_dialog("{% url etiquette_printer.print %}", "clariadmin", "Host", "{{ form.instance.id }}").show();'>Etiquette</button>
+        
       <button dojoType="dijit.form.Button" iconClass="dijitEditorIcon dijitEditorIconUndo" type="button" onclick='window.location = ".."'>Retourner à la liste</button>
       <button dojoType="dijit.form.Button" iconClass="dijitEditorIcon dijitEditorIconSave" type="submit" name="submit_button" value="save">Enregistrer</button>
       <button dojoType="dijit.form.Button" iconClass="dijitEditorIcon dijitEditorIconNewPage" type="submit" name="submit_button" value="new">Enregistrer et ajouter un nouveau</button>

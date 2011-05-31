@@ -24,7 +24,7 @@ def user_has_perms_on_client(user, client):
 
 
 def filter_form_for_user(form, user, keywords = ("client", "assigned_to")):
-     if user:
+    if user:
         for key,qs in zip(keywords, [sort_queryset(user.clients), user.childs]):
             if key in form.base_fields:
                 form.base_fields[key].choices = [(x.pk, x) for x in qs]

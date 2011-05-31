@@ -159,7 +159,9 @@ class TicketQuerySet(models.query.QuerySet):
         qs = self.filter(query)
 
         return qs
-
+    filter_by_user = filter_ticket_by_user
+    
+    
     def filter_queryset(self, filters, inverted_filters={}, *args, **kwargs):
         """ Filtre un queryset de ticket a partir d'un dictionnaire de fields lookup. """
         search_mapping = {

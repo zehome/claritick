@@ -6,6 +6,7 @@
 {% endblock %}
 {% block extrajs %}
 <script type="text/javascript" src="{{ MEDIA_URL }}javascript/modify.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}javascript/etiquette.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/DijitRelatedObjectLookups.js"></script>
 {% endblock %}
 
@@ -203,7 +204,7 @@ var lock_settings = {{ lock_settings|safe }};
     <div class="left_buttons">
         <div dojoType="dijit.form.Button" id="etiquette_button" 
             iconClass="dijitEditorIcon claritickEtiquettePrintIcon" 
-            onClick='get_print_dialog("{% url etiquette_printer.print %}", "{{ form.instance.id }}").show();'>Etiquette</div>
+            onClick='get_print_dialog("{% url etiquette_printer.print %}", "ticket", "Ticket", "{{ form.instance.id }}").show();'>Etiquette</div>
         <div dojoType="dijit.Tooltip" connectId="etiquette_button">
             <h3>Etiquette</h3>
             <p>Permet d'imprimer des étiquettes relatives à ce ticket. (Identification de carton, matériel, ...)</p>

@@ -46,7 +46,7 @@ def ajax_print_etiquette(request):
             else:
                 return HttpResponse("<span style=\"color: green\">Impression terminée.</span>") 
     else:
-        form = PrintOrderForm()
+        form = PrintOrderForm(app_name=request.GET.get("app"), model_name=request.GET.get("model"))
     return render(request, "etiquette_printer/ajax_dialog.html", {
         'form': form,
     })
