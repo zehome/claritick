@@ -323,7 +323,7 @@ function get_print_dialog(get_etiquette_form_url, ticket_id)
     }
     
     etiquette_print_dialog.set("Chargement...");
-    dojo.xhrPost(
+    dojo.xhrGet(
     {
         url: get_etiquette_form_url,
         handleAs: "text",
