@@ -201,7 +201,7 @@ var lock_settings = {{ lock_settings|safe }};
             <p>En mettant une alarme sur ce ticket, il sera marqué comme urgence.</p>
         </div>
     </div>
-    {% if perms.print_etiquette.print_etiquettetemplate %}
+    {% if perms.etiquette_printer.print_etiquettetemplate %}
     <div class="left_buttons">
         <div dojoType="dijit.form.Button" id="etiquette_button" 
             iconClass="dijitEditorIcon claritickEtiquettePrintIcon" 
