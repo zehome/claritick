@@ -23,8 +23,7 @@ class PrintOrderForm(df.Form):
         app_name = kwargs.pop("app_name", None)
         model_name = kwargs.pop("model_name", None)
         if app_name and model_name:
-            qs = self.base_fields["template"].queryset
-            self.base_fields["template"].queryset = qs.filter(app_name=app_name, model_name=model_name)
+            self.base_fields["template"].queryset = EtiquetteTemplate.objects.filter(app_name=app_name, model_name=model_name)
         super(PrintOrderForm, self).__init__(*args, **kwargs)
     
     def get_output(self, pk, user):

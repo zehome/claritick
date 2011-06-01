@@ -201,6 +201,7 @@ var lock_settings = {{ lock_settings|safe }};
             <p>En mettant une alarme sur ce ticket, il sera marqué comme urgence.</p>
         </div>
     </div>
+    {% if perms.print_etiquette.print_etiquettetemplate %}
     <div class="left_buttons">
         <div dojoType="dijit.form.Button" id="etiquette_button" 
             iconClass="dijitEditorIcon claritickEtiquettePrintIcon" 
@@ -210,6 +211,7 @@ var lock_settings = {{ lock_settings|safe }};
             <p>Permet d'imprimer des étiquettes relatives à ce ticket. (Identification de carton, matériel, ...)</p>
         </div>
     </div>
+    {% endif %}
     
     <div dojoType="dijit.Dialog" id="alarm_dialog" title="{{ alarm.title_string|default:"Nouvelle Alarme" }}">
         <label for="id_alarm">Raison </label><br /><textarea rows="12" cols="32" id="id_alarm" name="alarm_reason">{{ alarm.reason }}</textarea>
