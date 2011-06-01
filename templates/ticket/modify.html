@@ -144,7 +144,7 @@ var lock_settings = {{ lock_settings|safe }};
     <ul>
     {% for bdc in bondecommandes %}
         <li{% if bdc.is_closed %} style="text-decoration:line-through"{% endif %}>
-            {% if perms.bondecommande.can_change_bondecommande %}
+            {% if perms.bondecommande.change_bondecommande %}
               <a href="{% url admin:bondecommande_bondecommande_change bdc.id %}">{{ bdc }}</a>
             {% else %}
               {{ bdc }}
@@ -158,7 +158,7 @@ var lock_settings = {{ lock_settings|safe }};
     {% endfor %}
     </ul>
     {% endif %}
-    {% if perms.bondecommande.can_add_bondecommande %}
+    {% if perms.bondecommande.add_bondecommande %}
     <h3>Lier un bon de commande:</h3>
     {{ form.bondecommande }}
         <a id='add_id_bondecommande' class="add-another" href="{% url admin:bondecommande_bondecommande_add %}?client={{ form.instance.client.id }}" onclick="return showAddAnotherPopup(this);">
