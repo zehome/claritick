@@ -660,6 +660,7 @@ def ajax_set_alarm(request, ticket_id):
         ret = "Nouvelle Alarme"
     return http.HttpResponse(ret)
 
+@csrf_exempt
 @login_required
 @json_response
 def ajax_load_telephone(request):
