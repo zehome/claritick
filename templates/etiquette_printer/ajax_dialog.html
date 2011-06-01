@@ -1,9 +1,9 @@
 <form method="POST" action='{% url etiquette_printer.print %}' id='printer_form'>
   <input type="hidden" value={{ ticket_id }} name="obj_pk" id="id_ticket">
-  <table>
+  <table class="better">
     {{ form.as_table }}
     <tr><td>
         <button type='submit'>Valider</button>
-      </td></tr>
+    </td></tr>
   </table>
 </form>

@@ -16,7 +16,8 @@ class PermissionDenied(Exception):
     pass
 
 class PrintOrderForm(df.Form):
-    template = df.ModelChoiceField(queryset=EtiquetteTemplate.objects.all(), widget=MyDojoFilteringSelect(), empty_label=None, label=u'Template')
+    template = df.ModelChoiceField(queryset=EtiquetteTemplate.objects.all(), 
+        widget=MyDojoFilteringSelect(attrs={"style": "width: 250px;"}), empty_label=None, label=u'Template')
     nombre_etiquettes = df.IntegerField(label=u'Nombre d\'étiquettes', initial=1)
     
     def __init__(self, *args, **kwargs):

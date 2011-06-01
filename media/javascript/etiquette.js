@@ -6,7 +6,14 @@ function get_print_dialog(get_etiquette_form_url, app, model, object_id)
         etiquette_print_dialog = new dijit.Dialog(
         {
             title: "impression d'étiquette",
-            style: "width: 300px"
+            style: "width: 500px"
+        });
+        dojo.connect(etiquette_print_dialog, 'onkeypress', function (evt) 
+        {
+            key = evt.keyCode;
+            if(key == dojo.keys.ESCAPE) {
+                etiquette_print_dialog.hide();
+            }
         });
     }
     
@@ -38,6 +45,9 @@ function get_print_dialog(get_etiquette_form_url, app, model, object_id)
                     load: function(post_data) 
                     {
                         etiquette_print_dialog.set('content', post_data);
+                        setTimeout(function() {
+                            etiquette_print_dialog.hide();
+                        }, 2000);
                     },
                     error: function(error) { console.error("Error: "+error); }
                 });
