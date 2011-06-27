@@ -380,7 +380,7 @@ div#gauche a:hover {
 /************** div contenu **************/
 #contenu {
     text-align: center;
-    margin-left: 30px;
+    margin-left: 25px;
     margin-bottom: 40px; /* for fixed stuff */
 }
 
@@ -521,7 +521,10 @@ table#menuPrincipal a {
     color: #555;
 }
 
-body.claritick fieldset {
+body.claritick {
+	margin: 0;
+}
+fieldset {
     margin: 5px;
 }
 
