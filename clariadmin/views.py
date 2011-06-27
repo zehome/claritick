@@ -237,7 +237,10 @@ def modify(request, host_id):
     POST = HostForm.filter_querydict(request.user, request.POST)
     host = get_host_or_404(request.user, pk=host_id)
     prefix = str(host_id)
-    template = "clariadmin/ajax_host.html" if request.is_ajax() else "clariadmin/host.html"
+    if request.is_ajax():
+        template = "clariadmin/ajax_host.html"
+    else:
+        template = "clariadmin/host.html"
 
     add_fields = AdditionnalFieldForm(host=host, prefix=prefix)
     if POST:
