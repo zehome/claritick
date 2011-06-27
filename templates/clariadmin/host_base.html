@@ -1,5 +1,5 @@
 {% load adminmedia %}
-<form id="the_{{prefix}}_form" method="post" {% if host.id %} action="{% url modify_host host.id %}" {% endif %} >
+<form id="the_{{ prefix }}_form" method="post" {% if host.id %} action="{% url modify_host host.id %}" {% endif %} >
   {% csrf_token %}
   <div>
     <fieldset style="float:left;">
@@ -9,7 +9,7 @@
                 <th>{{ form.site.label_tag }}</th><td class="no_border">{{ form.site }}</td><td class="no_border">{{ form.site.errors }}</td>
                 <td>
                     {% if perms.common.add_client %}
-                    <a id='add_id_{{form.site.name}}' class="add-another" href="{% url admin:common_client_add %}" onclick="return showAddAnotherPopup(this);">
+                    <a id='add_id_{{ form.site.name }}' class="add-another" href="{% url admin:common_client_add %}" onclick="return showAddAnotherPopup(this);">
                         <img width="10" height="10" alt="Ajouter un autre" src="{% admin_media_prefix %}img/admin/icon_addlink.gif" />
                     </a>{% endif %}
                 </td>
@@ -26,7 +26,7 @@
                 <th>{{ form.os.label_tag }}</th><td class="no_border">{{ form.os }}</td><td class="no_border">{{ form.os.errors }}</td>
                 <td>
                     {% if perms.clariadmin.add_supplier %}
-                    <a id='add_id_{{form.os.name}}' class="add-another" href="{% url admin:clariadmin_operatingsystem_add %}" onclick="return showAddAnotherPopup(this);">
+                    <a id='add_id_{{ form.os.name }}' class="add-another" href="{% url admin:clariadmin_operatingsystem_add %}" onclick="return showAddAnotherPopup(this);">
                         <img width="10" height="10" alt="Ajouter un autre" src="{% admin_media_prefix %}img/admin/icon_addlink.gif" />
                     </a>{% endif %}
                 </td>
@@ -39,7 +39,7 @@
                 <th>{{ form.supplier.label_tag }}</th><td class="no_border">{{ form.supplier }}</td><td class="no_border">{{ form.supplier.errors }}</td>
                 <td>
                     {% if perms.clariadmin.add_supplier %}
-                    <a id='add_id_{{form.supplier.name}}' class="add-another" href="{% url admin:clariadmin_supplier_add %}" onclick="return showAddAnotherPopup(this);">
+                    <a id='add_id_{{ form.supplier.name }}' class="add-another" href="{% url admin:clariadmin_supplier_add %}" onclick="return showAddAnotherPopup(this);">
                         <img width="10" height="10" alt="Ajouter un autre" src="{% admin_media_prefix %}img/admin/icon_addlink.gif" />
                     </a>{% endif %}
                 </td>
@@ -52,7 +52,7 @@
                 <th>{{ form.type.label_tag }}</th><td class="no_border">{{ form.type }}</td><td class="no_border">{{ form.type.errors }}</td>
                 <td>
                     {% if perms.clariadmin.add_hosttype %}
-                    <a id='add_id_{{form.type.name}}' class="add-another" href="{% url admin:clariadmin_hosttype_add %}" onclick="return showAddAnotherPopup(this);">
+                    <a id='add_id_{{ form.type.name }}' class="add-another" href="{% url admin:clariadmin_hosttype_add %}" onclick="return showAddAnotherPopup(this);">
                         <img width="10" height="10" alt="Ajouter un autre" src="{% admin_media_prefix %}img/admin/icon_addlink.gif" />
                     </a>{% endif %}
                 </td>
@@ -83,8 +83,8 @@
             </tr>
         </table>
     </fieldset>
-    <fieldset id="{{prefix}}extra_fieldset"{% if not additionnal_fields.fields %} class="dijitHidden"{% endif %}>
-      <table id="{{prefix}}extra_fields" class="clariadmin_form better">
+    <fieldset id="{{ prefix }}extra_fieldset"{% if not additionnal_fields.fields %} class="dijitHidden"{% endif %}>
+      <table id="{{ prefix }}extra_fields" class="clariadmin_form better">
         {% if additionnal_fields.fields %}
             {{ additionnal_fields }}
         {% else %}
@@ -94,7 +94,7 @@
     </fieldset>
     <hr class="clear" />
     {% if form.commentaire %}
-    <table id="{{prefix}}comment_table" class="clariadmin_form better">
+    <table id="{{ prefix }}comment_table" class="clariadmin_form better">
         <tr>
             <th>{{ form.commentaire.label_tag }}:</th>
             <td>{{ form.commentaire }}</td>
@@ -105,7 +105,7 @@
     <hr />
     {% if not ajax %}
     <div id="save_buttons">
-      {% if host %}<button dojoType="dijit.form.Button" onclick='confirmDialog("Supression de l hote", "Êtes vous sûr de vouloir supprimer cette machine de la base?", confirmation_callback, "the_{{prefix}}_form")'
+      {% if host %}<button dojoType="dijit.form.Button" onclick='confirmDialog("Supression de l hote", "Êtes vous sûr de vouloir supprimer cette machine de la base?", confirmation_callback, "the_{{ prefix }}_form")'
           iconClass="dijitEditorIcon dijitEditorIconDelete" type="button" value="true" class="default">Suprimer</button>{% endif %}
         
       {% if perms.etiquette_printer.print_etiquettetemplate %}
@@ -129,8 +129,8 @@
            iconClass="dijitEditorIcon dijitEditorIconDelete" type="button" value="true" class="default">Suprimer</button>
       <button dojoType="dijit.form.Button" iconClass="dijitEditorIcon dijitEditorIconSave" type="submit" name="submit_button" value="save">Enregistrer</button>
       <div class="right_buttons">
-        <div dojoType="dijit.form.Button" iconClass="dijitEditorIcon claritickTicketMailAction" id="{{prefix}}id_trace_button" onClick="window.location = '{% url list_logs "host" form.instance.id %}';">Historique</div>
-        <div dojoType="dijit.Tooltip" connectId="{{prefix}}id_trace_button">Voir l'historique de cette machine.</div>
+        <div dojoType="dijit.form.Button" iconClass="dijitEditorIcon claritickTicketMailAction" id="{{ prefix }}id_trace_button" onClick="window.location = '{% url list_logs "host" form.instance.id %}';">Historique</div>
+        <div dojoType="dijit.Tooltip" connectId="{{ prefix }}id_trace_button">Voir l'historique de cette machine.</div>
       </div>
     </div>
     {% endif %}
