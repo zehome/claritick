@@ -27,18 +27,18 @@
     dojo.require('dijit.form.MultiSelect');
     dojo.require('dijit.form.CheckBox');
     function handle_data(data){
-      tab = dojo.byId("{{prefix}}extra_fields");
+      tab = dojo.byId("{{ prefix }}extra_fields");
         dojo.forEach(dijit.findWidgets(tab), function(w) {w.destroyRecursive();});
         tab.innerHTML = data;
         dojo.parser.parse(tab);
     }
     dojo.addOnLoad(function(){
-      dojo.connect(dijit.byId("id_{{prefix}}-type"),"onChange",typeChanged);
+      dojo.connect(dijit.byId("id_{{ prefix }}-type"),"onChange",typeChanged);
     });
     function typeChanged(event)
     {
-      dojo.byId("{{prefix}}extra_fieldset").classList.remove("dijitHidden");
-      select_box=dijit.byId("id_{{prefix}}-type");
+      dojo.byId("{{ prefix }}extra_fieldset").classList.remove("dijitHidden");
+      select_box=dijit.byId("id_{{ prefix }}-type");
       dojo.xhrGet({
         url:"{% url clariadmin.views.ajax_extra_fields_form host_type_id=-1 prefix=prefix %}".replace('-1',select_box.item.value?select_box.item.value:-1),
         load: handle_data
