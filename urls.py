@@ -23,6 +23,7 @@ import host_history.urls
 import desktopnotifications.urls
 import bondecommande.urls
 import etiquette_printer.urls
+import qbuilder.urls
 
 # Init code
 admin.autodiscover()
@@ -107,4 +108,7 @@ urlpatterns = patterns('',
 
     ## Impression d'étiquettes
     url(r'^etiquette/', include(etiquette_printer.urls)),
+
+    ## Stats Qbuilder
+    url(r'^qbuilder/', include(qbuilder.urls)),
 )

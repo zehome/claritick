@@ -1,0 +1,59 @@
+<!DOCTYPE html >
+<html>
+<head>
+    <title>Pie Representation-Highcharts QBuilder</title>
+    
+    <script type="text/javascript" src="../../../libraries/jquery-1.6.2.min.js" ></script>
+    <script type="text/javascript" src="../../../libraries/Highcharts/highcharts.js" ></script>
+    <script type="text/javascript" src="../../../libraries/Highcharts/modules/exporting.js" ></script>
+    <script type="text/javascript" src="../../../libraries/Highcharts/themes/gray.js"></script>
+
+    <script type="text/javascript">
+        var chart;
+        $(document).ready(function() {
+        chart = new Highcharts.Chart({
+            chart: {
+                renderTo: 'container',
+                plotBackgroundColor: null,
+                plotBorderWidth: null,
+                plotShadow: true
+        },
+	credits: {
+            text: 'QueryBuilder'
+	},
+        title: {
+            text: 'Nombre total de commande, classer par categorie de produit'
+        },
+        tooltip: {
+            formatter: function() {
+                return '<b>'+ this.point.name +'</b>: '+ this.y +'';
+            }
+        },
+        plotOptions: {
+            pie: {
+                allowPointSelect: true,
+                cursor: 'pointer',
+                dataLabels: {
+                    enabled: true,
+                    color: Highcharts.theme.textColor || '#000000',
+                    connectorColor: Highcharts.theme.textColor || '#000000',
+                    formatter: function() {
+                        return '<b>'+ this.point.name +'</b>: '+ this.y +'';
+                 }
+              }
+           }
+        },
+        series: [{
+            type: 'pie',
+            name: 'Browser share',
+            data: [["stuff", 454], {name: "tool", y: 456, sliced: true, selected: true}, ["toy", 443]]
+            }]
+        });
+     });
+    </script>
+
+</head>
+<body>
+    <div id="container" style="height:410px; margin: 0 2em; min-width: 600px">
+</body>
+</html>

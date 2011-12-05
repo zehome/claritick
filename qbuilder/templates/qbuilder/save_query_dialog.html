@@ -1,0 +1,19 @@
+<label for="new_query_name">Nom :</label>
+<input id="new_query_name" name="new_query_name" dojoType="dijit.form.TextBox"/>
+<hr/>
+<label for="overwrite_query">Remplacer la requête existante :</label>
+<select id="overwrite_query" name="overwrite_query" dojoType="dijit.form.Select">
+    <option value="None"></option>
+{% for qb in existing_queries %}
+    <option value="{{ qb.pk }}">{{ qb.name }}</option>
+{% endfor %}
+</select>
+<hr/>
+<label for="display_for_groups">Afficher pour les groupes :</label><br/>
+<select id="display_for_groups" name="display_for_groups" dojoType="dijit.form.MultiSelect">
+{% for grp in groups %}
+    <option value="{{ grp.pk }}" selected="false">{{ grp.name }}</option>
+{% endfor %}
+</select>
+<hr/>
+<button dojoType="dijit.form.Button" type="submit">OK</button>

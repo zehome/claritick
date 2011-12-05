@@ -1,0 +1,7 @@
+{
+    "whattodo": "count",
+    "model": "Ordering",
+
+    "model_for_grouping_0": "ProductCategory",
+    "field_for_grouping_0": "name"
+}

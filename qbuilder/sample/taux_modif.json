@@ -1,0 +1,9 @@
+{
+  "whattodo": "count",
+  "model": "Ordering",
+
+  "model_for_grouping_0": "OrderingHistory",
+  "field_for_grouping_0": "event_type",
+  "type_for_grouping_0": "any",
+  "value_for_grouping_0": "2"
+}

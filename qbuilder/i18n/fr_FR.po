@@ -1,0 +1,81 @@
+# Query Builder
+# Copyright (C) 2011 Clarisys Informatique
+# Ghislain Leveque <ghislain.leveque@clarisys.fr>, 2011.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Development Version\n"
+"POT-Creation-Date: 2011-09-19 16:06+CEST\n"
+"PO-Revision-Date: 2011-09-19 16:20+0200\n"
+"Last-Translator: Ghislain Leveque <ghislain.leveque@clarisys.fr>\n"
+"Language-Team: Français <>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Generated-By: pygettext.py 1.5\n"
+"Language: fr\n"
+"Plural-Forms: nplurals=2; plural=n>1;\n"
+
+#: constants.py:9
+msgid "Maximum"
+msgstr "Maximum"
+
+#: constants.py:10
+msgid "Minimum"
+msgstr "Minimum"
+
+#: constants.py:11
+msgid "Average"
+msgstr "Moyenne"
+
+#: constants.py:12
+msgid "Median"
+msgstr "Médiane"
+
+#: constants.py:13
+msgid "Variance"
+msgstr "Variance"
+
+#: constants.py:14
+msgid "Standard deviation"
+msgstr "Ecart type"
+
+#: constants.py:15
+msgid "Element count"
+msgstr "Nombre d'éléments"
+
+#: constants.py:16
+msgid "Element count after removing those over percentile"
+msgstr "Nombre d'éléments après percentile"
+
+#: main.py:263 main.py:277
+msgid "Number of %ss"
+msgstr "Nombre de %ss"
+
+#: views.py:42 views.py:127
+msgid "No query with id %s"
+msgstr "Pas de requête portant l'id %s"
+
+#: views.py:44 views.py:129
+msgid "Incorrect parameters for query %s"
+msgstr "Paramètres incorrects pour la requête %s"
+
+#: views.py:111
+msgid "New parameter : name"
+msgstr "Nouveau paramètre : nom"
+
+#: views.py:112
+msgid "New parameter : value"
+msgstr "Nouveau paramètre : valeur"
+
+#: views.py:132
+msgid "No templates with id %s"
+msgstr "Pas de template avec l'id %s"
+
+#: views.py:145
+msgid "Using cached results generated on %s"
+msgstr "Utilisation des résultats générés le %s"
+
+#: views.py:159
+msgid "Grouped by : %s"
+msgstr "Regroupés par : %s"

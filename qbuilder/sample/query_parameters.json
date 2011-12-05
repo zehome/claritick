@@ -1,0 +1,1 @@
+{"whattodo":"count","model":"Product","model_for_filter_0":"ProductCategory","field_for_filter_0":"name","type_for_filter_0":"=","value_for_filter_0":"tool","model_for_grouping_0":"Customer","field_for_grouping_0":"name","limit":500}

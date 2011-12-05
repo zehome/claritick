@@ -1,0 +1,32 @@
+{% extends "tat/base.html" %}
+
+{% load list_tags %}
+
+{% block head_addon %}
+    {{ block.super }}
+    <script type="text/javascript" src="{{ MEDIA_URL }}javascript/gfx.js"></script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}javascript/qbuilder.js"></script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}FusionCharts/FusionCharts.js"></script>
+{% endblock %}
+
+{% block content %}
+    {{ block.super }}
+    {% if indicateur %}
+        <div class="indicateur-tat" id="indicateur-tat-{{ indicateur.pk }}">
+            <span id="indicateur-tat-title-{{ indicateur.pk }}" class="indicateur-tat-title">
+                <a href="{% url tat.views.accueil %}" title="Cliquez ici pour revenir au tableau de bord">{{ indicateur.title }}</a>
+                <a href="{% url tat.views.qbuilder %}?recover={{ indicateur.pk }}" title="Cliquez ici pour modifier cet indicateur">
+                    <img src="{{ MEDIA_URL }}icones/configure.png" class="icon" alt="Configuration"/>
+                </a>
+            </span>
+            <div id="chartdiv_{{ indicateur.pk }}" align="center">Ici</div>
+            <script type="text/javascript">
+                var myChart = new FusionCharts("{{ MEDIA_URL }}FusionCharts/{{ indicateur.swffile }}.swf?ChartNoDataText=Aucune donnée trouvée&PBarLoadingText=Chargement en cours&XMLLoadingText=Chargement en cours&ParsingDataText=Interprétation en cours&RenderingChartText=Rendu en cours&InvalidXMLText=Données invalides", "myChartId_{{ indicateur.pk }}", "100%","80%","0","0");
+                myChart.addParam("WMode", "Transparent");
+                myChart.setDataURL("{% url tat.services.xml_for_query %}?id_query={{ indicateur.pk }}");
+                myChart.render("chartdiv_{{ indicateur.pk }}");
+            </script>
+        </div>
+    {% endif %}
+{% endblock %}
+

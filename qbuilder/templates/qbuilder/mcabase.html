@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block head_addon %}
+    {% block imports_js %}
+    {% endblock %}
+    <script type="text/javascript">
+            {% block qbuilder_functions_js %}
+            {% endblock %}
+            {% block make_chart_js %}
+            {% endblock %}
+    </script>
+    <style>
+        table.qbuilder_homepage td
+            {
+            vertical-align: top;
+            }
+        table.qbuilder_homepage td.qbuilder_graph_container
+            {
+            text-align: right;
+            }
+        li.qbuilder_query_link a.qbuilder_edit_link
+            {
+            display: none;
+            margin-left: 10px;
+            }
+        li.qbuilder_query_link:hover a.qbuilder_edit_link
+            {
+            display: inline;
+            }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <table class="qbuilder_homepage">
+        <tbody>
+            <tr>
+                <td>
+                    <ul>
+                        {% if not full_screen %}
+                        {% for query in queries %}
+                            <li class="qbuilder_query_link"><a href="{% url qbuilder_home query.pk %}">{{ query.name }}</a><a class="qbuilder_edit_link" href="{% url admin:qbuilder_queryparameters_change query.pk %}">edit</a></li>
+                        {% endfor %}
+                        {% endif %}
+                    </ul>
+                </td>
+                <td class="qbuilder_graph_container">
+                    {% block graph_container %}
+                    {% endblock %}
+                </td>
+            </tr>
+        </tbody>
+    </table>
+{% endblock %}

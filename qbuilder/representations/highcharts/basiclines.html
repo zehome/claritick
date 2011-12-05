@@ -1,0 +1,77 @@
+<!DOCTYPE html >
+<html>
+<head>
+    <title>Pie Representation-Highcharts QBuilder</title>
+    
+    <script type="text/javascript" src="../../../libraries/jquery-1.6.2.min.js" ></script>
+    <script type="text/javascript" src="../../../libraries/Highcharts/highcharts.js" ></script>
+    <script type="text/javascript" src="../../../libraries/Highcharts/modules/exporting.js" ></script>
+    <script type="text/javascript" src="../../../libraries/Highcharts/themes/gray.js"></script>
+
+    <script type="text/javascript">
+      var chart;
+      $(document).ready(function() {
+          chart = new Highcharts.Chart({
+              chart: {
+              renderTo: 'container',
+              defaultSeriesType: 'line',
+              marginRight: 130,
+              marginBottom: 25
+          },
+          title: {
+              text: 'Evolution du nombre de commande en fonction du temps, classer par status',
+              x: -20
+          },
+          credits: {
+              text: 'QueryBuilder'
+          },
+          xAxis: {
+              categories: ['01 Jun', '02 Jun', '03 Jun', '04 Jun', '05 Jun',
+                           '06 Jun', '07 Jun', '08 Jun', '09 Jun', '10 Jun',
+                           '11 Jun', '12 Jun', '13 Jun', '14 Jun', '15 Jun',
+                           '16 Jun', '17 Jun', '18 Jun', '19 Jun', '20 Jun',
+                           '21 Jun', '22 Jun', '23 Jun', '24 Jun', '25 Jun',
+                           '26 Jun', '27 Jun', '28 Jun', '29 Jun', '30 Jun']
+          },
+          yAxis: {
+              title: {
+                  text: 'Nombre de commande'
+              },
+              plotLines: [{
+                  value: 0,
+                  width: 1,
+                  color: '#808080'
+              }]
+          },
+          tooltip: {
+              formatter: function() {
+                  return '<b>'+ this.series.name +'</b><br/>'+ this.x +': '+ this.y +'';
+              }
+          },
+          legend: {
+              layout: 'vertical',
+              align: 'right',
+              verticalAlign: 'top',
+              x: -10,
+              y: 100,
+              borderWidth: 0
+          },
+          series: [{
+              name: 'status 0',
+              data: [1, 0, 2, 1, 1, 2, 2, 0, 0, 1, 1, 0, 0, 1, 3, 4, 1, 2, 3, 0, 0, 2, 1, 4, 1, 1, 2, 3, 5, 2]
+          }, {
+              name: 'status 1',
+              data: [3, 2, 1, 3, 3, 1, 1, 0, 0, 3, 3, 2, 0, 3, 3, 4, 0, 1, 3, 0, 0, 1, 3, 0, 3, 3, 1, 3, 0, 1]
+          }, {
+              name: 'status 2',
+              data: [1, 1, 4, 2, 1, 2, 0, 0, 0, 1, 0, 0, 0, 2, 6, 5, 6, 5, 4, 3, 2, 2, 1, 0, 0, 3, 4, 5, 5, 2]
+          }]
+      });
+});
+    </script>
+
+</head>
+<body>
+    <div id="container" style="height:500px; margin: 0 2em; min-width: 600px">
+</body>
+</html>

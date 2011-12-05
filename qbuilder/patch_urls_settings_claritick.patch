@@ -1,0 +1,40 @@
+Index: urls.py
+===================================================================
+--- urls.py	(révision 808)
++++ urls.py	(copie de travail)
+@@ -23,6 +23,7 @@
+ import desktopnotifications.urls
+ import bondecommande.urls
+ import etiquette_printer.urls
++import qbuilder.urls
+ 
+ # Init code
+ admin.autodiscover()
+@@ -107,4 +108,7 @@
+ 
+     ## Impression d'�tiquettes
+     url(r'^etiquette/', include(etiquette_printer.urls)),
++
++    ## Stats Qbuilder
++    url(r'^qbuilder/', include(qbuilder.urls)),
+ )
+Index: settings.py
+===================================================================
+--- settings.py	(révision 808)
++++ settings.py	(copie de travail)
+@@ -111,6 +111,7 @@
+ 
+ TEMPLATE_DIRS = (
+     os.path.join(basepath, 'templates'),
++    os.path.join(basepath, 'qbuilder', 'templates'),
+ )
+ 
+ INSTALLED_APPS = (
+@@ -138,6 +139,7 @@
+     'desktopnotifications',
+     'bondecommande',
+     'etiquette_printer',       # Impression d'étiquettes codebarre
++    'qbuilder',
+ )
+ 
+ COMMENTS_APP = 'ticket_comments'

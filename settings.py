@@ -111,6 +111,7 @@ ROOT_URLCONF = 'claritick.urls'
 
 TEMPLATE_DIRS = (
     os.path.join(basepath, 'templates'),
+    os.path.join(basepath, 'qbuilder', 'templates'),
 )
 
 INSTALLED_APPS = (
@@ -138,6 +139,7 @@ INSTALLED_APPS = (
     'desktopnotifications',
     'bondecommande',
     'etiquette_printer',       # Impression d'étiquettes codebarre
+    'qbuilder',
 )
 
 COMMENTS_APP = 'ticket_comments'

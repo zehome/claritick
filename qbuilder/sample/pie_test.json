@@ -1,0 +1,17 @@
+{
+  "model" : "Ordering",
+  "whattodo": "count",
+
+  "model_for_filter_0":"Ordering",
+  "field_for_filter_0":"create_date",
+  "type_for_filter_0":"date_gt",
+  "value_for_filter_0":"2011-07-01",
+
+  "model_for_filter_1":"Customer",
+  "field_for_filter_1":"name",
+  "type_for_filter_1":"IN",
+  "value_for_filter_1[]":["joe","jim","tom"],
+
+  "model_for_grouping_0":"ProductCategory",
+  "field_for_grouping_0":"name"
+  }
