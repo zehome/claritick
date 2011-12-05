@@ -7,6 +7,7 @@ from django.utils   import simplejson as json
 from django.utils.datastructures import SortedDict
 from django.utils.translation import ugettext as _
 from django import forms
+from django.contrib.auth.decorators import login_required, permission_required
 
 from qbuilder.main import QBuilder
 from qbuilder.models import QueryParameters, QueryResult
@@ -19,103 +20,11 @@ import datetime
 logger = logging.getLogger("qbuilder")
 
 # MAIN VIEWS
+@permission_required("ticket.can_view_qbuilder")
 def home(request):
     context = RequestContext(request)
     context["queries"] = QueryParameters.objects.filter(status__gt = -50).order_by('pk')
     return make_response("base.html", context)
-
-def create(request):
-    context = RequestContext(request)
-    context.update({
-        })
-    return make_response("create.html", context)
-
-def edit(request, query_id):
-    context = RequestContext(request)
-    # Load the query
-    try:
-        query_param = QueryParameters.objects.get(pk = query_id)
-        jsondata = json.loads(query_param.data)
-    except QueryParameters.DoesNotExist:
-        return make_response("error.html", {"message" : _(u"No query with id %s") % (query_id,)})
-    except ValueError:
-        return make_response("error.html", {"message" : _(u"Incorrect parameters for query %s") % (query_id,)})
-    # First, commit the edits if any:
-    if request.method == "POST":
-        for k, v in request.POST.iteritems():
-            if k == 'new_parameter_name' and v:
-                jsondata.update({v:request.POST.get('new_parameter_value','')})
-                continue
-            if k == "new_parameter_value": # On n'enregistre pas ce parametre dans data
-                continue
-            if '^' in v:
-                v = v.split('^')
-            updating_dict = {}
-            jsondata.update({k:v})
-        # Commit this to the BDD
-        query_param.data = json.dumps(jsondata)
-        QueryResult.objects.filter(query__pk = query_id).delete()
-        query_param.save()
-    # For each param of the query, build a form field
-    form_fields = SortedDict()
-    filter_parameters = {}
-    grouping_parameters = {}
-    # Start by taking only the "non filter" and "non grouping" fields
-    # On this first pass, we also put filters and groupings in a custom hashing
-    for k, v in jsondata.iteritems():
-        index = k.split('_')[-1]
-        if k.startswith('model_for_filter') or\
-             k.startswith('field_for_filter') or\
-             k.startswith('type_for_filter'):
-            filter_parameters.setdefault(int(index), {}).update({k:v})
-        elif k.startswith('value_for_filter'):
-            if index.endswith('[]'):
-                index = index[:-2]
-            filter_parameters.setdefault(int(index), {}).update({k:v})
-        elif k.startswith('model_for_grouping') or\
-             k.startswith('field_for_grouping') or\
-             k.startswith('type_for_grouping'):
-            grouping_parameters.setdefault(0, {}).update({k:v})
-        elif k.startswith('value_for_grouping'):
-            if index.endswith('[]'):
-                index = index[:-2]
-            grouping_parameters.setdefault(int(index), {}).update({k:v})
-        else:
-            if isinstance(v, (list, tuple)):
-                v = '^'.join([unicode(x) for x in v])
-            form_fields[k] = forms.CharField(initial = v)
-    # Then filters
-    filters = filter_parameters.keys()
-    filters.sort()
-    for i in filters:
-        form_fields['model_for_filter_%d' % (i,)] = forms.CharField(initial = filter_parameters[i]['model_for_filter_%d' % (i,)])
-        form_fields['field_for_filter_%d' % (i,)] = forms.CharField(initial = filter_parameters[i].get('field_for_filter_%d' % (i,), ''))
-        form_fields['type_for_filter_%d' % (i,)] = forms.CharField(initial = filter_parameters[i].get('type_for_filter_%d' % (i,), ''))
-        if 'value_for_filter_%d[]' % (i,) in filter_parameters[i]:
-            form_fields['value_for_filter_%d[]' % (i,)] = forms.CharField(initial = '^'.join(filter_parameters[i]['value_for_filter_%d[]' % (i,)]))
-        else:
-            form_fields['value_for_filter_%d' % (i,)] = forms.CharField(initial = filter_parameters[i].get('value_for_filter_%d' % (i,), ''))
-    # And finally groupings
-    groupings = grouping_parameters.keys()
-    groupings.sort()
-    for i in groupings:
-        form_fields['model_for_grouping_%d' % (i,)] = forms.CharField(initial = grouping_parameters[i]['model_for_grouping_%d' % (i,)])
-        form_fields['field_for_grouping_%d' % (i,)] = forms.CharField(initial = grouping_parameters[i].get('field_for_grouping_%d' % (i,), ''))
-        if 'type_for_grouping_%d' % (i,) in grouping_parameters[i]:
-            form_fields['type_for_grouping_%d' % (i,)] = forms.CharField(initial = grouping_parameters[i]['type_for_grouping_%d' % (i,)])
-            if 'value_for_grouping_%d[]' % (i,) in grouping_parameters[i]:
-                form_fields['value_for_grouping_%d[]' % (i,)] = forms.CharField(initial = '^'.join(grouping_parameters[i]['value_for_grouping_%d[]' % (i,)]))
-            else:
-                form_fields['value_for_grouping_%d' % (i,)] = forms.CharField(initial = grouping_parameters[i].get('value_for_grouping_%d' % (i,), ''))
-    # Add an empty "free" field
-    form_fields["new_parameter_name"] = forms.CharField(label = _(u"New parameter : name"))
-    form_fields["new_parameter_value"] = forms.CharField(label = _(u"New parameter : value"))
-    # Create a dynamic form class
-    formclass = type("EditQbuilderQuery", (forms.Form,), form_fields)
-    # Use this form
-    context["form"] = formclass()
-    context["query"] = query_param
-    return make_response("edit.html", context)
 
 # "Query Builder" VIEWS
 def prepare_charts(graph_data, query_id):
@@ -205,6 +114,7 @@ def prepare_charts(graph_data, query_id):
         )
     return graph_data
 
+@permission_required("ticket.can_view_qbuilder")
 def views_highcharts(request, query_ids):
     liste_id = query_ids.split(',')
     context = RequestContext(request)
@@ -221,14 +131,6 @@ def views_highcharts(request, query_ids):
     prepare_charts(context, liste_id[0])
 
     return make_response("base.html", context)
-
-def vue_test(request):  # VUE TEST
-    context = RequestContext(request)
-    context.update(get_context())
-    return make_response('vue_test.html',
-            {
-            },
-            context_instance = context)
 
 # HELPERS
 def get_context(jsonfilename = None, jsondata = None):

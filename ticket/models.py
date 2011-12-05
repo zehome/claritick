@@ -287,6 +287,7 @@ class Ticket(models.Model):
             ("can_validate_ticket", u"Peut valider un ticket"),
             ("can_add_child", u"Peut créer un ticket fils"),
             ("can_view_internal_comments", u"Peut voir les commentaires internes"),
+            ("can_view_qbuilder", u"Peut voir le Query Builder"),
         )
 
 

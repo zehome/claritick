@@ -1,3 +1,6 @@
+r810
+    qbuilder/claritick_qbuilder.sql
+    - syncdb
 r707
     - syncdb
     //!\\ Attention, les deux requêtes UPDATE n'ont pas été testées.
