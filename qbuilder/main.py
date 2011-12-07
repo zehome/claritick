@@ -661,7 +661,7 @@ class QBuilder(object):
         # TODO : find a smart ordering algo
         order_columns = range(3, len(self.query.column_descriptions)+1)
         order_columns.append(2)
-        self.query = self.query.order_by(*order_columns)
+        self.query = self.query.order_by(*[str(oc) for oc in order_columns])
         self.save_query()
         self.logger.debug("Built Query : %s", str(debug_inline_params(self.query)))
         return self.query
