@@ -10,14 +10,34 @@
             {% endblock %}
     </script>
     <style>
+        table.qbuilder_homepage
+        {
+            width: 99%;
+        }
         table.qbuilder_homepage td
             {
             vertical-align: top;
             }
+        ul, li
+        {
+            margin: 0;
+            padding-left: 15px;
+            list-style-type: none;
+            text-align: left;
+        }
+        li {
+            list-style-type: circle;
+            border-bottom: 1px solid grey;
+            margin-bottom: 5px !important;
+            font-size: 1em !important;
+        }
         table.qbuilder_homepage td.qbuilder_graph_container
             {
             text-align: right;
             }
+        div#container {
+            margin: 2px !important;
+        }
         li.qbuilder_query_link a.qbuilder_edit_link
             {
             display: none;
@@ -34,7 +54,7 @@
     <table class="qbuilder_homepage">
         <tbody>
             <tr>
-                <td>
+                <td style="min-width: 220px; width: 220px;">
                     <ul>
                         {% if not full_screen %}
                         {% for query in queries %}
