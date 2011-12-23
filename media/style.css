@@ -13,6 +13,13 @@ body { font-family:"Lucida Grande","DejaVu Sans","Bitstream Vera Sans",Verdana,A
     color:#333;
 }
 
+.clear {
+    clear:both; 
+    visibility:hidden;
+    margin:0;
+    padding:0;
+}
+
 img {
     border: 0;
 }
@@ -52,10 +59,6 @@ h2 {
 ul li {
     padding: 0;
     margin: 0;
-}
-
-#contenu ul li {
-    font-size: 1.4em;
 }
 
 table {
@@ -162,6 +165,11 @@ table#menuPrincipal{
 
 .claritick #contenu input[type="text"] {
     height: 14px;
+}
+
+/* fix bordure à l'intérieur des inputs (surcharge de base.css de django admin) */
+input[class^="dijit"] {
+    border: 0;
 }
 
 /* Anti dojango width: 15em; */
@@ -385,7 +393,7 @@ div#gauche a:hover {
 }
 
 #contenu p {
-    font-size: 1.3em;
+    font-size: 13px;
 }
 
 #contenu h1 img {
@@ -443,7 +451,7 @@ div#gauche a:hover {
 }
 
 #contenu fieldset {
-    margin-bottom: 20px;
+    margin-bottom: 10px;
 }
 
 #contenu fieldset p label {
@@ -453,7 +461,7 @@ div#gauche a:hover {
 #contenu fieldset legend {
     white-space: normal;
     font-weight: bold;
-    font-size: 2em;
+    font-size: 18px;
     color: #777;
 }
 
@@ -474,7 +482,7 @@ div#gauche a:hover {
 }
 
 #contenu textarea, #contenu input {
-    font-size: 1.3em;
+    font-size: 13px;
 }
 #contenu input {
     height: 1.3em !important;
@@ -503,6 +511,9 @@ div#contenu.admin input {
     padding-top: 15px;
     border: 1px solid #999;
     /*background-color: #dedede;*/
+}
+fieldset.block, fieldset.inline {
+    padding-top:0;
 }
 
 .inline div {
@@ -599,41 +610,147 @@ div#contenu .selector select {
     width: 500px;
 }
 
-.comment_table {
-    width: 100%;
-}
+/*** COMMENTAIRES TICKETS ***/
 
-.comment_table td {
-    vertical-align: top !important;
-    width: 48%;
-}
-
-.comment_table th {
-    font-size: 2em;
+h2.comment-title {
+    white-space: normal;
     font-weight: bold;
-    color: black;
-    text-align: center;
+    font-size: 20px;
+    color: #777;
+    margin-top: 0;
+    margin-bottom: 10px;
 }
+
+.comments-list {
+    text-align: left;
+    padding: 5px;
+    padding-top: 15px;
+}
+
+.comment_table {
+    width: 95%;
+    margin: auto auto;
+}
+
+.bubble {
+    margin: 0 0 8px;
+    background-color: #ddd;
+    border-radius: 4px;
+    width: 99%;
+    padding:3px;
+    position:relative;
+    float: left;
+}
+
+.comment {
+    border: 1px solid #ccc;
+}
+
 .comment h3 {
+    height: 28px;
+    line-height: 28px;
     padding: 0;
     margin: 0;
-    margin-top: 15px;
     font-weight: normal;
     vertical-align: top;
-    background-color: white;
+    text-shadow: 0 1px 0 rgba(255,255,255,0.8);
+    
+    border-bottom: 1px solid #ccc;
+
+    background-color: #e1e1e1;
+    background-repeat: repeat-x;
+    background-image: -khtml-gradient(linear, left top, left bottom, from(#f1f1f1), to(#e1e1e1)); /* Konqueror */
+    background-image: -moz-linear-gradient(top, #f1f1f1, #e1e1e1); /* FF 3.6+ */
+    background-image: -ms-linear-gradient(top, #f1f1f1, #e1e1e1); /* IE10 */
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #fff), color-stop(100%, #e1e1e1)); /* Safari 4+, Chrome 2+ */
+    background-image: -webkit-linear-gradient(top, #f1f1f1, #e1e1e1); /* Safari 5.1+, Chrome 10+ */
+    background-image: -o-linear-gradient(top, #f1f1f1, #e1e1e1); /* Opera 11.10 */
+    background-image: linear-gradient(top, #f1f1f1, #e1e1e1); /* The standard */
+    filter: e(%("progid:DXImageTransform.Microsoft.gradient(startColorstr='%d', endColorstr='%d', GradientType=0)",#f1f1f1,#e1e1e1)); /* IE9 and down */
+
+    -webkit-box-shadow: inset 0 1px 0 rgba(255,255,255,0.25);
+    -moz-box-shadow: inset 0 1px 0 rgba(255,255,255,0.25);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.25);
+}
+
+.bubble.interne .comment h3 {
+    color: #404040;
+    background-color: #f5eac1;
+    background-repeat: repeat-x;
+    background-image: -khtml-gradient(linear, left top, left bottom, from(#faf3de), to(#f5eac1)); /* Konqueror */
+    background-image: -moz-linear-gradient(top, #faf3de, #f5eac1); /* FF 3.6+ */
+    background-image: -ms-linear-gradient(top, #faf3de, #f5eac1); /* IE10 */
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #fff), color-stop(100%, #f5eac1)); /* Safari 4+, Chrome 2+ */
+    background-image: -webkit-linear-gradient(top, #faf3de, #f5eac1); /* Safari 5.1+, Chrome 10+ */
+    background-image: -o-linear-gradient(top, #faf3de, #f5eac1); /* Opera 11.10 */
+    background-image: linear-gradient(top, #faf3de, #f5eac1); /* The standard */
+    filter: e(%("progid:DXImageTransform.Microsoft.gradient(startColorstr='%d', endColorstr='%d', GradientType=0)",#faf3de,#f5eac1)); /* IE9 and down */
+}
+
+.bubble.public .comment h3 {
+    color: #404040;
+    background-color: #bcddff;
+    background-repeat: repeat-x;
+    background-image: -khtml-gradient(linear, left top, left bottom, from(#deeeff), to(#bcddff)); /* Konqueror */
+    background-image: -moz-linear-gradient(top, #deeeff, #bcddff); /* FF 3.6+ */
+    background-image: -ms-linear-gradient(top, #deeeff, #bcddff); /* IE10 */
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #fff), color-stop(100%, #bcddff)); /* Safari 4+, Chrome 2+ */
+    background-image: -webkit-linear-gradient(top, #deeeff, #bcddff); /* Safari 5.1+, Chrome 10+ */
+    background-image: -o-linear-gradient(top, #deeeff, #bcddff); /* Opera 11.10 */
+    background-image: linear-gradient(top, #deeeff, #bcddff); /* The standard */
+    filter: e(%("progid:DXImageTransform.Microsoft.gradient(startColorstr='%d', endColorstr='%d', GradientType=0)",#deeeff,#bcddff)); /* IE9 and down */
+}
+
+.comment h3 .bubble-icon {
+    display: block;
+    float: left;
+    width: 24px;
+    text-align: center;
+    padding:0 1px 0 5px;
+}
+
+.comment h3 .bubble-icon img {
+    margin-top: 3px;
+    width: 20px;
+}
+
+.comment h3 .author {
+    font-weight: bold;
+    font-size: 12px;
+    float:left;
+    margin-left: 5px;
+}
+
+.comment h3 .author span {
+    font-weight: normal;
+    font-style: italic;
+    font-size: 10px;
+}
+
+.comment h3 .info {
+    color: #666;
+    font-size: 11px;
+    float:right;
+    margin-right: 5px;
 }
 
 .comment pre {
     margin: 0;
-    background-color: #efefef;
+    background-color: #fbfbfb;
     border: 0;
-    padding: 2px;
-    border-top: 1px solid black;
-    margin-bottom: 5px;
+    padding: 6px;
     color: black;
-    line-height: 25px;
     font-family: monospace !important;
     white-space: normal;
+
+    word-wrap: break-word;
+    display: block;
+    min-height: 50px;
+}
+
+#contenu .comment pre p {
+    font-size:13px;
+    line-height: 16px;
 }
 
 .comment p.row1 {
@@ -643,6 +760,7 @@ div#contenu .selector select {
     background-color: #eeffff;
 }
 
+/*** PAGINATION ***/
 
 ol#pagination-digg {
     text-align: center;
@@ -764,7 +882,7 @@ ol#pagination-digg {
 }
 
 #contenu .child legend {
-    font-size: 1.5em;
+    font-size: 16px;
 }
 
 #contenu .child legend img {
@@ -865,8 +983,3 @@ td.original p {
 	font-size: 1em !important;
 	position: relative !important;
 }
-
-#contenu ul li ul li {
-	font-size: 1em;
-}
-

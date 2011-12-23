@@ -1,59 +1,56 @@
 {% load filters %}
 
 {% if form_to_comment.instance.comment %}
-<table class="comment_table">
-  <thead>
-    <tr>
-        {% if perms.ticket.can_view_internal_comments %}<th style="width:48%">Interne</th>{% endif %}
-        <th style="width:48%">Diffusé au client</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        {% if perms.ticket.can_view_internal_comments %}
-        <td>
-            {% for comment in form_to_comment.instance.comment %}{% if comment.internal %}
+<div class="comment_table">
+    {% for comment in form_to_comment.instance.comment %}
+        {% if comment.internal and perms.ticket.can_view_internal_comments or not comment.internal %}
+            <div class="bubble {% if comment.internal %}interne{% else %}public{% endif %}">
                 <div class="comment">
-                    <h3><b>{{ comment.user.first_name }} {{ comment.user.last_name }}</b> ({{ comment.user_name }})&nbsp;<i>Le {{ comment.submit_date|date:'d/m/Y à H\hi' }}</i></h3>
-                    <pre class="{% cycle 'row1' 'row2' %}">{{ comment.comment|linebreaks|wordwrap:80 }}</pre>
+                    <h3>
+                        {% if comment.internal %}
+                            <div class="bubble-icon interne">
+                                <img src="{{ MEDIA_URL }}images/sign.png" alt="commentaire_interne" title="commentaire interne" />
+                            </div>
+                        {% endif %}
+                        {% if not comment.internal %}
+                            <div class="bubble-icon public">
+                                <img src="{{ MEDIA_URL }}images/users.png" alt="commentaire_public" title="commentaire public" />
+                            </div>
+                        {% endif %}
+                        <div class="author">{{ comment.user.first_name }} {{ comment.user.last_name }} <span>({{ comment.user_name }})</span></div>
+                        <div class="info">Le {{ comment.submit_date|date:'d/m/Y à H\hi' }}</div>
+                        <div class="clear"></div>
+                    </h3>
+                    <pre>{{ comment.comment|linebreaks|wordwrap:80 }}</pre>
                 </div>
-            {% endif %}{% endfor %}
-        </td>
+            </div>
+            <div class="clear"></div>
         {% endif %}
-
-        <td>
-            {% for comment in form_to_comment.instance.comment %}{% if not comment.internal %}
-                <div class="comment">
-                    <h3><b>{{ comment.user.first_name }} {{ comment.user.last_name }}</b> ({{ comment.user_name }})&nbsp;<i>Le {{ comment.submit_date|date:'d/m/Y à H\hi' }}</i></h3>
-                    <pre class="{% cycle 'row1' 'row2' %}">{{ comment.comment|linebreaks|wordwrap:80 }}</pre>
-                </div>
-            {% endif %}{% endfor %}
-        </td>
-
-      </tr>
-    </tbody>
-</table>
+    {% endfor %}
+</div>
 {% else %}
 <p>Aucune réponse.</p>
 {% endif %}
-
 {% block comment_form %}
+  <fieldset class="block form" style="padding: 0;">
+    <legend>Nouvelle réponse</legend>
     <div class="no_print">
-      <p>Nouvelle réponse:<br/> {{ form_to_comment.comment }}</p>
+        {{ form_to_comment.comment }}
         {% if perms.ticket.can_view_internal_comments %}
         <div dojoType="dijit.Tooltip" connectId="{{ form_to_comment.get_exact_id|interpret:"comment" }}" position="after" id="{{ form_to_comment.get_exact_id|interpret:"internal"}}-tooltip">
-            <div style="display: none;">
-                <img src="{{ MEDIA_URL }}images/oxygen/comment_public.png" alt="commentaire_public" />
+            <div style="display: none; width:200px;">
+                <img src="{{ MEDIA_URL }}images/oxygen/comment_public.png" alt="commentaire_public" style="width:64px;display:block;float:left;padding-right:10px;" />
                 <p>Attention, la réponse sera transmise au client final</p>
             </div>
-            <div>
-                <img src="{{ MEDIA_URL }}images/oxygen/comment_internal.png" alt="commentaire_interne" />
+            <div style="width:200px;">
+                <img src="{{ MEDIA_URL }}images/oxygen/comment_internal.png" alt="commentaire_interne" style="width:64px;display:block;float:left;padding-right:10px;" />
                 <p>La réponse sera conservée en interne</p>
             </div>
         </div>
         <p>{{ form_to_comment.internal }}<span id="checkbox_internal_comment"> Commentaire <b>Interne</b> (Si cette case est cochée, la réponse ne sera pas transmise au client final)</span></p>
         {% endif %}
     </div>
+  </fieldset>
 {% endblock comment_form %}
 
 <script type="text/javascript">
@@ -65,5 +62,45 @@ dojo.addOnLoad( function()
         var w = dijit.byId("id_internal");
         w.set("checked", !w.checked);
     });
+
+    var toggleDuration = 400;
+    var toggleButton = new dijit.form.ToggleButton({
+        showLabel: true,
+        checked: true,
+        onChange: function(val){
+            if (val == true) {
+                console.log("value = true");
+                dojo.query(".bubble.interne").forEach(function(tr){
+                    dojo.fx.combine([
+                        dojo.fadeIn({
+                            node: tr,
+                            duration: toggleDuration
+                        }),
+                        dojo.fx.wipeIn({
+                            node: tr,
+                            duration: toggleDuration
+                        }),
+                    ]).play();
+                });
+            } else {
+                console.log("value = false");
+                dojo.query(".bubble.interne").forEach(function(tr){
+                    dojo.fx.combine([
+                        dojo.fadeOut({
+                            node: tr,
+                            duration: toggleDuration
+                        }),
+                        dojo.fx.wipeOut({
+                            node: tr,
+                            duration: toggleDuration
+                        }),
+                    ]).play();
+                });
+            }
+        },
+        label: "Afficher commentaires internes",
+        iconClass: "dijitCheckBoxIcon"
+    },
+    "showInternalButton");
 });
 </script>

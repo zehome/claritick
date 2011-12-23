@@ -35,7 +35,7 @@ var lock_url = '{% url lock_ajax_lock form.instance.id %}?model=ticket.Ticket&la
 var lock_settings = {{ lock_settings|safe }};
 </script>
 
-<fieldset class="block form">
+<fieldset class="block form" style="width: 65%; float: left;">
   <legend>Contact</legend>
   <table>
     <tr>
@@ -71,6 +71,21 @@ var lock_settings = {{ lock_settings|safe }};
   </table>
 </fieldset>
 
+<fieldset class="block form no_print" style="width: 30%; float: left; margin-left: 10px;">
+    <legend>Appels du client</legend>
+    {% with form.instance.ticketappel_set.all as appels %}
+    {% if appels %}
+    <ul>
+        {% for a in appels %}
+        <li>Le {{ a.date|date:"d/m/Y à H:i" }} par {{ a.user.username }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    {% endwith %}
+    <div>{{ form.appel }} {{ form.appel.label_tag }}</div>
+</fieldset>
+<div class="clear"></div>
+
 <fieldset class="block form print_content">
   <legend>Contenu</legend>
   <table class="print_title">
@@ -90,25 +105,17 @@ var lock_settings = {{ lock_settings|safe }};
 </fieldset>
 
 {% with form as form_to_comment %}
-<fieldset class="block form" style="padding: 0;">
-  <legend>Réponses</legend>
-{% include "ticket/comment.html" %}
-</fieldset>
+<h2 class="comment-title" style="float:left;">Réponses</h2>
+{% if perms.ticket.can_view_internal_comments %}
+<div style="float:left; padding-left: 10px;">
+    <button id="showInternalButton">Afficher commentaires internes</button>
+</div>
+{% endif %}
+<div class="clear"></div>
+<div class="comments-list" style="padding: 0;">
+    {% include "ticket/comment.html" %}
+</div>
 {% endwith %}
-
-<fieldset class="block form no_print">
-    <legend>Appels du client</legend>
-    {% with form.instance.ticketappel_set.all as appels %}
-    {% if appels %}
-    <ul>
-        {% for a in appels %}
-        <li>Le {{ a.date|date:"d/m/Y à H:i" }} par {{ a.user.username }}</li>
-        {% endfor %}
-    </ul>
-    {% endif %}
-    {% endwith %}
-    <div>{{ form.appel }} {{ form.appel.label_tag }}</div>
-</fieldset>
 
 <fieldset class="block form no_print">
   <legend>Planification</legend>
