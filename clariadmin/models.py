@@ -202,7 +202,29 @@ class Host(models.Model):
 
     def available_for(self, user):
         return (self.site in user.clients)
+    
+    def is_last_iplog_thesame(self):
+        """Returns if the last iplog has the same ip address"""
+        try:
+            return self.hostiplog_set.all().order_by("-date")[0].log_ip == self.ip
+        except (TypeError, ValueError):
+            return False
 
+class HostIPLog(models.Model):
+    class Meta:
+        verbose_name = u"Dernières adresses IP connues"
+        ordering = ("-date",)
+    
+    def __unicode__(self):
+        return u"%s %s %s" % (self.host, self.log_ip, self.date)
+    
+    date = models.DateTimeField(u"Date", auto_now_add=True, auto_now=True)
+    # If serial not matched...
+    host = models.ForeignKey(Host, verbose_name=u"Machine", null=True, blank=True)
+    
+    log_ip = models.CharField(u"Adresse IP", max_length=128)
+    log_hostname = models.CharField(u"Hostname", max_length=128)
+    log_queryfrom = models.CharField(u"QueryFrom", max_length=128)
 
 class ParamAdditionnalField(models.Model):
 

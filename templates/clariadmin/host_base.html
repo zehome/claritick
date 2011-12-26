@@ -19,8 +19,17 @@
                 <td></td>
             </tr>
             <tr>
-                <th>{{ form.ip.label_tag }}</th><td class="no_border">{{ form.ip }}</td><td class="no_border">{{ form.ip.errors }}</td>
-                <td></td>
+                <th>{{ form.ip.label_tag }}</th>
+                <td class="no_border">{{ form.ip }}</td><td class="no_border">{{ form.ip.errors }}</td>
+                <td>
+                    {% if host.id %}
+                        {% if host.is_last_iplog_thesame %}
+                        <img src="{{ MEDIA_URL }}images/oxygen/ok.png" alt="OK" />
+                        {% else %}
+                        <img src="{{ MEDIA_URL }}images/oxygen/cancel.png" alt="Not OK" />
+                        {% endif %}
+                    {% endif %}
+                </td>
             </tr>
             <tr>
                 <th>{{ form.os.label_tag }}</th><td class="no_border">{{ form.os }}</td><td class="no_border">{{ form.os.errors }}</td>
@@ -101,6 +110,30 @@
             {% if form.commentaire.errors %}<td>{{ form.commentaire.errors }}</td>{% endif %}
         </tr>
     </table>
+    {% endif %}
+    <hr />
+    {% if host.id %}
+    {% if not host.hostiplog_set.all %}
+        <h2>Aucun log IP disponible.</h2>
+    {% else %}
+    <fieldset class="block form">
+        <legend>Host IP Log (dernières adresses IP connues)</legend>
+        <table class="resultat">
+            <thead>
+            <tr>
+                <th>Date</th><th>IP</th><th>Hostname</th><th>Envoyé par</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr class="{% cycle 'row1' 'row2' %}">
+            {% for iplog in host.hostiplog_set.all %}
+                <td>{{ iplog.date }}</td><td>{{ iplog.log_ip }}</td><td>{{ iplog.log_hostname }}</td><td>{{ iplog.log_queryfrom }}</td>
+            {% endfor %}
+            </tr>
+            </tbody>
+        </table>
+    </fieldset>
+    {% endif %}
     {% endif %}
     <hr />
     {% if not ajax %}

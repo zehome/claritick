@@ -238,6 +238,9 @@ except ImportError:
 PROFILE_MIDDLEWARE_SORT = ('time', 'calls')
 #PROFILE_MIDDLEWARE_STRIP_DIRS=True
 
+# Clariadmin / softupdate key
+SOFTUPDATE_KEY="engee4keiShequ1YiuRieyaejohcohjae9naefeisie2eenaeliequahshaShaed"
+
 try:
     from clariadmin.settings import SECURITY
 except ImportError:

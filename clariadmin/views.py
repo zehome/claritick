@@ -6,8 +6,10 @@ from django.contrib.auth.decorators import permission_required
 from django.conf import settings
 from django.http import HttpResponse, Http404
 from django.db.models import Q
+from django.views.decorators.csrf import csrf_exempt
+from django.core.exceptions import PermissionDenied
 
-from clariadmin.models import Host, HostType
+from clariadmin.models import Host, HostType, HostIPLog
 from clariadmin.forms import HostForm, SearchHostForm, AdditionnalFieldForm
 from common.diggpaginator import DiggPaginator
 from operator import ior
@@ -282,3 +284,68 @@ def ajax_extra_fields_form(request, host_type_id, prefix="", blank=False):
         return HttpResponse("<tr></tr>")
     form = AdditionnalFieldForm(host_type=host_type, blank=bool(blank), prefix=prefix)
     return HttpResponse(form.as_table())
+
+@csrf_exempt
+def softupdate_ip(request, ipaddress):
+    """
+    This view is used for a "host" to self modify his
+    ip address (in HostIPLog).
+    
+    The HostIPLog is used for security reasons in order not to
+    give public write access to Host.
+    """
+    
+    softupdate_key = settings.SOFTUPDATE_KEY
+    if request.POST.get("key", "invalid_key") != softupdate_key:
+        raise PermissionDenied()
+    
+    # LC: UGGLY and not "portable"
+    STATUS_EN_SERVICE='En service'
+    
+    def noanswer(reason=""):
+        message = """Modification impossible.\n"""
+        if reason and settings.DEBUG:
+            message += """%s\n""" % (reason,)
+        return HttpResponse(message, content_type="plain/text")
+    
+    serial = request.POST.get("serial", None)
+    hostname = request.POST.get("hostname", None)
+    
+    host = None
+    errmsgs = []
+    
+    if serial:
+        hosts = Host.objects.filter(serial=serial, status__description=STATUS_EN_SERVICE)
+        if len(hosts) == 1:
+            host = hosts[0]
+        elif len(hosts) > 1:
+            for h in hosts:
+                if h.ip == ipaddress:
+                    host = h
+                    break
+        
+        if not host:
+            errmsgs.append("Le host serial=%s est introuvable." % (serial,))
+    
+    if hostname and not host:
+        hosts = Host.objects.filter(hostname=hostname, status__description=STATUS_EN_SERVICE)
+        if len(hosts) == 1:
+            host = hosts[0]
+        elif len(hosts) > 1:
+            for h in hosts:
+                if h.ip == ipaddress:
+                    host = h
+                    break
+        
+    # Get the last log entry
+    hostlogs = HostIPLog.objects.filter(host=host, log_ip=ipaddress).order_by("-date")
+    if hostlogs:
+        hostlog = hostlogs[0]
+    else:
+        hostlog = HostIPLog(host=host, log_ip=ipaddress)
+    
+    hostlog.log_queryfrom = request.META.get('REMOTE_ADDR')
+    hostlog.log_hostname = request.POST.get('hostname', 'unknown')
+    hostlog.save()
+    
+    return HttpResponse('ok.', content_type='plain/text')
