@@ -207,7 +207,7 @@ class Host(models.Model):
         """Returns if the last iplog has the same ip address"""
         try:
             return self.hostiplog_set.all().order_by("-date")[0].log_ip == self.ip
-        except (TypeError, ValueError):
+        except (TypeError, ValueError, IndexError):
             return False
 
 class HostIPLog(models.Model):
