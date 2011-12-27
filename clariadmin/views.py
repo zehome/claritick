@@ -315,7 +315,7 @@ def softupdate_ip(request, ipaddress):
     errmsgs = []
     
     if serial:
-        hosts = Host.objects.filter(serial=serial, status__description=STATUS_EN_SERVICE)
+        hosts = Host.objects.filter(serial=serial)
         if len(hosts) == 1:
             host = hosts[0]
         elif len(hosts) > 1:
