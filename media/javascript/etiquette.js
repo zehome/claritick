@@ -40,7 +40,7 @@ function get_print_dialog(get_etiquette_form_url, app, model, object_id)
                 dojo.stopEvent(event);
                 dojo.xhrPost(
                 {
-                    form: printer_form,
+                    form: "printer_form",
                     handleAs: "text",
                     load: function(post_data) 
                     {

@@ -18,7 +18,7 @@ def get_dialog(request):
 @csrf_exempt
 def ajax_print_etiquette(request):
     if request.POST and 'template' in request.POST:
-        form = PrintOrderForm(request.POST)
+        form = PrintOrderForm(request.POST, app_name=request.GET.get("app"), model_name=request.GET.get("model"))
         if form.is_valid():
             error = False
             errorMessage = u"Erreur inconnue."
