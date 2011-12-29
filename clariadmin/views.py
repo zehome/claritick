@@ -395,7 +395,11 @@ def softupdate_ip(request, ipaddress):
     else:
         hostlog = HostIPLog(host=host, log_ip=ipaddress)
     
-    hostlog.log_queryfrom = request.META.get('REMOTE_ADDR')
+    x_forwarded_for = request.META.get('X-FORWARDED-FOR', None)
+    if x_forwarded_for is not None:
+        hostlog.log_queryfrom = x_forwarded_for
+    else:
+        hostlog.log_queryfrom = request.META.get('REMOTE_ADDR')
     hostlog.log_hostname = request.POST.get('hostname', 'unknown')
     hostlog.save()
     
