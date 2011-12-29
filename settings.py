@@ -140,6 +140,7 @@ INSTALLED_APPS = (
     'bondecommande',
     'etiquette_printer',       # Impression d'étiquettes codebarre
     'qbuilder',
+    'loggingauth',             # Logs login/logout
 )
 
 COMMENTS_APP = 'ticket_comments'
@@ -169,6 +170,9 @@ DOJANGO_BASE_MEDIA_URL = "/dojango/dojo-media"
 EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
 EMAIL_FILE_PATH = '/tmp/claritick_emails'
 #EMAIL_HOST = "192.168.3.7"
+
+# Authentification backend
+AUTHENTICATION_BACKENDS = ('loggingauth.authbackend.LoggingAuthBackend',)
 
 DIALOG_DIALOG = '/usr/bin/dialog'
 DIALOG_WIDTH=80

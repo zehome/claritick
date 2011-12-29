@@ -1,3 +1,7 @@
+r822
+    - syncdb
+    - manage.py shell: 
+        from django.contrib.sessions.models import Session; Session.objects.all().delete()
 r810
     qbuilder/claritick_qbuilder.sql
     - syncdb
