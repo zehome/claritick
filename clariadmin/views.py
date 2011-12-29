@@ -11,6 +11,7 @@ from django.core.exceptions import PermissionDenied
 
 from clariadmin.models import Host, HostType, HostIPLog
 from clariadmin.forms import HostForm, SearchHostForm, AdditionnalFieldForm
+from clariadmin.forms import SearchHostIPLogForm
 from common.diggpaginator import DiggPaginator
 from operator import ior
 
@@ -284,6 +285,56 @@ def ajax_extra_fields_form(request, host_type_id, prefix="", blank=False):
         return HttpResponse("<tr></tr>")
     form = AdditionnalFieldForm(host_type=host_type, blank=bool(blank), prefix=prefix)
     return HttpResponse(form.as_table())
+
+@permission_required("clariadmin.can_access_hostiplog")
+@permission_required("clariadmin.can_access_clariadmin")
+def list_hostiplog(request, filter_type=None, filter_key=None):
+    """
+    Affichage en liste des hostiplog remontés automatiquement par les
+    postes disposant de l'utilitaire softupdate.py
+    """
+    sort_default = '-date'
+    columns = ["date", "host", "log_hostname", "log_ip", "log_queryfrom"]
+
+    qs = HostIPLog.objects.all()
+    qs = qs.select_related('host')
+
+    # Handle SearchForm filtering
+    form = SearchHostIPLogForm(request.POST or
+                                     request.session.get("search_hostiplog_list", {}))
+    if form.is_valid():
+        request.session["search_hostiplog_list"] = form.cleaned_data
+        qs = form.search(qs)
+
+    # Update sorting
+    sorting = sort_default
+    sort_get = request.GET.get('sort',
+                   request.session.get("sort_hostiplog_list", sort_default))
+    if sort_get in columns:
+        sorting = sort_get
+    if sort_get.startswith('-') and sort_get[1:] in columns:
+        sorting = sort_get
+    request.session["sort_hostiplog_list"] = sorting
+
+    # Set paginator
+    paginator = DiggPaginator(qs.order_by(sorting),
+                              settings.HOSTS_PER_PAGE, body=5, tail=2, padding=2)
+
+    # Get page
+    page_num = 1
+    page_asked = int(request.GET.get('page',
+                                     request.session.get('lastpage_hostiplog_list', 1)))
+    if ((page_asked <= paginator.num_pages)):
+        page_num = page_asked
+    request.session["lastpage_hostiplog_list"] = page_num
+    page = paginator.page(page_num)
+    return render_to_response(
+        'clariadmin/list_hostiplog.html',
+        {"page": page,
+         "columns": columns,
+         "sorting": sorting,
+         "form": form},
+        context_instance=RequestContext(request))
 
 @csrf_exempt
 def softupdate_ip(request, ipaddress):

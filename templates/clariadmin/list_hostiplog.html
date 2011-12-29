@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}CLARIADMIN - IPLogs{% endblock %}
+{% block content_title %}CLARIADMIN - IPLogs{% endblock %}
+{% block image %}<img src="/media/images/oxygen/search.png" />{% endblock %}
+
+{% block extrajs %}
+{{ block.super }}
+  <script type="text/javascript" src="{{ MEDIA_URL }}js/clariadmin.js"></script>
+{% endblock %}
+{% block content %}
+<form method="post" id="search_form">
+  {% csrf_token %}
+  <fieldset class="block form">
+    <legend>Filtrage</legend>
+    <table class="search">
+      {{ form.as_column_table }}
+    </table>
+    <div class="left_buttons">
+      <button type="reset" iconClass="dijitrtl dijitIconClear" dojoType="dijit.form.Button">Annuler</button>
+    </div>
+    <div align='center'>
+      <button type="submit" dojoType="dijit.form.Button" iconClass="dijitrtl dijitIconSearch">Rechercher</button>
+    </div>
+  </fieldset>
+</form>
+<table class="resultat exportable" id="clariadmin_result_all">
+<thead>
+<tr>{%for column in columns %}
+    <th><a href="?sort={% if sorting == column %}-{% endif %}{{ column }}">{% if sorting == column %}
+        <img src="/media/images/oxygen/arrow-up.png" class="state_image" alt="down" />{% else %} {% if sorting == '-'|add:column %}
+        <img src="/media/images/oxygen/arrow-down.png" class="state_image" alt="up" />{% endif %}{% endif %}
+        {{ column }}</a></th>{% endfor %}
+</tr>
+</thead>
+<tbody id="context_lines">
+{% for row in page.object_list %}
+    <tr id="comp_{{ row.id }}" class="{% cycle 'row1' 'row2'%}">
+        {% if 'date' in columns %}<td>{{ row.date }}</td>{% endif %}
+        {% if 'host' in columns %}<td>{% if row.host %}<a href="{% url modify_host row.host.id %}">{{ row.host.hostname }}</a>{% else %}<i style="color:red;">Absent!</i> {% endif %}</td>{% endif %}
+        {% if 'log_ip' in columns %}<td>{{ row.log_ip }}</td>{% endif %}
+        {% if 'log_hostname' in columns %}<td>{{ row.log_hostname }}</td>{% endif %}
+        {% if 'log_queryfrom' in columns %}<td>{{ row.log_queryfrom }}</td>{% endif %}
+    </tr>{% endfor %}
+</tbody>
+</table>
+{% load diggpaginator %}
+{% if page.paginator.num_pages > 1 %}
+{% diggpaginator page %}
+{% endif %}
+{% endblock %}

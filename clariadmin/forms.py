@@ -423,3 +423,16 @@ class SearchHostForm(df.Form, ModelFormTableMixin, FormSecurityChecker):
 
     class Meta:
         fields = ('ip', 'hostname', 'site', 'type', 'os', 'supplier', 'status', 'inventory', 'commentaire')
+
+
+class SearchHostIPLogForm(df.Form, ModelFormTableMixin):
+    hostname = df.CharField(required=False, label=u'Nom de la machine')
+    ip = df.CharField(required=False)
+
+    def search(self, qs):
+        cd = self.cleaned_data
+        if cd['hostname']:
+            qs = qs.filter(host__hostname__icontains=cd['hostname'])
+        if cd['ip']:
+            qs = qs.filter(log_ip__contains=cd['ip'])
+        return qs

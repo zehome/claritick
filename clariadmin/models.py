@@ -214,6 +214,9 @@ class HostIPLog(models.Model):
     class Meta:
         verbose_name = u"Dernières adresses IP connues"
         ordering = ("-date",)
+        permissions = (
+            ("can_access_hostiplog", u"Accès aux logs softupdate"),
+        )
     
     def __unicode__(self):
         return u"%s %s %s" % (self.host, self.log_ip, self.date)
