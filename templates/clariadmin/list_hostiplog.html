@@ -36,11 +36,11 @@
 <tbody id="context_lines">
 {% for row in page.object_list %}
     <tr id="comp_{{ row.id }}" class="{% cycle 'row1' 'row2'%}">
-        {% if 'date' in columns %}<td>{{ row.date }}</td>{% endif %}
-        {% if 'host' in columns %}<td>{% if row.host %}<a href="{% url modify_host row.host.id %}">{{ row.host.hostname }}</a>{% else %}<i style="color:red;">Absent!</i> {% endif %}</td>{% endif %}
-        {% if 'log_ip' in columns %}<td>{{ row.log_ip }}</td>{% endif %}
-        {% if 'log_hostname' in columns %}<td>{{ row.log_hostname }}</td>{% endif %}
-        {% if 'log_queryfrom' in columns %}<td>{{ row.log_queryfrom }}</td>{% endif %}
+        <td>{{ row.date }}</td>
+        <td>{% if row.host %}<a href="{% url modify_host row.host.id %}">{{ row.host.hostname }}</a>{% else %}<i style="color:red;">Absent!</i> {% endif %}</td>
+        <td>{{ row.log_hostname }}</td>
+        <td>{{ row.log_ip }}</td>
+        <td>{{ row.log_queryfrom }}</td>
     </tr>{% endfor %}
 </tbody>
 </table>
