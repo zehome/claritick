@@ -395,7 +395,8 @@ def softupdate_ip(request, ipaddress):
     else:
         hostlog = HostIPLog(host=host, log_ip=ipaddress)
     
-    x_forwarded_for = request.META.get('X-FORWARDED-FOR', None)
+    print request.META
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR', None)
     if x_forwarded_for is not None:
         hostlog.log_queryfrom = x_forwarded_for
     else:
