@@ -8,7 +8,6 @@ from django.template import RequestContext
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.core.exceptions import PermissionDenied
 from django.forms.models import modelformset_factory
-from django.views.decorators.csrf import csrf_exempt
 from django.utils import simplejson as json
 
 from common.models import Client, Coordinate
@@ -89,7 +88,6 @@ def modify_client(request, client_id):
         "coordinate_form": coordinate_form,
     }, context_instance=RequestContext(request))
 
-@csrf_exempt
 @login_required
 def trafiquable(request):
     if not request.is_ajax():
@@ -113,7 +111,6 @@ def trafiquable(request):
         return HttpResponseBadRequest(json.dumps(data))
     return HttpResponse(json.dumps(data))
 
-@csrf_exempt
 @login_required
 def exportable(request):
     data = None
