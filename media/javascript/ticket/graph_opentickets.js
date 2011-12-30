@@ -64,6 +64,7 @@ function graph_opentickets_init(renderTo, tickIntervalDays, title, defaultSeries
 function graph_opentickets_load(options, dataget_url, interval) {
     dojo.byId(options.chart.renderTo).innerHTML = "<p>" + options.title.text +  ": Loading...</p>";
     dojo.xhrPost({
+        headers: { 'X-CSRFToken': dojo.cookie("csrftoken") },
         url: dataget_url, 
         postData: dojo.toJson({"interval": interval}), 
         handleAs:"json",

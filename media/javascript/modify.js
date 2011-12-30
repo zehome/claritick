@@ -41,6 +41,7 @@ function changeClassOnScroll(yoffset, id, before_class, after_class)
 function ajaxMenu2D(url, query_string, container, id_menu, json_key, id_input0, id_input1) {
     var menu;
     dojo.xhrPost({
+        headers: { 'X-CSRFToken': dojo.cookie("csrftoken") },
         url: url, 
         handleAs:"json",
         postData: query_string, 
@@ -196,6 +197,7 @@ function setTicketAlarm(url) {
     postdata = dojo.byId('id_alarm').value;
     if (postdata) {
         dojo.xhrPost({
+        headers: { 'X-CSRFToken': dojo.cookie("csrftoken") },
         url: url,
         postData:dojo.byId('id_alarm').value,
         handleAs: 'text',

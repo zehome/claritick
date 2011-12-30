@@ -618,7 +618,6 @@ def ajax_load_ticketmailtrace(request, ticket_id):
             {"ticketmailtrace": ticketmailtrace},
             context_instance=RequestContext(request))
 
-@csrf_exempt
 @login_required
 def ajax_set_alarm(request, ticket_id):
     """ Met (ou enlève) une alarme sur le ticket """
@@ -660,7 +659,6 @@ def ajax_set_alarm(request, ticket_id):
         ret = "Nouvelle Alarme"
     return http.HttpResponse(ret)
 
-@csrf_exempt
 @login_required
 @json_response
 def ajax_load_telephone(request):
@@ -717,7 +715,6 @@ def encode_datetime(obj):
         return time.strftime('%Y-%m-%dT%H:%M:%SZ', obj.utctimetuple())
     raise TypeError(repr(obj) + " is not JSON serializable")
 
-@csrf_exempt
 @login_required
 @json_response
 def ajax_graph_opentickets(request):
@@ -738,7 +735,6 @@ def ajax_graph_opentickets(request):
             ret["hs_charts"].append(get_hc_serie(tss, {'name': 'Priority %s' % (priority.label,)}))
     return ret
 
-@csrf_exempt
 @login_required
 @json_response
 def ajax_graph_closetickets(request):
@@ -759,7 +755,6 @@ def ajax_graph_closetickets(request):
             ret["hs_charts"].append(get_hc_serie(tss, {'name': 'Priority %s' % (priority.label,)}))
     return ret
 
-@csrf_exempt
 @login_required
 @json_response
 def ajax_graph_recall(request):
@@ -910,7 +905,6 @@ def ajax_mark_all_ticket_seen(request):
     profile.save()
     return http.HttpResponse("saved")
 
-@csrf_exempt
 @login_required
 def ajax_reset_all_ticket_seen(request):
     profile = request.user.get_profile()

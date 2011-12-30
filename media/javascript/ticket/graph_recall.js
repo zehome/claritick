@@ -48,6 +48,7 @@ function graph_recall_init(renderTo, tickIntervalDays) {
 function graph_recall_load(options, dataget_url, interval) {
     dojo.byId(options.chart.renderTo).innerHTML = "<p>" + options.title.text +  ": Loading...</p>";
     dojo.xhrPost({
+        headers: { 'X-CSRFToken': dojo.cookie("csrftoken") },
         url: dataget_url, 
         postData: dojo.toJson({"interval": interval}), 
         handleAs:"json",

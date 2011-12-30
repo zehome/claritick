@@ -34,6 +34,7 @@
     <td class="right"><button dojoType="dijit.form.Button" type="submit" name="submit-comment" value="1">{% trans "Post" %}
         <script type="dojo/method" event="onClicke">
             dojo.xhrPost({
+                headers: { 'X-CSRFToken': dojo.cookie("csrftoken") },
                 form: "id_comment_form",
                 handleAs: "text",
                 load: function(data) {
