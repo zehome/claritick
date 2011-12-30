@@ -20,6 +20,7 @@ print from ticket
             dojo.connect(dojo.byId('printer_form'), "onsubmit", function(event) {
                 dojo.stopEvent(event);
                 dojo.xhrPost({
+                    headers: { 'X-CSRFToken': dojo.cookie("csrftoken") },
                     form: dojo.byId('printer_form'),
                     handleAs: "text",
                     load: function(post_data) 

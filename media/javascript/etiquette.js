@@ -40,6 +40,7 @@ function get_print_dialog(get_etiquette_form_url, app, model, object_id)
                 dojo.stopEvent(event);
                 dojo.xhrPost(
                 {
+                    headers: { 'X-CSRFToken': dojo.cookie("csrftoken") },
                     form: "printer_form",
                     handleAs: "text",
                     load: function(post_data) 

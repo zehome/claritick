@@ -4,7 +4,6 @@ import traceback
 
 from django.contrib.auth.decorators import permission_required
 from django.shortcuts import render
-from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
 
 from etiquette_printer.forms import PrintOrderForm, PermissionDenied
@@ -15,7 +14,6 @@ def get_dialog(request):
     return render(request, "etiquette_printer/test.html", {})
 
 @permission_required('etiquette_printer.print_etiquettetemplate')
-@csrf_exempt
 def ajax_print_etiquette(request):
     if request.POST and 'template' in request.POST:
         form = PrintOrderForm(request.POST, app_name=request.GET.get("app"), model_name=request.GET.get("model"))
