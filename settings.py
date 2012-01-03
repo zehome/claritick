@@ -103,7 +103,6 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.request',
     'ticket.context_processors.ticket_views',
     'lock.context_processors.lock_settings',
-    'developpements.context_processors.projects',
 )
 
 
@@ -128,7 +127,6 @@ INSTALLED_APPS = (
     'ticket_comments',
     'clariadmin',              # Clariadmin
     'host_history',            # Clariadmin hosts versioning
-    'developpements',          # Suivi developpements MCA3
     'qsstats',                 # Fun with aggregates ;)
     'backlinks',               # Return to page saved in sessions
     'chuser',                  # Switch user

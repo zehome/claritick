@@ -1,3 +1,24 @@
+r823
+    - manage.py dbshell
+BEGIN;
+DELETE FROM auth_group_permissions WHERE auth_group_permissions.permission_id IN 
+    (SELECT id FROM auth_permission WHERE content_type_id IN 
+        (SELECT id FROM django_content_type WHERE app_label = 'developpements'));
+DELETE FROM auth_user_user_permissions WHERE auth_user_user_permissions.permission_id IN 
+    (SELECT id FROM auth_permission WHERE content_type_id IN 
+        (SELECT id FROM django_content_type WHERE app_label = 'developpements'));
+DELETE FROM auth_permission WHERE content_type_id IN 
+        (SELECT id FROM django_content_type WHERE app_label = 'developpements');
+DROP TABLE developpements_client CASCADE;
+DROP TABLE developpements_developpement_client_demandeur CASCADE;
+DROP TABLE developpements_developpement CASCADE;
+DROP TABLE developpements_version_contenu CASCADE;
+DROP TABLE developpements_version CASCADE;
+DROP TABLE developpements_groupedev CASCADE;
+DROP TABLE developpements_project CASCADE;
+DROP TABLE developpements_groupedevmanager CASCADE;
+COMMIT;
+
 r822
     - syncdb
     - manage.py shell: 

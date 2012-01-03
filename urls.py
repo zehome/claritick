@@ -14,7 +14,6 @@ from django.template import RequestContext
 import ticket.urls
 import common.urls
 import clariadmin.urls
-import developpements.urls
 import ws.urls
 import chuser.urls
 import lock.urls
@@ -77,7 +76,6 @@ urlpatterns = patterns('',
     (r'^lock/', include(lock.urls)),
     (r'^clariadmin/', include(clariadmin.urls)),
     (r'^host-history/', include(host_history.urls)),
-    (r'^developpements/', include(developpements.urls)),
     (r'^agenda/$', agenda),
     (r'^dojango/', include('dojango.urls')), # Dojango requires
     
