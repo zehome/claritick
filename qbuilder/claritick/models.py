@@ -349,3 +349,28 @@ class RapiditeClotureSiemensOuPas(Entity, QBEntity):
     qbfield_translations = {
         }
 
+class NombreTicketsCloturesOuPas(Entity, QBEntity):
+    # options
+    using_options(tablename = 'nombre_tickets_fermes_journee', allowcoloverride=True)
+
+    # fields
+    jour = Field(DateTime)
+    nombre = Field(Integer)
+    statut_cloture = Field(Boolean)
+    incident = Field(Boolean)
+    ticket_siemens = Field(Boolean)
+
+    # QB properties
+    qbtitle = u'clotures_dans_la_journee'
+    qbfilter = {
+        'jour' : ALL_DATE_FILTERS,
+        'nombre' : STD_FILTERS,
+        'statut_cloture': STD_FILTERS,
+        'incident' : STD_FILTERS,
+        'ticket_siemens' : STD_FILTERS,
+        }
+    qbgroup_by = {
+        }
+    qbfield_translations = {
+        }
+

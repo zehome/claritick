@@ -5,8 +5,8 @@
 # define your models as in this sample. (Create a folder named by
 # you application or copy the sample folder).
 
-from qbuilder.claritick.models import VueTicketsTempsCloture, Tickets, CloturesDansLaJournee, CloturesDansLaJourneeSemaine, CloturesDansLaJourneeMois, TickUser, Priority, Category, State, RapiditeClotureSiemensOuPas, TicketsClarisysSiemens
-QBSelectables = ['VueTicketsTempsCloture', 'Tickets', 'CloturesDansLaJournee', 'CloturesDansLaJourneeSemaine', 'CloturesDansLaJourneeMois', 'TickUser', 'Priority', 'Category', 'State', 'RapiditeClotureSiemensOuPas', 'TicketsClarisysSiemens', ]
+from qbuilder.claritick.models import VueTicketsTempsCloture, Tickets, CloturesDansLaJournee, CloturesDansLaJourneeSemaine, CloturesDansLaJourneeMois, TickUser, Priority, Category, State, RapiditeClotureSiemensOuPas, TicketsClarisysSiemens, NombreTicketsCloturesOuPas
+QBSelectables = ['VueTicketsTempsCloture', 'Tickets', 'CloturesDansLaJournee', 'CloturesDansLaJourneeSemaine', 'CloturesDansLaJourneeMois', 'TickUser', 'Priority', 'Category', 'State', 'RapiditeClotureSiemensOuPas', 'TicketsClarisysSiemens', 'NombreTicketsCloturesOuPas']
 QBEventsConfig = {
     'model' : None,
     'partition_field' : None,
