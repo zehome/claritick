@@ -197,6 +197,9 @@ def init_data_param(graph_type, jsondata = {}, data = []):
         datetime.timedelta:
             lambda v: """mca.timestampdisplay(%s, "S", 3)""" % (v,),
         }
+    if 'colors' in jsondata:
+        data_param['colors'] = jsondump(jsondata['colors'].split(','))
+        logger.error("using colors in jsondata %s", data_param['colors'])
     if isinstance(data, dict) and 'xType' in data:
         tooltip_this_x = python_type_to_js_converter_function.get(type(data['xType']), lambda v: v)(tooltip_this_x)
     if isinstance(data, dict) and 'yType' in data:

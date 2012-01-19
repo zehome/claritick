@@ -169,6 +169,9 @@
                     }
             {% endif %}
             chart = new Highcharts.Chart({
+                {% if colors %}
+                colors: {{ colors|safe|default:"[]" }},
+                {% endif %}
                 chart: {
                     renderTo: 'container',
                     zoomType: "xy",
