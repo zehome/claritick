@@ -356,7 +356,7 @@ class NombreTicketsCloturesOuPas(Entity, QBEntity):
     # fields
     jour = Field(DateTime)
     nombre = Field(Integer)
-    statut_cloture = Field(Boolean)
+    statut_cloture = Field(Integer)
     incident = Field(Boolean)
     ticket_siemens = Field(Boolean)
 
