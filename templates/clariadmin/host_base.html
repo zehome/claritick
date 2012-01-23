@@ -128,8 +128,8 @@
             <tr class="{% cycle 'row1' 'row2' %}">
             {% for iplog in host.hostiplog_set.all %}
                 <td>{{ iplog.date }}</td><td>{{ iplog.log_ip }}</td><td>{{ iplog.log_hostname }}</td><td>{{ iplog.log_queryfrom }}</td>
-            {% endfor %}
             </tr>
+            {% endfor %}
             </tbody>
         </table>
     </fieldset>
