@@ -1,0 +1,155 @@
+# -*- coding: utf-8 -*-
+
+import csv
+import codecs
+import cStringIO
+import datetime
+
+from django.http import HttpResponse
+from django.template import RequestContext
+from django.db.models import Q
+
+from django.contrib.auth.decorators import login_required
+
+from ticket.views import get_context, get_filters, set_filters
+from ticket.forms import SearchTicketForm
+from ticket.models import Ticket
+
+csv.register_dialect('claritick', delimiter=',', quoting=csv.QUOTE_MINIMAL)
+
+class UTF8Recoder:
+    """
+    Iterator that reads an encoded stream and reencodes the input to UTF-8
+    See : http://docs.python.org/library/csv.html
+    """
+    def __init__(self, f, encoding):
+        self.reader = codecs.getreader(encoding)(f)
+
+    def __iter__(self):
+        return self
+
+    def next(self):
+        return self.reader.next().encode("utf-8")
+
+class UnicodeWriter:
+    """
+    A CSV writer which will write rows to CSV file "f",
+    which is encoded in the given encoding.
+    See : http://docs.python.org/library/csv.html
+    """
+
+    def __init__(self, f, dialect=csv.excel, encoding="utf-8", **kwds):
+        # Redirect output to a queue
+        self.queue = cStringIO.StringIO()
+        self.writer = csv.writer(self.queue, dialect=dialect, **kwds)
+        self.stream = f
+        self.encoder = codecs.getincrementalencoder(encoding)()
+
+    def writerow(self, row):
+        self.writer.writerow([s.encode("utf-8") for s in row])
+        # Fetch UTF-8 output from the queue ...
+        data = self.queue.getvalue()
+        data = data.decode("utf-8")
+        # ... and reencode it into the target encoding
+        data = self.encoder.encode(data)
+        # write to the target stream
+        self.stream.write(data)
+        # empty queue
+        self.queue.truncate(0)
+
+    def writerows(self, rows):
+        for row in rows:
+            self.writerow(row)
+
+@login_required
+def export_me(request, *args, **kw):
+    form = None
+    if not request.POST.get("assigned_to", None):
+        form = SearchTicketForm({'assigned_to': request.user.id}, get_filters(request), user=request.user)
+        set_filters(request, form.data)
+    return export_all(request, form, filename=request.user.username, *args, **kw)
+
+@login_required
+def export_unassigned(request, *args, **kw):
+    filterdict = {'assigned_to__isnull': True}
+    return export_all(request, None, filterdict = filterdict, filename='unassigned', *args, **kw)
+
+@login_required
+def export_nonvalide(request):
+    """
+    liste des tickets ã  valider.
+    """
+    filterdict = {"validated_by__isnull": True}
+    return export_all(request, filterdict=filterdict, filename='nonvalide')
+
+@login_required
+def export_notseen(request):
+    """liste des tickets non consultes."""
+    profile = request.user.get_profile()
+    ticket_vus = profile.tickets_vus or {}
+
+    def postfiltercallback(qs):
+        for k,v in ticket_vus.items():
+            if k == "all":
+                q = Q(last_modification__gt=datetime.datetime.fromtimestamp(int(v)))
+                qs = qs.filter(q)
+            else:
+                q = Q(pk=int(k)) & Q(last_modification__lt=datetime.datetime.fromtimestamp(int(v)))
+                qs = qs.exclude(q)
+        return qs
+
+    return export_all(request, postfiltercallback=postfiltercallback, filename='notseen')
+
+@login_required
+def export_all(request, form=None, filename='tickets',
+    filterdict=None, postfiltercallback=None, *args, **kw):
+    """
+        Exporte tous les tickets sans aucun filtre
+    """
+
+    response = HttpResponse(mimetype='text/csv')
+    response['Content-Disposition'] = 'attachment; filename=%s.csv' % (filename,)
+
+    if request.GET.get("reset", False) and request.session.get("list_filters", {}):
+        request.session["list_filters"] = {}
+        return http.HttpResponseRedirect(".")
+
+    if not form:
+        if request.method == "POST" and request.POST.get("validate-filters", None):
+            form = SearchTicketForm(request.POST, user=request.user)
+            if form.is_valid():
+                set_filters(request, filterdict)
+        else:
+            form = SearchTicketForm(get_filters(request), user=request.user)
+
+    if not get_filters(request).get("state"):
+        qs = Ticket.open_tickets.filter(parent__isnull=True)
+    else:
+        qs = Ticket.tickets.filter(parent__isnull=True)
+
+    # Form cleaned_data ?
+    if form.is_valid():
+        data = form.cleaned_data.copy()
+        if not request.user.has_perm("ticket.can_list_all") and form.cleaned_data["text"]:
+            qs = qs.filter_or_child(Q(title__icontains=form.cleaned_data["text"]) | Q(text__icontains=form.cleaned_data["text"]), user=request.user)
+            del data["text"]
+        qs = qs.filter_queryset(data, user=request.user)
+
+    # unassigned / nonvalide
+    if filterdict:
+        qs = qs.filter_or_child(filterdict, user=request.user)
+
+    # On va filtrer la liste des tickets en fonction de la relation user => client
+    qs = qs.filter_ticket_by_user(request.user)
+
+    if postfiltercallback:
+        qs = postfiltercallback(qs)
+
+    # Le tri
+    qs = qs.add_order_by(request)
+
+    writer = UnicodeWriter(response, 'claritick')
+    writer.writerow(['Num','Statut','Titre'])
+    for tick in qs:
+        writer.writerow([unicode(I) for I in [tick.pk, tick.state, tick.title]])
+    return response
