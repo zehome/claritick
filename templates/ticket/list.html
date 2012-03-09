@@ -3,7 +3,7 @@
 {% load comments diggpaginator %}
 
 {% block title %}Liste des tickets{% endblock %}
-{% block content_title %}Liste des tickets{% if export_link %} (<a href="{{ export_link }}">Export</a>){% endif %}{% endblock %}
+{% block content_title %}Liste des tickets{% endblock %}
 {% block image %}<img src="{{ MEDIA_URL }}images/oxygen/search.png" alt="search" />{% endblock %}
 
 {% block extrajs %}
@@ -148,6 +148,14 @@
             dojo.doc.location = "{% url ticket_list_view %}?reset=1";
         </script>
     </button>
+{% if export_link %}
+    <button type="button" dojoType="dijit.form.Button" iconClass="dijitIconFile">Export CSV
+        <script type="dojo/method" event="onClick">
+            dojo.doc.location = "{{ export_link }}";
+        </script>
+    </button>
+{% endif %}
+
 </fieldset>
 {% endblock list_filters %}
 </form>

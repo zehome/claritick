@@ -107,7 +107,6 @@
             <li><a href="{% url ticket_list_view view.pk %}">{{ view.name }}</a></li>
             {% endfor %}
             {% endif %}
-            <li><a href="{% url ticket_export_home %}">Export</a></li>
         </ul>
         {% if perms.clariadmin.can_access_clariadmin %}
         <h2><img src="{{ MEDIA_URL }}images/oxygen/computer.png" alt="/" />Clariadmin</h2>

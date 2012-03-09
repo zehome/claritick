@@ -18,7 +18,7 @@ from ticket.models import Ticket, TicketView
 
 csv.register_dialect('claritick', delimiter=',', quoting=csv.QUOTE_MINIMAL)
 
-class UTF8Recoder:
+class UTF8Recoder(object):
     """
     Iterator that reads an encoded stream and reencodes the input to UTF-8
     See : http://docs.python.org/library/csv.html
@@ -32,7 +32,7 @@ class UTF8Recoder:
     def next(self):
         return self.reader.next().encode("utf-8")
 
-class UnicodeWriter:
+class UnicodeWriter(object):
     """
     A CSV writer which will write rows to CSV file "f",
     which is encoded in the given encoding.
@@ -61,10 +61,6 @@ class UnicodeWriter:
     def writerows(self, rows):
         for row in rows:
             self.writerow(row)
-
-@login_required
-def export_home(request):
-    return render_to_response("ticket/export.html", context_instance = RequestContext(request))
 
 @login_required
 def export_me(request, *args, **kw):
