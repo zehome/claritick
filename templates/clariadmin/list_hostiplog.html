@@ -24,7 +24,7 @@
     </div>
   </fieldset>
 </form>
-<table class="resultat exportable" id="clariadmin_result_all">
+<table class="resultat" id="clariadmin_result_all">
 <thead>
 <tr>{%for column in columns %}
     <th><a href="?sort={% if sorting == column %}-{% endif %}{{ column }}">{% if sorting == column %}

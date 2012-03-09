@@ -65,19 +65,6 @@
             });
     </script>
 {% endblock %}
-{% block activation_exportables %}
-    <script type="text/javascript" src="{{ MEDIA_URL }}javascript/exportable.js"></script>
-    <script type="text/javascript">
-        dojo.addOnLoad(function()
-            {
-            dojo.forEach(dojo.query("table.exportables"), function(table, index)
-                {
-                new Exportable(table.id, '{% url common.views.exportable %}');
-                });
-            });
-    </script>
-{% endblock %}
-
     <script type="text/javascript" src="{{ MEDIA_URL }}js/menu.js"></script>
   </head>
 {% load i18n %}
