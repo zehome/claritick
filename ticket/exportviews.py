@@ -110,9 +110,20 @@ def make_csv_response(queryset, filename):
     response['Content-Disposition'] = 'attachment; filename=%s.csv' % (filename,)
 
     writer = UnicodeWriter(response, 'claritick')
-    writer.writerow(['Num','Statut','Titre'])
+    writer.writerow(['Id','Client', u'Catégorie', 'Projet', 'Titre', 'Contact', 'Ouvert par', u'Assigné à', 'Statut','Contenu'])
     for tick in queryset:
-        writer.writerow([unicode(I) for I in [tick.pk, tick.state, tick.title]])
+        writer.writerow([unicode(I) for I in [
+            tick.pk,
+            tick.client,
+            tick.category,
+            tick.project,
+            tick.title,
+            tick.contact,
+            tick.opened_by,
+            tick.assigned_to,
+            tick.state,
+            tick.text,
+            ]])
 
     return response
 
