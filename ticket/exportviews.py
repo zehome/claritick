@@ -16,7 +16,7 @@ from ticket.views import get_context, get_filters, set_filters
 from ticket.forms import SearchTicketForm, SearchTicketViewForm, SearchTicketViewFormInverted
 from ticket.models import Ticket, TicketView
 
-csv.register_dialect('claritick', delimiter=',', quoting=csv.QUOTE_MINIMAL)
+csv.register_dialect('claritick', delimiter=';', quoting=csv.QUOTE_ALL)
 
 class UTF8Recoder(object):
     """
