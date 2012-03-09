@@ -27,7 +27,7 @@
 {% endblock %}
 
 {% block content_title %}
-{{ block.super }}{% if view %} : {{ view.name }}{% endif %}
+{{ block.super }}{% if view %} : {{ view.name }} (<a href="{% url ticket_export_view view.pk %}">Export</a>){% endif %}
 {% endblock %}
 
 {% block list_filters %}

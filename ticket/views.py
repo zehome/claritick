@@ -7,6 +7,7 @@ import datetime
 from django import http
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
+from django.core.urlresolvers import reverse
 from django.db import models, connection, transaction
 from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.template import RequestContext
@@ -101,13 +102,13 @@ def list_me(request, *args, **kw):
     if not request.POST.get("assigned_to", None):
         form = SearchTicketForm({'assigned_to': request.user.id}, get_filters(request), user=request.user)
         set_filters(request, form.data)
-    return list_all(request, form, *args, **kw)
+    return list_all(request, form, export_link = reverse('ticket_export_me'), *args, **kw)
 
 @login_required
 @backlink_setter
 def list_unassigned(request, *args, **kw):
     filterdict = {'assigned_to__isnull': True}
-    return list_all(request, None, filterdict = filterdict, *args, **kw)
+    return list_all(request, None, export_link = reverse('ticket_export_unassigned'), filterdict = filterdict, *args, **kw)
 
 @login_required
 @backlink_setter
@@ -116,7 +117,7 @@ def list_nonvalide(request):
     liste des tickets ã  valider.
     """
     filterdict = {"validated_by__isnull": True}
-    return list_all(request, filterdict=filterdict)
+    return list_all(request, export_link = reverse('ticket_export_nonvalide'), filterdict=filterdict)
 
 @login_required
 @backlink_setter
@@ -140,7 +141,7 @@ def list_notseen(request):
                 qs = qs.exclude(q)
         return qs
     
-    return list_all(request, postfiltercallback=postfiltercallback, get_context_callback=my_get_context)
+    return list_all(request, export_link = reverse('ticket_export_notseen'), postfiltercallback=postfiltercallback, get_context_callback=my_get_context)
 
 
 @login_required
@@ -260,8 +261,8 @@ def list_view(request, view_id=None):
 
 @login_required
 @backlink_setter
-def list_all(request, form=None, 
-    filterdict=None, template_name=None, 
+def list_all(request, form=None, filterdict=None, template_name=None,
+    export_link=None,
     postfiltercallback=None, get_context_callback=get_context, *args, **kw):
     """
         Liste tous les tickets sans aucun filtre
@@ -327,10 +328,13 @@ def list_all(request, form=None,
     pagination = get_pagination(qs, request)
     pagination.object_list = get_and_child(pagination.object_list, cqs)
 
+    if export_link is None:
+        export_link = reverse('ticket_export_all')
     context.update({
         "form": form, 
         "action_form": action_form,
         "tickets": pagination,
+        "export_link": export_link,
     })
     return render_to_response(template_name or "ticket/list.html", context, context_instance=RequestContext(request))
 

@@ -3,7 +3,7 @@
 {% load comments diggpaginator %}
 
 {% block title %}Liste des tickets{% endblock %}
-{% block content_title %}Liste des tickets{% endblock %}
+{% block content_title %}Liste des tickets{% if export_link %} (<a href="{{ export_link }}">Export</a>){% endif %}{% endblock %}
 {% block image %}<img src="{{ MEDIA_URL }}images/oxygen/search.png" />{% endblock %}
 
 {% block extrajs %}

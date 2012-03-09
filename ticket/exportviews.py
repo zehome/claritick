@@ -6,14 +6,15 @@ import cStringIO
 import datetime
 
 from django.http import HttpResponse
+from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.db.models import Q
 
 from django.contrib.auth.decorators import login_required
 
 from ticket.views import get_context, get_filters, set_filters
-from ticket.forms import SearchTicketForm
-from ticket.models import Ticket
+from ticket.forms import SearchTicketForm, SearchTicketViewForm, SearchTicketViewFormInverted
+from ticket.models import Ticket, TicketView
 
 csv.register_dialect('claritick', delimiter=',', quoting=csv.QUOTE_MINIMAL)
 
@@ -62,6 +63,10 @@ class UnicodeWriter:
             self.writerow(row)
 
 @login_required
+def export_home(request):
+    return render_to_response("ticket/export.html", context_instance = RequestContext(request))
+
+@login_required
 def export_me(request, *args, **kw):
     form = None
     if not request.POST.get("assigned_to", None):
@@ -100,15 +105,23 @@ def export_notseen(request):
 
     return export_all(request, postfiltercallback=postfiltercallback, filename='notseen')
 
+def make_csv_response(queryset, filename):
+    response = HttpResponse(mimetype='text/csv')
+    response['Content-Disposition'] = 'attachment; filename=%s.csv' % (filename,)
+
+    writer = UnicodeWriter(response, 'claritick')
+    writer.writerow(['Num','Statut','Titre'])
+    for tick in queryset:
+        writer.writerow([unicode(I) for I in [tick.pk, tick.state, tick.title]])
+
+    return response
+
 @login_required
 def export_all(request, form=None, filename='tickets',
     filterdict=None, postfiltercallback=None, *args, **kw):
     """
         Exporte tous les tickets sans aucun filtre
     """
-
-    response = HttpResponse(mimetype='text/csv')
-    response['Content-Disposition'] = 'attachment; filename=%s.csv' % (filename,)
 
     if request.GET.get("reset", False) and request.session.get("list_filters", {}):
         request.session["list_filters"] = {}
@@ -147,9 +160,54 @@ def export_all(request, form=None, filename='tickets',
 
     # Le tri
     qs = qs.add_order_by(request)
+    return make_csv_response(qs, filename)
 
-    writer = UnicodeWriter(response, 'claritick')
-    writer.writerow(['Num','Statut','Titre'])
-    for tick in qs:
-        writer.writerow([unicode(I) for I in [tick.pk, tick.state, tick.title]])
-    return response
+@login_required
+def export_view(request, view_id=None):
+    context = get_context(request)
+
+    # On charge la vue de la liste
+    inverted_filters = {}
+    filters = {}
+    if view_id:
+        profile = request.user.get_profile()
+        ticket_vus = profile.tickets_vus or {}
+
+        view = get_object_or_404(TicketView, pk=view_id, user=request.user)
+        data = view.filters
+        inverted_filters = view.inverted_filters
+        data.update({"view_name": view.name})
+        filters = data.copy()
+        context["view"] = view
+
+    # le form de filtres
+    form = SearchTicketViewForm(data, user=request.user)    
+    form_inverted = SearchTicketViewFormInverted(inverted_filters, user=request.user)
+
+    if not data.get("state"):
+        qs = Ticket.open_tickets.filter(parent__isnull=True)
+    else:
+        qs = Ticket.tickets.filter(parent__isnull=True)
+
+    # On filtre la liste a partir des datas de la vue
+    if not request.user.has_perm("ticket.can_list_all") and data.get("text"):
+        qs = qs.filter_or_child(models.Q(title__icontains=data["title"]) | models.Q(text__icontains=data["text"]), user=request.user)
+        del filters["text"]
+    qs = qs.filter_queryset(filters, user=request.user, inverted_filters=inverted_filters)
+
+    # On va filtrer la liste des tickets en fonction de la relation user => client
+    qs = qs.filter_ticket_by_user(request.user)
+
+    if context.get("view", False) and view.notseen: 
+        for k,v in ticket_vus.items():
+            if k == "all":
+                q = models.Q(last_modification__gt=datetime.datetime.fromtimestamp(int(v)))
+                qs = qs.filter(q)
+            else:
+                q = models.Q(pk=int(k)) & models.Q(last_modification__lt=datetime.datetime.fromtimestamp(int(v)))
+                qs = qs.exclude(q)
+
+    # Le tri
+    qs = qs.add_order_by(request)
+    filename = view.name
+    return make_csv_response(qs, filename)

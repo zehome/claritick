@@ -38,9 +38,11 @@ urlpatterns = patterns('ticket.views',
 
 # Exports
 urlpatterns += patterns('ticket.exportviews',
+    url(r'^export/$', 'export_home', name='ticket_export_home'),
     url(r'^export/all.csv$', 'export_all', name='ticket_export_all'),
     url(r'^export/me.csv$', 'export_me', name='ticket_export_me'),
     url(r'^export/notseen.csv$', 'export_notseen', name='ticket_export_notseen'),
     url(r'^export/unassigned.csv$', 'export_unassigned', name='ticket_export_unassigned'),
     url(r'^export/nonvalide.csv$', 'export_nonvalide', name='ticket_export_nonvalide'),
+    url(r'^export/view/(?P<view_id>\d+)/$', 'export_view', name="ticket_export_view"),
     )
