@@ -23,6 +23,7 @@ import desktopnotifications.urls
 import bondecommande.urls
 import etiquette_printer.urls
 import qbuilder.urls
+import smokeping.urls
 
 # Init code
 admin.autodiscover()
@@ -109,4 +110,7 @@ urlpatterns = patterns('',
 
     ## Stats Qbuilder
     url(r'^qbuilder/', include(qbuilder.urls)),
+
+    ## Smokeping
+    url(r'^smokeping/', include(smokeping.urls)),
 )
