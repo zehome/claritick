@@ -117,12 +117,10 @@
           {% if perms.clariadmin.can_access_hostiplog %}<li><a href="{% url list_hostiplog %}?reset=1">Historique IP</a></li>{% endif %}
         </ul>
         {% endif %}
-        {% if perms.developpements.can_access_suividev and developpements_projects %}
-        <h2><img src="{{ MEDIA_URL }}images/oxygen/suividev.png" alt="/" />SuiviDev</h2>
+        {% if perms.smokeping.smokeping %}
+        <h2><img src="{{ MEDIA_URL}}images/oxygen/esd.png" alt="smokeping" />Monitoring</h2>
         <ul class="menu">
-            {% for project in developpements_projects %}
-                <li><a href="/developpements/shortlist/{{ project.pk }}/">{{ project.label }}</a></li>
-            {% endfor %}
+          <li><a href="{% url smokeping %}">Smokeping</a></li>
         </ul>
         {% endif %}
         {% if perms.package.can_access %}
