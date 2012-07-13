@@ -47,6 +47,8 @@ class NewTicketForm(CustomModelForm):
     comment = df.CharField(widget=forms.Textarea(attrs={'cols':'80','style':'margin:10px;'}), required=False)
     internal = forms.BooleanField(widget=df.widgets.CheckboxInput(attrs={'onChange': 'modif_ticket(); toggleComment(this);'}), initial=True, required=False)
     appel = forms.BooleanField(label=u"Signaler un (r)appel du client", widget=df.widgets.CheckboxInput(attrs={'onChange': 'modif_ticket();'}), initial=False, required=False)
+    delete_rappel = forms.BooleanField(label=u"Désactiver le rappel du ticket", widget=df.widgets.CheckboxInput(attrs={'onChange': 'modif_ticket();'}), initial=False, required=False)
+    calendar_rappel = df.DateTimeField(required=False)
     bondecommande = BonDeCommandeModelChoiceField(label=u'Bon de commande', 
         widget=FilteringSelect(attrs={'onChange': 'modif_ticket();', 'style': 'width:400px'}),
         queryset=BonDeCommande.objects.filter(ticket=None), required=False)
@@ -318,4 +320,3 @@ class TicketActionsSmallForm(TicketActionsForm):
             if self.cleaned_data["actions"] not in ("action_close_tickets"):
                 return False
             return super(TicketActionsSmallForm, self).process_actions()
-

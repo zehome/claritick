@@ -983,3 +983,17 @@ td.original p {
 	font-size: 1em !important;
 	position: relative !important;
 }
+
+.rappel .right {
+    float: right;
+}
+
+.rappel h3 {
+    margin-top: 0;
+}
+.rappel ul li {
+    list-style-type: none;
+}
+.rappel .form-calendar {
+    margin-bottom: 10px;
+}

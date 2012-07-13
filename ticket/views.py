@@ -15,12 +15,14 @@ from django.forms.models import modelformset_factory
 from django.utils import simplejson as json
 from django.contrib.auth.decorators import login_required, permission_required
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.models import User
 
 from dojango.decorators import json_response
 
 from ticket.models import Ticket, TicketView, TicketFile, Priority
 from ticket_comments.views import post_comment
 from ticket.forms import *
+from rappel.models import Rappel
 
 from common.diggpaginator import DiggPaginator
 from common.models import Client, UserProfile, ClaritickUser
@@ -480,6 +482,27 @@ def modify(request, ticket_id):
             # Appel du client
             if form.cleaned_data['appel']:
                 ticket.ticketappel_set.create(user=request.user)
+            
+            # Rappels de ticket
+            rappel = None
+
+            if form.cleaned_data['calendar_rappel']:
+                ident = ticket.pk
+                current_user = User.objects.get(pk=request.user.id)
+                # Select or create existing rappel
+                try:                    
+                    rappel = Rappel.objects.filter(ticket=ident).filter(user=current_user).get()                    
+                except Rappel.DoesNotExist:
+                    rappel = Rappel()
+
+                rappel.ticket = ticket
+                rappel.date_email = None
+                rappel.date = form.cleaned_data['calendar_rappel']
+                rappel.user = current_user
+                rappel.save()
+                
+            if form.cleaned_data['delete_rappel'] and rappel:
+                rappel.delete()
 
             file = form.cleaned_data["file"]
             if file:
@@ -505,7 +528,13 @@ def modify(request, ticket_id):
                 bdc.save()
             return exit_action()
     else:
-        form = TicketForm(instance=ticket, user=request.user)
+        try:
+            rappel = Rappel.objects.get(ticket=ticket, user=request.user)
+            rappel_date = rappel.date
+        except Rappel.DoesNotExist:
+            rappel_date = ""
+
+        form = TicketForm(instance=ticket, user=request.user, initial = {"calendar_rappel": rappel_date})
         child_formset = ChildFormSet(queryset=child)
         for f in child_formset.forms:
             filter_form_for_user(f, request.user)
@@ -525,6 +554,9 @@ def modify(request, ticket_id):
     
     update_ticket_last_seen(request, ticket.pk)
     
+    # List of rappel other user about the same ticket    
+    list_rappel_other_user = Rappel.objects.all().select_related('user__username').filter(ticket=ticket.pk).exclude(user=request.user)
+    
     # Bon de commande
     bondecommades = BonDeCommande.objects.all().filter_by_user(request.user).filter(ticket=ticket.pk)
     
@@ -532,7 +564,8 @@ def modify(request, ticket_id):
         { 
             "form": form, 
             "child_formset": child_formset,
-            "bondecommandes": bondecommades
+            "bondecommandes": bondecommades,
+            "list_rappel_other_user": list_rappel_other_user,
         },
         context_instance=RequestContext(request))
 

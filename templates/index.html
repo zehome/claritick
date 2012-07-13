@@ -60,7 +60,22 @@
         </ul>
     </div>
     {% endif %}
-    
+
+    {% if list_of_rappel %}
+    <div class="container" >
+        <h2>Rappels</h2>
+        <ul>
+
+          {% for rappel in list_of_rappel %}
+            <li><a href="{% url ticket_modify rappel.ticket.id %}">
+		[{{ rappel.ticket.id }}] {{ rappel.date }} {{ rappel.ticket.title|truncatewords:8 }}
+	    </a></li>
+          {% endfor %}
+
+        </ul>
+    </div>
+    {% endif %}
+  
     {% if ticket_dashboard_text_statistics %}
     <div id="list_stats" class="container">
         <h2>Statistiques</h2>

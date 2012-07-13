@@ -176,6 +176,26 @@ var lock_settings = {{ lock_settings|safe }};
 <hr />
 
 {% endblock content_ticket %}
+
+{% if perms.rappel.can_use_rappel %}
+<fieldset class="block form no_print rappel">
+    <legend>Rappel Ticket</legend>
+    {% if list_rappel_other_user %}
+    <div class="right">
+        <h3>Rappels Autres Utilisateurs</h3>
+        <ul>
+        {% for rappel in list_rappel_other_user %}
+            <li>{{ rappel.date }}  {{ rappel.user.username }}</li>
+        {% endfor %} 
+        </ul>
+    </div>
+    {% endif %}
+    <div class="form-calendar">{{ form.calendar_rappel }}</div>
+    <div>{{ form.delete_rappel }} {{ form.delete_rappel.label_tag }}</div>
+</fieldset>
+<hr />
+{% endif %}
+
 </div><!-- parent -->
 
 <script type="text/javascript">

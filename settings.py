@@ -139,7 +139,8 @@ INSTALLED_APPS = (
     'etiquette_printer',       # Impression d'étiquettes codebarre
     'qbuilder',
     'loggingauth',             # Logs login/logout
-    'smokeping',             # Logs login/logout
+    'smokeping',               # Logs login/logout
+    'rappel',                  # Create ticket rappel
 )
 
 COMMENTS_APP = 'ticket_comments'

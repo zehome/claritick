@@ -1,0 +1,47 @@
+{% autoescape off %}{% load comments %}+------------------------------------------------------------------------------------+
+| Ticket n°{{ ticket.id|ljust:'6' }}: [ {{ ticket.state }} ]
+| Objet: {{ ticket.title|striptags|wordwrap:80 }}
++------------------------------------------------------------------------------------+
+Date d'ouverture:      {{ ticket.date_open|date:'d/m/Y H\hi' }}
+Dernière modification: {{ ticket.last_modification|date:'d/m/Y H\hi' }}
+Ouvert par:            {{ ticket.opened_by.first_name }} {{ ticket.opened_by.last_name }} ({{ ticket.opened_by.username }})
+{% if ticket.project %}Projet:                {{ ticket.project }}{% endif %}
+{% if ticket.assigned_to %}Assigné à:             {{ ticket.assigned_to.first_name }} {{ ticket.assigned_to.last_name }} ({{ ticket.assigned_to.username }}){% else %}
+Non assigné{% endif %}
+Contact:               {% if ticket.contact %}{{ ticket.contact }}{% else %}{{ ticket.client }}{% endif %}
+{% if ticket.client %}Site:                  {{ ticket.client }}{% endif %}
+
+=======================================================================
+{{ ticket.text|striptags|wordwrap:80 }}
+
+
+{% get_comment_list for ticket as comment_list %}{% for comment in comment_list %}{% if not comment.internal %}
+***********************************************************************
+{{ comment.user.first_name }} {{ comment.user.last_name }} ({{ comment.user_name }}) le {{ comment.submit_date|date:'d/m/Y H\hi' }}:
+{{ comment.comment|striptags|wordwrap:80 }}
+{% endif %}{% endfor %}
+
+{% for child in childs %}
++------------------------------------------------------------------------------------+
+| Ticket n°{{ child.id|ljust:'6' }}: [ {{ child.state }} ]
+| Objet: {{ child.title|striptags|wordwrap:80 }}
++------------------------------------------------------------------------------------+
+
+=======================================================================
+{{ child.text|striptags|wordwrap:80 }}
+
+
+{% get_comment_list for child as comment_list %}{% for comment in comment_list %}{% if not comment.internal %}
+***********************************************************************
+{{ comment.user.first_name }} {{ comment.user.last_name }} ({{ comment.user_name }}) le {{ comment.submit_date|date:'d/m/Y H\hi' }}:
+{{ comment.comment|striptags|wordwrap:80 }}
+{% endif %}{% endfor %}
+{% endfor %}
+
+-- 
+CLARISYS Informatique        http://www.clarisys.fr/
+6, rue Jean Monnet           31240 SAINT JEAN
+Téléphone: 09 72 11 43 60    Fax: 09 72 11 33 88
+
+Email généré automatiquement par le système de suivi CLARITICK.
+{% endautoescape %}

@@ -4,6 +4,7 @@ from django.conf.urls.defaults import patterns, url, include
 from django.shortcuts import render_to_response
 from django.contrib import admin
 from ticket.views import get_critical_tickets, get_ticket_alarm
+from rappel.views import list_rappel
 from django.http import HttpResponse
 
 import reporting
@@ -38,6 +39,8 @@ def indexpage(template, data={}):
                     #ticket_dashboard_text_statistics = get_ticket_text_statistics(request),
                     ticket_alarms = get_ticket_alarm(request),
                     )
+            if request.user.has_perm("rappel.can_use_rappel"):
+                data.update(list_of_rappel = list_rappel(request))
         return render_to_response(template, data, context_instance=RequestContext(request))
     return render
 
