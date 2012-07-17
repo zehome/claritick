@@ -176,7 +176,6 @@
         {% if row.alarm %}
             <h3>Alarme le {{ row.alarm.date_open|date:"d/m/Y à H:i" }} par {{ row.alarm.user_open }}</h3>
             {{ row.alarm.reason }}
-            </h3>
         {% endif %}
         <h3>{{ row.title|wordwrap:80 }}</h3>
         {{ row.text|wordwrap:80|linebreaks }}
