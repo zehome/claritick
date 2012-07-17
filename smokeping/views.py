@@ -40,11 +40,18 @@ def smokeping(request):
         smokeping_conn.request("GET", "%s?%s" % (smokeping.path, prepreq(request.GET)))
     elif pi.startswith("/smokeping/"):
         smokeping_conn.request("GET", str(pi))
-    response = smokeping_conn.getresponse()
-    if response.status == 200:
-        djresponse = HttpResponse(response.read())
-        for k,v in response.getheaders():
-            djresponse[k] = v
-        return djresponse
-    else:
-        return HttpResponse(u"Erreur", status=500)
+    try:
+        response = smokeping_conn.getresponse()
+    except:
+        return HttpResponse(u"Erreur de communication.", status=502)
+
+    try:
+        if response.status == 200:
+            djresponse = HttpResponse(response.read())
+            for k,v in response.getheaders():
+                djresponse[k] = v
+            return djresponse
+        else:
+            return HttpResponse(u"Erreur du serveur", status=502)
+    finally:
+        smokeping_conn.close()
