@@ -2,6 +2,15 @@
 
 from django.contrib.auth.models import User
 from common.exceptions import NoProfileException
+from django.core.cache import cache
+
+def get_request_remote_addr(request):
+    x_forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR", None)
+    if x_forwarded_for:
+        ip = x_forwarded_for
+    else:
+        ip = request.META.get("REMOTE_ADDR")
+    return ip
 
 def sort_queryset(queryset):
     """
@@ -27,8 +36,13 @@ def filter_form_for_user(form, user, keywords = ("client", "assigned_to")):
     if user:
         for key,qs in zip(keywords, [sort_queryset(user.clients), user.childs]):
             if key in form.base_fields:
-                form.base_fields[key].choices = [(x.pk, x) for x in qs]
-                form.base_fields[key].choices.insert(0, ("", ""))
+                cache_key = "form_filter_%s_%s_%s" % (user.id, form.__class__.__name__, key)
+                choices = cache.get(cache_key)
+                if choices is None:
+                    choices = [(x.pk, x) for x in qs]
+                    choices.insert(0, ("", ""))
+                    cache.set(cache_key, choices, 3600)
+                form.base_fields[key].choices = choices
 
 def filter_ticket_for_user(form, user, current_assigned_to):
     if user:
