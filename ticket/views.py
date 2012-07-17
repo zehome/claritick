@@ -15,6 +15,7 @@ from django.forms.models import modelformset_factory
 from django.utils import simplejson as json
 from django.contrib.auth.decorators import login_required, permission_required
 from django.views.decorators.csrf import csrf_exempt
+from django.core.cache import cache
 from django.contrib.auth.models import User
 
 from dojango.decorators import json_response
@@ -757,6 +758,12 @@ def encode_datetime(obj):
 def ajax_graph_opentickets(request):
     """ Returns data for high charts """
     interval = request.POST.get("interval", "weeks")
+
+    cache_key = 'graph_opentickets_%s_%s' % (request.user.pk, interval)
+    cache_data = cache.get(cache_key)
+    if cache_data:
+        return cache_data
+
     ret = { "hs_charts": [] }
     today = datetime.datetime.now()
     def get_hc_serie(tss, properties):
@@ -770,6 +777,8 @@ def ajax_graph_opentickets(request):
             qss = qsstats.QuerySetStats(qs, 'date_open')
             tss = qss.time_series(today-datetime.timedelta(days=365), today, interval=interval)
             ret["hs_charts"].append(get_hc_serie(tss, {'name': 'Priority %s' % (priority.label,)}))
+
+    cache.set(cache_key, ret, 38400)
     return ret
 
 @login_required
@@ -777,6 +786,12 @@ def ajax_graph_opentickets(request):
 def ajax_graph_closetickets(request):
     """ Returns data for high charts """
     interval = request.POST.get("interval", "weeks")
+
+    cache_key = 'graph_closetickets_%s_%s' % (request.user.pk, interval)
+    cache_data = cache.get(cache_key)
+    if cache_data:
+        return cache_data
+
     ret = { "hs_charts": [] }
     today = datetime.datetime.now()
     def get_hc_serie(tss, properties):
@@ -790,6 +805,8 @@ def ajax_graph_closetickets(request):
             qss = qsstats.QuerySetStats(qs, 'date_close')
             tss = qss.time_series(today-datetime.timedelta(days=365), today, interval=interval)
             ret["hs_charts"].append(get_hc_serie(tss, {'name': 'Priority %s' % (priority.label,)}))
+
+    cache.set(cache_key, ret, 38400)
     return ret
 
 @login_required
@@ -797,6 +814,12 @@ def ajax_graph_closetickets(request):
 def ajax_graph_recall(request):
     """ Returns data for high charts """
     interval = request.POST.get("interval", "weeks")
+
+    cache_key = 'graph_recall_%s_%s' % (request.user.pk, interval)
+    cache_data = cache.get(cache_key)
+    if cache_data:
+        return cache_data
+
     ret = { "hs_charts": [] }
     today = datetime.datetime.now()
     def get_hc_serie(tss, properties):
@@ -810,8 +833,9 @@ def ajax_graph_recall(request):
             qss = qsstats.QuerySetStats(qs, 'date')
             tss = qss.time_series(today-datetime.timedelta(days=365), today, interval=interval)
             ret["hs_charts"].append(get_hc_serie(tss, {'name': 'Priority %s' % (priority.label,)}))
-    return ret
 
+    cache.set(cache_key, ret, 38400)
+    return ret
 
 @login_required
 @json_response
@@ -820,6 +844,11 @@ def ajax_graph_average_close_time(request):
     
     Returns data for generating "average close time" graph
     """
+    cache_key = 'graph_avg_closetime_%s' % (request.user.pk)
+    cache_data = cache.get(cache_key)
+    if cache_data:
+        return cache_data
+
     ret = {}
     
     if not request.user.is_staff:
@@ -862,7 +891,6 @@ def ajax_graph_average_close_time(request):
     cursor = connection.cursor()
     cursor.execute(rawquery)
     data = cursor.fetchall()
-    #data = [(850743.80952400004, datetime.datetime(2009, 7, 1, 0, 0), 1), (5205087.4000000004, datetime.datetime(2009, 8, 1, 0, 0), 1), (28206.0, datetime.datetime(2009, 9, 1, 0, 0), 1), (143188.5, datetime.datetime(2009, 11, 1, 0, 0), 1), (127069.333333, datetime.datetime(2009, 12, 1, 0, 0), 1), (162324.0, datetime.datetime(2010, 1, 1, 0, 0), 1), (1894222.096102, datetime.datetime(2010, 3, 1, 0, 0), 1), (522988.93457899999, datetime.datetime(2009, 7, 1, 0, 0), 2), (547603.640288, datetime.datetime(2009, 8, 1, 0, 0), 2), (368607.906716, datetime.datetime(2009, 9, 1, 0, 0), 2), (561494.17058799998, datetime.datetime(2009, 10, 1, 0, 0), 2), (623945.57837700006, datetime.datetime(2009, 11, 1, 0, 0), 2), (647219.15001900005, datetime.datetime(2009, 12, 1, 0, 0), 2), (399448.89853300003, datetime.datetime(2010, 1, 1, 0, 0), 2), (507396.04899099999, datetime.datetime(2010, 2, 1, 0, 0), 2), (204780.30123700001, datetime.datetime(2010, 3, 1, 0, 0), 2), (222393.817759, datetime.datetime(2010, 4, 1, 0, 0), 2), (1595656.538462, datetime.datetime(2009, 7, 1, 0, 0), 3), (600649.68421099999, datetime.datetime(2009, 8, 1, 0, 0), 3), (287347.47619000002, datetime.datetime(2009, 9, 1, 0, 0), 3), (746089.95833299996, datetime.datetime(2009, 10, 1, 0, 0), 3), (614552.60089300002, datetime.datetime(2009, 11, 1, 0, 0), 3), (289317.22395800002, datetime.datetime(2009, 12, 1, 0, 0), 3), (367416.75990300003, datetime.datetime(2010, 1, 1, 0, 0), 3), (148866.46093199999, datetime.datetime(2010, 2, 1, 0, 0), 3), (181966.69768000001, datetime.datetime(2010, 3, 1, 0, 0), 3), (72059.588652999999, datetime.datetime(2010, 4, 1, 0, 0), 3), (1288154.0, datetime.datetime(2009, 7, 1, 0, 0), 4), (10974.5, datetime.datetime(2009, 9, 1, 0, 0), 4), (479802.11111100001, datetime.datetime(2009, 10, 1, 0, 0), 4), (357279.33333300002, datetime.datetime(2009, 11, 1, 0, 0), 4), (1157326.5, datetime.datetime(2009, 12, 1, 0, 0), 4), (482023.45454499999, datetime.datetime(2010, 1, 1, 0, 0), 4), (26748.099999999999, datetime.datetime(2010, 2, 1, 0, 0), 4), (890311.0, datetime.datetime(2010, 3, 1, 0, 0), 4), (220048.82686900001, datetime.datetime(2010, 4, 1, 0, 0), 4)]
     transaction.commit_unless_managed()
     if not data:
         return ret
@@ -883,12 +911,11 @@ def ajax_graph_average_close_time(request):
     ret["series"] = [ get_chart(serie, 
         properties = {
             "legend": u"Priorité %s" % (serie[0][2],),
-#            "color": Priority.objects.get(pk=int(serie[0][2])).forecolor,
-#            "stroke": Priority.objects.get(pk=int(serie[0][2])).forecolor
         }) for serie in series ]
     
     ret["x_labels"] = [ {'value': idx+1, 'text': text_mapping[month-1]} for idx, month in enumerate(mapping) ]
     
+    cache.set(cache_key, ret, 38400)
     return ret
 
 @login_required
