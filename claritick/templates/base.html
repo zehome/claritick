@@ -81,9 +81,6 @@
             {% if user.is_staff %}
             <li><a href="/admin/">Administration</a></li>
             {% endif %}
-            {% if perms.ticket.can_view_report %}
-            <li><a href="/reporting/ticket/">Reporting</a></li>
-            {% endif %}
             {% if perms.ticket.can_view_qbuilder %}
             <li><a href="/qbuilder/">Query Builder</a></li>
             {% endif %}

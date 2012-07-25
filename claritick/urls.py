@@ -7,8 +7,6 @@ from ticket.views import get_critical_tickets, get_ticket_alarm
 from rappel.views import list_rappel
 from django.http import HttpResponse
 
-import reporting
-
 from django.template import RequestContext
 
 # Custom models
@@ -27,7 +25,6 @@ import smokeping.urls
 
 # Init code
 admin.autodiscover()
-reporting.autodiscover()
 
 # Utilities
 def indexpage(template, data={}):
@@ -88,9 +85,6 @@ urlpatterns = patterns('',
     ## Auth
     (r'^accounts/$', 'django.contrib.auth.views.login'),
     (r'^accounts/', include('django.contrib.auth.urls')),
-    
-    ## Reporting
-    (r'^reporting/', include('reporting.urls')),
     
     ## Error testing
     (r'^error/', raise_trial_exception),

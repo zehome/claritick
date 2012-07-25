@@ -346,26 +346,6 @@ class Ticket(models.Model):
     # Par defaut à false
     update_google = False
 
-    # Used for "reporting" tool
-    @property
-    def reporting_state_open(self):
-        return self.state and (self.state.id in (1,2,3) and 1 or 0) or 0
-    @property
-    def reporting_state_closed(self):
-        return self.state and (self.state.id == settings.TICKET_STATE_CLOSED and 1 or 0) or 0
-    @property
-    def reporting_priority_low(self):
-        return self.priority and (self.priority.id == 1 and 1 or 0) or 0
-    @property
-    def reporting_priority_normal(self):
-        return self.priority and (self.priority.id == 2 and 1 or 0) or 0
-    @property
-    def reporting_priority_high(self):
-        return self.priority and (self.priority.id == 3 and 1 or 0) or 0
-    @property
-    def reporting_priority_critical(self):
-        return self.priority and (self.priority.id == 4 and 1 or 0) or 0
-    
     @property
     def is_closed(self):
         return self.date_close or self.state.id == settings.TICKET_STATE_CLOSED
