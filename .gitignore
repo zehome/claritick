@@ -1,0 +1,10 @@
+*.pyc
+*.swp
+*.svn
+*.sqlite
+*.db
+build
+dist
+eggs
+/dist
+*.*~
