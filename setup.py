@@ -34,5 +34,8 @@ setup(
         'django-debug-toolbar',
         'django-extensions',
         'django-desktop-notifications>=0.4',
+        'elixir',
+        'psycopg2',
+        'setproctitle',
     ],
 )
