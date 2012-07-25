@@ -8,3 +8,4 @@ dist
 eggs
 /dist
 *.*~
+*.egg-info
