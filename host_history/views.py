@@ -98,8 +98,16 @@ def view_changes(request, rev_id):
     log = version.log_entry
     message_infos = log.parse_message()
     # Removing last item because it's an empty line.
-    host_changes = version.host.split('\n')[:-1]
-    fields_changes = version.additionnal_fields.split('\n')[:-1]
+    if version.host:
+        host_changes = version.host.split('\n')[:-1]
+    else:
+        host_changes = []
+    
+    if version.additionnal_fields:
+        fields_changes = version.additionnal_fields.split('\n')[:-1]
+    else:
+        fields_changes = []
+    
     return render_to_response('host_history/view.html', {
             "host_changes": host_changes,
             "fields_changes": fields_changes,

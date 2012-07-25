@@ -137,6 +137,8 @@ class ChromeCryptoField(models.CharField):
         return b64rc4crypt(data, settings.CHROMECRYPTO_KEY)
 
     def get_prep_value(self, value):
+        if value is None:
+            return None
         if value.data.startswith("{chromecrypto:"):
             return value.data[14:-1]
         return self._encrypt(value.data)

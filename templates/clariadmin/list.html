@@ -155,6 +155,7 @@
         pane = dijit.byId('pane_row_'+host_id);
         console.log(form);
         dojo.xhrPost({
+            headers: { 'X-CSRFToken': dojo.cookie("csrftoken") },
             form: form.id,
             handleAs: "text",
             load: function(data) {

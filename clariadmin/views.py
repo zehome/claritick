@@ -13,6 +13,7 @@ from clariadmin.models import Host, HostType, HostIPLog
 from clariadmin.forms import HostForm, SearchHostForm, AdditionnalFieldForm
 from clariadmin.forms import SearchHostIPLogForm
 from common.diggpaginator import DiggPaginator
+from common.utils import get_request_remote_addr
 from operator import ior
 
 
@@ -205,13 +206,15 @@ def new(request, from_host=False):
     POST = HostForm.filter_querydict(request.user, request.POST)
     add_fields = None
 
+    remote_addr = get_request_remote_addr(request)
+
     if POST:
-        form = HostForm(request.user, request.META['REMOTE_ADDR'], POST)
+        form = HostForm(request.user, remote_addr, POST)
         if form.is_valid():
             host, add_fields = form.save(POST=POST)
             redir = POST.get('submit_button', False)
             if redir == 'new':
-                form = HostForm(request.user, request.META['REMOTE_ADDR'])
+                form = HostForm(request.user, remote_addr)
             elif redir == 'save':
                 return redirect(host)
             elif redir == 'return':
@@ -220,11 +223,11 @@ def new(request, from_host=False):
         if from_host:
             from_host = get_host_or_404(request.user, pk=from_host)
             inst, comp = from_host.copy_instance()
-            form = HostForm(request.user, request.META['REMOTE_ADDR'], instance=inst)
+            form = HostForm(request.user, remote_addr, instance=inst)
             form.log_action(u"consulté", from_host)
             add_fields = AdditionnalFieldForm(comp, host=inst)
         else:
-            form = HostForm(request.user, request.META['REMOTE_ADDR'])
+            form = HostForm(request.user, remote_addr)
     return render_to_response('clariadmin/host.html', {
             'form': form,
             'prefix': '8',
@@ -244,10 +247,12 @@ def modify(request, host_id):
         template = "clariadmin/ajax_host.html"
     else:
         template = "clariadmin/host.html"
-
+    
+    remote_addr = get_request_remote_addr(request)
+    
     add_fields = AdditionnalFieldForm(host=host, prefix=prefix)
     if POST:
-        form = HostForm(request.user, request.META['REMOTE_ADDR'],
+        form = HostForm(request.user, remote_addr,
                         POST, instance=host, prefix=prefix)
         if POST.get("delete", False):
             form.delete()
@@ -262,7 +267,7 @@ def modify(request, host_id):
             elif redir == 'return':
                 return redirect('list_hosts')
     else:
-        form = HostForm(request.user, request.META['REMOTE_ADDR'],
+        form = HostForm(request.user, remote_addr,
                         instance=host, prefix=prefix)
     form.log_action(u"consulté")
     return render_to_response(template, {
@@ -395,12 +400,7 @@ def softupdate_ip(request, ipaddress):
     else:
         hostlog = HostIPLog(host=host, log_ip=ipaddress)
     
-    print request.META
-    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR', None)
-    if x_forwarded_for is not None:
-        hostlog.log_queryfrom = x_forwarded_for
-    else:
-        hostlog.log_queryfrom = request.META.get('REMOTE_ADDR')
+    hostlog.log_queryfrom = get_request_remote_addr(request)
     hostlog.log_hostname = request.POST.get('hostname', 'unknown')
     hostlog.save()
     
