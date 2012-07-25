@@ -132,7 +132,6 @@ INSTALLED_APPS = (
     'chuser',                  # Switch user
     'lock',                    # Lock objects by users
     'packaging',               # Clarideploy tools
-    'importv1',
     'debug_toolbar',
     'desktopnotifications',
     'bondecommande',
