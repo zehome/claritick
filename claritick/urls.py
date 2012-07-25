@@ -15,7 +15,6 @@ from django.template import RequestContext
 import ticket.urls
 import common.urls
 import clariadmin.urls
-import ws.urls
 import chuser.urls
 import lock.urls
 import packaging.urls
@@ -96,9 +95,6 @@ urlpatterns = patterns('',
     ## Error testing
     (r'^error/', raise_trial_exception),
     
-    ## Web services
-    (r'^ws/', include(ws.urls)),
-
     ## Ovh cert
     (r'^ovh-cert.txt', ovh_cert),
 
