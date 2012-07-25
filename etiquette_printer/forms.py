@@ -55,6 +55,5 @@ class PrintOrderForm(df.Form):
         output_data = tmplt.render(ctx)
         # Replace accents...
         x = purify(output_data)
-        print x
         return x
 
