@@ -1,0 +1,14 @@
+# Override PATH ?
+export HOME=/home/claritick
+source /home/claritick/claritick_env/bin/activate
+
+CONFIG_DIR="/etc/djserv"
+
+# Source defaults file; edit that file to configure this script.
+AUTOSTART="claritick"
+DAEMON="/home/ed/djserv/webserver.py"
+DAEMONARGS=""
+
+# You can specify variables per instance:
+DAEMONARGS_claritick="--cluster --port 3000 --cpus 2"
+
