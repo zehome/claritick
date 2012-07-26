@@ -34,9 +34,11 @@ setup(
         'django-debug-toolbar',
         'django-extensions',
         'django-desktop-notifications>=0.3',
+        'dojango',
         'elixir',
         'psycopg2',
         'setproctitle',
         'python-dateutil'
+        'numpy',
     ],
 )
