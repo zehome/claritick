@@ -90,7 +90,7 @@ class Project(models.Model):
 
     objects = ProjectManager()
     label = models.CharField("Libellé", max_length=64)
-    color = ColorField(name="Couleur associée", blank=True, null=True)
+    color = ColorField("Couleur associée", blank=True, null=True)
     #watchers = models.ManyToManyField(User, blank=True)
     procedure = models.ForeignKey('Procedure', verbose_name=u'Procédure', limit_choices_to={'active': True}, blank = True, null = True)
     
