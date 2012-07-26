@@ -34,7 +34,8 @@ setup(
         'django-debug-toolbar',
         'django-extensions',
         'django-desktop-notifications>=0.3',
-        'dojango',
+        # LC: TODO: Remove included in claritick dojango to use stock release        
+#        'dojango',
         'elixir',
         'psycopg2',
         'setproctitle',
