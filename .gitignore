@@ -9,3 +9,5 @@ eggs
 /dist
 *.*~
 *.egg-info
+static/
+local_settings.py
