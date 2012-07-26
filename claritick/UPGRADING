@@ -1,3 +1,6 @@
+46f1962:
+    - manage.py collectstatic
+
 2012-25-07:
     - manage.py dbshell
         CREATE INDEX django_comments_ticket_idx ON django_comments(submit_date, site_id, object_pk, content_type_id) WHERE (is_public = true AND is_removed = false);
