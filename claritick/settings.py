@@ -52,30 +52,28 @@ LANGUAGE_CODE = 'fr-fr'
 # to load the internationalization machinery.
 USE_I18N = True
 
-# Absolute path to the directory that holds media.
-# Example: "/home/media/media.lawrence.com/"
 MEDIA_ROOT = os.path.join(basepath, 'media')
-
-# URL that handles the media served from MEDIA_ROOT. Make sure to use a
-# trailing slash if there is a path component (optional in other cases).
-# Examples: "http://media.lawrence.com", "http://example.com/media/"
 MEDIA_URL = '/media/'
 
-# URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
-# trailing slash.
-# Examples: "http://foo.com/media/", "/media/".
-ADMIN_MEDIA_PREFIX = '/adm_media/'
+STATIC_ROOT = os.path.join(basepath, 'static')
+STATIC_URL = '/static/'
+STATICFILES_DIRS = (
+    os.path.join(basepath, 'media'),
+    ("qbuilder", os.path.join(basepath, 'qbuilder', 'media')),
+    ("dojango", os.path.join(basepath, 'dojango', 'dojo-media')),
+)
+
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = '9hart)zyl_0=u7$xj@+!d@6(^8&nmvni5r@898ko!rrp5spj-e'
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
-    ('django.template.loaders.cached.Loader', (
+#    ('django.template.loaders.cached.Loader', (
         'django.template.loaders.filesystem.Loader',
         'django.template.loaders.app_directories.Loader',
-        ),
-    ),
+#        ),
+#    ),
 )
 
 MIDDLEWARE_CLASSES = (
@@ -99,7 +97,8 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.contrib.auth.context_processors.auth",
     "django.core.context_processors.debug",
     "django.core.context_processors.i18n",
-    "django.core.context_processors.media",
+    "django.core.context_processors.media", # Legacy support
+    "django.core.context_processors.static",
     "django.contrib.messages.context_processors.messages",
     "dojango.context_processors.config",
     'django.core.context_processors.csrf',
@@ -120,6 +119,7 @@ INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.sites',    # Needed for comment
     'django.contrib.contenttypes',
+    'django.contrib.staticfiles', # Media static from django
     'django.contrib.sessions',
     'django.contrib.admin',    # Site admin
     'django.contrib.comments', # Commentaires
@@ -160,12 +160,14 @@ DATETIME_FORMAT = "d/m/Y H\hi"
 TIME_FORMAT = "H\hi"
 
 # Dojango config
+DOJANGO_DOJO_BUILD_VERSION = "1.6.1"
 DOJANGO_DOJO_PROFILE = "local_release"
-DOJANGO_DOJO_VERSION = "custom_build_160"
+DOJANGO_DOJO_VERSION = "custom_build_161"
 DOJANGO_DOJO_THEME = "tundra"
 DOJO_BUILD_JAVA_EXEC = "/usr/bin/java"
 DOJANGO_BASE_MEDIA_ROOT = os.path.join(basepath, 'dojango', 'dojo-media')
-DOJANGO_BASE_MEDIA_URL = "/dojango/dojo-media"
+DOJANGO_BASE_MEDIA_URL = "/static/dojango"
+DOJANGO_BUILD_MEDIA_URL = "/static/dojango/release"
 
 # Contrôle des emails
 EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'

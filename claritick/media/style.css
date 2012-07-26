@@ -6,7 +6,7 @@ body { font-family:"Lucida Grande","DejaVu Sans","Bitstream Vera Sans",Verdana,A
     margin:0;
     padding:0;
     background-color:#eff4ff;
-    background-image:url('/media/images/deg_fond.png');
+    background-image:url('/static/images/deg_fond.png');
     background-repeat:repeat-y;
     background-position:left;
     font-size:9pt;
@@ -286,7 +286,7 @@ input[class^="dijit"] {
     width: 185px;
     height:100%;
     background-color:#98b3e9;
-    background-image:url('/media/images/deg_menugauche.png');
+    background-image:url('/static/images/deg_menugauche.png');
     background-repeat:repeat-x;
     background-position:top;
     color:#013368;
@@ -310,7 +310,7 @@ input[class^="dijit"] {
     height: 100%;
     width: 20px;
     background-color: #98B3E9;
-    background-image:url('/media/images/deg_menugauche.png');
+    background-image:url('/static/images/deg_menugauche.png');
     background-repeat:repeat-x;
     background-position:top;
     /* Ie sucks */
@@ -353,7 +353,7 @@ div#gauche a {
     min-height:25px;
     line-height:25px;
     background-color:#d6e2fa;
-    background-image:url('/media/images/deg_menu.png');
+    background-image:url('/static/images/deg_menu.png');
     background-repeat:repeat-x;
     background-position:top left;
     color:#013368;
@@ -368,7 +368,7 @@ div#gauche a {
 
 div#gauche a:hover {
     background-color:#b0bfde;
-    background-image:url('/media/images/deg_menusurvol.png');
+    background-image:url('/static/images/deg_menusurvol.png');
     background-repeat:repeat-x;
     background-position:top left;
     color:#fff;
@@ -840,7 +840,7 @@ ol#pagination-digg {
     padding: 2px;
     padding-left: 20px;
     margin: 0;
-    background: url('/media/images/bg_header.jpg');
+    background: url('/static/images/bg_header.jpg');
     height: 34px;
     color: black;
     font-weight: bold;
@@ -910,22 +910,22 @@ ol#pagination-digg {
 }
 
 .claritickNewChild {
-    background-image: url('/media/images/oxygen/list-add.png') !important;
+    background-image: url('/static/images/oxygen/list-add.png') !important;
     background-position: 0 100% !important;
 }
 
 .claritickTicketMailAction {
-    background-image: url('/media/images/mail.png') !important;
+    background-image: url('/static/images/mail.png') !important;
     background-position: 0 100% !important;
 }
 
 .claritickNoTicketAlarm,.claritickTicketAlarm {
-    background-image: url('/media/icones/alarm.png') !important;
+    background-image: url('/static/icones/alarm.png') !important;
     background-position: 0 100% !important;
 }
 
 .claritickEtiquettePrintIcon {
-    background-image: url('/media/icones/filequickprint.png') !important;
+    background-image: url('/static/icones/filequickprint.png') !important;
     background-position: 0 100% !important;
 }
 

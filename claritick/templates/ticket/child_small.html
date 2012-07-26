@@ -4,7 +4,7 @@
         <legend>Nouveau Ticket fils</legend>
         <span>
     {% else %}
-    <legend><img src="{{ MEDIA_URL }}images/{% if cf.instance.state_id == 4 %}plus.png{% else %}minus.png{% endif %}" alt="plus" onClick="togglePlusMinus(this, 'child{{ cf.instance.id }}_content');" />
+    <legend><img src="{{ STATIC_URL }}images/{% if cf.instance.state_id == 4 %}plus.png{% else %}minus.png{% endif %}" alt="plus" onClick="togglePlusMinus(this, 'child{{ cf.instance.id }}_content');" />
         {% if cf.instance.state.img %}<img src="{{ cf.instance.state.img.url }}" alt="{{ cf.instance.state }}" />{% else %}[ {{ cf.instance.state }} ]{% endif %}
         &nbsp;{{ cf.instance.title }}
     </legend>

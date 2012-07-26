@@ -4,12 +4,12 @@
 {% block content_title %}Statistiques ticket{% endblock %}
 
 {% block extrajs %}
-<script src="{{ MEDIA_URL }}js/jquery-1.5.min.js" type="text/javascript"></script>
-<script src="{{ MEDIA_URL }}js/highcharts.js" type="text/javascript"></script>
-<script src="{{ MEDIA_URL }}js/modules/exporting.js" type="text/javascript"></script>
-<script src="{{ MEDIA_URL }}js/themes/grid.js" type="text/javascript"></script>
-<script src="{{ MEDIA_URL }}javascript/ticket/graph_opentickets.js" type="text/javascript"></script>
-<script src="{{ MEDIA_URL }}javascript/ticket/graph_recall.js" type="text/javascript"></script>
+<script src="{{ STATIC_URL }}js/jquery-1.5.min.js" type="text/javascript"></script>
+<script src="{{ STATIC_URL }}js/highcharts.js" type="text/javascript"></script>
+<script src="{{ STATIC_URL }}js/modules/exporting.js" type="text/javascript"></script>
+<script src="{{ STATIC_URL }}js/themes/grid.js" type="text/javascript"></script>
+<script src="{{ STATIC_URL }}javascript/ticket/graph_opentickets.js" type="text/javascript"></script>
+<script src="{{ STATIC_URL }}javascript/ticket/graph_recall.js" type="text/javascript"></script>
 
 <script type="text/javascript">
 dojo.addOnLoad(function() {

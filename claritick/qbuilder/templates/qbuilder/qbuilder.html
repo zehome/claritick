@@ -4,12 +4,12 @@
 
 {% block head_addon %}
     {{ block.super }}
-    <script type="text/javascript" src="{{ MEDIA_URL }}javascript/qbuilder.js"></script>
-    <script type="text/javascript" src="{{ MEDIA_URL }}FusionCharts/FusionCharts.js"></script>
-    <script type="text/javascript" src="{{ MEDIA_URL }}javascript/raphael-min.js"></script>
-    <script type="text/javascript" src="{{ MEDIA_URL }}javascript/raphael_popup.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}javascript/qbuilder.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}FusionCharts/FusionCharts.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}javascript/raphael-min.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}javascript/raphael_popup.js"></script>
     <style type="text/css">
-        @import "{% setting "DOJANGO_BASE_MEDIA_URL" %}/release/custom_build_141/dojox/grid/resources/Grid.css";
+        @import "{% setting "DOJANGO_BASE_STATIC_URL" %}/release/custom_build_141/dojox/grid/resources/Grid.css";
     </style>
     {% if recover_request_id %}
         <script type="text/javascript">
@@ -57,7 +57,7 @@
                         <div id="active_display_type" style="display: inline;"></div>
                     </div>
                     <button dojoType="dijit.form.Button" onclick="save_query();" style="display: inline;" id='save_query_btn'>
-                        <img src="{{ MEDIA_URL }}icones/save.png" height="18px;"/><span>Sauvegarder</span>
+                        <img src="{{ STATIC_URL }}icones/save.png" height="18px;"/><span>Sauvegarder</span>
                     </button>
                     <div id="chosen_query_div" style="display: inline;"></div>
                 </td>
@@ -87,7 +87,7 @@
             <tr>
                 <td colspan="999" class="align-center">
                     <button dojoType="dijit.form.Button" onclick="test_query();" style="display: inline;" id='test_query_btn'>
-                        <img src="{{ MEDIA_URL }}icones/ok.png" height="18px;"/><span>Lancer</span>
+                        <img src="{{ STATIC_URL }}icones/ok.png" height="18px;"/><span>Lancer</span>
                     </button>
                 </td>
             </tr>

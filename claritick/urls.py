@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.conf.urls.defaults import patterns, url, include
 from django.shortcuts import render_to_response
 from django.contrib import admin
@@ -66,7 +67,7 @@ def raise_trial_exception(*kw, **args):
 urlpatterns = patterns('',
     (r'^/*$', indexpage("index.html")),
     url(r'^ie/*$', iepage("ie.html"), name="internet_explorer"),
-    ## Medias (STATIC Content)
+    ## Medias (STATIC Content) (uncomment in debug mode)
     #(r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT}),
     (r'^comments/', include('django.contrib.comments.urls')),
     (r'^admin/', include(admin.site.urls)),
@@ -107,3 +108,6 @@ urlpatterns = patterns('',
     ## Smokeping
     url(r'^smokeping/', include(smokeping.urls)),
 )
+
+# Only in debug mode
+urlpatterns += staticfiles_urlpatterns()

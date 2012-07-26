@@ -2,7 +2,7 @@
 
 {% block title %}Consultation de demande{% endblock %}
 {% block content_title %}Consultation de demande{% endblock %}
-{% block image %}<img src="{{ MEDIA_URL }}images/oxygen/demande.png" />{% endblock %}
+{% block image %}<img src="{{ STATIC_URL }}images/oxygen/demande.png" />{% endblock %}
 {% block content %}
 
 <div class="demande_block">
@@ -66,11 +66,11 @@
     
     
     <div class="download">
-        {% ifnotequal pdf_id None %}<a href="/medecin/pdf/{{ pdf_id }}">{% endifnotequal %}<img src="{{ MEDIA_URL }}images/oxygen/pdf.png" alt="PDF"/>
+        {% ifnotequal pdf_id None %}<a href="/medecin/pdf/{{ pdf_id }}">{% endifnotequal %}<img src="{{ STATIC_URL }}images/oxygen/pdf.png" alt="PDF"/>
         <br />PDF{% ifnotequal pdf_id None %}</a>{% else %} (non disponible) {% endifnotequal %}
     </div>
     <div class="download">
-        {% ifnotequal hprim_id None %}<a href="/medecin/hprim/{{ hprim_id }}">{% endifnotequal %}<img src="{{ MEDIA_URL }}images/oxygen/hprim.png" alt="HPRIM"/>
+        {% ifnotequal hprim_id None %}<a href="/medecin/hprim/{{ hprim_id }}">{% endifnotequal %}<img src="{{ STATIC_URL }}images/oxygen/hprim.png" alt="HPRIM"/>
         <br />HPRIM{% ifnotequal hprim_id None %}</a>{% else %} (non disponible) {% endifnotequal %}
     </div>
 </div>

@@ -42,9 +42,9 @@ class HostType(models.Model):
         ordering = ['text']
 
     gateway = models.BooleanField("Gateway", default=False)
-    text = models.TextField("Description", blank=True)
-    color_fg = ColorField(name="Couleur texte", blank=True, null=True)
-    color_bg = ColorField(name="Couleur fond", blank=True, null=True)
+    text = models.TextField(u"Description", blank=True)
+    color_fg = ColorField(u"Couleur texte", blank=True, null=True)
+    color_bg = ColorField(u"Couleur fond", blank=True, null=True)
 
     def __unicode__(self):
         return u"%s" % (self.text,)
@@ -58,8 +58,8 @@ class HostStatus(models.Model):
 
     name = models.CharField("Nom", max_length=64, unique=True, blank=False)
     description = models.TextField("Description", blank=True)
-    color_fg = ColorField(name="Couleur texte", blank=True, null=True)
-    color_bg = ColorField(name="Couleur fond", blank=True, null=True)
+    color_fg = ColorField(u"Couleur texte", blank=True, null=True)
+    color_bg = ColorField(u"Couleur fond", blank=True, null=True)
 
     def __unicode__(self):
         return u"%s" % (self.name, )

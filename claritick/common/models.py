@@ -294,7 +294,6 @@ class ClaritickUser(User):
     get_client.short_description = u"Client"
 
     def get_security_level(self):
-        print dir(self)
         return getattr(self, "security_level", 99)
     get_security_level.short_description = u"Security level"
 

@@ -24,9 +24,9 @@
                 <td>
                     {% if host.id %}
                         {% if host.is_last_iplog_thesame %}
-                        <img src="{{ MEDIA_URL }}images/oxygen/ok.png" alt="OK" />
+                        <img src="{{ STATIC_URL }}images/oxygen/ok.png" alt="OK" />
                         {% else %}
-                        <img src="{{ MEDIA_URL }}images/oxygen/cancel.png" alt="Not OK" />
+                        <img src="{{ STATIC_URL }}images/oxygen/cancel.png" alt="Not OK" />
                         {% endif %}
                     {% endif %}
                 </td>

@@ -9,12 +9,12 @@
                     <h3>
                         {% if comment.internal %}
                             <div class="bubble-icon interne">
-                                <img src="{{ MEDIA_URL }}images/sign.png" alt="commentaire_interne" title="commentaire interne" />
+                                <img src="{{ STATIC_URL }}images/sign.png" alt="commentaire_interne" title="commentaire interne" />
                             </div>
                         {% endif %}
                         {% if not comment.internal %}
                             <div class="bubble-icon public">
-                                <img src="{{ MEDIA_URL }}images/users.png" alt="commentaire_public" title="commentaire public" />
+                                <img src="{{ STATIC_URL }}images/users.png" alt="commentaire_public" title="commentaire public" />
                             </div>
                         {% endif %}
                         <div class="author">{{ comment.user.first_name }} {{ comment.user.last_name }} <span>({{ comment.user_name }})</span></div>
@@ -39,11 +39,11 @@
         {% if perms.ticket.can_view_internal_comments %}
         <div dojoType="dijit.Tooltip" connectId="{{ form_to_comment.get_exact_id|interpret:"comment" }}" position="after" id="{{ form_to_comment.get_exact_id|interpret:"internal"}}-tooltip">
             <div style="display: none; width:200px;">
-                <img src="{{ MEDIA_URL }}images/oxygen/comment_public.png" alt="commentaire_public" style="width:64px;display:block;float:left;padding-right:10px;" />
+                <img src="{{ STATIC_URL }}images/oxygen/comment_public.png" alt="commentaire_public" style="width:64px;display:block;float:left;padding-right:10px;" />
                 <p>Attention, la réponse sera transmise au client final</p>
             </div>
             <div style="width:200px;">
-                <img src="{{ MEDIA_URL }}images/oxygen/comment_internal.png" alt="commentaire_interne" style="width:64px;display:block;float:left;padding-right:10px;" />
+                <img src="{{ STATIC_URL }}images/oxygen/comment_internal.png" alt="commentaire_interne" style="width:64px;display:block;float:left;padding-right:10px;" />
                 <p>La réponse sera conservée en interne</p>
             </div>
         </div>

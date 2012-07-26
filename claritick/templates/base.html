@@ -5,8 +5,8 @@
   <head>
     <title>CLARITICK - Gestion{% block title %}{% endblock %}</title>
     <!-- Admin -->
-    <link rel="stylesheet" type="text/css" href="{% block stylesheet %}{% load adminmedia %}{% admin_media_prefix %}css/base.css{% endblock %}" />
-    <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}style.css" />
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}admin/css/base.css" />
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}style.css" />
     {% block extrastyle %}
     <style type="text/css" media="screen">
         ul.errorlist {
@@ -16,13 +16,12 @@
     {% endblock %}
     {{ form.media }}
     {% include "dojango/include.html" %}
-    <!--[if lte IE 7]><link rel="stylesheet" type="text/css" href="{% block stylesheet_ie %}{% load adminmedia %}{% admin_media_prefix %}css/ie.css{% endblock %}" /><![endif]-->
-    {% if LANGUAGE_BIDI %}<link rel="stylesheet" type="text/css" href="{% block stylesheet_rtl %}{% admin_media_prefix %}css/rtl.css{% endblock %}" />{% endif %}
-    <script type="text/javascript">window.__admin_media_prefix__ = "{% filter escapejs %}{% admin_media_prefix %}{% endfilter %}";</script>
+    <!--[if lte IE 7]><link rel="stylesheet" type="text/css" href="{% block stylesheet_ie %}{{ STATIC_URL }}admin/css/ie.css{% endblock %}" /><![endif]-->
+    {% if LANGUAGE_BIDI %}<link rel="stylesheet" type="text/css" href="{% block stylesheet_rtl %}{{ STATIC_URL }}admin/css/rtl.css{% endblock %}" />{% endif %}
     {% block extrahead %}{% endblock %}
     {% block blockbots %}<meta name="robots" content="NONE,NOARCHIVE" />{% endblock %}
     <!-- End admin -->
-    <script type="text/javascript" src="{{ MEDIA_URL }}js/clariadmin.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/clariadmin.js"></script>
     <script type="text/javascript" charset="utf-8">
         dojo.config['ioPublish'] = true;
     </script>
@@ -49,10 +48,10 @@
             });
         });
     </script>
-    <script type="text/javascript" src="{{ MEDIA_URL }}javascript/claritick.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}javascript/claritick.js"></script>
     {% block extrajs %}{% endblock %}
 {% block activation_trafiquables %}
-    <script type="text/javascript" src="{{ MEDIA_URL }}javascript/trafiquable.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}javascript/trafiquable.js"></script>
     <script type="text/javascript">
         dojo.addOnLoad(function()
             {
@@ -65,7 +64,7 @@
             });
     </script>
 {% endblock %}
-    <script type="text/javascript" src="{{ MEDIA_URL }}js/menu.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/menu.js"></script>
   </head>
 {% load i18n %}
   <body class="{{ DOJANGO.THEME }} {% if is_popup %}popup {% endif %}{% block bodyclass %}claritick{% endblock %}">
@@ -73,7 +72,7 @@
 
     <div id="gauche">
         {% block claritick_menu %}
-        <h2><img src="{{ MEDIA_URL }}images/icon-home.png" alt="home" />Général</h2>
+        <h2><img src="{{ STATIC_URL }}images/icon-home.png" alt="home" />Général</h2>
         <ul class="menu">
             <li><a href="/">Accueil</a></li>
     {% if user.is_authenticated %}
@@ -87,12 +86,12 @@
             <li><a href="{% url infos_login %}">Identification</a></li>
         </ul>
 
-        <h2><img src="{{ MEDIA_URL }}images/icon-new.png" alt="+" />Création</h2>
+        <h2><img src="{{ STATIC_URL }}images/icon-new.png" alt="+" />Création</h2>
         <ul class="menu">
             <li><a href="/ticket/partial_new/">Ticket</a></li>
         </ul>
 
-        <h2><img src="{{ MEDIA_URL }}images/icon-list.png" alt="/" />Tickets</h2>
+        <h2><img src="{{ STATIC_URL }}images/icon-list.png" alt="/" />Tickets</h2>
         <ul class="menu">
             <li><a href="{% url ticket_list_all %}?reset=1">Tous</a></li>
             <li><a href="{% url ticket_list_me %}?reset=1">Les miens</a></li>
@@ -106,7 +105,7 @@
             {% endif %}
         </ul>
         {% if perms.clariadmin.can_access_clariadmin %}
-        <h2><img src="{{ MEDIA_URL }}images/oxygen/computer.png" alt="/" />Clariadmin</h2>
+        <h2><img src="{{ STATIC_URL }}images/oxygen/computer.png" alt="/" />Clariadmin</h2>
         <ul class="menu">
           <li><a href="{% url list_hosts %}?reset=1">Toutes les machines</a></li>
           <li><a href="{% url new_host %}">Nouvelle machine</a></li>
@@ -115,13 +114,13 @@
         </ul>
         {% endif %}
         {% if perms.smokeping.smokeping %}
-        <h2><img src="{{ MEDIA_URL}}images/oxygen/esd.png" alt="smokeping" />Monitoring</h2>
+        <h2><img src="{{ STATIC_URL}}images/oxygen/esd.png" alt="smokeping" />Monitoring</h2>
         <ul class="menu">
           <li><a href="{% url smokeping %}">Smokeping</a></li>
         </ul>
         {% endif %}
         {% if perms.package.can_access %}
-        <h2><img src="{{ MEDIA_URL }}images/oxygen/packaging.png" alt="/" />Déploiement</h2>
+        <h2><img src="{{ STATIC_URL }}images/oxygen/packaging.png" alt="/" />Déploiement</h2>
         <ul class="menu">
             <li><a href="/packaging/">Gestion</a></li>
         </ul>
@@ -135,14 +134,14 @@
     <table id="menuPrincipal" summary="Menu">
       <tr>
         <td align="left" width="33%">
-          <a href="/"><img src="{{ MEDIA_URL }}images/accueil.png" alt="accueil" /></a>
+          <a href="/"><img src="{{ STATIC_URL }}images/accueil.png" alt="accueil" /></a>
           {% if ticket_alarms_count %}{{ ticket_alarms_count }} alarmes actives!{% endif %}
             {% if user.is_authenticated %}
-            <p><a class="bouton" href="/accounts/logout"><img src="{{ MEDIA_URL }}images/oxygen/disconnect.png" alt="disconnect" />Déconnexion</a><!--<br />(autologout: {{ request.autologout_enabled }})--></p>
+            <p><a class="bouton" href="/accounts/logout"><img src="{{ STATIC_URL }}images/oxygen/disconnect.png" alt="disconnect" />Déconnexion</a><!--<br />(autologout: {{ request.autologout_enabled }})--></p>
             {% endif %}
         </td>
         <td valign="middle" align="center" width="33%">
-            <a href="/"><img id="logoClaritick" src="{{ MEDIA_URL }}images/logo_pt.png" alt="logo" /></a>
+            <a href="/"><img id="logoClaritick" src="{{ STATIC_URL }}images/logo_pt.png" alt="logo" /></a>
         </td>
         <td align="right" width="33%" style="status">
           <span id="status">[ IDLE ]</span>

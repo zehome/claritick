@@ -4,12 +4,13 @@ from django.conf import settings
 DEBUG = getattr(settings, "DEBUG", False)
 DEFAULT_CHARSET = getattr(settings, 'DEFAULT_CHARSET', 'utf-8')
 
-DOJO_VERSION = getattr(settings, "DOJANGO_DOJO_VERSION", "1.6.0")
+DOJO_VERSION = getattr(settings, "DOJANGO_DOJO_VERSION", "1.7.2")
+# NOTE: you have to use "google_xd" for dojo versions < 1.7.0
 DOJO_PROFILE = getattr(settings, "DOJANGO_DOJO_PROFILE", "google")
 
 DOJO_MEDIA_URL = getattr(settings, "DOJANGO_DOJO_MEDIA_URL", 'dojo-media')
 BASE_MEDIA_URL = getattr(settings, "DOJANGO_BASE_MEDIA_URL", '/dojango/%s' % DOJO_MEDIA_URL)
-BUILD_MEDIA_URL = getattr(settings, "DOJANGO_BUILD_MEDIA_URL", '%s/release' % BASE_MEDIA_URL)
+BUILD_MEDIA_URL = getattr(settings, "DOJANGO_BUILD_MEDIA_URL", '%s/release/' % BASE_MEDIA_URL)
 BASE_MEDIA_ROOT = getattr(settings, "DOJANGO_BASE_MEDIA_ROOT", os.path.abspath(os.path.dirname(__file__)+'/../dojo-media/'))
 BASE_DOJO_ROOT = getattr(settings, "DOJANGO_BASE_DOJO_ROOT", BASE_MEDIA_ROOT + "/src")
 # as default the dijit theme folder is used
@@ -29,12 +30,15 @@ CDN_USE_SSL = getattr(settings, "DOJANGO_CDN_USE_SSL", False) # is dojo served v
 # - use_gfx: there is a special case, when using dojox.gfx from aol (see http://dev.aol.com/dojo)
 # - is_local: marks a profile being local. this is needed when using the dojo module loader
 # - is_local_build: profile being a locally builded version
-_aol_versions = ('0.9.0', '1.0.0', '1.0.2', '1.1.0', '1.1.1', '1.2.0', '1.2.3', '1.3', '1.3.0', '1.3.1', '1.3.2', '1.4', '1.4.0', '1.4.1', '1.4.3', '1.5', '1.5.0',)
+_aol_versions = ('0.9.0', '1.0.0', '1.0.2', '1.1.0', '1.1.1', '1.2.0', '1.2.3', '1.3', '1.3.0', '1.3.1', '1.3.2', '1.4', '1.4.0', '1.4.1', '1.4.3', '1.5', '1.5.0', '1.6', '1.6.0')
 _aol_gfx_versions = ('0.9.0', '1.0.0', '1.0.2', '1.1.0', '1.1.1',)
-_google_versions = ('1.1.1', '1.2', '1.2.0', '1.2.3', '1.3', '1.3.0', '1.3.1', '1.3.2', '1.4', '1.4.0', '1.4.1', '1.4.3', '1.5', '1.5.0', '1.6.0')
+_google_xd_versions = ('1.1.1', '1.2', '1.2.0', '1.2.3', '1.3', '1.3.0', '1.3.1', '1.3.2', '1.4', '1.4.0', '1.4.1', '1.4.3', '1.5', '1.5.0', '1.6', '1.6.0', '1.6.1')
+_google_versions = ('1.7', '1.7.0', '1.7.1', '1.7.2',) # since Dojo 1.7.0 an alternative loading mechanism is in place
 DOJO_PROFILES = {
-    'google': {'base_url':(CDN_USE_SSL and 'https' or 'http') + '://ajax.googleapis.com/ajax/libs/dojo', 'use_xd':True, 'versions':_google_versions}, # google just supports version >= 1.1.1
-    'google_uncompressed': {'base_url':(CDN_USE_SSL and 'https' or 'http') + '://ajax.googleapis.com/ajax/libs/dojo', 'use_xd':True, 'uncompressed':True, 'versions':_google_versions},
+    'google': {'base_url':(CDN_USE_SSL and 'https' or 'http') + '://ajax.googleapis.com/ajax/libs/dojo', 'use_xd':False, 'versions':_google_versions},
+    'google_uncompressed': {'base_url':(CDN_USE_SSL and 'https' or 'http') + '://ajax.googleapis.com/ajax/libs/dojo', 'use_xd':False, 'uncompressed':True, 'versions':_google_versions},
+    'google_xd': {'base_url':(CDN_USE_SSL and 'https' or 'http') + '://ajax.googleapis.com/ajax/libs/dojo', 'use_xd':True, 'versions':_google_xd_versions}, # google just supports version >= 1.1.1
+    'google_uncompressed_xd': {'base_url':(CDN_USE_SSL and 'https' or 'http') + '://ajax.googleapis.com/ajax/libs/dojo', 'use_xd':True, 'uncompressed':True, 'versions':_google_xd_versions},
     'aol': {'base_url':'http://o.aolcdn.com/dojo', 'use_xd':True, 'versions':_aol_versions},
     'aol_uncompressed': {'base_url':'http://o.aolcdn.com/dojo', 'use_xd':True, 'uncompressed':True, 'versions':_aol_versions},
     'aol_gfx': {'base_url':'http://o.aolcdn.com/dojo', 'use_xd':True, 'use_gfx':True, 'versions':_aol_gfx_versions},
@@ -52,7 +56,7 @@ DOJO_PROFILES.update(getattr(settings, "DOJANGO_DOJO_PROFILES", {}))
 # =============================================================================================
 # general doc: http://dojotoolkit.org/book/dojo-book-0-9/part-4-meta-dojo/package-system-and-custom-builds
 # see http://www.sitepen.com/blog/2008/04/02/dojo-mini-optimization-tricks-with-the-dojo-toolkit/ for details
-DOJO_BUILD_VERSION = getattr(settings, "DOJANGO_DOJO_BUILD_VERSION", '1.6.0')
+DOJO_BUILD_VERSION = getattr(settings, "DOJANGO_DOJO_BUILD_VERSION", '1.7.2')
 # this is the default build profile, that is used, when calling "./manage.py dojobuild"
 # "./manage.py dojobuild dojango" would have the same effect
 DOJO_BUILD_PROFILE = getattr(settings, "DOJANGO_DOJO_BUILD_PROFILE", "dojango")
@@ -69,10 +73,14 @@ DOJO_BUILD_PROFILE = getattr(settings, "DOJANGO_DOJO_BUILD_PROFILE", "dojango")
 #                              this tupel will be appended to the default folders/files that are skipped: see SKIP_FILES in management/commands/dojobuild.py 
 DOJO_BUILD_PROFILES = {
     'dojango': {
-        'options': 'profileFile="%(BASE_MEDIA_ROOT)s/dojango.profile.js" action=release optimize=shrinksafe.keepLines cssOptimize=comments.keepLines',
+        'options': (DOJO_VERSION > '1.6' and 'profile' or 'profileFile') + '="%(BASE_MEDIA_ROOT)s/dojango.profile.js" action=release optimize=shrinksafe.keepLines cssOptimize=comments.keepLines',
     },
     'dojango_optimized': {
-        'options': 'profileFile="%(BASE_MEDIA_ROOT)s/dojango_optimized.profile.js" action=release optimize=shrinksafe.keepLines cssOptimize=comments.keepLines',
+        'options': (DOJO_VERSION > '1.6' and 'profile' or 'profileFile') + '="%(BASE_MEDIA_ROOT)s/dojango_optimized.profile.js" action=release optimize=shrinksafe.keepLines cssOptimize=comments.keepLines',
+        'build_version': '%(DOJO_BUILD_VERSION)s-dojango-optimized-with-dojo',
+    },
+    'dojango_claritick': {
+        'options': (DOJO_VERSION > '1.6' and 'profile' or 'profileFile') + '="%(BASE_MEDIA_ROOT)s/dojango_claritick" action=release optimize=shrinksafe.keepLines cssOptimize=comments.keepLines',
         'build_version': '%(DOJO_BUILD_VERSION)s-dojango-optimized-with-dojo',
     },
 }

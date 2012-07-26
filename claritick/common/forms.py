@@ -22,7 +22,6 @@ class ClaritickUserCreationForm(forms.ModelForm):
     def save(self, commit=True):
         user = super(ClaritickUserCreationForm, self).save(commit=False)
         p = ClaritickUser.generate_random_password()
-        print p
         user.set_password(p)
         if commit:
             user.save()

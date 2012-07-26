@@ -4,7 +4,7 @@
 
 {% block title %}Liste des tickets{% endblock %}
 {% block content_title %}Liste des tickets{% endblock %}
-{% block image %}<img src="{{ MEDIA_URL }}images/oxygen/search.png" alt="search" />{% endblock %}
+{% block image %}<img src="{{ STATIC_URL }}images/oxygen/search.png" alt="search" />{% endblock %}
 
 {% block extrajs %}
 <script type="text/javascript" charset="utf-8">
@@ -216,8 +216,8 @@
     <th><a href="?sort=category&sort_order={{ sort_order }}">Catégorie</a></th>
     <th><a href="?sort=project&sort_order={{ sort_order }}">Projet</a></th>
     <th><a href="?sort=title&sort_order={{ sort_order }}">Titre</a></th>
-    <th><a href="?sort=nb_comments&sort_order={{ sort_order }}"><img src="{{ MEDIA_URL }}images/comment.png" /></a></th>
-    <th><a href="?sort=nb_appels&sort_order={{ sort_order }}"><img src="{{ MEDIA_URL }}images/phone.png" /></a></th>
+    <th><a href="?sort=nb_comments&sort_order={{ sort_order }}"><img src="{{ STATIC_URL }}images/comment.png" /></a></th>
+    <th><a href="?sort=nb_appels&sort_order={{ sort_order }}"><img src="{{ STATIC_URL }}images/phone.png" /></a></th>
     <th><a href="?sort=contact&sort_order={{ sort_order }}">Contact</a></th>
     <th><a href="?sort=last_modification&sort_order=1">M.à.J.</a></th>
     <th><a href="?sort=opened_by&sort_order={{ sort_order }}">Ouvert par</a></th>
@@ -229,8 +229,8 @@
     <tr class="bigrow {% cycle 'row1' 'row2' as rowcolor %}" id="ticket_line_{{ forloop.counter }}">
         <td class="bigrow"><input type="checkbox" name="ticket_checked" id="ticket_select_{{ forloop.counter }}" value="{{ row.pk }}" /></td>
         <td class="bigrow" style="width: 60px;{{ row.close_style }}{{ row.priority_back_style }}" rowspan="{{ row.enfants|length|add:'1' }}">
-            {% if row.alarm %}<img src="{{ MEDIA_URL }}images/important.png" alt="[alarme]" />{% endif %}
-            {% if row.file %}<img src="{{ MEDIA_URL }}images/attachment.png" alt="[attach]" />{% endif %}
+            {% if row.alarm %}<img src="{{ STATIC_URL }}images/important.png" alt="[alarme]" />{% endif %}
+            {% if row.file %}<img src="{{ STATIC_URL }}images/attachment.png" alt="[attach]" />{% endif %}
             <a style="{{ row.priority_text_style }}" href="{% url ticket_modify row.id %}">{{ row.id }}</a>
         </td>
         <td class="bigrow" style="width: 200px;">{% if row.client %}{{ row.client }}{% endif %}</td>
@@ -247,7 +247,7 @@
         </tr>
         <tr class="{{ rowcolor }}" id="ticket_child{{ forloop.parentloop.counter }}_line_{{ forloop.counter }}">
             <td><input type="checkbox" name="ticket_checked" id="ticket_child{{ forloop.parentloop.counter}}_select_{{ forloop.counter }}" value="{{ child.pk }}" /></td>
-            <td colspan="11" class="rowchild"><img src="{{ MEDIA_URL }}images/oxygen/code-class.png" alt="-->" />&nbsp;<span style="{{ child.close_style }}"><a href="{% url ticket_modify row.id %}#child{{ child.id }}">{{ child.title|truncatewords:8 }}</a></span></td>
+            <td colspan="11" class="rowchild"><img src="{{ STATIC_URL }}images/oxygen/code-class.png" alt="-->" />&nbsp;<span style="{{ child.close_style }}"><a href="{% url ticket_modify row.id %}#child{{ child.id }}">{{ child.title|truncatewords:8 }}</a></span></td>
         </tr>
     {% endfor %}
     {% if not row.enfants %}</tr>{% endif %}

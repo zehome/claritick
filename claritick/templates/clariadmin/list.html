@@ -6,7 +6,7 @@
 {% block image %}<img src="/media/images/oxygen/search.png" />{% endblock %}
 {% block extrajs %}
   {{ block.super }}
-  <script type="text/javascript" src="{{ MEDIA_URL }}js/clariadmin.js"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}js/clariadmin.js"></script>
   <script type="text/javascript" charset="utf-8">
     dojo.require("dijit.Menu");
     dojo.require('dijit.form.MultiSelect');

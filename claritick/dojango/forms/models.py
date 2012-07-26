@@ -15,8 +15,7 @@ from dojango.forms.widgets import DojoWidgetMixin, Textarea, Select, SelectMulti
 
 __all__ = (
     'ModelForm', 'BaseModelForm', 'model_to_dict', 'fields_for_model',
-    'save_instance', 'ModelChoiceField',
-    'ModelMultipleChoiceField',
+    'save_instance', 'ModelChoiceField', 'ModelMultipleChoiceField',
 )
     
 class ModelChoiceField(DojoFieldMixin, models.ModelChoiceField):
@@ -88,7 +87,6 @@ MODEL_TO_FORM_FIELD_MAP = (
     (fields.IntegerField, IntegerField),
     (fields.TimeField, TimeField),
     (fields.URLField, URLField),
-    (fields.XMLField, CharField, Textarea),
     (fields.TextField, CharField, Textarea),
     (fields.CharField, CharField),
 )
@@ -186,8 +184,8 @@ class BaseModelFormSet(BaseModelFormSet, BaseFormSet):
 
 def modelformset_factory(*args, **kwargs):
     """Changed modelformset_factory function, where we use our own formfield_callback"""
-    kwargs["formfield_callback"] = formfield_function
-    kwargs["formset"] = BaseModelFormSet
+    kwargs["formfield_callback"] = kwargs.get("formfield_callback", formfield_function)
+    kwargs["formset"] = kwargs.get("formset", BaseModelFormSet)
     return models.modelformset_factory(*args, **kwargs)
 
 # InlineFormSets #############################################################
@@ -209,6 +207,6 @@ class BaseInlineFormSet(BaseInlineFormSet, BaseModelFormSet):
             
 def inlineformset_factory(*args, **kwargs):
     """Changed inlineformset_factory function, where we use our own formfield_callback"""
-    kwargs["formfield_callback"] = formfield_function
-    kwargs["formset"] = BaseInlineFormSet
+    kwargs["formfield_callback"] = kwargs.get("formfield_callback", formfield_function)
+    kwargs["formset"] = kwargs.get("formset", BaseInlineFormSet)
     return models.inlineformset_factory(*args, **kwargs)
