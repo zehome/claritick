@@ -41,7 +41,7 @@ class FormSecurityChecker(object):
         If required fields are removed, the _security_can_save flag is
         switched to False.
         """
-        self._security_userlevel = user.get_profile().get_security_level()
+        self._security_userlevel = user.my_userprofile.get_security_level()
         if formName is None:
             formName = self.__class__.__name__
         if not security:
@@ -65,7 +65,7 @@ class FormSecurityChecker(object):
         """
         This method will filter querydict, not letting user pass invalid data to the view.
         """
-        userlevel = user.get_profile().get_security_level()
+        userlevel = user.my_userprofile.get_security_level()
         security_settings = settings.SECURITY.get(cls.__name__, {})
         security_default_level = security_settings.get("__default__", settings.SECURITY["DEFAULT_LEVEL"])
         filtred_querydict = querydict.copy()
@@ -82,7 +82,7 @@ class FormSecurityChecker(object):
         fileds -- list or iterable of keys to filter.
         returns the `list` with only authorized filed names.
         """
-        userlevel = user.get_profile().get_security_level()
+        userlevel = user.my_userprofile.get_security_level()
         security_settings = settings.SECURITY.get(cls.__name__, {})
         security_default_level = security_settings.get("__default__", settings.SECURITY["DEFAULT_LEVEL"])
         return [e for e in fields
@@ -144,7 +144,7 @@ class HostForm(df.ModelForm, FormSecurityChecker):
                 instance.hostname,
                 action,
                 self.user.username,
-                self.user.get_profile().get_security_level(),
+                self.user.my_userprofile.get_security_level(),
                 self.user_ip,
                 datetime.datetime.now().strftime("%m/%d/%Y %H:%M"))
         log = HostEditLog(host=instance, username=self.user.username, ip=self.user_ip, action=action,

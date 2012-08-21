@@ -83,6 +83,7 @@ MIDDLEWARE_CLASSES = (
     'dojango.middleware.DojoCollector',
     'django.middleware.transaction.TransactionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+    'common.middleware.userprofile.LazyProfileToUserMiddleware',
     'common.exceptionmiddleware.UserBasedExceptionMiddleware',
     'backlinks.middleware.BacklinksMiddleware',
     'django.middleware.http.ConditionalGetMiddleware',
@@ -105,6 +106,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.request',
     'ticket.context_processors.ticket_views',
     'lock.context_processors.lock_settings',
+    'profiletools.context_processors.fetch_profile',
 )
 
 
@@ -142,6 +144,7 @@ INSTALLED_APPS = (
     'loggingauth',             # Logs login/logout
     'smokeping',               # Logs login/logout
     'rappel',                  # Create ticket rappel
+    'django_extensions',
 )
 
 COMMENTS_APP = 'ticket_comments'

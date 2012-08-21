@@ -92,7 +92,7 @@ def get_pagination(queryset, request):
     return paginator.page(request.GET.get("page", 1))
 
 def update_ticket_last_seen(request, ticket_id):
-    userprofile = request.user.get_profile()
+    userprofile = request.user.my_userprofile
     ticket_vus = userprofile.tickets_vus or {} or {} or {}
     ticket_vus[str(ticket_id)] = int(time.time())
     userprofile.tickets_vus = ticket_vus
@@ -126,7 +126,7 @@ def list_nonvalide(request):
 @backlink_setter
 def list_notseen(request):
     """liste des tickets non consultes."""
-    profile = request.user.get_profile()
+    profile = request.user.my_userprofile
     ticket_vus = profile.tickets_vus or {}
 
     def my_get_context(request):
@@ -157,7 +157,7 @@ def list_view(request, view_id=None):
     inverted_filters = {}
     filters = {}
     if view_id:
-        profile = request.user.get_profile()
+        profile = request.user.my_userprofile
         ticket_vus = profile.tickets_vus or {}
 
         view = get_object_or_404(TicketView, pk=view_id, user=request.user)
@@ -403,7 +403,7 @@ def modify(request, ticket_id):
 
     # Si le ticket n'est pas rattaché à aucun client, on l'affecte au client de l'utilisateur
     if not ticket.client:
-        ticket.client = request.user.get_profile().client
+        ticket.client = request.user.my_userprofile.client
 
     if request.user.has_perm("ticket.add_ticket_full"):
         template_name = "ticket/modify.html"
@@ -852,7 +852,7 @@ def ajax_graph_average_close_time(request):
     ret = {}
     
     if not request.user.is_staff:
-        client_list = request.user.get_profile().get_clients()
+        client_list = request.user.my_userprofile.get_clients()
         filterquery = """AND ticket_ticket.client_id IN (%s)""" % (",".join(map(str, [ c.id for c in client_list ])),)
     else:
         filterquery = ""
@@ -964,14 +964,14 @@ def ticket_feed(request):
 
 @login_required
 def ajax_mark_all_ticket_seen(request):
-    profile = request.user.get_profile()
+    profile = request.user.my_userprofile
     profile.tickets_vus = {"all": datetime.datetime.now().strftime("%s")}
     profile.save()
     return http.HttpResponse("saved")
 
 @login_required
 def ajax_reset_all_ticket_seen(request):
-    profile = request.user.get_profile()
+    profile = request.user.my_userprofile
     profile.tickets_vus = {}
     profile.save()
     return http.HttpResponse("saved")

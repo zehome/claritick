@@ -25,7 +25,7 @@ def smokeping(request):
     smokeping_conn = httplib.HTTPConnection("stats.clarisys.fr")
 
     try:
-        client = request.user.get_profile().client
+        client = request.user.my_userprofile.client
     except:
         return HttpResponse(u"No profile.", status=500)
 

@@ -301,10 +301,10 @@ class ClaritickUser(User):
         """
             Retourne tous les ClaritickUser de l'arbre client de l'utilisateur.
         """
-        client = self.get_profile().client
+        client = self.my_userprofile.client
         if client:
             return ClaritickUser.objects.filter(
-                userprofile__client__in=Client.objects.get_childs("parent", self.get_profile().client.pk)
+                userprofile__client__in=Client.objects.get_childs("parent", self.my_userprofile.client.pk)
             )
         return ClaritickUser.objects.none()
 

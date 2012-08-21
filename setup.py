@@ -41,5 +41,6 @@ setup(
         'setproctitle',
         'python-dateutil'
         'numpy',
+        'django-profiletools',
     ],
 )

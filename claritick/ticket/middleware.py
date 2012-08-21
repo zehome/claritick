@@ -7,7 +7,7 @@ class PopulateUserMiddleware(object):
     def process_request(self, request):
         if hasattr(request, 'user') and not request.user.is_anonymous():
             try:
-                profile = request.user.get_profile()
+                profile = request.user.my_userprofile
                 if request.user.is_superuser:
                     request.user.clients = Client.objects.all()
                     request.user.childs = ClaritickUser.objects.all()

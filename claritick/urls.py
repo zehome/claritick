@@ -51,7 +51,7 @@ def agenda(request, data={}):
     user = request.user
     if user:
         try:
-            profile = user.get_profile()
+            profile = user.my_userprofile
             data["google_account"] = profile.google_account
         except:
             pass

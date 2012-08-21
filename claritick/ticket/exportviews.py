@@ -86,7 +86,7 @@ def export_nonvalide(request):
 @login_required
 def export_notseen(request):
     """liste des tickets non consultes."""
-    profile = request.user.get_profile()
+    profile = request.user.my_userprofil
     ticket_vus = profile.tickets_vus or {}
 
     def postfiltercallback(qs):
@@ -177,7 +177,7 @@ def export_view(request, view_id=None):
     inverted_filters = {}
     filters = {}
     if view_id:
-        profile = request.user.get_profile()
+        profile = request.user.my_userprofile
         ticket_vus = profile.tickets_vus or {}
 
         view = get_object_or_404(TicketView, pk=view_id, user=request.user)

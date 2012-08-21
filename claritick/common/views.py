@@ -31,7 +31,7 @@ def infos_login(request):
     """
     Informations sur le client (liste d'enfants, modif mot de passe, ...)
     """
-    client = request.user.get_profile().client
+    client = request.user.my_userprofile.client
     if not client:
         raise Exception(u"Pas de client dans le profil pour l'utilisateur %s." % request.user)
     
@@ -61,7 +61,7 @@ def infos_login(request):
 
 @login_required
 def modify_client(request, client_id):
-    user_client = request.user.get_profile().client
+    user_client = request.user.my_userprofile.client
     if not user_client:
         raise Exception(u"Pas de client dans le profil pour l'utilisateur %s." % request.user)
     
@@ -93,7 +93,7 @@ def trafiquable(request):
     if not request.is_ajax():
         return HttpResponse("This method may only be called via ajax")
     data = {}
-    profile = request.user.get_profile()
+    profile = request.user.my_userprofile
     action = request.POST.get('action','get')
     id_table = request.POST.get('id_table',None)
     if id_table is None:
