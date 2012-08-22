@@ -5,19 +5,7 @@ Note: cette interface est en français et sans les options d'internationnalisati
 C'est une application Django, web utilisée notament par clarisys (http://www.clarisys.fr) pour avoir une interface plus adaptée et plus simple que celle de mantise et intégrer la gestion de parc et des clients.
 
 Ce logiciel est testé en production avec ces dépendences:
-zlib 1.2.5 (--shared et CFLAGS=-fPIC)
-bzip2 1.0.5
-Python 2.6.5 (configuré avec --without-pymalloc)
-PostgreSql 8.4.3
-egenix-base 3.0.0
-psycopg2 2.0.14
-Django 1.2.3
-Django-extentions 0.4.1
-gdata 2.0.9
-setuptools
-python-dateutils
-py-setproctitle
-pyftpdlib
+voir le fichier setup.py
 
 (Pours les internes clarisys, un utilitaire à jour permétant de compiler un environnement avec ces packets est disponible sous le nom de clarideploy)
 
