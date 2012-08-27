@@ -6,15 +6,13 @@ import datetime
 
 from django import http
 from django.conf import settings
-from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
+from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
 from django.db import models, connection, transaction
 from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.template import RequestContext
 from django.forms.models import modelformset_factory
-from django.utils import simplejson as json
 from django.contrib.auth.decorators import login_required, permission_required
-from django.views.decorators.csrf import csrf_exempt
 from django.core.cache import cache
 from django.contrib.auth.models import User
 
@@ -26,14 +24,14 @@ from ticket.forms import *
 from rappel.models import Rappel
 
 from common.diggpaginator import DiggPaginator
-from common.models import Client, UserProfile, ClaritickUser
-from common.exceptions import NoProfileException
+from common.models import Client, ClaritickUser
 from common.utils import user_has_perms_on_client, filter_form_for_user
 
 from backlinks.decorators import backlink_setter
 from django.utils.datastructures import SortedDict
 
 INVALID_TITLE = "Invalid title"
+
 
 def get_and_child(parents, cqs):
     """ Retourne les valeurs d'un SortedDict avec parents (liste reduite)
@@ -62,10 +60,12 @@ def get_and_child(parents, cqs):
 
     return ret.values()
 
+
 def get_filters(request):
     if "list_filters" in request.session:
         return request.session["list_filters"]
     return {}
+
 
 def set_filters(request, datas=None):
     if not "list_filters" in request.session:
@@ -74,6 +74,7 @@ def set_filters(request, datas=None):
         request.session["list_filters"] = request.POST.copy()
     if datas:
         request.session["list_filters"].update(datas)
+
 
 def get_context(request):
     """
@@ -84,12 +85,14 @@ def get_context(request):
         "sort_order": int(not int(request.GET.get("sort_order", 1)))
     }
 
+
 def get_pagination(queryset, request):
     """
         Mets en place la pagination via DiggPaginator.
     """
     paginator = DiggPaginator(queryset, settings.TICKETS_PER_PAGE, body=5, tail=2, padding=2)
     return paginator.page(request.GET.get("page", 1))
+
 
 def update_ticket_last_seen(request, ticket_id):
     userprofile = request.user.my_userprofile
@@ -98,20 +101,28 @@ def update_ticket_last_seen(request, ticket_id):
     userprofile.tickets_vus = ticket_vus
     userprofile.save()
 
+
 @login_required
 @backlink_setter
 def list_me(request, *args, **kw):
     form = None
     if not request.POST.get("assigned_to", None):
-        form = SearchTicketForm({'assigned_to': request.user.id}, get_filters(request), user=request.user)
+        form = SearchTicketForm({'assigned_to': request.user.id},
+                                get_filters(request),
+                                user=request.user)
         set_filters(request, form.data)
-    return list_all(request, form, export_link = reverse('ticket_export_me'), *args, **kw)
+    return list_all(request, form, export_link=reverse('ticket_export_me'), *args, **kw)
+
 
 @login_required
 @backlink_setter
 def list_unassigned(request, *args, **kw):
     filterdict = {'assigned_to__isnull': True}
-    return list_all(request, None, export_link = reverse('ticket_export_unassigned'), filterdict = filterdict, *args, **kw)
+    return list_all(request, None,
+                    export_link=reverse('ticket_export_unassigned'),
+                    filterdict=filterdict,
+                    *args, **kw)
+
 
 @login_required
 @backlink_setter
@@ -120,7 +131,10 @@ def list_nonvalide(request):
     liste des tickets � valider.
     """
     filterdict = {"validated_by__isnull": True}
-    return list_all(request, export_link = reverse('ticket_export_nonvalide'), filterdict=filterdict)
+    return list_all(request,
+                    export_link=reverse('ticket_export_nonvalide'),
+                    filterdict=filterdict)
+
 
 @login_required
 @backlink_setter
@@ -135,7 +149,7 @@ def list_notseen(request):
         return ctx
 
     def postfiltercallback(qs):
-        for k,v in ticket_vus.items():
+        for k, v in ticket_vus.items():
             if k == "all":
                 q = models.Q(last_modification__gt=datetime.datetime.fromtimestamp(int(v)))
                 qs = qs.filter(q)
@@ -143,8 +157,11 @@ def list_notseen(request):
                 q = models.Q(pk=int(k)) & models.Q(last_modification__lt=datetime.datetime.fromtimestamp(int(v)))
                 qs = qs.exclude(q)
         return qs
-    
-    return list_all(request, export_link = reverse('ticket_export_notseen'), postfiltercallback=postfiltercallback, get_context_callback=my_get_context)
+
+    return list_all(request,
+                    export_link=reverse('ticket_export_notseen'),
+                    postfiltercallback=postfiltercallback,
+                    get_context_callback=my_get_context)
 
 
 @login_required
@@ -174,25 +191,32 @@ def list_view(request, view_id=None):
             data.update({"view_name": view.name})
             filters = data.copy()
         context["view"] = view
-    
+
     # le form de filtres
-    form = SearchTicketViewForm(data, user=request.user)    
+    form = SearchTicketViewForm(data, user=request.user)
     form_inverted = SearchTicketViewFormInverted(inverted_filters, user=request.user)
-    
+
     # le template a charger
-    if request.user.has_perm("ticket.can_list_all"): # LC: useless ? or request.user.is_superuser:
+    # LC: useless ? or request.user.is_superuser
+    if request.user.has_perm("ticket.can_list_all"):
         template_name = "ticket/view.html"
     else:
         template_name = "ticket/view_small.html"
 
     # le form d'actions
-    if request.user.has_perm("ticket.can_list_all"): # LC: useless ? or request.user.is_superuser:
-        action_form = TicketActionsForm(request.POST, user=request.user, prefix="action")
+    # LC: useless ? or request.user.is_superuser
+    if request.user.has_perm("ticket.can_list_all"):
+        action_form = TicketActionsForm(request.POST,
+                                        user=request.user,
+                                        prefix="action")
     else:
-        action_form = TicketActionsSmallForm(request.POST, user=request.user, prefix="action")
+        action_form = TicketActionsSmallForm(request.POST,
+                                             user=request.user,
+                                             prefix="action")
 
     if action_form.process_actions(request):
-        return http.HttpResponseRedirect("%s?%s" % (request.META["PATH_INFO"], request.META["QUERY_STRING"]))
+        return http.HttpResponseRedirect("%s?%s" % (
+            request.META["PATH_INFO"], request.META["QUERY_STRING"]))
 
     if not data.get("state"):
         qs = Ticket.open_tickets.filter(parent__isnull=True)
@@ -230,14 +254,16 @@ def list_view(request, view_id=None):
         qs = qs.filter_or_child(models.Q(title__icontains=data["title"]) | models.Q(text__icontains=data["text"]), user=request.user)
         del filters["text"]
         cqs = cqs.filter(diffusion=True)
-    qs = qs.filter_queryset(filters, user=request.user, inverted_filters=inverted_filters)
+    qs = qs.filter_queryset(filters,
+                            user=request.user,
+                            inverted_filters=inverted_filters)
 
     # On va filtrer la liste des tickets en fonction de la relation user => client
     qs = qs.filter_ticket_by_user(request.user)
     cqs = cqs.filter_ticket_by_user(request.user)
 
-    if context.get("view", False) and view.notseen: 
-        for k,v in ticket_vus.items():
+    if context.get("view", False) and view.notseen:
+        for k, v in ticket_vus.items():
             if k == "all":
                 q = models.Q(last_modification__gt=datetime.datetime.fromtimestamp(int(v)))
                 qs = qs.filter(q)
@@ -262,23 +288,32 @@ def list_view(request, view_id=None):
 
     return render_to_response(template_name, context, context_instance=RequestContext(request))
 
+
 @login_required
 @backlink_setter
 def list_all(request, form=None, filterdict=None, template_name=None,
-    export_link=None,
-    postfiltercallback=None, get_context_callback=get_context, *args, **kw):
+             export_link=None,
+             postfiltercallback=None,
+             get_context_callback=get_context,
+             *args, **kw):
     """
-        Liste tous les tickets sans aucun filtre
+    Liste tous les tickets sans aucun filtre
     """
     context = get_context_callback(request)
 
     if request.user.has_perm("can_commit_full") or request.user.is_superuser:
-        action_form = TicketActionsForm(request.POST, user=request.user, prefix="action")
+        action_form = TicketActionsForm(request.POST,
+                                        user=request.user,
+                                        prefix="action")
     else:
-        action_form = TicketActionsSmallForm(request.POST, user=request.user, prefix="action")
+        action_form = TicketActionsSmallForm(request.POST,
+                                             user=request.user,
+                                             prefix="action")
 
     if action_form.process_actions(request):
-        return http.HttpResponseRedirect("%s?%s" % (request.META["PATH_INFO"], request.META["QUERY_STRING"]))
+        return http.HttpResponseRedirect("%s?%s" % (
+            request.META["PATH_INFO"],
+            request.META["QUERY_STRING"]))
 
     if request.GET.get("reset", False) and request.session.get("list_filters", {}):
         request.session["list_filters"] = {}
@@ -334,12 +369,15 @@ def list_all(request, form=None, filterdict=None, template_name=None,
     if export_link is None:
         export_link = reverse('ticket_export_all')
     context.update({
-        "form": form, 
+        "form": form,
         "action_form": action_form,
         "tickets": pagination,
         "export_link": export_link,
     })
-    return render_to_response(template_name or "ticket/list.html", context, context_instance=RequestContext(request))
+    return render_to_response(template_name or "ticket/list.html",
+                              context,
+                              context_instance=RequestContext(request))
+
 
 @permission_required("ticket.add_ticket")
 def partial_new(request, form=None):
@@ -348,30 +386,34 @@ def partial_new(request, form=None):
     """
     if not form:
         form = PartialNewTicketForm()
-    return render_to_response('ticket/partial_new.html', {'form': form }, context_instance=RequestContext(request))
+    return render_to_response('ticket/partial_new.html',
+                              {'form': form},
+                              context_instance=RequestContext(request))
+
 
 @permission_required("ticket.add_ticket")
 def new(request):
     """
     Create a new ticket.
     """
-    
+
     form = PartialNewTicketForm(request.POST)
     if not form.is_valid():
         return partial_new(request, form)
-    
+
     ticket = form.save(commit=False)
     ticket.opened_by = request.user
     ticket.title = INVALID_TITLE
     #ticket.state = None
     ticket.state = State.objects.get(pk=settings.TICKET_STATE_NEW)
     ticket.priority = Priority.objects.get(pk=settings.TICKET_PRIORITY_NORMAL)
-    
+
     if request.user.has_perm("ticket.add_ticket_full"):
         ticket.validated_by = request.user
 
     ticket.save()
     return redirect("ticket_modify", ticket_id=ticket.pk)
+
 
 @permission_required("ticket.change_ticket")
 def modify(request, ticket_id):
@@ -385,7 +427,7 @@ def modify(request, ticket_id):
             backlinks = request.backlinks
             precedent = backlinks[-1:]
             if not precedent:
-                return redirect("ticket_modify", ticket_id=ticket_id) 
+                return redirect("ticket_modify", ticket_id=ticket_id)
             else:
                 return precedent[0].redirect(request)
         else:
@@ -416,19 +458,25 @@ def modify(request, ticket_id):
         child = ticket.child.filter(diffusion=True).order_by('date_open')
         TicketChildForm = ChildFormSmall
 
-
-    ChildFormSet = modelformset_factory(Ticket, form=TicketChildForm, extra=0, can_delete=True)
+    ChildFormSet = modelformset_factory(Ticket,
+                                        form=TicketChildForm,
+                                        extra=0,
+                                        can_delete=True)
 
     if request.method == "POST":
-        if request.POST.get("_validate-ticket", None) and request.user.has_perm("ticket.can_validate_ticket")\
-            and ticket.validated_by is None:
+        if (request.POST.get("_validate-ticket", None) and
+        request.user.has_perm("ticket.can_validate_ticket") and
+        ticket.validated_by is None):
             ticket.validated_by = request.user
             ticket.save()
         # Instanciating the TicketForm changes ticket... So we need to store it
         # Before in order to do permission checking.
         ticket_old_assigned_to_pk = ticket.assigned_to and ticket.assigned_to.pk or None
 
-        form = TicketForm(request.POST, request.FILES, instance=ticket, user=request.user)
+        form = TicketForm(request.POST,
+                          request.FILES,
+                          instance=ticket,
+                          user=request.user)
 
         # Il faut valider les fils en premier pour ne pas se faire jetter si on ferme tout
         child_formset = ChildFormSet(request.POST, queryset=child)
@@ -439,7 +487,6 @@ def modify(request, ticket_id):
             if not f in deleted_forms and f.is_valid():
                 f.save()
                 post_comment(f, request)
-
 
         for f in deleted_forms:
             f.instance.delete()
@@ -474,16 +521,16 @@ def modify(request, ticket_id):
             update_ticket_last_seen(request, ticket.pk)
 
             # Alarme automatique
-            if ticket.priority \
-                    and ticket.priority.alarm \
-                    and not ticket.ticketalarm_set.all():
-                        ticket.ticketalarm_set.create(reason=ticket.priority.alarm,
-                                user_open = request.user)
+            if (ticket.priority
+            and ticket.priority.alarm
+            and not ticket.ticketalarm_set.all()):
+                ticket.ticketalarm_set.create(reason=ticket.priority.alarm,
+                                              user_open=request.user)
 
             # Appel du client
             if form.cleaned_data['appel']:
                 ticket.ticketappel_set.create(user=request.user)
-            
+
             # Rappels de ticket
             rappel = None
 
@@ -491,8 +538,9 @@ def modify(request, ticket_id):
                 ident = ticket.pk
                 current_user = User.objects.get(pk=request.user.id)
                 # Select or create existing rappel
-                try:                    
-                    rappel = Rappel.objects.filter(ticket=ident).filter(user=current_user).get()                    
+                try:
+                    rappel = Rappel.objects.filter(ticket=ident) \
+                        .filter(user=current_user).get()
                 except Rappel.DoesNotExist:
                     rappel = Rappel()
 
@@ -501,13 +549,15 @@ def modify(request, ticket_id):
                 rappel.date = form.cleaned_data['calendar_rappel']
                 rappel.user = current_user
                 rappel.save()
-                
+
             if form.cleaned_data['delete_rappel'] and rappel:
                 rappel.delete()
 
             file = form.cleaned_data["file"]
             if file:
-                ticket_file = TicketFile(ticket=ticket, filename=file.name, content_type=file.content_type)
+                ticket_file = TicketFile(ticket=ticket,
+                                         filename=file.name,
+                                         content_type=file.content_type)
                 if file.multiple_chunks():
                     dataList = []
                     for chunk in file.chunks():
@@ -517,7 +567,7 @@ def modify(request, ticket_id):
                     data = file.read()
                 ticket_file.data = data
                 ticket_file.save()
-            
+
             # BonDeCommande
             if form.cleaned_data["bondecommande"]:
                 bdc = form.cleaned_data["bondecommande"]
@@ -535,13 +585,15 @@ def modify(request, ticket_id):
         except Rappel.DoesNotExist:
             rappel_date = ""
 
-        form = TicketForm(instance=ticket, user=request.user, initial = {"calendar_rappel": rappel_date})
+        form = TicketForm(instance=ticket,
+                          user=request.user,
+                          initial={"calendar_rappel": rappel_date})
         child_formset = ChildFormSet(queryset=child)
         for f in child_formset.forms:
             filter_form_for_user(f, request.user)
 
     comments = django.contrib.comments.get_model().objects.filter(content_type__model="ticket").\
-            filter(models.Q(object_pk__in=[str(c.pk) for c in child]) | models.Q(object_pk=str(ticket.pk)))
+        filter(models.Q(object_pk__in=[str(c.pk) for c in child]) | models.Q(object_pk=str(ticket.pk)))
     ticket.comment = []
     for c in comments:
         if c.object_pk == str(ticket.pk):
@@ -552,23 +604,27 @@ def modify(request, ticket_id):
                     f.instance.comment = []
                 if c.object_pk == str(f.instance.pk):
                     f.instance.comment.append(c)
-    
+
     update_ticket_last_seen(request, ticket.pk)
-    
-    # List of rappel other user about the same ticket    
-    list_rappel_other_user = Rappel.objects.all().select_related('user__username').filter(ticket=ticket.pk).exclude(user=request.user)
-    
+
+    # List of rappel other user about the same ticket
+    list_rappel_other_user = Rappel.objects.all() \
+        .select_related('user__username') \
+        .filter(ticket=ticket.pk) \
+        .exclude(user=request.user)
+
     # Bon de commande
     bondecommades = BonDeCommande.objects.all().filter_by_user(request.user).filter(ticket=ticket.pk)
-    
-    return render_to_response(template_name, 
-        { 
-            "form": form, 
+
+    return render_to_response(template_name,
+        {
+            "form": form,
             "child_formset": child_formset,
             "bondecommandes": bondecommades,
             "list_rappel_other_user": list_rappel_other_user,
         },
         context_instance=RequestContext(request))
+
 
 @login_required
 def get_file(request, file_id):
@@ -586,8 +642,9 @@ def get_file(request, file_id):
     except UnicodeEncodeError:
         ext = file.filename.split(".")[-1]
         response["Content-Disposition"] = "attachment; filename=fichier%s.%s" % (file_id, ext)
-        
+
     return response
+
 
 @permission_required("ticket.can_add_child")
 def ajax_load_child(request, ticket_id):
@@ -618,6 +675,7 @@ def ajax_load_child(request, ticket_id):
             {"cf": form, },
             context_instance=RequestContext(request))
 
+
 @permission_required("ticket.can_delete_tma")
 def ajax_delete_tma(request, ticket_id):
     """ Supprime le/les tma(s) du ticket """
@@ -632,11 +690,12 @@ def ajax_delete_tma(request, ticket_id):
 
     tma_id = int(request.GET.get('tma_id', 0))
 
-    if not tma_id: # Delete all
+    if not tma_id:  # Delete all
         ticket.ticketmailaction_set.all().delete()
     else:
         ticket.ticketmailaction_set.filter(pk=tma_id).delete()
     return http.HttpResponse()
+
 
 @login_required
 def ajax_load_ticketmailtrace(request, ticket_id):
@@ -656,10 +715,11 @@ def ajax_load_ticketmailtrace(request, ticket_id):
             {"ticketmailtrace": ticketmailtrace},
             context_instance=RequestContext(request))
 
+
 @login_required
 def ajax_set_alarm(request, ticket_id):
     """ Met (ou enlève) une alarme sur le ticket """
-    ret=''
+    ret = ''
     if not ticket_id:
         raise PermissionDenied
 
@@ -681,21 +741,22 @@ def ajax_set_alarm(request, ticket_id):
     if reason:
         if not alarm:  # Nouvelle alarme
             alarm = TicketAlarm(reason=reason,
-                    user_open = request.user,
-                    ticket = ticket)
-        else: # Changement de raison (on change l'user aussi)
+                                user_open=request.user,
+                                ticket=ticket)
+        else:  # Changement de raison (on change l'user aussi)
             alarm.reason = reason
             alarm.user_open = request.user
 
         alarm.save()
         ret = alarm.title_string()
-    else: # not reason
-        if alarm: # Fermeture
+    else:  # not reason
+        if alarm:  # Fermeture
             alarm.user_close = request.user
             alarm.date_close = datetime.datetime.now()
             alarm.save()
         ret = "Nouvelle Alarme"
     return http.HttpResponse(ret)
+
 
 @login_required
 @json_response
@@ -703,25 +764,25 @@ def ajax_load_telephone(request):
     """
     Renvoie un json contenant les numéros uniques de téléphone/dernier numéro de téléphone du client/enfants
     """
-    
+
     ret = {}
-    
+
     client_id = request.POST.get("client_id", None)
     if not client_id:
         raise PermissionDenied
-    
+
     client = get_object_or_404(Client, pk=client_id)
     if not user_has_perms_on_client(request.user, client):
         raise PermissionDenied
-    
+
     # Récupère la liste des numéros
     telephones = {}
 
     if settings.POSTGRESQL_VERSION >= 8.4:
         client_and_childs = Client.objects.get_childs("parent", client.pk)
     else:
-        client_and_childs = [ client, ]
-    
+        client_and_childs = [client, ]
+
     for client in client_and_childs:
         coord = client.coordinates
         if coord and coord.telephone and not coord.telephone in telephones:
@@ -748,10 +809,12 @@ def ajax_load_telephone(request):
     ret["telephones"] = telephones.values()
     return ret
 
+
 def encode_datetime(obj):
     if isinstance(obj, datetime.datetime):
         return time.strftime('%Y-%m-%dT%H:%M:%SZ', obj.utctimetuple())
     raise TypeError(repr(obj) + " is not JSON serializable")
+
 
 @login_required
 @json_response
@@ -764,22 +827,26 @@ def ajax_graph_opentickets(request):
     if cache_data:
         return cache_data
 
-    ret = { "hs_charts": [] }
+    ret = {"hs_charts": []}
     today = datetime.datetime.now()
+
     def get_hc_serie(tss, properties):
-        return { 
+        return {
             "name": properties.get("name", "Unknown"),
-            "data": [ (encode_datetime(i[0]), i[1]) for i in tss ],
+            "data": [(encode_datetime(i[0]), i[1]) for i in tss],
         }
     for priority in Priority.objects.all().order_by('good_duration'):
         qs = Ticket.objects.filter(priority=priority).filter_ticket_by_user(request.user)
         if qs:
             qss = qsstats.QuerySetStats(qs, 'date_open')
-            tss = qss.time_series(today-datetime.timedelta(days=365), today, interval=interval)
+            tss = qss.time_series(today - datetime.timedelta(days=365),
+                                  today,
+                                  interval=interval)
             ret["hs_charts"].append(get_hc_serie(tss, {'name': 'Priority %s' % (priority.label,)}))
 
     cache.set(cache_key, ret, 38400)
     return ret
+
 
 @login_required
 @json_response
@@ -792,22 +859,26 @@ def ajax_graph_closetickets(request):
     if cache_data:
         return cache_data
 
-    ret = { "hs_charts": [] }
+    ret = {"hs_charts": []}
     today = datetime.datetime.now()
+
     def get_hc_serie(tss, properties):
-        return { 
+        return {
             "name": properties.get("name", "Unknown"),
-            "data": [ (encode_datetime(i[0]), i[1]) for i in tss ],
+            "data": [(encode_datetime(i[0]), i[1]) for i in tss],
         }
     for priority in Priority.objects.all().order_by('good_duration'):
         qs = Ticket.objects.filter(priority=priority, state=settings.TICKET_STATE_CLOSED).filter_ticket_by_user(request.user)
         if qs:
             qss = qsstats.QuerySetStats(qs, 'date_close')
-            tss = qss.time_series(today-datetime.timedelta(days=365), today, interval=interval)
+            tss = qss.time_series(today - datetime.timedelta(days=365),
+                                  today,
+                                  interval=interval)
             ret["hs_charts"].append(get_hc_serie(tss, {'name': 'Priority %s' % (priority.label,)}))
 
     cache.set(cache_key, ret, 38400)
     return ret
+
 
 @login_required
 @json_response
@@ -820,28 +891,32 @@ def ajax_graph_recall(request):
     if cache_data:
         return cache_data
 
-    ret = { "hs_charts": [] }
+    ret = {"hs_charts": []}
     today = datetime.datetime.now()
+
     def get_hc_serie(tss, properties):
-        return { 
+        return {
             "name": properties.get("name", "Unknown"),
-            "data": [ (encode_datetime(i[0]), i[1]) for i in tss ],
+            "data": [(encode_datetime(i[0]), i[1]) for i in tss],
         }
     for priority in Priority.objects.all().order_by('good_duration'):
-        qs = TicketAppel.objects.filter(ticket__priority=priority, ticket__client__in = request.user.clients)
+        qs = TicketAppel.objects.filter(ticket__priority=priority,
+                                        ticket__client__in=request.user.clients)
         if qs:
             qss = qsstats.QuerySetStats(qs, 'date')
-            tss = qss.time_series(today-datetime.timedelta(days=365), today, interval=interval)
+            tss = qss.time_series(today - datetime.timedelta(days=365),
+                                  today,
+                                  interval=interval)
             ret["hs_charts"].append(get_hc_serie(tss, {'name': 'Priority %s' % (priority.label,)}))
 
     cache.set(cache_key, ret, 38400)
     return ret
 
+
 @login_required
 @json_response
 def ajax_graph_average_close_time(request):
     """
-    
     Returns data for generating "average close time" graph
     """
     cache_key = 'graph_avg_closetime_%s' % (request.user.pk)
@@ -850,19 +925,20 @@ def ajax_graph_average_close_time(request):
         return cache_data
 
     ret = {}
-    
+
     if not request.user.is_staff:
         client_list = request.user.my_userprofile.get_clients()
-        filterquery = """AND ticket_ticket.client_id IN (%s)""" % (",".join(map(str, [ c.id for c in client_list ])),)
+        filterquery = """AND ticket_ticket.client_id IN (%s)""" % (",".join(map(str, [c.id for c in client_list])),)
     else:
         filterquery = ""
-    
-    rawquery = """SELECT 
-        extract('epoch' from AVG((date_close - date_open)::interval)) AS delay, 
+
+    rawquery = """
+    SELECT
+        extract('epoch' from AVG((date_close - date_open)::interval)) AS delay,
         date_trunc('month', date_open) AS date,
         priority_id
-    FROM 
-        ticket_ticket 
+    FROM
+        ticket_ticket
     WHERE
         state_id = 4
     AND
@@ -870,31 +946,34 @@ def ajax_graph_average_close_time(request):
     AND
         ticket_ticket.id NOT IN (SELECT id FROM ticket_ticket WHERE (date_close-date_open) > interval '40 days')
     %s
-    GROUP BY 
+    GROUP BY
         date, priority_id
     HAVING
         AVG((date_close - date_open)::interval) > interval '0'
     ORDER BY
         priority_id, date;""" % (filterquery,)
-    
+
     today = datetime.datetime.now()
     current_month = today.month
-    mapping = [ ((i+current_month) % 12)+1 for i in range(0,12) ]
-    text_mapping = ("Jan", "Fev", "Mar", "Avr", "Mai", "Jun", "Jul", "Aou", "Sep", "Oct", "Nov", "Dec")
-    
+    mapping = [((i + current_month) % 12) + 1 for i in range(0, 12)]
+    text_mapping = ("Jan", "Fev", "Mar", "Avr", "Mai",
+                    "Jun", "Jul", "Aou", "Sep", "Oct", "Nov", "Dec")
+
     def get_chart(serie, properties):
         chart = {}
-        chart["values"] = [ {'x': mapping.index(s[1].month), 'y': s[0]/3600} for s in serie ] # En heures
+        chart["values"] = [{
+            'x': mapping.index(s[1].month),
+            'y': s[0] / 3600} for s in serie]  # En heures
         chart["properties"] = properties
         return chart
-    
+
     cursor = connection.cursor()
     cursor.execute(rawquery)
     data = cursor.fetchall()
     transaction.commit_unless_managed()
     if not data:
         return ret
-    
+
     serie = []
     series = []
     old_priority = data[0][2]
@@ -905,33 +984,41 @@ def ajax_graph_average_close_time(request):
             old_priority = d[2]
             serie = []
         serie.append(d)
-    
+
     if serie:
         series.append(serie)
-    ret["series"] = [ get_chart(serie, 
-        properties = {
-            "legend": u"Priorité %s" % (serie[0][2],),
-        }) for serie in series ]
-    
-    ret["x_labels"] = [ {'value': idx+1, 'text': text_mapping[month-1]} for idx, month in enumerate(mapping) ]
-    
+    ret["series"] = [get_chart(serie,
+        properties={
+            "legend": u"Priorité %s" % (serie[0][2], ),
+        }) for serie in series]
+
+    ret["x_labels"] = [
+        {'value': idx + 1,
+        'text': text_mapping[month - 1]} for idx, month in enumerate(mapping)]
+
     cache.set(cache_key, ret, 38400)
     return ret
 
+
 @login_required
 def get_critical_tickets(request):
-    qs = Ticket.open_tickets.select_related().only('id', 'title').\
-            filter_ticket_by_user(request.user).\
-            filter(priority__gt=3).\
-            order_by('-date_open')
+    qs = Ticket.open_tickets \
+        .select_related() \
+        .only('id', 'title') \
+        .filter_ticket_by_user(request.user) \
+        .filter(priority__gt=3) \
+        .order_by('-date_open')
     return qs[:settings.SUMMARY_TICKETS]
+
 
 @login_required
 def get_ticket_text_statistics(request):
     statList = []
-    statList.append(u"Tickets sans client: %s" % (Ticket.objects.filter(client__isnull = True).count()),)
-    qs = Ticket.minimal.only('id', 'date_open').\
-            filter_ticket_by_user(request.user)
+    statList.append(u"Tickets sans client: %s" % (
+        Ticket.objects.filter(client__isnull=True).count()),)
+    qs = Ticket.minimal \
+        .only('id', 'date_open') \
+        .filter_ticket_by_user(request.user)
     if qs:
         qss = qsstats.QuerySetStats(qs, 'date_open')
         statList.append(u"Ouverts aujourd'hui: %s" % (qss.this_day(),))
@@ -939,28 +1026,31 @@ def get_ticket_text_statistics(request):
         statList.append(u"Ouverts en %s: %s" % (datetime.date.today().year, qss.this_year(),))
     return statList
 
+
 @login_required
 def get_ticket_alarm(request):
     alarms = TicketAlarm.opened.select_related().only('id')
-    qs = Ticket.minimal.filter(ticketalarm__in=alarms).\
-            filter_ticket_by_user(request.user)
+    qs = Ticket.minimal \
+        .filter(ticketalarm__in=alarms) \
+        .filter_ticket_by_user(request.user)
     return qs[:settings.SUMMARY_TICKETS]
 
 
 @login_required
 @json_response
 def ticket_feed(request):
-    max_limit=20
+    max_limit = 20
 
     alarms = TicketAlarm.opened.select_related().only('id')
     ticket_alarms = Ticket.minimal.filter(ticketalarm__in=alarms).\
-            filter_ticket_by_user(request.user)[:max_limit]
-    ticket_mine = Ticket.minimal.filter(assigned_to=request.user).order_by("-date_open")[:max_limit] 
+        filter_ticket_by_user(request.user)[:max_limit]
+    ticket_mine = Ticket.minimal.filter(assigned_to=request.user).order_by("-date_open")[:max_limit]
 
     return {
-        "alarms": [ {"id": t.id, "title": t.title} for t in ticket_alarms ],
-        "mine": [ {"id": t.id, "title": t.title} for t in ticket_mine ],
+        "alarms": [{"id": t.id, "title": t.title} for t in ticket_alarms],
+        "mine": [{"id": t.id, "title": t.title} for t in ticket_mine],
     }
+
 
 @login_required
 def ajax_mark_all_ticket_seen(request):
@@ -969,12 +1059,14 @@ def ajax_mark_all_ticket_seen(request):
     profile.save()
     return http.HttpResponse("saved")
 
+
 @login_required
 def ajax_reset_all_ticket_seen(request):
     profile = request.user.my_userprofile
     profile.tickets_vus = {}
     profile.save()
     return http.HttpResponse("saved")
+
 
 @login_required
 def ticket_stats(request):

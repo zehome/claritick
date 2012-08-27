@@ -5,7 +5,6 @@ import datetime
 from django.conf import settings
 from django.db import models
 from django.contrib.auth.models import User
-from django.contrib.comments.moderation import CommentModerator, moderator
 import django.contrib.comments
 from django.contrib.comments.signals import comment_was_posted
 from django.core.exceptions import ValidationError, FieldError
@@ -17,8 +16,8 @@ from django.template import Context, Template
 from django.core.mail.message import make_msgid
 
 # Clarisys fields
-from common.models import ColorField, Client, ClientField, JsonField, ByteaField, PickleField, UserProfile
-from common.exceptions import NoProfileException
+from common.models import ColorField, Client, ClientField
+from common.models import JsonField, ByteaField, PickleField
 from django.db.models import AutoField
 
 # Lock
@@ -27,11 +26,12 @@ from lock.decorators import locked_content
 # Desktop notifications
 from desktopnotifications.models import DesktopNotification
 
+
 def copy_model_instance(obj):
     initial = dict([(f.name, getattr(obj, f.name))
                     for f in obj._meta.fields
-                    if not isinstance(f, AutoField) and\
-                       not f in obj._meta.parents.values()])
+                    if not isinstance(f, AutoField)
+                    and not f in obj._meta.parents.values()])
     return obj.__class__(**initial)
 
 
@@ -44,13 +44,14 @@ class Priority(models.Model):
     forecolor = ColorField("Couleur du texte", blank=True, null=True)
     backcolor = ColorField("Couleur de fond", blank=True)
     alarm = models.CharField("Alarme automatique", max_length=128, null=True, blank=True)
-    
+
     good_duration = models.IntegerField("Durée en seconde => Bon", blank=True, null=True)
     warning_duration = models.IntegerField("Durée en seconde => Attention", blank=True, null=True)
     critical_duration = models.IntegerField("Durée en seconde => Critique", blank=True, null=True)
 
     def __unicode__(self):
         return u"%s" % (self.label,)
+
 
 class State(models.Model):
     class Meta:
@@ -65,6 +66,7 @@ class State(models.Model):
     def __unicode__(self):
         return u"%s" % (self.label,)
 
+
 class Category(models.Model):
     """
 
@@ -75,13 +77,15 @@ class Category(models.Model):
         ordering = ['label']
 
     label = models.CharField("Libellé", max_length=64)
-    
+
     def __unicode__(self):
         return u"%s" % (self.label,)
+
 
 class ProjectManager(models.Manager):
     def get_query_set(self):
         return super(ProjectManager, self).get_query_set().select_related('procedure__label')
+
 
 class Project(models.Model):
     class Meta:
@@ -92,13 +96,16 @@ class Project(models.Model):
     label = models.CharField("Libellé", max_length=64)
     color = ColorField("Couleur associée", blank=True, null=True)
     #watchers = models.ManyToManyField(User, blank=True)
-    procedure = models.ForeignKey('Procedure', verbose_name=u'Procédure', limit_choices_to={'active': True}, blank = True, null = True)
-    
+    procedure = models.ForeignKey('Procedure',
+                                  verbose_name=u'Procédure',
+                                  limit_choices_to={'active': True},
+                                  blank=True, null=True)
+
     def __unicode__(self):
         if self.procedure:
             return u"%s (%s)" % (self.label, self.procedure)
-        return u"%s" % self.label 
-    
+        return u"%s" % self.label
+
     def save(self, client_id=None, *a, **kw):
         """ Override save in order to pass "client" from ModelAdmin form """
         created = bool(not self.id)
@@ -116,6 +123,7 @@ class Project(models.Model):
                     ticket.save()
         return r
 
+
 class Procedure(models.Model):
     class Meta:
         verbose_name = u"Procédure"
@@ -125,7 +133,7 @@ class Procedure(models.Model):
     active = models.BooleanField()
     category = models.ForeignKey(Category, verbose_name="Catégorie")
     tickets = models.ManyToManyField('Ticket', verbose_name="Ticket", limit_choices_to={'template': True})
-    
+
     def __unicode__(self):
         return u"%s" % (self.label,)
 
@@ -160,8 +168,7 @@ class TicketQuerySet(models.query.QuerySet):
 
         return qs
     filter_by_user = filter_ticket_by_user
-    
-    
+
     def filter_queryset(self, filters, inverted_filters={}, *args, **kwargs):
         """ Filtre un queryset de ticket a partir d'un dictionnaire de fields lookup. """
         search_mapping = {
@@ -174,9 +181,8 @@ class TicketQuerySet(models.query.QuerySet):
         inverted_search_mapping = {
             "not_client": None,
         }
-        
+
         qs = self.all()
-        d = {}
         for key, value in filters.items():
             try:
                 if not value:
@@ -190,13 +196,13 @@ class TicketQuerySet(models.query.QuerySet):
                         lookup = 'exact'
                 if lookup is None:
                     continue
-                qs = qs.filter_or_child({"%s__%s"% (key, lookup): value}, *args, **kwargs)
+                qs = qs.filter_or_child({"%s__%s" % (key, lookup): value}, *args, **kwargs)
             except (AttributeError, FieldError):
                 pass
         if not inverted_filters:
             inverted_filters = {}
         for key, value in inverted_filters.items():
-            realkey = key[len("not_"):] # LC: Strip not_
+            realkey = key[len("not_"):]  # LC: Strip not_
             try:
                 if not value:
                     continue
@@ -212,18 +218,18 @@ class TicketQuerySet(models.query.QuerySet):
                 qs = qs.exclude(models.Q(**{"%s__%s" % (realkey, lookup): value}))
             except (AttributeError, FieldError):
                 pass
-        
+
         client = filters.get("client", None)
         if client:
             clients = Client.objects.get_childs("parent", int(client))
-            qs = qs.filter(models.Q(client__in=[ c.id for c in clients ]))
-        
+            qs = qs.filter(models.Q(client__in=[c.id for c in clients]))
+
         not_client_list = inverted_filters.get("not_client", [])
         if not_client_list:
             for not_client in not_client_list:
                 not_clients = Client.objects.get_childs("parent", int(not_client))
-                qs = qs.exclude(models.Q(client__in=[ c.id for c in not_clients ]))
-        
+                qs = qs.exclude(models.Q(client__in=[c.id for c in not_clients]))
+
         return qs
 
     def filter_or_child(self, filter, user=None):
@@ -239,20 +245,22 @@ class TicketQuerySet(models.query.QuerySet):
 
         if isinstance(filter, models.query_utils.Q):
             query = models.Q()
-            for k,v in filter.children:
-                query |= models.Q(**{'child__%s'%k: v})
-            qs = qs.filter(filter | \
+            for k, v in filter.children:
+                query |= models.Q(**{'child__%s' % k: v})
+            qs = qs.filter(filter |
                 (child_condition & query))
         else:
-            for k,v in filter.items():
-                qs = qs.filter(models.Q(**{k: v}) | \
-                        (child_condition & \
-                        models.Q(**{"child__%s"%k: v})))
+            for k, v in filter.items():
+                qs = qs.filter(models.Q(**{k: v}) |
+                        (child_condition &
+                        models.Q(**{"child__%s" % k: v})))
         return qs.distinct()
+
 
 class QuerySetManager(models.Manager):
     def get_query_set(self):
         return TicketQuerySet(self.model)
+
 
 class BaseTicketManager(QuerySetManager):
     def get_query_set(self):
@@ -261,7 +269,8 @@ class BaseTicketManager(QuerySetManager):
             "priority", "state", "validated_by", "category", "project", "parent__id",
             "client", "client__coordinates", "client__parent", "client__parent__coordinates", "client__parent__parent")
         return qs
-    
+
+
 class TicketManager(BaseTicketManager):
     def get_query_set(self):
         qs = super(TicketManager, self).get_query_set()
@@ -269,11 +278,13 @@ class TicketManager(BaseTicketManager):
         qs = qs.exclude(template__exact=True)
         return qs
 
+
 class OpenTicketManager(TicketManager):
     def get_query_set(self):
         qs = super(OpenTicketManager, self).get_query_set()
-        qs = qs.exclude(state__id__in = (0,4))
+        qs = qs.exclude(state__id__in=(0, 4))
         return qs
+
 
 class Ticket(models.Model):
     class Meta:
@@ -290,7 +301,6 @@ class Ticket(models.Model):
             ("can_view_qbuilder", u"Peut voir le Query Builder"),
         )
 
-
     minimal = QuerySetManager()
     objects = BaseTicketManager()
     tickets = TicketManager()
@@ -302,36 +312,55 @@ class Ticket(models.Model):
     telephone = models.CharField("Téléphone", max_length=20, blank=True)
 
     date_open = models.DateTimeField("Date d'ouverture", auto_now_add=True)
-    last_modification = models.DateTimeField("Dernière modification", auto_now_add=True,auto_now=True)
+    last_modification = models.DateTimeField("Dernière modification",
+                                             auto_now_add=True, auto_now=True)
     date_close = models.DateTimeField("Date de fermeture", blank=True, null=True)
 
     state = models.ForeignKey(State, verbose_name="État", blank=True, null=True)
     priority = models.ForeignKey(Priority, verbose_name="Priorité", blank=True, null=True)
 
-    assigned_to = models.ForeignKey(User, related_name = "assigned_to", verbose_name="Assigné à", blank=True, null=True)
-    opened_by = models.ForeignKey(User, related_name="opened_by", verbose_name="Ouvert par")
+    assigned_to = models.ForeignKey(User,
+                                    related_name="assigned_to",
+                                    verbose_name="Assigné à",
+                                    blank=True, null=True)
+    opened_by = models.ForeignKey(User,
+                                  related_name="opened_by",
+                                  verbose_name="Ouvert par")
     title = models.CharField("Titre", max_length=128, blank=True, null=True)
     text = models.TextField("Texte", blank=True, null=True)
 
-    category = models.ForeignKey(Category, verbose_name="Catégorie")
-    project = models.ForeignKey(Project, verbose_name="Projet", blank=True, null=True)
+    category = models.ForeignKey(Category,
+                                 verbose_name="Catégorie")
+    project = models.ForeignKey(Project,
+                                verbose_name="Projet",
+                                blank=True, null=True)
 
     # Si le ticket est d'une provenance extérieure, alors validated_by
     # ne sera pas défini. Il faudra qu'un "clarimen" Valide le ticket
-    validated_by = models.ForeignKey(User, related_name="validated_by", verbose_name="Validé par", blank=True, null=True, default=None)
-    
+    validated_by = models.ForeignKey(User,
+                                     related_name="validated_by",
+                                     verbose_name="Validé par",
+                                     blank=True, null=True, default=None)
+
     # Pour faciliter la recherche
-    keywords = models.CharField(u"Mots clefs", max_length=1024, blank=True, null=True)
-    
+    keywords = models.CharField(u"Mots clefs",
+                                max_length=1024, blank=True, null=True)
+
     # Calendar
-    calendar_start_time = models.DateTimeField(u"Début évenement", blank=True, null=True)
-    calendar_end_time = models.DateTimeField(u"Fin évenement", blank=True, null=True)
-    calendar_title = models.CharField(u"Titre évenement", max_length=64, blank=True, null=True)
-    
+    calendar_start_time = models.DateTimeField(u"Début évenement",
+                                               blank=True, null=True)
+    calendar_end_time = models.DateTimeField(u"Fin évenement",
+                                             blank=True, null=True)
+    calendar_title = models.CharField(u"Titre évenement",
+                                      max_length=64, blank=True, null=True)
+
     template = models.BooleanField(u"Modèle", default=False)
 
     # parent ticket
-    parent = models.ForeignKey('Ticket', related_name="child", verbose_name="Ticket parent", blank=True, null=True)
+    parent = models.ForeignKey('Ticket',
+                               related_name="child",
+                               verbose_name=u"Ticket parent",
+                               blank=True, null=True)
     diffusion = models.BooleanField(default=True)
 
     # TODO nombre de comments
@@ -349,13 +378,13 @@ class Ticket(models.Model):
     @property
     def is_closed(self):
         return self.date_close or self.state.id == settings.TICKET_STATE_CLOSED
-    
+
     @property
     def close_style(self):
         if self.is_closed:
             return "text-decoration: line-through;"
         return ""
-    
+
     @property
     def priority_text_style(self):
         style = ""
@@ -364,7 +393,7 @@ class Ticket(models.Model):
             if p.forecolor:
                 style += "color: %s;" % (p.forecolor,)
         return style
-    
+
     @property
     def priority_back_style(self):
         style = ""
@@ -373,10 +402,10 @@ class Ticket(models.Model):
             if p.backcolor:
                 style += "background-color: %s;" % (p.backcolor,)
         return style
-    
+
     def is_valid(self):
         return bool(self.text and self.title)
-    
+
     def get_absolute_url(self):
         return "/ticket/modify/%i" % (self.id,)
 
@@ -387,9 +416,9 @@ class Ticket(models.Model):
         except TicketAlarm.DoesNotExist:
             ret = None
         return ret
-    
+
     def __unicode__(self):
-        return u"n°%s: %s" % (self.id, self.title) 
+        return u"n° % s: %s" % (self.id, self.title)
 
     @staticmethod
     def handle_comment_posted_signal(sender, **kwargs):
@@ -399,26 +428,28 @@ class Ticket(models.Model):
             return
 
         ticket = comment.content_object
-        ticket.last_modification=datetime.datetime.now()
+        ticket.last_modification = datetime.datetime.now()
         ticket.nb_comments = django.contrib.comments.get_model().objects.filter(content_type__model="ticket", object_pk=ticket.pk).count()
         ticket.save()
-        
+
         # Send email
-        if ticket.diffusion and (((not comment.internal) or 
-            (comment.internal and getattr(settings, "EMAIL_INTERNAL_COMMENTS", True)))):
-            send_email_reasons = [ u"Nouvelle réponse%s" % (comment.internal and " (Diffusion interne seulement)" or ''), ]
+        if ticket.diffusion and (
+                not comment.internal or
+                (comment.internal and getattr(settings, "EMAIL_INTERNAL_COMMENTS", True))
+                ):
+            send_email_reasons = [u"Nouvelle réponse%s" % (comment.internal and " (Diffusion interne seulement)" or ''), ]
             #ticket.send_email(reasons=send_email_reasons)
             ticket.ticketmailaction_set.create(reasons=send_email_reasons)
         ticket.send_desktop_notification("TNR")
-    
+
     @staticmethod
     def handle_ticket_presave_signal(sender, **kwargs):
         new_ticket = kwargs["instance"]
         if not new_ticket.id:
             return
-        
+
         try:
-            old_ticket = Ticket.objects.get(id=new_ticket.id)
+            Ticket.objects.get(id=new_ticket.id)
         except Ticket.DoesNotExist:
             return
 
@@ -437,7 +468,12 @@ class Ticket(models.Model):
         if self.assigned_to:
             dests.add(self.assigned_to)
         # Ceux qui ont participé (comments)
-        dests = dests.union( set([ c.user for c in django.contrib.comments.get_model().objects.filter(content_type__model="ticket", object_pk=str(self.id)) if c.user ]))
+        dests = dests.union(set([
+            c.user
+            for c in django.contrib.comments.get_model().objects.filter(content_type__model="ticket",
+                                                                        object_pk=str(self.id))
+            if c.user]))
+
         for dest in dests:
             notification = DesktopNotification(user=dest)
             notification.tag = tag
@@ -446,8 +482,10 @@ class Ticket(models.Model):
 
     @locked_content
     def save(self, *a, **kw):
-        """ Overwrite save in order to do checks if email should be sent, then send email """
-        send_email_reason=None
+        """
+        Overwrite save in order to do checks if email should be sent,
+        then send email
+        """
 
         try:
             old_ticket = Ticket.objects.get(id=self.id)
@@ -471,8 +509,8 @@ class Ticket(models.Model):
         if self.is_valid():
             if old_ticket is None:
                 r = u"Création du ticket"
-                send_email_reasons = [ r, ]
-                send_fax_reasons = [ r, ]
+                send_email_reasons = [r, ]
+                send_fax_reasons = [r, ]
                 if not self.assigned_to:
                     send_desktop_notifications.append("TU")
                 else:
@@ -484,7 +522,7 @@ class Ticket(models.Model):
                     send_fax_reasons.append(r)
 
                     if (self.state == settings.TICKET_STATE_CLOSED):
-                        send_dekstop_notifications.append("TCL")
+                        send_desktop_notifications.append("TCL")
                 if old_ticket.client and old_ticket.client != self.client:
                     r = u"Erreur d'affectation client"
                     send_email_reasons.append(r)
@@ -532,24 +570,17 @@ class Ticket(models.Model):
                 target_ticket.ticketmailaction_set.create(reasons=send_email_reasons)
             if send_fax_reasons:
                 target_ticket.send_fax(send_fax_reasons)
-        
+
         for tag in send_desktop_notifications:
             self.send_desktop_notification(tag)
 
         return ret
 
-
     def send_fax(self, reasons=[u'Demande spécifique']):
         """ Send a fax for this particuliar ticket """
-        if self.client is not None:
-            faxes = set(self.client.get_faxes())
-            
-            #if self.client and self.client.notifications_by_fax:
-            #    print "send_fax to %s reasons: %s" % (faxes, reasons,)
-            #else:
-            #    print "no send_fax: le client ne veut pas être faxé"
-    
-    def send_email(self, reasons=[u"Demande spécifique",]):
+        pass
+
+    def send_email(self, reasons=[u"Demande spécifique", ]):
         """ Send an email for this particuliar ticket """
         dests = set()
         if self.client:
@@ -558,27 +589,32 @@ class Ticket(models.Model):
         # La personne qui a ouvert
         if self.opened_by.email:
             dests.add(self.opened_by.email)
-        
+
         # La personne sur qui le ticket est assignée
         if self.assigned_to and self.assigned_to.email:
             dests.add(self.assigned_to.email)
-        
+
         # Les project watchers ?
         # LC: TODO watchers
-        
+
         # Ceux qui ont participé (comments)
-        dests = dests.union( set([ c.user.email for c in django.contrib.comments.get_model().objects.filter(content_type__model="ticket", object_pk=str(self.id)) if c.user and c.user.email ]))
-        
+        dests = dests.union(set([c.user.email
+                                for c in django.contrib.comments.get_model().objects.filter(content_type__model="ticket",
+                                                                                            object_pk=str(self.id))
+                                if c.user and c.user.email]))
+
         #print "Envoi d'email à %s. Raisons: %s" % (dests, reasons)
         if not dests:
         #    print "Aucun destinataire email ?!"
             return
-        
+
         # Application du template email
         template = get_template("email/ticket.txt")
-        context = Context({"ticket": self, 'childs': self.child.order_by('date_open'), 'reasons': reasons })
+        context = Context({"ticket": self,
+                          'childs': self.child.order_by('date_open'),
+                          'reasons': reasons})
         data = template.render(context)
-        
+
         template = Template("{% autoescape off %}[Ticket {{ ticket.id }} ({{ ticket.state }})]: {{ ticket.title|striptags|truncatewords:64 }}{% endautoescape %}")
         subject = template.render(context)
 
@@ -596,6 +632,7 @@ class Ticket(models.Model):
         self.ticketmailtrace_set.create(email=mail)
         mail.send()
 
+
 class TicketView(models.Model):
     """
     Represente un ensemble de critere de recherches.
@@ -612,15 +649,16 @@ class TicketView(models.Model):
     def __unicode__(self):
         return u"%s (%s)" % (self.name, self.user)
 
+
 class TicketFileManager(models.Manager):
     def get_query_set(self):
-        qs = super(TicketFileManager, self).get_query_set().\
-                defer('data').select_related('ticket__id')
+        qs = super(TicketFileManager, self).get_query_set().defer('data').select_related('ticket__id')
         return qs
+
 
 class TicketFile(models.Model):
     """
-        Pièces jointe attachées aux tickets.
+    Pièces jointe attachées aux tickets.
     """
     objects = TicketFileManager()
     with_data = models.Manager()
@@ -629,6 +667,7 @@ class TicketFile(models.Model):
     content_type = models.TextField()
     data = ByteaField()
 
+
 class TicketMailAction(models.Model):
     class Meta:
         permissions = (
@@ -636,20 +675,22 @@ class TicketMailAction(models.Model):
         )
         ordering = ["date"]
     """
-    
+
     Une action d'envoie d'email a faire plus tard
     """
-    
-    date = models.DateTimeField(verbose_name = u"Date d'ajout", auto_now_add = True, blank=False)
+
+    date = models.DateTimeField(verbose_name=u"Date d'ajout",
+                                auto_now_add=True, blank=False)
     reasons = PickleField(blank=False)
     ticket = models.ForeignKey(Ticket)
 
     class Meta:
         verbose_name = u"Email à envoyer"
         verbose_name_plural = u"Emails à envoyer"
-    
+
     def __unicode__(self):
         return u"Email pour ticket %s à envoyer" % (self.ticket.id,)
+
 
 class TicketMailTrace(models.Model):
     """
@@ -664,18 +705,20 @@ class TicketMailTrace(models.Model):
         verbose_name_plural = u"Logs des mails envoyés"
         ordering = ["date_sent"]
 
+
 class TicketAlarmManager(models.Manager):
     def get_query_set(self):
-        qs = super(TicketAlarmManager, self).get_query_set().\
-                select_related('user_open')
+        qs = super(TicketAlarmManager, self).get_query_set().select_related('user_open')
         return qs
+
 
 class TicketAlarmOpenManager(TicketAlarmManager):
     def get_query_set(self):
-        qs =  super(TicketAlarmOpenManager, self).get_query_set().\
-                select_related('ticket__title').\
-                filter(user_close__isnull=True)
+        qs = super(TicketAlarmOpenManager, self).get_query_set().\
+            select_related('ticket__title').\
+            filter(user_close__isnull=True)
         return qs
+
 
 class TicketAlarm(models.Model):
 
@@ -683,15 +726,17 @@ class TicketAlarm(models.Model):
     opened = TicketAlarmOpenManager()
 
     reason = models.CharField(u"Raison", max_length=128)
-    date_open = models.DateTimeField(u"Date de creation", auto_now_add = True)
+    date_open = models.DateTimeField(u"Date de creation", auto_now_add=True)
     user_open = models.ForeignKey(User, related_name="ticket_alarm_open")
-    date_close = models.DateTimeField(u"Date de fermeture", null=True )
-    user_close = models.ForeignKey(User, related_name="ticket_alarm_close", null=True)
+    date_close = models.DateTimeField(u"Date de fermeture", null=True)
+    user_close = models.ForeignKey(User,
+                                   related_name="ticket_alarm_close", null=True)
     ticket = models.ForeignKey(Ticket)
 
     def title_string(self):
         if self.id:
-            ret = "Alarme ouverte le %s par %s" % (self.date_open.strftime('%d/%m/%Y à %H:%M'), self.user_open,)
+            ret = "Alarme ouverte le %s par %s" % (
+                self.date_open.strftime('%d/%m/%Y à %H:%M'), self.user_open,)
         else:
             ret = "Nouvelle alarme"
         return ret
@@ -699,10 +744,12 @@ class TicketAlarm(models.Model):
     def __unicode__(self):
         return self.reason
 
+
 class TicketAppelManager(models.Manager):
     def get_query_set(self):
         return super(TicketAppelManager, self).get_query_set().\
-                select_related('user')
+            select_related('user')
+
 
 class TicketAppel(models.Model):
     """ Liste de date où le client a rappelé  """
@@ -728,5 +775,5 @@ class TicketAppel(models.Model):
 comment_was_posted.connect(Ticket.handle_comment_posted_signal)
 
 # Google calendar sync
-models.signals.pre_save.connect(Ticket.handle_ticket_presave_signal, sender=Ticket)
-
+models.signals.pre_save.connect(Ticket.handle_ticket_presave_signal,
+                                sender=Ticket)

@@ -6,17 +6,18 @@ import cStringIO
 import datetime
 
 from django.http import HttpResponse
-from django.shortcuts import render_to_response, get_object_or_404
-from django.template import RequestContext
+from django.shortcuts import get_object_or_404
 from django.db.models import Q
 
 from django.contrib.auth.decorators import login_required
 
 from ticket.views import get_context, get_filters, set_filters
-from ticket.forms import SearchTicketForm, SearchTicketViewForm, SearchTicketViewFormInverted
+from ticket.forms import SearchTicketForm, SearchTicketViewForm
+from ticket.forms import SearchTicketViewFormInverted
 from ticket.models import Ticket, TicketView
 
 csv.register_dialect('claritick', delimiter=';', quoting=csv.QUOTE_ALL)
+
 
 class UTF8Recoder(object):
     """
@@ -31,6 +32,7 @@ class UTF8Recoder(object):
 
     def next(self):
         return self.reader.next().encode("utf-8")
+
 
 class UnicodeWriter(object):
     """
@@ -62,18 +64,27 @@ class UnicodeWriter(object):
         for row in rows:
             self.writerow(row)
 
+
 @login_required
 def export_me(request, *args, **kw):
     form = None
     if not request.POST.get("assigned_to", None):
-        form = SearchTicketForm({'assigned_to': request.user.id}, get_filters(request), user=request.user)
+        form = SearchTicketForm({
+                    'assigned_to': request.user.id},
+                    get_filters(request),
+                    user=request.user)
         set_filters(request, form.data)
-    return export_all(request, form, filename=request.user.username, *args, **kw)
+    return export_all(request, form,
+                      filename=request.user.username, *args, **kw)
+
 
 @login_required
 def export_unassigned(request, *args, **kw):
     filterdict = {'assigned_to__isnull': True}
-    return export_all(request, None, filterdict = filterdict, filename='unassigned', *args, **kw)
+    return export_all(request, None,
+                      filterdict=filterdict,
+                      filename='unassigned', *args, **kw)
+
 
 @login_required
 def export_nonvalide(request):
@@ -82,6 +93,7 @@ def export_nonvalide(request):
     """
     filterdict = {"validated_by__isnull": True}
     return export_all(request, filterdict=filterdict, filename='nonvalide')
+
 
 @login_required
 def export_notseen(request):
@@ -99,14 +111,19 @@ def export_notseen(request):
                 qs = qs.exclude(q)
         return qs
 
-    return export_all(request, postfiltercallback=postfiltercallback, filename='notseen')
+    return export_all(request,
+                      postfiltercallback=postfiltercallback,
+                      filename='notseen')
+
 
 def make_csv_response(queryset, filename):
     response = HttpResponse(mimetype='text/csv')
     response['Content-Disposition'] = 'attachment; filename=%s.csv' % (filename,)
 
     writer = UnicodeWriter(response, 'claritick')
-    writer.writerow(['Id','Client', u'Catégorie', 'Projet', 'Titre', 'Contact', 'Ouvert par', u'Assigné à', 'Statut','Contenu'])
+    writer.writerow([u'Id', u'Client', u'Catégorie', u'Projet',
+                     u'Titre', u'Contact', u'Ouvert par',
+                     u'Assigné à', u'Statut', u'Contenu'])
     for tick in queryset:
         writer.writerow([unicode(I) for I in [
             tick.pk,
@@ -122,6 +139,7 @@ def make_csv_response(queryset, filename):
             ]])
 
     return response
+
 
 @login_required
 def export_all(request, form=None, filename='tickets',
@@ -159,7 +177,8 @@ def export_all(request, form=None, filename='tickets',
     if filterdict:
         qs = qs.filter_or_child(filterdict, user=request.user)
 
-    # On va filtrer la liste des tickets en fonction de la relation user => client
+    # On va filtrer la liste des tickets en fonction
+    # de la relation user => client
     qs = qs.filter_ticket_by_user(request.user)
 
     if postfiltercallback:
@@ -168,6 +187,7 @@ def export_all(request, form=None, filename='tickets',
     # Le tri
     qs = qs.add_order_by(request)
     return make_csv_response(qs, filename)
+
 
 @login_required
 def export_view(request, view_id=None):
@@ -188,8 +208,8 @@ def export_view(request, view_id=None):
         context["view"] = view
 
     # le form de filtres
-    form = SearchTicketViewForm(data, user=request.user)    
-    form_inverted = SearchTicketViewFormInverted(inverted_filters, user=request.user)
+    form_inverted = SearchTicketViewFormInverted(inverted_filters,
+                                                 user=request.user)
 
     if not data.get("state"):
         qs = Ticket.open_tickets.filter(parent__isnull=True)
@@ -202,11 +222,12 @@ def export_view(request, view_id=None):
         del filters["text"]
     qs = qs.filter_queryset(filters, user=request.user, inverted_filters=inverted_filters)
 
-    # On va filtrer la liste des tickets en fonction de la relation user => client
+    # On va filtrer la liste des tickets en fonction
+    # de la relation user => client
     qs = qs.filter_ticket_by_user(request.user)
 
-    if context.get("view", False) and view.notseen: 
-        for k,v in ticket_vus.items():
+    if context.get("view", False) and view.notseen:
+        for k, v in ticket_vus.items():
             if k == "all":
                 q = models.Q(last_modification__gt=datetime.datetime.fromtimestamp(int(v)))
                 qs = qs.filter(q)

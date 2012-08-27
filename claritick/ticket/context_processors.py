@@ -1,10 +1,10 @@
-from ticket.models import TicketView, Ticket, TicketAlarm
-import qsstats
-import datetime
+from ticket.models import TicketView, TicketAlarm
 import settings
+
 
 def get_active_alarms(request):
     return TicketAlarm.opened.select_related().only('id').count()
+
 
 def ticket_views(request):
     if request.user and not request.user.is_anonymous():
@@ -18,4 +18,3 @@ def ticket_views(request):
         "ticket_alarms_count": get_active_alarms(request),
         }
     return {}
-

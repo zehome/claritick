@@ -11,48 +11,65 @@ from django.contrib.sites.models import Site
 from ticket.models import *
 from common.widgets import *
 from common.forms import ModelFormTableMixin
-from common.models import UserProfile
-from common.exceptions import NoProfileException
-from common.models import UserProfile, ClaritickUser
-from common.utils import filter_form_for_user, filter_ticket_for_user, sort_queryset
+from common.models import ClaritickUser
+from common.utils import filter_form_for_user, filter_ticket_for_user
+from common.utils import sort_queryset
 from common.widgets import FilteringSelect
 
 from bondecommande.models import BonDeCommande
 
+
 class BonDeCommandeModelChoiceField(df.ModelChoiceField):
     def label_from_instance(self, obj):
         return u"n°%s pour %s (le %s)" % (obj.id, obj.client, obj.date_creation.strftime("%Y/%m/%d"))
+
 
 class CustomModelForm(forms.ModelForm):
     def get_exact_id(self):
         prefix = self.prefix + '-' if self.prefix else ''
         return self.auto_id % prefix + '%s'
 
+
 class PartialNewTicketForm(forms.ModelForm):
     class Meta:
         model = Ticket
         fields = ("category",)
 
+
 class NewTicketForm(CustomModelForm):
     title = forms.CharField(label=u'Titre', widget=forms.TextInput(attrs={'size': '80'}))
-    text = df.CharField(label=u'Texte', widget=forms.Textarea(attrs={'cols':'90', 'rows': '15'}))
-    client = df.ModelChoiceField(queryset = Client.objects.all(),
-            widget=FilteringSelect(attrs={'queryExpr': '${0}*', 'onChange': 'modif_ticket();'}), empty_label='', required=False)
-    keywords = forms.CharField(label=u'Mots clefs',widget=forms.TextInput(attrs={'size': '80'}), required=False)
+    text = df.CharField(label=u'Texte', widget=forms.Textarea(attrs={'cols': '90', 'rows': '15'}))
+    client = df.ModelChoiceField(queryset=Client.objects.all(),
+                                 widget=FilteringSelect(attrs={'queryExpr': '${0}*', 'onChange': 'modif_ticket();'}),
+                                 empty_label='', required=False)
+    keywords = forms.CharField(label=u'Mots clefs',
+                               widget=forms.TextInput(attrs={'size': '80'}),
+                               required=False)
     calendar_start_time = df.DateTimeField(required=False)
     calendar_end_time = df.DateTimeField(required=False)
-    assigned_to = df.ModelChoiceField(label=u'Assigné à', widget=FilteringSelect(attrs={'onChange': 'modif_ticket();'}), queryset=ClaritickUser.objects.all(), required=False)
+    assigned_to = df.ModelChoiceField(
+        label=u'Assigné à',
+        widget=FilteringSelect(attrs={'onChange': 'modif_ticket();'}),
+        queryset=ClaritickUser.objects.all(),
+        required=False)
     #validated_by = df.ModelChoiceField(widget=FilteringSelect(), queryset=ClaritickUser.objects.all(), required=False)
     file = df.FileField(label='Fichier joint', required=False)
-    comment = df.CharField(widget=forms.Textarea(attrs={'cols':'80','style':'margin:10px;'}), required=False)
-    internal = forms.BooleanField(widget=df.widgets.CheckboxInput(attrs={'onChange': 'modif_ticket(); toggleComment(this);'}), initial=True, required=False)
-    appel = forms.BooleanField(label=u"Signaler un (r)appel du client", widget=df.widgets.CheckboxInput(attrs={'onChange': 'modif_ticket();'}), initial=False, required=False)
-    delete_rappel = forms.BooleanField(label=u"Désactiver le rappel du ticket", widget=df.widgets.CheckboxInput(attrs={'onChange': 'modif_ticket();'}), initial=False, required=False)
+    comment = df.CharField(widget=forms.Textarea(attrs={'cols': '80', 'style': 'margin:10px;'}),
+                           required=False)
+    internal = forms.BooleanField(widget=df.widgets.CheckboxInput(attrs={'onChange': 'modif_ticket(); toggleComment(this);'}),
+                                  initial=True, required=False)
+    appel = forms.BooleanField(label=u"Signaler un (r)appel du client",
+                               widget=df.widgets.CheckboxInput(attrs={'onChange': 'modif_ticket();'}),
+                               initial=False, required=False)
+    delete_rappel = forms.BooleanField(label=u"Désactiver le rappel du ticket",
+                                       widget=df.widgets.CheckboxInput(attrs={'onChange': 'modif_ticket();'}),
+                                       initial=False, required=False)
     calendar_rappel = df.DateTimeField(required=False)
-    bondecommande = BonDeCommandeModelChoiceField(label=u'Bon de commande', 
+    bondecommande = BonDeCommandeModelChoiceField(
+        label=u'Bon de commande',
         widget=FilteringSelect(attrs={'onChange': 'modif_ticket();', 'style': 'width:400px'}),
         queryset=BonDeCommande.objects.filter(ticket=None), required=False)
-    
+
     class Meta:
         model = Ticket
         exclude = ("opened_by", "validated_by", "diffusion", "alarm", )
@@ -66,54 +83,86 @@ class NewTicketForm(CustomModelForm):
         filter_ticket_for_user(self, kwargs.pop("user", None), current_assigned_to)
         super(NewTicketForm, self).__init__(*args, **kwargs)
 
-class NewTicketSmallForm(NewTicketForm):
 
+class NewTicketSmallForm(NewTicketForm):
     class Meta:
         model = Ticket
         exclude = ("opened_by", "category", "project", "keywords", "priority", "assigned_to", "validated_by", "diffusion", "alarm", )
 
+
 class ChildFormSmall(CustomModelForm):
     title = df.CharField(label=u'Titre', widget=forms.TextInput(attrs={'size': '80'}), required=True)
-    text = df.CharField(widget=forms.Textarea(attrs={'cols':'90', 'rows': '15'}))
+    text = df.CharField(widget=forms.Textarea(attrs={'cols': '90', 'rows': '15'}))
+
     class Meta:
         model = Ticket
         fields = ("title", "text")
 
+
 class ChildForm(ChildFormSmall):
-    title = df.CharField(label=u'Titre', widget=forms.TextInput(attrs={'size': '80', 'onBlur': 'showDeletebox(this);'}), required=True)
-    text = df.CharField(widget=forms.Textarea(attrs={'cols':'90', 'rows': '15', 'onBlur': 'showDeletebox(this);'}))
-    keywords = df.CharField(widget=forms.TextInput(attrs={'size': '80'}), required=False)
-    state       = forms.ModelChoiceField(label=u'État', queryset = State.objects.all())
-    assigned_to = df.ModelChoiceField(widget=FilteringSelect(attrs={'onChange': 'modif_ticket();',}), label=u'Assigné à', queryset=ClaritickUser.objects.all(), required=False)
-    project = forms.ModelChoiceField(label=u'Projet', queryset=Project.objects.all(), required=False)
-    diffusion = forms.NullBooleanField(widget=forms.HiddenInput(), initial=False)
-    comment = forms.CharField(widget=forms.Textarea(), required=False)
-    internal = forms.BooleanField(widget=df.widgets.CheckboxInput(attrs={'onChange': 'toggleComment(this)'}), initial=True, required=False)
+    title = df.CharField(label=u'Titre',
+                         widget=forms.TextInput(attrs={'size': '80', 'onBlur': 'showDeletebox(this);'}),
+                         required=True)
+    text = df.CharField(widget=forms.Textarea(attrs={'cols': '90', 'rows': '15', 'onBlur': 'showDeletebox(this);'}))
+    keywords = df.CharField(widget=forms.TextInput(attrs={'size': '80'}),
+                            required=False)
+    state = forms.ModelChoiceField(label=u'État',
+                                   queryset=State.objects.all())
+    assigned_to = df.ModelChoiceField(widget=FilteringSelect(attrs={'onChange': 'modif_ticket();'}),
+                                      label=u'Assigné à',
+                                      queryset=ClaritickUser.objects.all(),
+                                      required=False)
+    project = forms.ModelChoiceField(label=u'Projet',
+                                     queryset=Project.objects.all(),
+                                     required=False)
+    diffusion = forms.NullBooleanField(widget=forms.HiddenInput(),
+                                       initial=False)
+    comment = forms.CharField(widget=forms.Textarea(),
+                              required=False)
+    internal = forms.BooleanField(widget=df.widgets.CheckboxInput(attrs={'onChange': 'toggleComment(this)'}),
+                                  initial=True, required=False)
 
     class Meta:
         model = Ticket
-        fields = ("state", "title", "text", "keywords", "assigned_to", "category", "project", "diffusion")
+        fields = ("state", "title", "text", "keywords", "assigned_to",
+                  "category", "project", "diffusion")
 
     def __init__(self, *args, **kwargs):
         filter_form_for_user(self, kwargs.pop("user", None))
         super(ChildForm, self).__init__(*args, **kwargs)
 
+
 class SearchTicketForm(df.Form, ModelFormTableMixin):
-    title       = df.CharField(label=u'Titre', widget=df.TextInput(attrs={'size':'64'}), required=False)
-    client      = df.ChoiceField(choices=[(x.pk, x) for x in sort_queryset(Client.objects.all())],
-        widget=FilteringSelect(), required=False)
-    category    = df.ModelChoiceField(label=u'Catégorie', queryset = Category.objects.all(), 
-        widget=FilteringSelect(), empty_label='', required=False)
-    project     = df.ModelChoiceField(label=u'Projet', queryset = Project.objects.all(), 
-        widget=FilteringSelect(), empty_label='', required=False)
-    state       = df.ModelChoiceField(label=u'État', queryset = State.objects.all(), 
-        widget=FilteringSelect(), empty_label='', required=False)
-    priority    = df.ModelChoiceField(label=u'Priorité', queryset = Priority.objects.all(), 
-        widget=FilteringSelect(), empty_label='', required=False)
-    assigned_to = df.ChoiceField(label=u'Assigné a', widget=FilteringSelect(), required=False)
-    
+    title = df.CharField(label=u'Titre',
+                         widget=df.TextInput(attrs={'size': '64'}),
+                         required=False)
+    client = df.ChoiceField(choices=[(x.pk, x) for x in sort_queryset(Client.objects.all())],
+                            widget=FilteringSelect(),
+                            required=False)
+    category = df.ModelChoiceField(label=u'Catégorie',
+                                   queryset=Category.objects.all(),
+                                   widget=FilteringSelect(),
+                                   empty_label='', required=False)
+    project = df.ModelChoiceField(label=u'Projet',
+                                  queryset=Project.objects.all(),
+                                  widget=FilteringSelect(),
+                                  empty_label='', required=False)
+    state = df.ModelChoiceField(label=u'État',
+                                queryset=State.objects.all(),
+                                widget=FilteringSelect(),
+                                empty_label='', required=False)
+    priority = df.ModelChoiceField(label=u'Priorité',
+                                   queryset=Priority.objects.all(),
+                                   widget=FilteringSelect(),
+                                   empty_label='', required=False)
+    assigned_to = df.ChoiceField(label=u'Assigné a',
+                                 widget=FilteringSelect(),
+                                 required=False)
+
     text = df.CharField(label=u'Texte', required=False)
-    opened_by = df.ChoiceField(label=u'Ouvert part', widget=FilteringSelect(), required=False)
+    opened_by = df.ChoiceField(label=u'Ouvert part',
+                               widget=FilteringSelect(),
+                               required=False)
     keywords = df.CharField(label=u'Mots clefs', required=False)
     contact = df.CharField(required=False)
 
@@ -121,6 +170,7 @@ class SearchTicketForm(df.Form, ModelFormTableMixin):
         filter_form_for_user(self, kwargs.pop("user", None))
         self.base_fields["opened_by"].choices = self.base_fields["assigned_to"].choices
         super(SearchTicketForm, self).__init__(*args, **kwargs)
+
 
 class SearchTicketViewFormInverted(df.Form):
     not_client = df.MultipleChoiceField(
@@ -154,6 +204,7 @@ class SearchTicketViewFormInverted(df.Form):
         required=False,
         widget=df.CheckboxSelectMultiple()
     )
+
     def __init__(self, *args, **kwargs):
         self.base_fields["not_state"].choices = State.objects.values_list("pk", "label")
         self.base_fields["not_category"].choices = Category.objects.values_list("pk", "label")
@@ -161,33 +212,57 @@ class SearchTicketViewFormInverted(df.Form):
         self.base_fields["not_priority"].choices = Priority.objects.values_list("pk", "label")
         self.base_fields["not_assigned_to"].choices = User.objects.values_list("pk", "username")
         filter_form_for_user(self, kwargs.pop("user", None), keywords=("not_client", "not_assigned_to"))
-        
+
         super(SearchTicketViewFormInverted, self).__init__(*args, **kwargs)
         # On retire les choix vide, provenant de SearchTicketForm
         del self.base_fields["not_assigned_to"].choices[0]
         del self.base_fields["not_client"].choices[0]
-    
+
+
 class SearchTicketViewForm(SearchTicketForm):
     client = df.ChoiceField(choices=[(x.pk, x) for x in sort_queryset(Client.objects.all())],
-        widget=FilteringSelect(), required=False)
-    view_name = df.CharField(widget=df.TextInput(), label="Nom de la vue", required=False)
-    state = df.MultipleChoiceField(label=u'État', required=False, widget=df.CheckboxSelectMultiple())
-    category = df.MultipleChoiceField(label=u'Catégorie', required=False, widget=df.CheckboxSelectMultiple())
-    project = df.MultipleChoiceField(label=u'Projet', required=False, widget=df.CheckboxSelectMultiple())
-    priority = df.MultipleChoiceField(label=u'Priorité', required=False, widget=df.CheckboxSelectMultiple())
-    assigned_to = df.MultipleChoiceField(label='Assigné à', required=False, widget=df.widgets.CheckboxSelectMultiple())
-    opened_by = df.MultipleChoiceField(label='Ouvert par', required=False, widget=df.widgets.CheckboxSelectMultiple())
-    notseen = df.BooleanField(label=u"Non consultés", widget=df.widgets.CheckboxInput(), initial=False, required=False)
-    title = df.CharField(label=u'Titre', required=False, widget = df.TextInput())
-    text = df.CharField(label=u'Texte', required=False, widget = df.TextInput())
-    keywords = df.CharField(label=u'Mots clefs', required=False, widget = df.TextInput())
-    
+                            widget=FilteringSelect(),
+                            required=False)
+    view_name = df.CharField(widget=df.TextInput(),
+                             label=u"Nom de la vue",
+                             required=False)
+    state = df.MultipleChoiceField(label=u'État',
+                                   required=False,
+                                   widget=df.CheckboxSelectMultiple())
+    category = df.MultipleChoiceField(label=u'Catégorie',
+                                      required=False,
+                                      widget=df.CheckboxSelectMultiple())
+    project = df.MultipleChoiceField(label=u'Projet',
+                                     required=False,
+                                     widget=df.CheckboxSelectMultiple())
+    priority = df.MultipleChoiceField(label=u'Priorité',
+                                      required=False,
+                                      widget=df.CheckboxSelectMultiple())
+    assigned_to = df.MultipleChoiceField(label=u'Assigné à',
+                                         required=False,
+                                         widget=df.widgets.CheckboxSelectMultiple())
+    opened_by = df.MultipleChoiceField(label=u'Ouvert par',
+                                       required=False,
+                                       widget=df.widgets.CheckboxSelectMultiple())
+    notseen = df.BooleanField(label=u"Non consultés",
+                              widget=df.widgets.CheckboxInput(),
+                              initial=False, required=False)
+    title = df.CharField(label=u'Titre',
+                         required=False,
+                         widget=df.TextInput())
+    text = df.CharField(label=u'Texte',
+                        required=False,
+                        widget=df.TextInput())
+    keywords = df.CharField(label=u'Mots clefs',
+                            required=False,
+                            widget=df.TextInput())
+
     def __init__(self, *args, **kwargs):
         self.base_fields["state"].choices = State.objects.values_list("pk", "label")
         self.base_fields["category"].choices = Category.objects.values_list("pk", "label")
         self.base_fields["project"].choices = Project.objects.values_list("pk", "label")
         self.base_fields["priority"].choices = Priority.objects.values_list("pk", "label")
-        
+
         filter_form_for_user(self, kwargs.pop("user", None))
         super(SearchTicketViewForm, self).__init__(*args, **kwargs)
 
@@ -201,19 +276,25 @@ class SearchTicketViewForm(SearchTicketForm):
             return u"Nouvelle vue"
         return name
 
+
 class TicketActionsForm(df.Form):
-    actions     = df.ChoiceField(widget=df.FilteringSelect(), required=False)
-    assigned_to = df.ModelChoiceField(queryset=User.objects.all(), 
-        widget=FilteringSelect(attrs={"style": "display: none;"}), empty_label='', required=False)
-    category    = df.ModelChoiceField(queryset = Category.objects.all(), 
-        widget=FilteringSelect(attrs={"style": "display: none;"}), empty_label='', required=False)
-    project     = df.ModelChoiceField(queryset = Project.objects.all(), 
-        widget=FilteringSelect(attrs={"style": "display: none;"}), empty_label='', required=False)
-    state       = df.ModelChoiceField(queryset = State.objects.all(), 
-        widget=FilteringSelect(attrs={"style": "display: none;"}), empty_label='', required=False)
-    priority    = df.ModelChoiceField(queryset = Priority.objects.all(), 
-        widget=FilteringSelect(attrs={"style": "display: none;"}), empty_label='', required=False)
-    comment     = df.CharField(widget=df.HiddenInput(), required=False)
+    actions = df.ChoiceField(widget=df.FilteringSelect(), required=False)
+    assigned_to = df.ModelChoiceField(queryset=User.objects.all(),
+        widget=FilteringSelect(attrs={"style": "display: none;"}),
+        empty_label='', required=False)
+    category = df.ModelChoiceField(queryset=Category.objects.all(),
+        widget=FilteringSelect(attrs={"style": "display: none;"}),
+        empty_label='', required=False)
+    project = df.ModelChoiceField(queryset=Project.objects.all(),
+        widget=FilteringSelect(attrs={"style": "display: none;"}),
+        empty_label='', required=False)
+    state = df.ModelChoiceField(queryset=State.objects.all(),
+        widget=FilteringSelect(attrs={"style": "display: none;"}),
+        empty_label='', required=False)
+    priority = df.ModelChoiceField(queryset=Priority.objects.all(),
+        widget=FilteringSelect(attrs={"style": "display: none;"}),
+        empty_label='', required=False)
+    comment = df.CharField(widget=df.HiddenInput(), required=False)
 
     model = Ticket.objects
 
@@ -225,7 +306,6 @@ class TicketActionsForm(df.Form):
 
         self.base_fields["actions"].choices = self.get_actions()
         self.base_fields["actions"].choices.insert(0, ("", ""))
-
 
         filter_form_for_user(self, kwargs.pop("user", None))
         super(TicketActionsForm, self).__init__(*args, **kwargs)
@@ -255,7 +335,9 @@ class TicketActionsForm(df.Form):
     def clean(self):
         cd = self.cleaned_data
         if cd["actions"] == "action_close_tickets" or (
-            cd["actions"] == "action_change_state" and cd["state"] and cd["state"].pk == settings.TICKET_STATE_CLOSED):
+                cd["actions"] == "action_change_state" and
+                cd["state"] and
+                cd["state"].pk == settings.TICKET_STATE_CLOSED):
             if not cd["comment"]:
                 raise forms.ValidationError(u"Vous devez saisir un commentaire de clotûre pour le/les tickets sélectionné(s).")
 
@@ -269,7 +351,7 @@ class TicketActionsForm(df.Form):
             raise forms.ValidationError(u"Vous devez choisir un nouveau project.")
         if cd["actions"] == "action_change_priority" and not cd["priority"]:
             raise forms.ValidationError(u"Vous devez choisir une nouvelle priorité.")
- 
+
         return cd
 
     def action_close_tickets(self, qs, request):
@@ -304,12 +386,12 @@ class TicketActionsForm(df.Form):
 
     def action_change_priority(self, qs, request):
         qs.update(priority=self.cleaned_data["priority"])
-    
+
     def action_validate_tickets(self, qs, request):
         qs.update(validated_by=request.user)
 
-class TicketActionsSmallForm(TicketActionsForm):
 
+class TicketActionsSmallForm(TicketActionsForm):
     def get_actions(self):
         return [
             ("action_close_tickets", u"Fermer les tickets sélectionnés"),

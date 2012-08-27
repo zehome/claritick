@@ -6,6 +6,7 @@ from django.contrib.sites.models import Site
 from datetime import datetime
 from ticket_comments.models import TicketComment
 
+
 # Custom post_comment,
 # form doit être un formulaire de Ticket
 # avec deux champs 'comment' et 'internal'
@@ -24,20 +25,19 @@ def post_comment(form, request):
                 internal=form.cleaned_data['internal']
                 )
         responses = signals.comment_will_be_posted.send(
-                sender = comment.__class__,
-                comment = comment,
-                request = request
+                sender=comment.__class__,
+                comment=comment,
+                request=request
                 )
         for (receiver, response) in responses:
-            if response == False:
+            if not response:
                 return CommentPostBadRequest(
                     "comment_will_be_posted receiver %r killed the comment" % receiver.__name__)
 
         # Save the comment and signal that it was saved
         comment.save()
         signals.comment_was_posted.send(
-            sender  = comment.__class__,
-            comment = comment,
-            request = request
+            sender=comment.__class__,
+            comment=comment,
+            request=request
         )
-
