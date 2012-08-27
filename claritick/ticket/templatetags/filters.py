@@ -5,6 +5,7 @@ from django.template.defaultfilters import stringfilter
 
 register = template.Library()
 
+
 # Interprete une chaine avec des arguments
 # "foo%s", "bar" -> "foobar"
 @stringfilter

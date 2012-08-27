@@ -9,6 +9,7 @@ from django.contrib.contenttypes.models import ContentType
 from lock.models import Lock
 from lock.settings import *
 
+
 @login_required
 def ajax_lock(request, object_pk):
     model = request.GET.get("model", None)
@@ -19,8 +20,8 @@ def ajax_lock(request, object_pk):
     app_label, name = model.split('.', 1)
 
     try:
-        lock = Lock.objects.get(content_type__name=name, \
-                content_type__app_label=app_label, \
+        lock = Lock.objects.get(content_type__name=name,
+                content_type__app_label=app_label,
                 object_pk=object_pk)
     except Lock.DoesNotExist:
         lock = None
@@ -39,7 +40,7 @@ def ajax_lock(request, object_pk):
             lock.save()
             ret = LOCK_STATUS_UPDATED
         elif lock.is_expired:
-            lock.user = user # get lock
+            lock.user = user  # get lock
             ret = LOCK_STATUS_EXPIRED
         else:
             ret = LOCK_STATUS_LOCKED
@@ -47,12 +48,12 @@ def ajax_lock(request, object_pk):
         lock = Lock(content_object=obj, user=user, last_modif_field=last_timestamp_field)
         ret = LOCK_STATUS_EXPIRED
 
-    if ret == LOCK_STATUS_EXPIRED: # check for update
+    if ret == LOCK_STATUS_EXPIRED:  # check for update
         if last_timestamp_field and timestamp:
             last_timestamp = getattr(obj, last_timestamp_field)
             from_date = datetime.fromtimestamp(timestamp)
             if last_timestamp - from_date < timedelta(seconds=LOCK_DELTA_MODIFICATION):
-                ret = LOCK_STATUS_CREATED # get lock now
+                ret = LOCK_STATUS_CREATED  # get lock now
         lock.save()
 
     data = '{"status": %s' % (unicode(ret),)
@@ -61,4 +62,3 @@ def ajax_lock(request, object_pk):
     data += '}'
 
     return HttpResponse(data, content_type="application/json; charset=utf-8")
-

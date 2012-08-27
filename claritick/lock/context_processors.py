@@ -3,6 +3,7 @@
 import lock.settings
 from django.utils import simplejson as json
 
+
 def lock_settings(request):
     ret = {}
     for key in ("LOCK_EXPIRE", "LOCK_UPDATE",
@@ -10,4 +11,3 @@ def lock_settings(request):
             "LOCK_STATUS_EXPIRED", "LOCK_STATUS_CREATED"):
         ret[key] = getattr(lock.settings, key)
     return {"lock_settings": json.dumps(ret)}
-

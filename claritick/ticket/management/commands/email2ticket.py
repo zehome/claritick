@@ -8,7 +8,7 @@ from common.models import Client
 from ticket.models import Category, Ticket, State, TicketFile
 from ticket.views import post_comment
 from common.html2text import html2text
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
 from django.template.loader import get_template
@@ -22,7 +22,7 @@ pattern_body = re.compile('\[contenu\](.+)\[/contenu\]', re.DOTALL | re.IGNORECA
 def send_error(to, reasons):
     """ Envoie un mail d'érreur """
     template = get_template("email/ticket_error.txt")
-    context = Context({"reasons": reasons })
+    context = Context({"reasons": reasons})
     data = template.render(context)
     send_mail("Ticket invalide", data, settings.DEFAULT_FROM_EMAIL, [to])
     print "Erreur <%s> : %s" % (to, ", ".join(reasons))
@@ -37,8 +37,8 @@ def email2ticket(string):
 
     match = pattern_from.search(mail.get('From', ''))
 
-    mail_from = mail.get('Return-Path', \
-            mail.get('Reply-To', match.groups()[0] if match else None))
+    mail_from = mail.get('Return-Path',
+        mail.get('Reply-To', match.groups()[0] if match else None))
 
     references = mail.get('References', '').split()
 
@@ -76,16 +76,15 @@ def email2ticket(string):
 
     user = User.objects.get(pk=settings.EMAIL_USER_PK)
 
-    if references and content: # New comment
+    if references and content:  # New comment
         form = type("", (), {})()
-        form.cleaned_data = {'comment': content, 'internal': False }
+        form.cleaned_data = {'comment': content, 'internal': False}
         form.instance = ticket
         request = type("", (), {})()
         request.user = user
         post_comment(form, request)
         print "Ticket commenté ", ticket.pk
-    elif not references: # New ticket
-
+    elif not references:  # New ticket
         try:
             subject = mail.get('Subject', '')
             match = pattern_subject.search(subject)
@@ -113,11 +112,14 @@ def email2ticket(string):
         filename = part.get_filename()
         content_type = part.get_content_type()
         if filename and content_type in settings.IMAP_ALLOWED_CONTENT_TYPES:
-            ticket_file = TicketFile(ticket=ticket, filename=filename, content_type = content_type, data=part.get_payload(decode=True))
+            ticket_file = TicketFile(ticket=ticket,
+                                     filename=filename,
+                                     content_type=content_type,
+                                     data=part.get_payload(decode=True))
             ticket_file.save()
 
-class Command(BaseCommand):
 
+class Command(BaseCommand):
     def handle(self, *a, **kw):
         srv = imaplib.IMAP4_SSL(settings.IMAP_SERVER)
 
@@ -132,5 +134,3 @@ class Command(BaseCommand):
             typ, content = srv.fetch(n, '(RFC822)')
             content = content[0][1]
             email2ticket(content)
-
-

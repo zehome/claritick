@@ -3,18 +3,20 @@
 import httplib
 import urllib
 
-from django.http import Http404, HttpResponse
+from django.http import HttpResponse
 from django.utils.encoding import smart_str
 from django.contrib.auth.decorators import permission_required
 
 from smokeping.models import Smokeping
 
+
 def prepreq(d):
     o = []
     for k, v in d.items():
         k = smart_str(k, "ISO-8859-15")
-        o.extend([ urllib.urlencode({k: smart_str(v, "ISO-8859-15")}) for v in d.getlist(k)])
+        o.extend([urllib.urlencode({k: smart_str(v, "ISO-8859-15")}) for v in d.getlist(k)])
     return '&'.join(o)
+
 
 @permission_required("smokeping.smokeping")
 def smokeping(request):
@@ -48,7 +50,7 @@ def smokeping(request):
     try:
         if response.status == 200:
             djresponse = HttpResponse(response.read())
-            for k,v in response.getheaders():
+            for k, v in response.getheaders():
                 djresponse[k] = v
             return djresponse
         else:

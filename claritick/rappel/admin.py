@@ -1,9 +1,10 @@
 #-*- coding: utf-8 -*-
 
 from django.contrib import admin
-from rappel.models import *
+from rappel.models import Rappel
+
 
 class ListRappel(admin.ModelAdmin):
-    list_display = ('ticket','date_email','date')
+    list_display = ('ticket', 'date_email', 'date')
 
-admin.site.register(Rappel,ListRappel)
+admin.site.register(Rappel, ListRappel)

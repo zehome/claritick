@@ -30,12 +30,15 @@ DATABASES = {
 DEFAULT_FROM_EMAIL = 'claritick@clarisys.fr'
 SERVER_EMAIL = DEFAULT_FROM_EMAIL
 
-IMAP_SERVER='localhost' # IMAP server used for email2ticket
-IMAP_LOGIN=''
-IMAP_PASSWORD=''
-IMAP_ALLOWED_CONTENT_TYPES = ['application/pdf',]
-EMAIL_USER_PK = 79 # User pk who open ticket recevied by email
-EMAIL_TICKET_CATEGORY_DEFAULT = 46 # category when open ticket recevied by email
+# IMAP server used for email2ticket
+IMAP_SERVER = 'localhost'
+IMAP_LOGIN = ''
+IMAP_PASSWORD = ''
+IMAP_ALLOWED_CONTENT_TYPES = ['application/pdf', ]
+# User pk who open ticket recevied by email
+EMAIL_USER_PK = 79
+# category when open ticket recevied by email
+EMAIL_TICKET_CATEGORY_DEFAULT = 46
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -98,7 +101,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.contrib.auth.context_processors.auth",
     "django.core.context_processors.debug",
     "django.core.context_processors.i18n",
-    "django.core.context_processors.media", # Legacy support
+    "django.core.context_processors.media",  # Legacy support
     "django.core.context_processors.static",
     "django.contrib.messages.context_processors.messages",
     "dojango.context_processors.config",
@@ -154,8 +157,8 @@ LOGIN_REDIRECT_URL = '/'
 LOGIN_URL = '/accounts/login/'
 
 # Paramètres application "comment"
-COMMENTS_HIDE_REMOVED=True
-SITE_ID=1
+COMMENTS_HIDE_REMOVED = True
+SITE_ID = 1
 
 # Formats de date
 DATE_FORMAT = "d/m/Y"
@@ -181,21 +184,22 @@ EMAIL_FILE_PATH = '/tmp/claritick_emails'
 AUTHENTICATION_BACKENDS = ('loggingauth.authbackend.LoggingAuthBackend',)
 
 DIALOG_DIALOG = '/usr/bin/dialog'
-DIALOG_WIDTH=80
-DIALOG_HEIGHT=25
+DIALOG_WIDTH = 80
+DIALOG_HEIGHT = 25
 
-TICKETS_PER_PAGE=50
-TICKET_EMAIL_DELAY=120 # delay for 120s before sending email. (Permits grouping)
-TICKET_STATE_CLOSED = 4 # pk de l'etat fermé
-TICKET_STATE_NEW = 1 # pk de l'etat nouveau
-TICKET_STATE_ACTIVE = 2 # pk de l'état actif
-TICKET_PRIORITY_NORMAL = 2 # pk de la priorité normale
+TICKETS_PER_PAGE = 50
+TICKET_EMAIL_DELAY = 120  # delay for 120s before sending email. (Permits grouping)
+TICKET_STATE_CLOSED = 4  # pk de l'etat fermé
+TICKET_STATE_NEW = 1  # pk de l'etat nouveau
+TICKET_STATE_ACTIVE = 2  # pk de l'état actif
+TICKET_PRIORITY_NORMAL = 2  # pk de la priorité normale
 
 HOSTS_PER_PAGE = 50
 HOST_DEFAULT_ORDER = '-id'
 
-SUMMARY_TICKETS=15 # Nombre de tickets affichés sur la page d'accueil
-EMAIL_INTERNAL_COMMENTS = False # Ne transmet pas d'email lorsque l'on poste un commentaire interne
+SUMMARY_TICKETS = 15  # Nombre de tickets affichés sur la page d'accueil
+# Ne transmet pas d'email lorsque l'on poste un commentaire interne
+EMAIL_INTERNAL_COMMENTS = False
 COMMENT_MAX_LENGTH = 65535 * 4
 
 POSTGRESQL_VERSION = 8.4
@@ -205,25 +209,9 @@ AUTO_LOGOUT_DELAY = 10
 
 # Paramettres de la django-debug-toolbar
 # plus d'infos: https://github.com/robhudson/django-debug-toolbar
-DEBUG_TOOLBAR_CONFIG={
-    'INTERCEPT_REDIRECTS' : False,
+DEBUG_TOOLBAR_CONFIG = {
+    'INTERCEPT_REDIRECTS': False,
 }
-
-SVNDOC_CONFIG = {
-    'OPENED_BY' : 75,
-    'CATEGORY'  : 48,
-    'ASSIGNED_TO' : 10,
-    'VALIDATOR' : 75,
-    'STATE'     : 1,
-    'PRIORITY'  : 2,
-    'CLIENT'    : 52,
-    'SVN_REPOSITORY_TO_CLARITICK_PROJECT' : {
-        '/svn/MCA3' : 4,
-        '/svn/MCA2' : 4,
-        '/svn/ghltest' : 4,
-        '/svn/clarilab' : 2,
-        }
-    }
 
 # Where package files are stored
 PACKAGING_ROOT = os.path.join(basepath, 'packaging', 'filestorage')
@@ -249,7 +237,7 @@ PROFILE_MIDDLEWARE_SORT = ('time', 'calls')
 #PROFILE_MIDDLEWARE_STRIP_DIRS=True
 
 # Clariadmin / softupdate key
-SOFTUPDATE_KEY="engee4keiShequ1YiuRieyaejohcohjae9naefeisie2eenaeliequahshaShaed"
+SOFTUPDATE_KEY = "engee4keiShequ1YiuRieyaejohcohjae9naefeisie2eenaeliequahshaShaed"
 
 try:
     from clariadmin.settings import SECURITY

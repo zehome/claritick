@@ -9,15 +9,19 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 from django.contrib.auth.models import User
 
+
 class ExpiredLockManager(models.Manager):
     def get_query_set(self, *a, **kw):
-        return super(ExpiredLockManager, self).get_query_set(*a, **kw).\
-                filter(updated__lt=(datetime.now() - timedelta()))
+        return super(ExpiredLockManager, self) \
+            .get_query_set(*a, **kw) \
+            .filter(updated__lt=(datetime.now() - timedelta()))
+
 
 class LockManager(models.Manager):
     def get_query_set(self, *a, **kw):
-        return super(LockManager, self).get_query_set(*a, **kw).\
-                select_related('user')
+        return super(LockManager, self) \
+            .get_query_set(*a, **kw) \
+            .select_related('user')
 
 
 class Lock(models.Model):
@@ -45,4 +49,3 @@ class Lock(models.Model):
         if self.user.email:
             ret += u" <%s>" % (self.user.email)
         return ret
-
