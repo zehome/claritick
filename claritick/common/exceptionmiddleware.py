@@ -1,6 +1,8 @@
-import sys, traceback
+import sys
+import traceback
 from django.views.debug import technical_500_response
 from django.http import HttpResponse
+
 
 class UserBasedExceptionMiddleware(object):
     def process_exception(self, request, exception):
@@ -10,7 +12,7 @@ class UserBasedExceptionMiddleware(object):
                     unicode(exception), exc_info),
                 status=500)
             return r
-        
+
         user = request.user
         if user.is_staff:
             return technical_500_response(request, *sys.exc_info())

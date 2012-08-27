@@ -37,8 +37,9 @@ def filter_hosts(qs, user, sorting, search, search_extra={}):
                 qs = qs.filter(**{"%s__%s" % (key, lookup): value})
     for key, value in search_extra.iteritems():
         if value:
-            qs = qs.filter(Q(additionnalfield__field__id__exact=key.replace("val_", ""))
-                         & Q(additionnalfield__value__icontains=value))
+            qs = qs.filter(
+                Q(additionnalfield__field__id__exact=key.replace("val_", ""))
+              & Q(additionnalfield__value__icontains=value))
     return qs.order_by(sorting)
 
 
@@ -128,7 +129,8 @@ def list_all(request, target_client=None, *args, **kw):
             post_filtred = dict((k, v) for k, v in POST.iteritems()
                                 if k in form.cleaned_data.keys())
 
-            # si recherche != dernière recherche, retour page 1 et update session
+            # si recherche != dernière recherche,
+            # retour page 1 et update session
             if request.session.get('search_host_form_fields', {}) != post_filtred:
                 new_search = True
                 request.session['search_host_form_fields'] = post_filtred
@@ -149,8 +151,8 @@ def list_all(request, target_client=None, *args, **kw):
         form = SearchHostForm(request.user, request.session.get('search_host_form_fields', {}))
         if host_type:
             form_extra = AdditionnalFieldForm(
-                        request.session.get('additionnal_field_form_fields', {}),
-                        host_type=HostType.objects.get(pk=host_type))
+                    request.session.get('additionnal_field_form_fields', {}),
+                    host_type=HostType.objects.get(pk=host_type))
             form_extra.is_valid()
 
     # filter SearchHostFrom
@@ -159,7 +161,7 @@ def list_all(request, target_client=None, *args, **kw):
     # get sorting
     sorting = sort_default
     sort_get = request.GET.get('sort',
-                               request.session.get("sort_adm_list", sort_default))
+                           request.session.get("sort_adm_list", sort_default))
     if sort_get in columns:
         sorting = sort_get
     if sort_get.startswith('-') and sort_get[1:] in columns:
@@ -173,17 +175,19 @@ def list_all(request, target_client=None, *args, **kw):
         if [v for v in search_args.itervalues() if v]:
             qs = Host.objects.filter_by_user(request.user)
             if form_extra:
-                qs = filter_hosts(qs, request.user, sorting, form.cleaned_data, form_extra.get_data())
+                qs = filter_hosts(qs, request.user, sorting, form.cleaned_data,
+                                  form_extra.get_data())
             else:
                 qs = filter_hosts(qs, request.user, sorting, form.cleaned_data)
             form.update(qs)
     # fill paginator
-    paginator = DiggPaginator(qs, settings.HOSTS_PER_PAGE, body=5, tail=2, padding=2)
+    paginator = DiggPaginator(qs, settings.HOSTS_PER_PAGE,
+                              body=5, tail=2, padding=2)
 
     # get page
     page_num = 1
-    page_asked = int(request.GET.get('page', request.session.get('lastpage_clariadmin',
-                                         1)))
+    page_asked = int(request.GET.get('page',
+                     request.session.get('lastpage_clariadmin', 1)))
     if ((page_asked <= paginator.num_pages) and not new_search):
         page_num = page_asked
     request.session["lastpage_clariadmin"] = page_num
@@ -288,8 +292,10 @@ def ajax_extra_fields_form(request, host_type_id, prefix="", blank=False):
         host_type = get_object_or_404(HostType, pk=host_type_id)
     except:
         return HttpResponse("<tr></tr>")
-    form = AdditionnalFieldForm(host_type=host_type, blank=bool(blank), prefix=prefix)
+    form = AdditionnalFieldForm(host_type=host_type, blank=bool(blank),
+                                prefix=prefix)
     return HttpResponse(form.as_table())
+
 
 @permission_required("clariadmin.can_access_hostiplog")
 @permission_required("clariadmin.can_access_clariadmin")
@@ -306,7 +312,7 @@ def list_hostiplog(request, filter_type=None, filter_key=None):
 
     # Handle SearchForm filtering
     form = SearchHostIPLogForm(request.POST or
-                                     request.session.get("search_hostiplog_list", {}))
+                 request.session.get("search_hostiplog_list", {}))
     if form.is_valid():
         request.session["search_hostiplog_list"] = form.cleaned_data
         qs = form.search(qs)
@@ -323,12 +329,13 @@ def list_hostiplog(request, filter_type=None, filter_key=None):
 
     # Set paginator
     paginator = DiggPaginator(qs.order_by(sorting),
-                              settings.HOSTS_PER_PAGE, body=5, tail=2, padding=2)
+                              settings.HOSTS_PER_PAGE,
+                              body=5, tail=2, padding=2)
 
     # Get page
     page_num = 1
     page_asked = int(request.GET.get('page',
-                                     request.session.get('lastpage_hostiplog_list', 1)))
+                         request.session.get('lastpage_hostiplog_list', 1)))
     if ((page_asked <= paginator.num_pages)):
         page_num = page_asked
     request.session["lastpage_hostiplog_list"] = page_num
@@ -341,35 +348,36 @@ def list_hostiplog(request, filter_type=None, filter_key=None):
          "form": form},
         context_instance=RequestContext(request))
 
+
 @csrf_exempt
 def softupdate_ip(request, ipaddress):
     """
     This view is used for a "host" to self modify his
     ip address (in HostIPLog).
-    
+
     The HostIPLog is used for security reasons in order not to
     give public write access to Host.
     """
-    
+
     softupdate_key = settings.SOFTUPDATE_KEY
     if request.POST.get("key", "invalid_key") != softupdate_key:
         raise PermissionDenied()
-    
+
     # LC: UGGLY and not "portable"
-    STATUS_EN_SERVICE='En service'
-    
+    STATUS_EN_SERVICE = 'En service'
+
     def noanswer(reason=""):
         message = """Modification impossible.\n"""
         if reason and settings.DEBUG:
             message += """%s\n""" % (reason,)
         return HttpResponse(message, content_type="plain/text")
-    
+
     serial = request.POST.get("serial", None)
     hostname = request.POST.get("hostname", None)
-    
+
     host = None
     errmsgs = []
-    
+
     if serial:
         hosts = Host.objects.filter(serial=serial)
         if len(hosts) == 1:
@@ -379,12 +387,13 @@ def softupdate_ip(request, ipaddress):
                 if h.ip == ipaddress:
                     host = h
                     break
-        
+
         if not host:
             errmsgs.append("Le host serial=%s est introuvable." % (serial,))
-    
+
     if hostname and not host:
-        hosts = Host.objects.filter(hostname=hostname, status__description=STATUS_EN_SERVICE)
+        hosts = Host.objects.filter(hostname=hostname,
+                                    status__description=STATUS_EN_SERVICE)
         if len(hosts) == 1:
             host = hosts[0]
         elif len(hosts) > 1:
@@ -392,9 +401,10 @@ def softupdate_ip(request, ipaddress):
                 if h.ip == ipaddress:
                     host = h
                     break
-        
+
     # Get the last log entry
-    hostlogs = HostIPLog.objects.filter(host=host, log_ip=ipaddress).order_by("-date")
+    hostlogs = HostIPLog.objects.filter(host=host, log_ip=ipaddress) \
+                                .order_by("-date")
     if hostlogs:
         hostlog = hostlogs[0]
     else:
@@ -403,5 +413,5 @@ def softupdate_ip(request, ipaddress):
     hostlog.log_queryfrom = get_request_remote_addr(request)
     hostlog.log_hostname = request.POST.get('hostname', 'unknown')
     hostlog.save()
-    
+
     return HttpResponse('ok.', content_type='plain/text')

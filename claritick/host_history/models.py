@@ -18,11 +18,13 @@ class HostEditLog(models.Model):
             ("can_access_host_history", u"Accès historique des hôtes"),
         )
 
-    host = models.ForeignKey(Host, verbose_name=u"Machine", blank=True, null=True, on_delete=models.SET_NULL)
-    username = models.CharField("Nom utilisateur", max_length=128)
+    host = models.ForeignKey(Host, verbose_name=u"Machine",
+                             blank=True, null=True, on_delete=models.SET_NULL)
+    username = models.CharField(u"Nom utilisateur", max_length=128)
     date = models.DateTimeField(u"Date d'ajout", auto_now_add=True)
     ip = models.CharField(u'Ip utilisateur', max_length=1024)
-    action = models.IntegerField(u"Action", choices=((i, s) for i, s, c in ACTIONS_LOG))
+    action = models.IntegerField(u"Action",
+                                 choices=((i, s) for i, s, c in ACTIONS_LOG))
     message = models.CharField(u'Action répertoriée', max_length=1024)
 
     @property
@@ -57,5 +59,6 @@ class HostVersion(models.Model):
         ordering = ("log_entry__date",)
 
     host = models.TextField(u"Host data")
-    additionnal_fields = models.TextField(u"Host additionnal fields", null=True)
+    additionnal_fields = models.TextField(u"Host additionnal fields",
+                                          null=True)
     log_entry = models.OneToOneField(HostEditLog)

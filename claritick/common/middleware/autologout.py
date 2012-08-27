@@ -6,7 +6,6 @@ from django.http import HttpResponseRedirect
 from django.contrib import auth
 from datetime import datetime, timedelta
 
-import logging, time
 
 class AutoLogout(object):
     login_url = settings.LOGIN_URL
@@ -37,4 +36,3 @@ class AutoLogout(object):
                     path = urlquote(request.get_full_path())
                     tup = self.login_url, self.redirect_field_name, path
                     return HttpResponseRedirect('%s?%s=%s' % tup)
-

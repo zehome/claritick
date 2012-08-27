@@ -55,7 +55,7 @@ def list_logs(request, filter_type=None, filter_key=None):
 
     # Handle SearchForm filtering
     form = SearchLogForm(request.user, request.POST or
-                                     request.session.get("search_log_list", {}))
+                                 request.session.get("search_log_list", {}))
     if form.is_valid():
         request.session["search_log_list"] = form.cleaned_data
         qs = form.search(qs)
@@ -72,12 +72,13 @@ def list_logs(request, filter_type=None, filter_key=None):
 
     # Set paginator
     paginator = DiggPaginator(qs.order_by(sorting),
-                              settings.HOSTS_PER_PAGE, body=5, tail=2, padding=2)
+                              settings.HOSTS_PER_PAGE,
+                              body=5, tail=2, padding=2)
 
     # Get page
     page_num = 1
     page_asked = int(request.GET.get('page',
-                                     request.session.get('lastpage_log_list', 1)))
+                                 request.session.get('lastpage_log_list', 1)))
     if ((page_asked <= paginator.num_pages) and not new_search):
         page_num = page_asked
     request.session["lastpage_log_list"] = page_num

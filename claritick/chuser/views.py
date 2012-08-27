@@ -7,11 +7,12 @@ from django.contrib.auth import SESSION_KEY
 from django.contrib.auth.decorators import login_required
 from forms import ChuserForm
 
+
 @require_POST
 @login_required
 def change_user(request):
-
-    if not (request.user.is_superuser or request.session.get('was_superuser', False)):
+    if not (request.user.is_superuser or
+            request.session.get('was_superuser', False)):
         raise PermissionDenied
 
     form = ChuserForm(request.POST)

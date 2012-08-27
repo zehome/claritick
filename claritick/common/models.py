@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
 import base64
-import random, string
+import random
+import string
 from django.conf import settings
 
 try:
@@ -9,7 +10,7 @@ try:
 except ImportError:
     import pickle
 
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import User
 from django.db import models
 from django.utils import simplejson as json
 from django import forms
@@ -23,18 +24,19 @@ except ImportError:
 from common.widgets import ColorPickerWidget
 from common.utils import sort_queryset
 
+
 class ByteaField(models.TextField):
     """
-        Field pour gerer le type bytea de porstgres.
-
-        psycopg2 obligatoire.
-    """    
+    Field pour gerer le type bytea de porstgres.
+    psycopg2 obligatoire.
+    """
     description = "A field to handle postgres bytea fields"
-    
+
     def db_type(self, connection):
         return 'bytea'
-    
-    def get_db_prep_lookup(self, lookup_type, value, connection, prepared=False):
+
+    def get_db_prep_lookup(self, lookup_type, value,
+                           connection, prepared=False):
         raise TypeError('Lookup type %r not supported.' % lookup_type)
 
     def get_db_prep_value(self, value, connection, prepared=False):
@@ -43,17 +45,18 @@ class ByteaField(models.TextField):
     def get_prep_value(self, value, connection):
         return buffer(value)
 
+
 class PickleField(models.TextField):
     """
-        Un ByteaField qui fait des pickle loads/dumps en entrée/sortie.
+    Un ByteaField qui fait des pickle loads/dumps en entrée/sortie.
     """
-    
     __metaclass__ = models.SubfieldBase
-    
+
     def db_type(self, connection):
         return 'bytea'
-    
-    def get_db_prep_lookup(self, lookup_type, value, connection, prepared=False):
+
+    def get_db_prep_lookup(self, lookup_type, value, connection,
+                           prepared=False):
         raise TypeError('Lookup type %r not supported.' % lookup_type)
 
     def get_prep_value(self, value, connection):
@@ -67,8 +70,8 @@ class PickleField(models.TextField):
             return pickle.loads(str(value))
         return value
 
-class Base64Field(models.TextField):
 
+class Base64Field(models.TextField):
     def contribute_to_class(self, cls, name):
         if self.db_column is None:
             self.db_column = name
@@ -82,8 +85,8 @@ class Base64Field(models.TextField):
     def set_data(self, obj, data):
         setattr(obj, self.field_name, base64.encodestring(data))
 
-class JsonField(models.TextField):
 
+class JsonField(models.TextField):
     __metaclass__ = models.SubfieldBase
 
     def to_python(self, value):
@@ -97,16 +100,19 @@ class JsonField(models.TextField):
     def get_prep_value(self, value, connection):
         return json.dumps(value)
 
+
 class TelephoneField(models.CharField):
     def __init__(self, *args, **kw):
         kw["max_length"] = 10
         kw["blank"] = True
         kw["null"] = True
-        super(TelephoneField, self).__init__(*args,**kw)
+        super(TelephoneField, self).__init__(*args, **kw)
+
 
 class OneLineTextField(models.TextField):
     """
-        Un TextField au niveau db qui s'affiche comme un CharField dans les formulaires.
+    Un TextField au niveau db qui s'affiche comme un CharField
+    dans les formulaires.
     """
     def formfield(self, **kwargs):
         defaults = {
@@ -115,29 +121,39 @@ class OneLineTextField(models.TextField):
         defaults.update(kwargs)
         return super(OneLineTextField, self).formfield(**defaults)
 
+
 class Coordinate(models.Model):
     class Meta:
         verbose_name = u"Coordonnées"
         ordering = ["destinataire", "address_line1"]
-    
+
     telephone = TelephoneField(u"Téléphone fixe")
     gsm = TelephoneField(u"Téléphone portable")
     fax = TelephoneField(u"Fax")
-    destinataire = models.CharField(u"Destinataire", max_length=128, blank=True, null=True)
-    address_line1 = models.CharField(u"Ligne1", max_length=128, blank=True, null=True)
-    address_line2 = models.CharField(u"Ligne2", max_length=128, blank=True, null=True)
-    address_line3 = models.CharField(u"Ligne3", max_length=128, blank=True, null=True)
-    postalcode = models.CharField(u"Code postal", max_length=6, blank=True, null=True)
-    city = models.CharField(u"Ville", max_length=64, blank=True, null=True)
-    email = models.EmailField(u"Email", blank=True, null=True)
+    destinataire = models.CharField(u"Destinataire",
+                                    max_length=128, blank=True, null=True)
+    address_line1 = models.CharField(u"Ligne1",
+                                     max_length=128, blank=True, null=True)
+    address_line2 = models.CharField(u"Ligne2",
+                                     max_length=128, blank=True, null=True)
+    address_line3 = models.CharField(u"Ligne3",
+                                     max_length=128, blank=True, null=True)
+    postalcode = models.CharField(u"Code postal",
+                                  max_length=6, blank=True, null=True)
+    city = models.CharField(u"Ville",
+                            max_length=64, blank=True, null=True)
+    email = models.EmailField(u"Email",
+                              blank=True, null=True)
     more = models.TextField(u"Complément d'information", blank=True, null=True)
-    
+
     def __unicode__(self):
-        return u"%s%s%s%s" % (self.destinataire and self.destinataire+' ' or '', 
-            self.address_line1 and self.address_line1+' ' or '', 
-            self.postalcode and self.postalcode+' ' or '', 
-            self.city and self.city+' ' or '')
- 
+        return u"%s%s%s%s" % (
+            self.destinataire and self.destinataire + ' ' or '',
+            self.address_line1 and self.address_line1 + ' ' or '',
+            self.postalcode and self.postalcode + ' ' or '',
+            self.city and self.city + ' ' or '')
+
+
 class ColorField(models.CharField):
     def __init__(self, *args, **kwargs):
         kwargs['max_length'] = 10
@@ -147,24 +163,28 @@ class ColorField(models.CharField):
         kwargs['widget'] = ColorPickerWidget
         return super(ColorField, self).formfield(**kwargs)
 
+
 class ClientField(models.ForeignKey):
     def formfield(self, **kwargs):
         # This is a fairly standard way to set up some defaults
         # while letting the caller override them.
         #defaults = {'form_class': dojangoforms.Select}
         #defaults.update(kwargs)
-        defaults=kwargs
+        defaults = kwargs
         return super(ClientField, self).formfield(**defaults)
 
+
 class ClientManager(models.Manager):
-    
+
     def get_query_set(self):
-        qs = super(ClientManager, self).get_query_set().select_related("parent", "parent__parent", "coordinates")
+        qs = super(ClientManager, self).get_query_set() \
+                    .select_related("parent", "parent__parent", "coordinates")
         return qs
 
     def get_childs(self, field, object_pk):
         """
-            Effectue un WITH RECURSIVE Postgres sur field à partir de l'objet object_pk.
+        Effectue un WITH RECURSIVE Postgres sur field
+        a partir de l'objet object_pk.
         """
         if settings.POSTGRESQL_VERSION >= 8.4:
             from django.db import connection
@@ -185,7 +205,7 @@ class ClientManager(models.Manager):
                 db_field = model_field.db_column
             else:
                 db_field = model_field.column
-        
+
             query = """
                 WITH RECURSIVE deep(n) AS (
                     SELECT %(db_table)s.%(pk)s FROM %(db_table)s WHERE %(db_table)s.%(pk)s = %(value)i
@@ -203,9 +223,9 @@ class ClientManager(models.Manager):
             ## SLOW METHOD
             clients = list(self.select_related("parent", "id").all().exclude(id=object_pk))
             childs = [ object_pk, ]
-            
+
             def recurse_get_child(parent_pk):
-                for client in clients[:]: # for the remove
+                for client in clients[:]:  # for the remove
                     if client.parent and client.parent.id == parent_pk:
                         clients.remove(client)
                         childs.append(client.id)
@@ -214,17 +234,25 @@ class ClientManager(models.Manager):
             recurse_get_child(object_pk)
             return self.filter(id__in=childs)
 
-# Models
+
 class Client(models.Model):
     class Meta:
         verbose_name = "Client"
         ordering = ['parent__label', 'label']
-    
-    label = models.CharField("Nom", max_length=64) 
-    parent = ClientField('Client', verbose_name='Parent', null=True, blank=True) #, limit_choices_to = {'parent__parent': None})
-    coordinates = models.ForeignKey(Coordinate, verbose_name=u'Coordonnées', blank=True, null=True)
-    emails = models.CharField("Emails séparés par des virgule", max_length=2048, blank=True, null=True)
-    notifications_by_fax = models.BooleanField(u"Transmission des notifications par fax", default=False)
+
+    label = models.CharField(u"Nom", max_length=64) 
+    parent = ClientField(u'Client',
+                         verbose_name=u'Parent',
+                         null=True, blank=True)
+    coordinates = models.ForeignKey(Coordinate,
+                                    verbose_name=u'Coordonnées',
+                                    blank=True, null=True)
+    emails = models.CharField(u"Emails séparés par des virgule",
+                              max_length=2048,
+                              blank=True, null=True)
+    notifications_by_fax = models.BooleanField(
+                                u"Transmission des notifications par fax",
+                                default=False)
 
     objects = ClientManager()
 
@@ -233,33 +261,35 @@ class Client(models.Model):
         if self.parent and self.parent.label != 'Clarisys':
             return u"%s - %s" % (self.parent.label, self.label)
         return u"%s" % (self.label,)
-    
+
     def get_emails(self):
         """ Returns emails of this site plus email of the parent """
         if self.emails:
-            emails = [ e.strip() for e in self.emails.split(",") ]
+            emails = [e.strip() for e in self.emails.split(",")]
         else:
             emails = []
         if self.parent:
-            emails.extend( self.parent.get_emails() )
+            emails.extend(self.parent.get_emails())
         return emails
-    
+
     def get_faxes(self):
         """ Returns list of fax numbers """
         if self.coordinates and self.coordinates.fax:
-            faxes = [ self.coordinates.fax, ]
+            faxes = [self.coordinates.fax, ]
         else:
             faxes = []
         if self.parent:
-            faxes.extend( self.parent.get_faxes() )
+            faxes.extend(self.parent.get_faxes())
         return faxes
+
 
 class GoogleAccount(models.Model):
     login = models.EmailField("Login")
     password = models.CharField("Mot de passe", max_length=64)
-    
+
     def __unicode__(self):
         return u"Compte google %s" % (self.login,)
+
 
 class ClaritickUserManager(models.Manager):
     """
@@ -267,12 +297,19 @@ class ClaritickUserManager(models.Manager):
     """
     def get_query_set(self):
         """
-            On va chercher le userprofile et client, ainsi que d'autre attributs du profil.
-            En sortie, l'objet aura un attribut client correspondant au userprofile__client__label de l'utilisateur.
+        On va chercher le userprofile et client,
+        ainsi que d'autre attributs du profil.
+
+        En sortie, l'objet aura un attribut client correspondant
+        au userprofileclient__label de l'utilisateur.
         """
         return super(ClaritickUserManager, self).get_query_set().\
-            extra(select={"client": '"common_client"."label"', "security_level": '"common_userprofile"."security_level"'}).\
-            select_related("userprofile", "userprofile__client", "userprofile__security_level").order_by("userprofile__client__label")
+            extra(select={"client": '"common_client"."label"',
+                  "security_level": '"common_userprofile"."security_level"'}).\
+            select_related("userprofile", "userprofile__client",
+                           "userprofile__security_level")\
+                        .order_by("userprofile__client__label")
+
 
 class ClaritickUser(User):
     """
@@ -294,6 +331,7 @@ class ClaritickUser(User):
     get_client.short_description = u"Client"
 
     def get_security_level(self):
+        print dir(self)
         return getattr(self, "security_level", 99)
     get_security_level.short_description = u"Security level"
 
@@ -301,10 +339,10 @@ class ClaritickUser(User):
         """
             Retourne tous les ClaritickUser de l'arbre client de l'utilisateur.
         """
-        client = self.my_userprofile.client
+        client = self.get_profile().client
         if client:
             return ClaritickUser.objects.filter(
-                userprofile__client__in=Client.objects.get_childs("parent", self.my_userprofile.client.pk)
+                userprofile__client__in=Client.objects.get_childs("parent", self.get_profile().client.pk)
             )
         return ClaritickUser.objects.none()
 
@@ -316,7 +354,6 @@ class ClaritickUser(User):
             ("no_autologout", u"Pas de logout automatique"),
         )
 
-
     @staticmethod
     def generate_random_password():
         """
@@ -325,18 +362,23 @@ class ClaritickUser(User):
         words = string.letters + string.digits
         return "".join(map(lambda x: random.choice(words), range(8)))
 
+
 class UserProfileManager(models.Manager):
     def get_query_set(self):
         return super(UserProfileManager, self).get_query_set().\
                 select_related("user", "client")
 
+
 class UserProfile(models.Model):
 
     objects = UserProfileManager()
-    user = models.ForeignKey(User, verbose_name="Utilisateur", unique=True)
-    google_account = models.ForeignKey(GoogleAccount, verbose_name="Compte google", null=True, blank=True)
-    client = ClientField(Client, verbose_name="Client", blank=True, null=True)
-    trafiquables = models.TextField(null = True, blank = True)
+    user = models.ForeignKey(User, verbose_name=u"Utilisateur", unique=True)
+    google_account = models.ForeignKey(GoogleAccount,
+                                       verbose_name=u"Compte google",
+                                       null=True, blank=True)
+    client = ClientField(Client, verbose_name=u"Client",
+                         blank=True, null=True)
+    trafiquables = models.TextField(null=True, blank=True)
 
     # Liste des tickets vus / date derni�re modif ticket
     tickets_vus = JsonField(null=True, blank=True)
@@ -360,11 +402,11 @@ class UserProfile(models.Model):
     def get_security_level(self):
         """
         Returns the user security level.
-        
+
         Lower level is higher security level.
         If the user has no security level defined,
         then it gets the DEFAULT_USER_SECURITY_LEVEL from settings.
-        
+
         If settings is not defined, then it gains security level 99
         """
 
@@ -385,23 +427,19 @@ class UserProfile(models.Model):
         except (ValueError, TypeError):
             traf = {}
         return traf
-    
+
     def set_trafiquable(self, id_table, liste_colonnes):
         traf = self._get_trafiquables()
         traf.update({id_table: liste_colonnes})
         self.trafiquables = json.dumps(traf)
         self.save()
-    
+
     def get_trafiquable(self, id_table):
         traf = self._get_trafiquables()
-        if not traf.has_key(id_table):
-            return []
-        return traf[id_table]
+        return traf.get("id_table", [])
 
     def clear_trafiquable(self, id_table):
         traf = self._get_trafiquables()
         traf.pop(id_table)
         self.trafiquables = json.dumps(traf)
         self.save()
-
-

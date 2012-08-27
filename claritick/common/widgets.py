@@ -6,6 +6,7 @@ from django.utils.safestring import mark_safe
 
 from dojango import forms as df
 
+
 class ColorPickerWidget(forms.TextInput):
     class Media:
         css = {
@@ -28,8 +29,8 @@ class ColorPickerWidget(forms.TextInput):
             $('#id_%s').colorPicker();
             </script>''' % name)
 
+
 class FilteringSelect(df.FilteringSelect):
-    
     def __init__(self, *args, **kwargs):
         default_attrs = {
             "queryExpr": "*${0}*",

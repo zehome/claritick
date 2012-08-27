@@ -9,9 +9,11 @@ from django.http import HttpResponse
 from etiquette_printer.forms import PrintOrderForm, PermissionDenied
 from etiquette_printer import tasks
 
+
 @permission_required('etiquette_printer.print_etiquettetemplate')
 def get_dialog(request):
     return render(request, "etiquette_printer/test.html", {})
+
 
 @permission_required('etiquette_printer.print_etiquettetemplate')
 def ajax_print_etiquette(request):
@@ -28,14 +30,14 @@ def ajax_print_etiquette(request):
             except:
                 error = True
                 errorMessage = "Formattage impossible:\n%s" % (traceback.format_exc(),)
-            
+
             if not error:
                 try:
                     error = not tasks.send_to_printer(output_data, form.cleaned_data["template"].printer_ip)
                 except:
                     error = True
                     errorMessage = "Impression impossible:\n%s" % (traceback.format_exc(),)
-            
+
             if error:
                 return HttpResponse(
                     "<span style=\"color: red\">Print command failed:"
@@ -48,4 +50,3 @@ def ajax_print_etiquette(request):
     return render(request, "etiquette_printer/ajax_dialog.html", {
         'form': form,
     })
-

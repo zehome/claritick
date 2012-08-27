@@ -3,6 +3,7 @@
 import traceback
 
 from django.template import Context, Template
+from django.core.exceptions import PermissionDenied
 from django import db
 
 import dojango.forms as df
@@ -12,21 +13,21 @@ from common.forms import MyDojoFilteringSelect
 from etiquette_printer.models import EtiquetteTemplate
 from etiquette_printer.unaccent import purify
 
-class PermissionDenied(Exception):
-    pass
 
 class PrintOrderForm(df.Form):
     template = df.ModelChoiceField(queryset=EtiquetteTemplate.objects.all(), 
-        widget=MyDojoFilteringSelect(attrs={"style": "width: 250px;"}), empty_label=None, label=u'Template')
+        widget=MyDojoFilteringSelect(
+                    attrs={"style": "width: 250px;"}),
+                empty_label=None, label=u'Template')
     nombre_etiquettes = df.IntegerField(label=u'Nombre d\'étiquettes', initial=1)
-    
+
     def __init__(self, *args, **kwargs):
         app_name = kwargs.pop("app_name", None)
         model_name = kwargs.pop("model_name", None)
         if app_name and model_name:
             self.base_fields["template"].queryset = EtiquetteTemplate.objects.filter(app_name=app_name, model_name=model_name)
         super(PrintOrderForm, self).__init__(*args, **kwargs)
-    
+
     def get_output(self, pk, user):
         assert(self.is_valid())
         try:
@@ -34,7 +35,7 @@ class PrintOrderForm(df.Form):
         except:
             traceback.print_exc()
             raise PermissionDenied
-        
+
         # LC: Uggly.
         try:
             instance = model.objects.filter(pk=pk).filter_by_user(user)[0]
@@ -44,7 +45,7 @@ class PrintOrderForm(df.Form):
         except:
             traceback.print_exc()
             raise PermissionDenied
-        
+
         tmplt = Template(self.cleaned_data['template'].template)
         context_dict = {
             'instance': instance,
@@ -56,4 +57,3 @@ class PrintOrderForm(df.Form):
         # Replace accents...
         x = purify(output_data)
         return x
-

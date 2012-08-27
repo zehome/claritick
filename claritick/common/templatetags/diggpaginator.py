@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 
 from django import template
-from common.diggpaginator import DiggPage
 register = template.Library()
+
 
 class DiggPaginatorNode(template.Node):
     def __init__(self, page):
         self.page = template.Variable(page)
-    
+
     def render(self, context):
         query_dict = context["request"].GET.copy()
         if "page" in query_dict:
@@ -37,12 +37,14 @@ class DiggPaginatorNode(template.Node):
         context.pop()
         return rendered_data
 
+
 @register.tag
 def diggpaginator(parser, token):
     try:
         # split_contents() knows not to split quoted strings.
         tag_name, page = token.split_contents()
     except ValueError:
-        raise template.TemplateSyntaxError, "%r tag requires page argument" % token.contents.split()[0]
-    
+        raise template.TemplateSyntaxError, "%r tag requires page argument" % \
+            token.contents.split()[0]
+
     return DiggPaginatorNode(page)

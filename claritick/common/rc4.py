@@ -1,10 +1,13 @@
 import base64
 
+
 def b64rc4crypt(data, key):
     return base64.b64encode(rc4crypt(data, key))
 
+
 def b64rc4decrypt(data, key):
     return rc4crypt(base64.b64decode(data), key)
+
 
 def rc4crypt(data, key):
     x = 0
@@ -20,5 +23,5 @@ def rc4crypt(data, key):
         y = (y + box[x]) % 256
         box[x], box[y] = box[y], box[x]
         out.append(chr(ord(char) ^ box[(box[x] + box[y]) % 256]))
-    
+
     return ''.join(out)

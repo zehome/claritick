@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
 from django.contrib import admin
 from django.http import HttpResponse
-from clariadmin.models import OperatingSystem, HostType, Supplier, ParamAdditionnalField, HostStatus
+from clariadmin.models import OperatingSystem, HostType, Supplier
+from clariadmin.models import ParamAdditionnalField, HostStatus
 from clariadmin.forms import ParamAdditionnalFieldAdminForm
 from common.widgets import ColorPickerWidget
 from common.models import ColorField
-# Procédure en cour d'implémentation inspirée de:
-# http://www.hindsightlabs.com/blog/2010/02/11/adding-extra-fields-to-a-model-form-in-djangos-admin/
 
 
 class ExtraFieldAdmin(admin.ModelAdmin):
@@ -18,7 +17,8 @@ class ExtraFieldAdmin(admin.ModelAdmin):
         (None, {
             'fields': ('host_type', 'name', 'sorting_priority', 'api_key',
                       'data_type', 'fast_search', 'show')}),
-        ('Choix (pas de recherche globale, supression de champs non supporté, favorisez un suffixe)', {
+        ('Choix (pas de recherche globale, supression de champs non supporté,'
+         ' favorisez un suffixe)', {
             'classes': ('dj_admin_Choix',),
             'fields': (
                 'choice01_val', 'choice02_val',
@@ -52,14 +52,16 @@ class ExtraFieldAdmin(admin.ModelAdmin):
                   opener.dismissAddAnotherPopup(window);
                   </script></body></html>""")
         else:
-            return super(ExtraFieldAdmin, self).response_change(request, obj, *args, **kwargs)
+            return super(ExtraFieldAdmin, self).response_change(
+                                                request, obj, *args, **kwargs)
 
 
 class ExtraFieldAdminInLine(admin.TabularInline):
     extra = 0
     model = ParamAdditionnalField
     readonly_fields = ('host_type', 'data_type', 'api_key', 'default_values')
-    fields = ('name', 'sorting_priority', 'fast_search', 'host_type', 'api_key',
+    fields = ('name', 'sorting_priority', 'fast_search',
+              'host_type', 'api_key',
               'data_type', 'default_values')
 
 
@@ -72,10 +74,12 @@ class HostTypeAdmin(admin.ModelAdmin):
     inlines = [
         ExtraFieldAdminInLine,
     ]
-    change_form_template = 'admin/clariadmin/hosttype/hosttype_change_form.html'
+    change_form_template = \
+        'admin/clariadmin/hosttype/hosttype_change_form.html'
 
     def change_view(self, request, object_id, extra_context=None):
-        return super(HostTypeAdmin, self).change_view(request, object_id, extra_context)
+        return super(HostTypeAdmin, self).change_view(
+                                            request, object_id, extra_context)
 
 
 class OperatingSystemAdmin(admin.ModelAdmin):

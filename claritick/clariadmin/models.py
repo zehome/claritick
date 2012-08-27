@@ -154,24 +154,41 @@ class Host(models.Model):
 
     objects = HostManager()
 
-    site = ClientField(Client, verbose_name="Client", limit_choices_to={'parent__isnull': False})
-    type = models.ForeignKey(HostType, verbose_name=u"Type d'hôte", blank=True, null=True)
-    os = models.ForeignKey(OperatingSystem, verbose_name=u"Système d'exploitation", blank=True, null=True)
+    site = ClientField(Client,
+                       verbose_name="Client",
+                       limit_choices_to={'parent__isnull': False})
+    type = models.ForeignKey(HostType,
+                             verbose_name=u"Type d'hôte",
+                             blank=True, null=True)
+    os = models.ForeignKey(OperatingSystem,
+                           verbose_name=u"Système d'exploitation",
+                           blank=True, null=True)
     hostname = models.CharField(u"Nom d'hôte", max_length=64)
-    rootpw = ChromeCryptoField(u"Mot de passe root", max_length=64, blank=True, null=True)
+    rootpw = ChromeCryptoField(u"Mot de passe root",
+                               max_length=64, blank=True, null=True)
     commentaire = models.TextField(blank=True, max_length=4096)
-    ip = models.CharField("Adresse IP", max_length=128, blank=True, null=True)
+    ip = models.CharField(u"Adresse IP",
+                          max_length=128, blank=True, null=True)
 
-    date_add = models.DateTimeField("Date d'ajout", auto_now_add=True)
-    date_start_prod = models.DateField("Date de mise en service", blank=True, null=True)
-    date_end_prod = models.DateField("Fin de mise en service", blank=True, null=True)
+    date_add = models.DateTimeField(u"Date d'ajout",
+                                    auto_now_add=True)
+    date_start_prod = models.DateField(u"Date de mise en service",
+                                       blank=True, null=True)
+    date_end_prod = models.DateField(u"Fin de mise en service",
+                                     blank=True, null=True)
 
-    supplier = models.ForeignKey(Supplier, verbose_name="Fournisseur", blank=True, null=True)
-    model = models.CharField(u"Modèle", blank=True, max_length=64, null=True)
+    supplier = models.ForeignKey(Supplier,
+                                 verbose_name=u"Fournisseur",
+                                 blank=True, null=True)
+    model = models.CharField(u"Modèle",
+                             blank=True, max_length=64, null=True)
 
-    location = models.CharField(u"Emplacement", blank=True, max_length=128, null=True)
-    serial = models.CharField(u"Numéro de série", blank=True, max_length=128, null=True)
-    inventory = models.CharField(u"Numéro d'inventaire", blank=True, max_length=128, null=True)
+    location = models.CharField(u"Emplacement",
+                                blank=True, max_length=128, null=True)
+    serial = models.CharField(u"Numéro de série",
+                              blank=True, max_length=128, null=True)
+    inventory = models.CharField(u"Numéro d'inventaire",
+                                 blank=True, max_length=128, null=True)
 
     status = models.ForeignKey(HostStatus, verbose_name=u"Statut", null=False)
 
@@ -189,8 +206,10 @@ class Host(models.Model):
 
     def copy_instance(self):
         """Return an unsaved copy of self and self's `AdditionnalFlied`s"""
-        h = Host(site=self.site, type=self.type, hostname=self.hostname + '_copy',
-                 os=self.os, status=self.status, date_end_prod=self.date_end_prod,
+        h = Host(site=self.site, type=self.type,
+                 hostname=self.hostname + '_copy',
+                 os=self.os, status=self.status,
+                 date_end_prod=self.date_end_prod,
                  supplier=self.supplier, commentaire=self.commentaire +
                  u"\n -> Copie de la machine %s(ip:%s, le:%s)" % (
                      self.hostname, self.ip, datetime.date.today()),
@@ -204,13 +223,15 @@ class Host(models.Model):
 
     def available_for(self, user):
         return (self.site in user.clients)
-    
+
     def is_last_iplog_thesame(self):
         """Returns if the last iplog has the same ip address"""
         try:
-            return self.hostiplog_set.all().order_by("-date")[0].log_ip == self.ip
+            return (self.hostiplog_set.all()
+                        .order_by("-date")[0].log_ip == self.ip)
         except (TypeError, ValueError, IndexError):
             return False
+
 
 class HostIPLog(models.Model):
     class Meta:
@@ -219,17 +240,20 @@ class HostIPLog(models.Model):
         permissions = (
             ("can_access_hostiplog", u"Accès aux logs softupdate"),
         )
-    
+
     def __unicode__(self):
         return u"%s %s %s" % (self.host, self.log_ip, self.date)
-    
+
     date = models.DateTimeField(u"Date", auto_now_add=True, auto_now=True)
     # If serial not matched...
-    host = models.ForeignKey(Host, verbose_name=u"Machine", null=True, blank=True)
-    
+    host = models.ForeignKey(Host,
+                             verbose_name=u"Machine",
+                             null=True, blank=True)
+
     log_ip = models.CharField(u"Adresse IP", max_length=128)
     log_hostname = models.CharField(u"Hostname", max_length=128)
     log_queryfrom = models.CharField(u"QueryFrom", max_length=128)
+
 
 class ParamAdditionnalField(models.Model):
 
@@ -239,12 +263,17 @@ class ParamAdditionnalField(models.Model):
 
     host_type = models.ForeignKey(HostType, verbose_name=u"Type d'hôte")
     name = models.CharField(u"Nom", max_length=32)
-    data_type = models.CharField(u"Type de donnée", max_length=4, choices=FIELD_TYPES)
-    # dans un cas de choices il sera stocké en json non indenté. ex: ["a","b","c"]
+    data_type = models.CharField(u"Type de donnée",
+                                 max_length=4, choices=FIELD_TYPES)
+    # dans un cas de choices il sera stocké en json non indenté.
+    # ex: ["a","b","c"]
     default_values = JsonField(u"Valeur par défaut/choix", max_length=8192)
-    fast_search = models.BooleanField(u"Champ recherché par défaut", default=False)
-    sorting_priority = models.IntegerField(u"Priorité d'affichage", default=100)
-    api_key = models.CharField(u"Nom d'exposition api", blank=True, max_length=64)
+    fast_search = models.BooleanField(u"Champ recherché par défaut",
+                                      default=False)
+    sorting_priority = models.IntegerField(u"Priorité d'affichage",
+                                           default=100)
+    api_key = models.CharField(u"Nom d'exposition api",
+                               blank=True, max_length=64)
     show = models.BooleanField(u"Affiché dans la liste", default=False)
 
     def __unicode__(self):
@@ -255,7 +284,9 @@ class ParamAdditionnalField(models.Model):
 
 class AdditionnalFieldManager(models.Manager):
     def get_query_set(self):
-        return super(AdditionnalFieldManager, self).get_query_set().select_related("field")
+        return super(AdditionnalFieldManager, self) \
+                    .get_query_set() \
+                    .select_related("field")
 
 
 class AdditionnalField(models.Model):
@@ -265,7 +296,8 @@ class AdditionnalField(models.Model):
         ordering = (u"field__sorting_priority", u"field__name")
 
     objects = AdditionnalFieldManager()
-    field = models.ForeignKey(ParamAdditionnalField, verbose_name="Origine du champ")
+    field = models.ForeignKey(ParamAdditionnalField,
+                              verbose_name=u"Origine du champ")
     value = models.CharField(u"Valeur", max_length=512)
     host = models.ForeignKey(Host, verbose_name=u"")
 
@@ -274,11 +306,13 @@ class AdditionnalField(models.Model):
         if self.field.data_type in (u"1", u"2", u"4", u"5"):
             return self.value
         if self.field.data_type == u"3":
-            return self.field.default_values[int(self.value)] if self.value else "False"
+            return self.field.default_values[int(self.value)] \
+                        if self.value else "False"
         dataLoaded = json.loads(self.value)
         val = ""
         if dataLoaded:
-            val = ",".join(self.field.default_values[int(e)] for e in dataLoaded)
+            val = ",".join(self.field.default_values[int(e)]
+                                for e in dataLoaded)
         return val
 
     def render_clean(self):
