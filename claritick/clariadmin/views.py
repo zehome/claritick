@@ -22,10 +22,11 @@ def filter_hosts(qs, user, sorting, search, search_extra={}):
     Returns results according to search and search_extra dictionnays.
     It will look in fields related to the keyword.
     """
-    search_mapping = {'ip': 'contains',
+    search_mapping = {
+        'ip': 'contains',
         'hostname': 'icontains',
         'commentaire': 'icontains',
-        }
+    }
     for key, value in search.iteritems():
         if value:
             lookup = search_mapping.get(key, 'exact')
@@ -141,7 +142,7 @@ def list_all(request, target_client=None, *args, **kw):
                              host_type=HostType.objects.get(pk=host_type))
                 # if search != last search => page 1 and update session
                 post_filtred = dict([(k, v) for k, v in POST.iteritems()
-                                        if k in form_extra.fields.keys()])
+                    if k in form_extra.fields.keys()])
                 if request.session.get('additionnal_field_form_fields', {}) != post_filtred:
                     new_search = True
                     request.session['additionnal_field_form_fields'] = post_filtred
