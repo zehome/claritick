@@ -94,6 +94,7 @@ MIDDLEWARE_CLASSES = (
     #'django.middleware.gzip.GZipMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
     #'common.middleware.profiling.ProfileMiddleware',
+    'common.middleware.anticache.MediaAnticacheMiddleware',
     'common.middleware.autologout.AutoLogout',
 )
 
@@ -227,6 +228,10 @@ DESKTOP_NOTIFICATION_TAGS = (
     (u"TNR", u"Nouvelle réponse"),
     (u"TCL", u"Ticket fermé"),
 )
+
+# Anti cache media middleware
+ANTICACHE_MEDIA_ROOT = STATIC_ROOT
+ANTICACHE_MEDIA_URL = STATIC_URL
 
 try:
     from local_settings import *
