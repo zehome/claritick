@@ -2,16 +2,19 @@
 
 import re
 import os
+import logging
 from django.conf import settings
 
+logger = logging.getLogger("anticachemiddleware")
 
 """
 (c) 2012 Laurent Coustet
+Licence: BSD
 Anti browser cache media URL transformer.
 
 Will append ?mtime to all your "REPLACE_MEDIA_URL"s.
 
-Set REPLACE_MEDIA_ROOT and REPLACE_MEDIA_URL in your local settings please.
+Set ANTICACHE_MEDIA_ROOT and ANTICACHE_MEDIA_URL in your local settings please.
 """
 
 if hasattr(settings, "ANTICACHE_MEDIA_URL"):
@@ -33,8 +36,8 @@ def _subreplace(m):
     try:
         media_path = os.path.join(REPLACE_MEDIA_ROOT, m.group(2))
         mtime = os.stat(media_path)[8]
-    except Exception, e:
-        print "Error in mstat: %s" % (e,)
+    except:
+        logger.exception("Unknown error in anticache middleware replace.")
         return m.group(0)
     else:
         return "%s?%s" % (m.group(0), mtime)
