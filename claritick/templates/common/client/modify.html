@@ -29,7 +29,8 @@
                 </th>
                 <th><b>Hosts:</b>
                     <select class="modifyclient"
-                            dojoType="dijit.form.FilteringSelect"
+                            data-dojo-type="dijit.form.FilteringSelect"
+                            data-dojo-props="queryExpr: '*${0}*', autoComplete: false"
                             onchange="controlifexist();"
                             id="host_id">
                             {% for i in host_list_qs %}
