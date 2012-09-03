@@ -2,6 +2,7 @@
 
 import re
 import os
+import stat
 import logging
 from django.conf import settings
 
@@ -35,7 +36,7 @@ MAX_PAGE_SIZE = 512 * 1024
 def _subreplace(m):
     try:
         media_path = os.path.join(REPLACE_MEDIA_ROOT, m.group(2))
-        mtime = os.stat(media_path)[8]
+        mtime = os.stat(media_path)[stat.ST_MTIME]
     except:
         logger.exception("Unknown error in anticache middleware replace.")
         return m.group(0)
