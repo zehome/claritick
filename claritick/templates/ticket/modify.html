@@ -35,13 +35,18 @@ var lock_url = '{% url lock_ajax_lock form.instance.id %}?model=ticket.Ticket&la
 var lock_settings = {{ lock_settings|safe }};
 </script>
 
+<div dojoType="dijit.Dialog" id="tickethostdialog" title="Host/Client" style="display: none;width:auto;" href="{% url ajax_load_host_client form.instance.client.id %}">
+</div>
+
 <fieldset class="block form" style="width: 65%; float: left;">
   <legend>Contact</legend>
   <table>
     <tr>
         <td class="large">{{ form.client.label_tag }}</td><td>{{ form.client }}
             <a href={% url list_hosts form.instance.client.id %}>
-                <img alt="postes" src="{{ STATIC_URL }}images/oxygen/computer_small.png" /></a></td>
+                <img alt="postes" src="{{ STATIC_URL }}images/oxygen/computer_small.png" /></a>
+            <button dojoType="dijit.form.Button" onClick="dijit.byId('tickethostdialog').show();">Host/Client</button>
+        </td>
         <td class="large right">{{ form.assigned_to.label_tag }}</td><td>{{ form.assigned_to }}</td>
     </tr>
     <tr>

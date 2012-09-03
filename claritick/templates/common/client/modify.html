@@ -1,9 +1,9 @@
 {% extends "base.html" %}
-
 {% block title %}Modification des coordonnées du laboratoire {{ client }}{% endblock %}
 {% block content_title %}Modification des coordonnées du laboratoire {{ client }}{% endblock %}
-
 {% block content %}
+<script type="text/javascript" src="{{ STATIC_URL }}javascript/hostclient.js"></script>
+
 <p style="text-align: left;"><a href="{% url infos_login %}">&lt;&lt; Retour aux informations</a></p>
 <form method="POST">
     {% csrf_token %}
@@ -13,7 +13,54 @@
             {{ coordinate_form.as_table }}
             {{ client_form.as_table }}
             </table>
-        <button type="submit" dojoType="dijit.form.Button">Enregistrer</button>
+        <button data-dojo-type="dijit.form.Button">Enregistrer</button>
     </fieldset>
 </form>
+    <fieldset class="block form bigfields">
+        <legend>Host/Client</legend>
+        <table class="datatable">
+            <thead>
+            <tr>
+                <th><b>Nom:</b><div class="hostnamebox" 
+                                    dojoType="dijit.form.ValidationTextBox"
+                                    required="true"
+                                    id="machine_name">
+                    </div>
+                </th>
+                <th><b>Hosts:</b>
+                    <select class="modifyclient"
+                            dojoType="dijit.form.FilteringSelect"
+                            onchange="controlifexist();"
+                            id="host_id">
+                            {% for i in host_list_qs %}
+                                <option value="{{ i.pk }}, {{ i }}" name="{{ i.pk }}">{{ i }}</option>
+                            {% endfor %}
+                    </select>
+                </th>
+                <th><button id="add_button"
+                            dojoType="dijit.form.Button"
+                            class="hostclient"
+                            onclick="addNewClienthost('{{ client.id }}');">
+                            Add<img  width="20" height="20" src="{{ STATIC_URL }}images/oxygen/list-add.png" />
+                    </button>
+                </th>
+            </tr>
+            </thead>
+        </table>
+        <table id="dataTable" class="datatable" cellspacing="50">
+            <tbody id="hostclient_tbody">
+                {% for hostclientid, hostname, hostip, hosttype, hostid, name in host_list_configure %}
+                {% ifchanged hostclientid %}
+                <tr id="del_{{ hostid }}">
+                    <td class="hostclientname">{{ name }}</td>
+                    <td class="hostclienthostname">{{ hostname}}</td>
+                    <td>
+                        <button onclick="delete_hostclient('{{ hostid }}', '{{ client.id }}');">supprimer</button>
+                    </td>
+                </tr>
+                {% endifchanged %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </fieldset>
 {% endblock %}

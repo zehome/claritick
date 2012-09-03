@@ -1,0 +1,22 @@
+{% block content %}
+<table class="hostclient">
+    <thead>
+        <tr>
+            <th field="site">Site</th>
+            <th field="ip">Adresse IP</th>
+            <th field="type">Type Machine</th>
+            <th field="name">Nom</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for hostname, hostip, hosttype, name in host_list %}
+        <tr class="{% cycle 'row1' 'row2'%}">
+            <td>{{ hostname }}</td>
+            <td><a href="http://{{ hostip }}" target="_new">{{ hostip }}</a></td>
+            <td>{{ hosttype }}</td>
+            <td>{{ name }}</td>
+        </tr>
+    {% endfor %}
+</tbody>
+</table>
+{% endblock %}
