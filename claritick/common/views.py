@@ -5,11 +5,15 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.core.exceptions import PermissionDenied
+from django.core.exceptions import ValidationError
+from django.core import validators
 from django.utils import simplejson as json
 
 from common.models import Client, Coordinate
 from common.forms import ClientForm, CoordinateForm
 from common.utils import user_has_perms_on_client
+from common.models import Client, Coordinate, HostChar
+from clariadmin.models import Host
 from bondecommande.models import BonDeCommande
 
 try:
@@ -81,10 +85,32 @@ def modify_client(request, client_id):
         client_form = ClientForm(instance=client)
         coordinate_form = CoordinateForm(instance=coordinate)
 
+    # list hosts current client can see
+    host_list = HostChar.objects.filter(client=client_id)
+    ip_table = []
+    for host in host_list:
+        host_ip = host.host.ip.split()
+        for ip in host_ip:
+            try:
+                validators.validate_ipv4_address(ip)
+                ip_table.append([host.id,
+                                 host.host,
+                                 ip,
+                                 host.host.type,
+                                 host.host.id,
+                                 host.name])
+            except ValidationError:
+                pass
+    host_list_configure = ip_table
+    host_list_qs = Host.objects.filter_by_user(request.user)
+    host_list_qs = host_list_qs.filter(site__in=Client.objects.get_childs('parent', client.id))
+
     return render_to_response("common/client/modify.html", {
         "client": client,
         "client_form": client_form,
         "coordinate_form": coordinate_form,
+        "host_list_qs": host_list_qs,
+        "host_list_configure": host_list_configure,
     }, context_instance=RequestContext(request))
 
 

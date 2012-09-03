@@ -45,3 +45,9 @@ urlpatterns += patterns('ticket.exportviews',
     url(r'^export/nonvalide.csv$', 'export_nonvalide', name='ticket_export_nonvalide'),
     url(r'^export/view/(?P<view_id>\d+)/$', 'export_view', name="ticket_export_view"),
     )
+
+urlpatterns += patterns('common.hostviews',
+    url(r'^ajax_load_host_client/(?P<client_id>\d+)/$', 'ajax_load_host_client', name='ajax_load_host_client'),
+    url(r'^ajax_add_host_client/$', 'ajax_add_host_client', name='ajax_add_host_client'),
+    url(r'^ajax_delete_host_client/$', 'ajax_delete_host_client', name='ajax_delete_host_client'),
+    )

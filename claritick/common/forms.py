@@ -137,7 +137,7 @@ class ClientForm(df.ModelForm, ModelFormTableMixin):
 
     class Meta:
         model = Client
-        exclude = ["parent", "label", "coordinates"]
+        exclude = ["parent", "label", "coordinates", "hosts"]
 
 
 class CoordinateForm(df.ModelForm, ModelFormTableMixin):
