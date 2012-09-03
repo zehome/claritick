@@ -258,10 +258,11 @@ input[class^="dijit"] {
 }
 
 .row1 {
-    background-color: white;
-}
-.row1 {
     background-color: #D3DBFF;
+}
+
+.row2 {
+    background-color: white;
 }
 
 .rowVisited {
@@ -996,4 +997,25 @@ td.original p {
 }
 .rappel .form-calendar {
     margin-bottom: 10px;
+}
+
+.datatable td {
+    vertical-align: middle;
+    padding-right: 30px;
+    padding-left: 10px;
+}
+
+.datatable th {
+    vertical-align: middle;
+}
+
+.datatable tr {
+    border-bottom: 1px solid grey;
+}
+
+.datatable tr:nth-child(odd) {
+    background-color: #D3DBFF;
+}
+.datatable tr:nth-child(even) {
+    background-color: white;
 }
