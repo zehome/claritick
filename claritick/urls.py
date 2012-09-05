@@ -10,6 +10,9 @@ from django.http import HttpResponse
 
 from django.template import RequestContext
 
+# django_statsd / boomerang timing
+from django_statsd.urls import urlpatterns as statsd_patterns
+
 # Custom models
 import ticket.urls
 import common.urls
@@ -111,3 +114,6 @@ urlpatterns = patterns('',
 
 # Only in debug mode
 urlpatterns += staticfiles_urlpatterns()
+
+# statsd
+urlpatterns += patterns('',('^services/timing/', include(statsd_patterns)))

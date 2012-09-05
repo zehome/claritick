@@ -22,6 +22,7 @@
     {% block blockbots %}<meta name="robots" content="NONE,NOARCHIVE" />{% endblock %}
     <!-- End admin -->
     <script type="text/javascript" src="{{ STATIC_URL }}js/clariadmin.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/jquery-1.5.min.js"></script>
     <script type="text/javascript" charset="utf-8">
         dojo.config['ioPublish'] = true;
     </script>
@@ -65,6 +66,7 @@
     </script>
 {% endblock %}
     <script type="text/javascript" src="{{ STATIC_URL }}js/menu.js"></script>
+    <script src="{{ STATIC_URL }}stick.js"></script>
   </head>
 {% load i18n %}
   <body class="{{ DOJANGO.THEME }} {% if is_popup %}popup {% endif %}{% block bodyclass %}claritick{% endblock %}">
@@ -185,6 +187,7 @@
     </script>
     <!-- End Dojo -->
     {% endif %}
+    <script>stick.send('/services/timing/record');</script>
   </body>
 </html>
 

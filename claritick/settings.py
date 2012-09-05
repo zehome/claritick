@@ -67,6 +67,13 @@ STATICFILES_DIRS = (
 )
 
 
+# django-statsd
+STATSD_CLIENT = 'django_statsd.clients.normal'
+STATSD_PATCHES = [
+    'django_statsd.patches.db',
+    'django_statsd.patches.cache',
+]
+
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = '9hart)zyl_0=u7$xj@+!d@6(^8&nmvni5r@898ko!rrp5spj-e'
 
@@ -80,6 +87,8 @@ TEMPLATE_LOADERS = (
 )
 
 MIDDLEWARE_CLASSES = (
+    'django_statsd.middleware.GraphiteRequestTimingMiddleware',
+    'django_statsd.middleware.GraphiteMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -149,6 +158,7 @@ INSTALLED_APPS = (
     'smokeping',               # Logs login/logout
     'rappel',                  # Create ticket rappel
     'django_extensions',
+    'django_statsd',
 )
 
 COMMENTS_APP = 'ticket_comments'
@@ -228,10 +238,6 @@ DESKTOP_NOTIFICATION_TAGS = (
     (u"TNR", u"Nouvelle réponse"),
     (u"TCL", u"Ticket fermé"),
 )
-
-# Anti cache media middleware
-ANTICACHE_MEDIA_ROOT = STATIC_ROOT
-ANTICACHE_MEDIA_URL = STATIC_URL
 
 try:
     from local_settings import *
