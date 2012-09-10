@@ -629,6 +629,9 @@ class Ticket(models.Model):
             self.save()
             mail.extra_headers['Message-ID'] = self.message_id
 
+        if self.keywords:
+            mail.extra_headers['X-CLARITICK-KEYWORDS'] = self.keywords
+
         self.ticketmailtrace_set.create(email=mail)
         mail.send()
 
