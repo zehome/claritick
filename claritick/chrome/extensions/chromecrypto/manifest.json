@@ -1,8 +1,8 @@
 {
-  "name": "Chrome crypto",
+  "name": "chromium crypto",
   "version": "2.0",
   "manifest_version": 2,
-  "description": "An extension for chrome that permits to cipher/decipher some text in a webpage.",
+  "description": "ONLY FOR clarisys.fr. An extension for chromium to cipher/decipher special text in a web page.",
   "background": {
     "scripts": [ "js/background.js" ]
   },
@@ -18,8 +18,7 @@
   "content_scripts": [
     {
       "matches": [ 
-        "https://claritick.clarisys.fr/*",
-        "file://*/*"
+        "https://claritick.clarisys.fr/*"
       ],
       "js": [
         "js/dojo.js",
@@ -32,8 +31,7 @@
     },
     {
       "matches": [
-        "https://claritick.clarisys.fr/*",
-        "file://*/*"
+        "https://claritick.clarisys.fr/*"
       ],
       "js": [
         "js/dojo.js",
@@ -49,8 +47,7 @@
   },
   "permissions": [
     "tabs",
-    "http://claritick.clarisys.fr/*",
-    "file://*/*"
+    "http://claritick.clarisys.fr/*"
   ],
   "content_security_policy": "script-src 'self'; object-src 'self'"
 }

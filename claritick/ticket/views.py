@@ -437,6 +437,7 @@ def modify(request, ticket_id):
     ticket = get_object_or_404(qs, pk=ticket_id)
 
     # Si c'est un fils rediriger vers le pêre au bon endroit
+    # (C'est utile uniquement pour le chargement de la page)
     if ticket.parent:
         return http.HttpResponseRedirect("/ticket/modify/%d/#child%s" % (ticket.parent_id, ticket_id))
 
