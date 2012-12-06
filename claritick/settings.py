@@ -87,8 +87,6 @@ TEMPLATE_LOADERS = (
 )
 
 MIDDLEWARE_CLASSES = (
-    'django_statsd.middleware.GraphiteRequestTimingMiddleware',
-    'django_statsd.middleware.GraphiteMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -99,6 +97,7 @@ MIDDLEWARE_CLASSES = (
     'common.exceptionmiddleware.UserBasedExceptionMiddleware',
     'backlinks.middleware.BacklinksMiddleware',
     'django.middleware.http.ConditionalGetMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
     'ticket.middleware.PopulateUserMiddleware',
     #'django.middleware.gzip.GZipMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
@@ -119,7 +118,6 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.request',
     'ticket.context_processors.ticket_views',
     'lock.context_processors.lock_settings',
-    'profiletools.context_processors.fetch_profile',
 )
 
 

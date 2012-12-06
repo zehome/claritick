@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import os
+
 from django.core.validators import RegexValidator
 from django.db import models
 from django.db.models import permalink
@@ -12,7 +14,7 @@ packagename_validator = RegexValidator(r"^[-+_0-9a-z]{5,}$", message=u"Nom inval
 
 class ClientPackageAuth(models.Model):
     class Meta:
-        verbose_name = u"Authorisations client/packages"
+        verbose_name = u"Authorisations client/package"
 
     client = models.ForeignKey(Client, verbose_name=u"Client", blank=False)
     key = models.CharField(max_length=64, unique=True, blank=False)
@@ -20,9 +22,12 @@ class ClientPackageAuth(models.Model):
     def __unicode__(self):
         return u"Auth for %s" % (self.client,)
 
-
 class Platform(models.Model):
-    """system platform. linux-default, linux-xorgversion, win32-default, win32-5.1, ... """
+    """
+    system platform.
+    linux, linux2, linux3, win32
+    as returned by sys.platform in python.
+    """
     class Meta:
         verbose_name = u"Plateforme"
 
@@ -38,53 +43,15 @@ class Platform(models.Model):
     def __unicode__(self):
         return self.name and self.name or u"Toutes"
 
-
-class PackageKind(models.Model):
-    """ Exemples: CLARILAB, MCA, ... """
-    class Meta:
-        verbose_name = u"Type de programme"
-
-    name = models.CharField(max_length=64, verbose_name=u"Nom du package")
-
-    def __unicode__(self):
-        return self.name
-
-
-class PackageTemplate(models.Model):
-    class Meta:
-        verbose_name = u"Modèle de paquet"
-
-    kind = models.ForeignKey(PackageKind,
-                             verbose_name=u"Type de package",
-                             blank=False)
-    name = models.CharField(max_length=256,
-                            verbose_name=u"Nom du paquet",
-                            blank=False,
-                            validators=[packagename_validator, ])
-    short_description = models.CharField(max_length=64,
-                                         verbose_name=u"Description courte",
-                                         blank=False)
-    description = models.TextField(verbose_name=u"Description Longue",
-                                   null=True,
-                                   blank=True)
-
-    def __unicode__(self):
-        return u"%s %s" % (self.kind, self.name)
-
-
 class Package(models.Model):
     class Meta:
         verbose_name = u"Paquet"
         permissions = (
             ("can_access", u"Accès au système de gestion de paquet"),
         )
+    clients = models.ManyToManyField(Client)
+    name = models.TextField(verbose_name=u"Nom", blank=False, null=False)
 
-    template = models.ForeignKey(PackageTemplate,
-                                 verbose_name=u"Modèle",
-                                 blank=False)
-    client = ClientField(Client,
-                         verbose_name=u"Client",
-                         blank=False)
     platform = models.ForeignKey(Platform,
                                  verbose_name=u"Plateforme",
                                  blank=True,
@@ -92,15 +59,9 @@ class Package(models.Model):
     date_add = models.DateTimeField(verbose_name=u"Date d'ajout",
                                     auto_now_add=True,
                                     blank=False)
-    version_major = models.PositiveIntegerField(verbose_name=u"Majeur de version",
-                                                blank=False)
-    version_minor = models.PositiveIntegerField(verbose_name=u"Mineur de version",
-                                                blank=False)
-    revision = models.PositiveIntegerField(verbose_name=u"Release",
+    version = models.PositiveIntegerField(verbose_name=u"Version",
                                            blank=False,
-                                           default=0)
-    required = models.BooleanField(verbose_name=u"Requis",
-                                   default=True)
+                                           default=1)
     file = models.FileField(upload_to=".",
                             storage=packaging_storage,
                             blank=True,
@@ -113,14 +74,12 @@ class Package(models.Model):
         else:
             fileStr = ""
 
-        return u"%s pour %s %s%s%s" % (self.template.name, self.client,
-            self.version,
-            self.platform and u" plateforme %s" % (self.platform,) or u" toute plateforme",
+        return u"%s version %s (%s)%s" % (self.name, self.version,
+            self.platform and self.platform or u"any",
             fileStr)
 
-    @property
-    def version(self):
-        return u"%s.%s+%s" % (self.version_major, self.version_minor, self.revision)
+    def filename(self):
+        return self.file and os.path.basename(self.file.name) or None
 
     @property
     def sha1(self):
@@ -133,4 +92,36 @@ class Package(models.Model):
 
     @permalink
     def download_url(self):
-        return ('packaging_get_id', [unicode(self.id), ])
+        return ('packaging_download', [unicode(self.id), ])
+
+class PackageConfig(models.Model):
+    class Meta:
+        verbose_name = u"Configuration"
+
+    packageauth = models.ForeignKey(ClientPackageAuth, verbose_name=u"PackageAuth", blank=False, null=False)
+    name = models.CharField(max_length=128, verbose_name=u"Nom", blank=False)
+    pathname = models.CharField(max_length=128, verbose_name=u"Chemin d'installation", blank=False)
+    server_ip = models.CharField(max_length=256, verbose_name=u"Server IP", blank=False)
+    server_port = models.CharField(max_length=5, verbose_name=u"Server Port", blank=False)
+    git_url = models.CharField(max_length=1024, verbose_name=u"Git URL", blank=False)
+    git_commit = models.CharField(max_length=1024, verbose_name=u"Git Commit", blank=False)
+    ssh_rsa_public = models.TextField(verbose_name=u"SSH RSA Public Key", blank=False)
+    ssh_rsa_private = models.TextField(verbose_name=u"SSH RSA Private Key", blank=False)
+
+    def todict(self):
+        return {
+            "id": self.pk,
+            "name": self.name,
+            "type": "CLARILAB",
+            "pathname": self.pathname,
+            "server_ip": self.server_ip,
+            "server_port": self.server_port,
+            "git_url": self.git_url,
+            "git_commit": self.git_commit,
+            "ssh_rsa_pub": self.ssh_rsa_public,
+            "ssh_rsa_priv": self.ssh_rsa_private,
+            "client": unicode(self.packageauth.client),
+        }
+
+    def __unicode__(self):
+        return u"%s (%s)" % (self.name, self.git_url)

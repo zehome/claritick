@@ -5,29 +5,29 @@
 {% block image %}<img src="{{ STATIC_URL }}images/oxygen/search.png" alt="search" />{% endblock %}
 
 {% block content %}
-<form method="post" id="list_form">{% csrf_token %}
-<fieldset class="form">
-  <legend>Filtrage</legend>
-    <table class="search">
-        <tr>
-            <th>{{ form.client.label_tag }}</th>
-            <td>{{ form.client }}</td>
-            <th>{{ form.kind.label_tag }}</th>
-            <td>{{ form.kind }}</td>
-        </tr>
-    </table>
-    <button type="reset" dojoType="dijit.form.Button">Annuler</button>
-    <button type="submit" dojoType="dijit.form.Button">Rechercher</button>
-</fieldset>
-</form>
 
 {% if packages %}
-
-<ul>
-{% for package in packages %}
-  <li>{{ package }}</li>
-{% endfor %}
-</ul>
+<h2>Liste des fichiers disponibles</h2>
+<table class="resultat">
+    <thead>
+        <tr>
+            <th>Plateforme</th>
+            <th>Nom</th>
+            <th>Version</th>
+            <th>Lien de téléchargement</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for package in packages %}
+        <tr class="{% cycle 'row1' 'row2'%}">
+            <td>{{ package.platform }}</td>
+            <td>{{ package.name }}</td>
+            <td>{{ package.version }}</td>
+            <td><a href="{% url packaging.views.download package.pk %}">{{ package.filename }}</a></td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
 
 {% else %}
 <h3>Aucun résultat</h3>

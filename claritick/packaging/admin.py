@@ -2,14 +2,9 @@
 
 from django.contrib import admin
 from packaging.models import ClientPackageAuth, Platform
-from packaging.models import PackageKind, PackageTemplate, Package
+from packaging.models import Package, PackageConfig
 
-
-class PackageAdmin(admin.ModelAdmin):
-    pass
-
-admin.site.register(Platform)
-admin.site.register(PackageKind)
-admin.site.register(PackageTemplate)
-admin.site.register(Package, PackageAdmin)
 admin.site.register(ClientPackageAuth)
+admin.site.register(Platform)
+admin.site.register(Package)
+admin.site.register(PackageConfig)
