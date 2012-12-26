@@ -100,7 +100,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'ticket.middleware.PopulateUserMiddleware',
     #'django.middleware.gzip.GZipMiddleware',
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
+#    'debug_toolbar.middleware.DebugToolbarMiddleware',
     #'common.middleware.profiling.ProfileMiddleware',
     'common.middleware.anticache.MediaAnticacheMiddleware',
     'common.middleware.autologout.AutoLogout',
@@ -147,7 +147,7 @@ INSTALLED_APPS = (
     'chuser',                  # Switch user
     'lock',                    # Lock objects by users
     'packaging',               # Clarideploy tools
-    'debug_toolbar',
+#    'debug_toolbar',
     'desktopnotifications',
     'bondecommande',
     'etiquette_printer',       # Impression d'étiquettes codebarre
@@ -155,8 +155,8 @@ INSTALLED_APPS = (
     'loggingauth',             # Logs login/logout
     'smokeping',               # Logs login/logout
     'rappel',                  # Create ticket rappel
-    'django_extensions',
-    'django_statsd',
+##    'django_extensions',
+#    'django_statsd',
 )
 
 COMMENTS_APP = 'ticket_comments'
