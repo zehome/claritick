@@ -6,11 +6,13 @@ Author: Laurent Coustet <ed@zehome.com>
 QUICK INSTALL
 -------------
 
-<pre>
+```
 # Install the dependencies
 root@machine:~# apt-get install python-virtualenv python-setuptools
 # Create the virtual env
 claritick@machine:~$ virtualenv claritick_env
+# Activate virtual env
+claritick@machine:~$ . claritick_env/bin/activate
 # Checkout sources in src
 claritick@machine:~$ mkdir src
 claritick@machine:src$ cd src
@@ -28,17 +30,16 @@ claritick@machine:claritick/dojango/dojo-media/release$ tar xzf custom_build_161
 # Deploy static files
 claritick@machine:claritick/dojango/dojo-media/release$ cd ~/claritick
 claritick@machine:claritick$ python manage.py collectstatic
-</pre>
+```
 
 Now, you must configure claritick using local_settings.py (DATABASE, CACHES, ...).
 Please don't modify settings or you will experience merge issues with upgrades.
 
-<pre>
+```
 # syncdb
 claritick@machine:claritick$ python manage.py syncdb
-</pre>
+```
 
 UPGRADES
 --------
-
 Please follow instructions in **UPGRADING** file.

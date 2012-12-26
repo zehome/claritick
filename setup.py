@@ -36,11 +36,14 @@ setup(
         'django-desktop-notifications>=0.3',
         # LC: TODO: Remove included in claritick dojango to use stock release        
 #        'dojango',
+        'sqlalchemy==0.6',
         'elixir',
         'psycopg2',
         'setproctitle',
-        'python-dateutil'
+        'python-dateutil',
         'numpy',
         'django-profiletools',
+        'memcache',
+        'pylibmc',
     ],
 )
