@@ -43,9 +43,11 @@ var lock_settings = {{ lock_settings|safe }};
   <table>
     <tr>
         <td class="large">{{ form.client.label_tag }}</td><td>{{ form.client }}
-            <a href={% url list_hosts form.instance.client.id %}>
-                <img alt="postes" src="{{ STATIC_URL }}images/oxygen/computer_small.png" /></a>
+            {% if perms.clariadmin.can_access_clariadmin %}
+            <a href="{% url list_hosts form.instance.client.id %}">
+                <img alt="postes" src="{{ STATIC_URL }}images/oxygen/computer_small.png"></a>
             <button dojoType="dijit.form.Button" onClick="dijit.byId('tickethostdialog').show();">Host/Client</button>
+            {% endif %}
         </td>
         <td class="large right">{{ form.assigned_to.label_tag }}</td><td>{{ form.assigned_to }}</td>
     </tr>
