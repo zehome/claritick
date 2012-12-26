@@ -49,18 +49,6 @@ def iepage(template, data = {}):
         return render_to_response(template, data, context_instance=RequestContext(request))
     return render
 
-def agenda(request, data={}):
-    template="agenda.html"
-    user = request.user
-    if user:
-        try:
-            profile = user.my_userprofile
-            data["google_account"] = profile.google_account
-        except:
-            pass
-    
-    return render_to_response(template, data, context_instance=RequestContext(request))
-
 def ovh_cert(request, data={}):
     return HttpResponse("knqvrjirhctwex")
 
@@ -80,7 +68,6 @@ urlpatterns = patterns('',
     (r'^lock/', include(lock.urls)),
     (r'^clariadmin/', include(clariadmin.urls)),
     (r'^host-history/', include(host_history.urls)),
-    (r'^agenda/$', agenda),
     (r'^dojango/', include('dojango.urls')), # Dojango requires
     
     ## Packaging
