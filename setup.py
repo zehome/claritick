@@ -43,7 +43,7 @@ setup(
         'python-dateutil',
         'numpy',
         'django-profiletools',
-        'memcache',
+        'python-memcached',
         'pylibmc',
     ],
 )
