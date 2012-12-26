@@ -46,9 +46,13 @@ def list_logs(request, filter_type=None, filter_key=None):
         if filter_type == 'host' and filter_key == 'deleted':
             qs = HostEditLog.objects.filter(host__exact=None)
         elif filter_type == 'host':
-            qs = get_object_or_404(Host, pk=filter_key).hosteditlog_set
+            try:
+                hostid = int(filter_key)
+            except ValueError:
+                raise Http404("Host not found.")
+            qs = get_object_or_404(Host, pk=hostid).hosteditlog_set
         else:
-            raise Http404
+            raise Http404("Invalid query")
     else:
         qs = HostEditLog.objects.all()
     qs = qs.select_related('host', 'hostrevision')

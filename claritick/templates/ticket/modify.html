@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-{% load adminmedia %}
 {% block extrastyle %}
   {{ block.super }}
   <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}print_ticket.css" media="print" />
@@ -176,7 +175,7 @@ var lock_settings = {{ lock_settings|safe }};
     <h3>Lier un bon de commande:</h3>
     {{ form.bondecommande }}
         <a id='add_id_bondecommande' class="add-another" href="{% url admin:bondecommande_bondecommande_add %}?client={{ form.instance.client.id }}" onclick="return showAddAnotherPopup(this);">
-            <img width="10" height="10" alt="Ajouter un autre" src="{% admin_media_prefix %}img/admin/icon_addlink.gif" />
+            <img width="10" height="10" alt="Ajouter un autre" src="{{ STATIC_URL }}admin/img/icon_addlink.gif" />
         </a>
     {% endif %}
 </fieldset>
