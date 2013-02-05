@@ -103,6 +103,7 @@ class PackageConfig(models.Model):
     pathname = models.CharField(max_length=128, verbose_name=u"Chemin d'installation", blank=False)
     server_ip = models.CharField(max_length=256, verbose_name=u"Server IP", blank=False)
     server_port = models.CharField(max_length=5, verbose_name=u"Server Port", blank=False)
+    extra_commandline = models.CharField(max_length=1024, verbose_name=u"Extra command line", blank=True)
     git_url = models.CharField(max_length=1024, verbose_name=u"Git URL", blank=False)
     git_commit = models.CharField(max_length=1024, verbose_name=u"Git Commit", blank=False)
     ssh_rsa_public = models.TextField(verbose_name=u"SSH RSA Public Key", blank=False)
@@ -116,6 +117,7 @@ class PackageConfig(models.Model):
             "pathname": self.pathname,
             "server_ip": self.server_ip,
             "server_port": self.server_port,
+            "extra_commandline": self.extra_commandline,
             "git_url": self.git_url,
             "git_commit": self.git_commit,
             "ssh_rsa_pub": self.ssh_rsa_public,

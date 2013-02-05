@@ -1,3 +1,6 @@
+2013-02-05 17:05
+    - ALTER TABLE packaging_packageconfig ADD COLUMN "extra_commandline" varchar(1024) NOT NULL DEFAULT '';
+    - ALTER TABLE packaging_packageconfig ALTER COLUMN "extra_commandline" DROP DEFAULT;
 2012-12-06 17:00
     - DROP TABLE packaging_package;
     - DROP TABLE packaging_packagetemplate;
