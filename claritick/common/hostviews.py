@@ -8,13 +8,13 @@ from django.template import RequestContext
 from dojango.decorators import json_response
 from django.shortcuts import render_to_response
 from django.core.exceptions import ValidationError
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import permission_required
 
 from clariadmin.models import Host
 from common.models import Client, HostChar
 
 
-@login_required
+@permission_required("clariadmin.can_access_clariadmin")
 def ajax_load_host_client(request, client_id):
     # List all the host of the current user
     host_list = HostChar.objects.filter(client=client_id)
@@ -33,8 +33,7 @@ def ajax_load_host_client(request, client_id):
                               {"host_list": ip_table},
                               context_instance=RequestContext(request))
 
-
-@login_required
+@permission_required("clariadmin.can_access_clariadmin")
 @json_response
 def ajax_delete_host_client(request):
     # Delete an host from many to many field client host
@@ -45,7 +44,7 @@ def ajax_delete_host_client(request):
     return response_dict
 
 
-@login_required
+@permission_required("clariadmin.can_access_clariadmin")
 @json_response
 def ajax_add_host_client(request):
     # Add an host to many to many field client host
