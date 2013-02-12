@@ -14,7 +14,6 @@ function delete_hostclient(host_id, clientid) {
                 + clientid,
         handleAs: 'text',
         load: function (data) {
-            console.log(data);
             tbody.removeChild(line);
         },
         error: function (error) {
@@ -53,7 +52,6 @@ function addNewClienthost(clientid) {
             // if return is true, the user atempt to create two same hostclient
             // this protect integrity error to database
             if (data.error != 'true') {
-                console.log(data);
                 // construction d'une nouvelle ligne
                 var table=dojo.byId("dataTable");
                 var rowCount=table.rows.length;
@@ -74,23 +72,11 @@ function addNewClienthost(clientid) {
                 dojo.connect(del_button, "onclick", function () {
                     delete_hostclient(host_id, clientid);
                 });
-                // desactivation du boutton ajouter
-                dijit.byId('add_button').set('disabled', true);
                 // raz du champ nom
                 name.textbox.value="";
+                host_select.textbox.value="";
             }
         }
     });
 }
 
-/* control si l'host selectionne dans le select est déjas dans la table,
-gestion du boutton ajouter */
-function controlifexist() {
-    var host_id=dijit.byId("host_id").get("value").split(',')[0];
-    if (dojo.byId('del_' + host_id)) {
-        dijit.byId('add_button').set('disabled', true);
-    } else {
-        dijit.byId('add_button').set('disabled', false);
-    }
-
-}
