@@ -225,8 +225,9 @@ class TicketQuerySet(models.query.QuerySet):
                     or_filters.append(
                         """ %s = ANY(string_to_array("ticket_ticket"."keywords", ',')) """)
                     or_param_list.append(kw_group)
-        where_list.append(u" OR ".join(or_filters))
-        where_param_list.extend(or_param_list)
+        if or_filters:
+            where_list.append(u" OR ".join(or_filters))
+            where_param_list.extend(or_param_list)
         return {
             "where": where_list,
             "params": where_param_list,
