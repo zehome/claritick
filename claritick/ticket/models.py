@@ -169,7 +169,45 @@ class TicketQuerySet(models.query.QuerySet):
         return qs
     filter_by_user = filter_ticket_by_user
 
-    def filter_queryset(self, filters, inverted_filters={}, *args, **kwargs):
+    @staticmethod
+    def build_inverted_keywords_lookup(value):
+        """ Si value contient
+        motcle1+motcle2,motcle3+motcle4,motcle5
+        ça signifie qu'on veut exclure les tickets qui ont :
+            le motcle1 ET le motcle2
+            Ou
+            le motcle3 ET le motcle4
+            Ou
+            le motcle5
+        Donc
+        where
+            NOT ('motcle1' = ANY(...) AND 'motcle2' ) ANY(...)) and
+            NOT ('motcle3' = ANY(...) AND 'motcle4' = ANY(...)) and
+            'motcle5' != ALL(string_to_array(keywords))
+        """
+        kw_groups = value.split(',')
+        where_list = []
+        where_param_list = []
+        for kw_group in kw_groups:
+            if '+' in kw_group:
+                kws = kw_group.split('+')
+                where_list.append(
+                    """ NOT (%s) """ % (" AND ".join([
+                        """%s = ANY(string_to_array("ticket_ticket"."keywords", ','))"""
+                        for kw in kws
+                    ])))
+                where_param_list.extend(kws)
+            else:
+                where_list.append(
+                    """ %s != ALL(string_to_array("ticket_ticket"."keywords", ',')) """)
+                where_param_list.append(kw_group)
+        return {
+            "where": where_list,
+            "params": where_param_list,
+        }
+
+
+    def filter_queryset(self, filters, inverted_filters=None, *args, **kwargs):
         """ Filtre un queryset de ticket a partir d'un dictionnaire de fields lookup. """
         search_mapping = {
             'title': 'icontains',
@@ -180,6 +218,7 @@ class TicketQuerySet(models.query.QuerySet):
         }
         inverted_search_mapping = {
             "not_client": None,
+            "keywords": TicketQuerySet.build_inverted_keywords_lookup
         }
 
         qs = self.all()
@@ -199,7 +238,7 @@ class TicketQuerySet(models.query.QuerySet):
                 qs = qs.filter_or_child({"%s__%s" % (key, lookup): value}, *args, **kwargs)
             except (AttributeError, FieldError):
                 pass
-        if not inverted_filters:
+        if inverted_filters is None:
             inverted_filters = {}
         for key, value in inverted_filters.items():
             realkey = key[len("not_"):]  # LC: Strip not_
@@ -208,6 +247,8 @@ class TicketQuerySet(models.query.QuerySet):
                     continue
                 try:
                     lookup = inverted_search_mapping[realkey]
+                    if callable(lookup):
+                        lookup = lookup(value)
                 except KeyError:
                     if isinstance(value, (list, models.query.QuerySet)):
                         lookup = "in"
@@ -215,7 +256,11 @@ class TicketQuerySet(models.query.QuerySet):
                         lookup = 'exact'
                 if lookup is None:
                     continue
-                qs = qs.exclude(models.Q(**{"%s__%s" % (realkey, lookup): value}))
+                if isinstance(lookup, dict):
+                    print lookup
+                    qs = qs.extra(**lookup)
+                else:
+                    qs = qs.exclude(models.Q(**{"%s__%s" % (realkey, lookup): value}))
             except (AttributeError, FieldError):
                 pass
 
