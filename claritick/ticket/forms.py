@@ -83,6 +83,9 @@ class NewTicketForm(CustomModelForm):
         filter_ticket_for_user(self, kwargs.pop("user", None), current_assigned_to)
         super(NewTicketForm, self).__init__(*args, **kwargs)
 
+    def clean_keywords(self):
+        keywords = self.cleaned_data['keywords']
+        return ','.join([kw.strip() for kw in keywords.split(',')])
 
 class NewTicketSmallForm(NewTicketForm):
     class Meta:
