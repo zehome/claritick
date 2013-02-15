@@ -11,3 +11,4 @@ eggs
 *.egg-info
 static/
 local_settings.py
+claritick/packaging/filestorage
