@@ -2,7 +2,7 @@
 
 from django import http
 from django.template import RequestContext
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import render_to_response
 from django.contrib.auth.decorators import permission_required
 from django.views.decorators.csrf import csrf_exempt
 from common.decorator import render_to_json
@@ -11,11 +11,13 @@ from django.db.models import Q
 import os.path
 
 
-@permission_required("package.can_access")
+@permission_required("packaging.can_access")
 def list(request, *args, **kwargs):
-    qs = Package.objects.all()
-    qs = qs.order_by("name")
-    context = { "packages": qs }
+    clientpackageauths = ClientPackageAuth.objects.filter(client__in=request.user.clients)
+    packages = Package.objects.filter(clients__in=request.user.clients)
+    packages = packages.order_by("name")
+    context = {"packages": packages,
+               "packageauths": clientpackageauths}
     return render_to_response('packaging/list.html',
                               context,
                               context_instance=RequestContext(request))
@@ -54,7 +56,7 @@ def getconfig(request, *args, **kwargs):
         authkey = data["authkey"]
     except KeyError:
         return http.HttpResponse('No permission without valid key.', status=403)
-    
+
     # Get packageAuth client
     try:
         packageauth = ClientPackageAuth.objects.get(key=authkey)
@@ -68,17 +70,20 @@ def getconfig(request, *args, **kwargs):
     # And that's all folks
     return configDictList
 
-@csrf_exempt
+@permission_required("packaging.can_access")
 def download(request, package_id):
-    package = get_object_or_404(Package, pk=package_id)
-    file = package.file
+    try:
+        package = Package.objects.get(clients__in=request.user.clients, pk=package_id)
+    except Package.DoesNotExist:
+        raise http.Http404("Package not found.")
 
+    file = package.file
     response = http.HttpResponse(content_type="application/octet-stream")
     response['Cache-Control'] = 'no-cache'
     response['Pragma'] = 'no-cache'
     response['Content-Transfer-Encoding'] = 'binary'
     try:
-        response["Content-Disposition"] = "attachment; filename=\"%s\"" % file.name
+        response["Content-Disposition"] = "attachment; filename=\"%s\"" % package.filename()
     except UnicodeEncodeError:
         ext = file.filename.split(".")[-1]
         response["Content-Disposition"] = "attachment; filename=package%s.%s" % (file.id, ext)
@@ -88,8 +93,3 @@ def download(request, package_id):
         response.write(c)
     response.flush()
     return response
-
-@csrf_exempt
-def autoupdate(request):
-    print "autoupdate received %s" % (request.POST,)
-    return http.HttpResponse('OK.', status=200)
