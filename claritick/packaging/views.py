@@ -16,7 +16,7 @@ def list(request, *args, **kwargs):
     clientpackageauths = ClientPackageAuth.objects.filter(client__in=request.user.clients)
     packages = Package.objects.filter(clients__in=request.user.clients)
     packages = packages.order_by("name")
-    context = {"packages": packages,
+    context = {"packages": packages.distinct(),
                "packageauths": clientpackageauths}
     return render_to_response('packaging/list.html',
                               context,
