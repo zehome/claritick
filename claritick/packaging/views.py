@@ -72,10 +72,11 @@ def getconfig(request, *args, **kwargs):
 
 @permission_required("packaging.can_access")
 def download(request, package_id):
-    try:
-        package = Package.objects.get(clients__in=request.user.clients, pk=package_id)
-    except Package.DoesNotExist:
+    packages = Package.objects.filter(clients__in=request.user.clients, pk=package_id).distinct()
+    if not packages:
         raise http.Http404("Package not found.")
+    else:
+        package = packages[0]
 
     file = package.file
     response = http.HttpResponse(content_type="application/octet-stream")
