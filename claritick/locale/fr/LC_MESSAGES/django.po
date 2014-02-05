@@ -1,0 +1,82 @@
+# CLARITICK French translation.
+# Copyright (C) 2014 Laurent COUSTET
+# This file is distributed under the same license as the claritick package.
+# Laurent COUSTET <ed@zehome.com>, 2014
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: 2.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2014-02-05 20:25+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: Laurent COUSTET <ed@zehome.com>\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: ticket/models.py:10
+msgid "Ticket"
+msgstr ""
+
+#: ticket/models.py:13
+msgid "Can create full tickets"
+msgstr "Peut créer des tickets complets"
+
+#: ticket/models.py:14
+msgid "Can close tickets"
+msgstr "Peut fermer des tickets"
+
+#: ticket/models.py:15
+msgid "Can view internal comments"
+msgstr "Peut voir tous les commentaires"
+
+#: ticket/models.py:17
+msgid "Customer"
+msgstr "Client"
+
+#: ticket/models.py:19
+msgid "Contact"
+msgstr ""
+
+#: ticket/models.py:20
+msgid "Phone"
+msgstr "Téléphone"
+
+#: ticket/models.py:21
+msgid "Open date"
+msgstr "Date d'ouverture"
+
+#: ticket/models.py:22
+msgid "Last modification"
+msgstr "Dernière modification"
+
+#: ticket/models.py:24
+msgid "Close date"
+msgstr "Date de fermerture"
+
+#: ticket/models.py:25
+msgid "State"
+msgstr "État"
+
+#: ticket/models.py:27
+msgid "Priority"
+msgstr "Priorité"
+
+#: ticket/models.py:29
+msgid "Assigned to"
+msgstr "Assigné à"
+
+#: ticket/models.py:32
+msgid "Opened by"
+msgstr "Ouvert par"
+
+#: ticket/models.py:34
+msgid "Title"
+msgstr "Titre"
+
+#: ticket/models.py:35
+msgid "Text"
+msgstr "Texte"

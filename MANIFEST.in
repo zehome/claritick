@@ -1,6 +1,0 @@
-recursive-include claritick/templates *
-recursive-include claritick/qbuilder/templates *
-recursive-include claritick/qbuilder/representations *
-recursive-include claritick/media *
-recursive-include claritick/docs *
-recursive-exclude * *.pyc

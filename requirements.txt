@@ -1,0 +1,12 @@
+Django==1.6
+psycopg2
+djangorestframework
+django-constance
+django-redis
+markdown
+django-filter
+south
+django-taggit
+django-mptt
+django-simple-email-confirmation
+django-positions

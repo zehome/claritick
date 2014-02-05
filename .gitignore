@@ -2,6 +2,7 @@
 *.swp
 *.svn
 *.sqlite
+*.sqlite3
 *.db
 build
 dist
@@ -9,6 +10,4 @@ eggs
 /dist
 *.*~
 *.egg-info
-static/
-local_settings.py
-claritick/packaging/filestorage
+local
