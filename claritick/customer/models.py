@@ -1,10 +1,9 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from mptt.models import MPTTModel, TreeForeignKey
-from simple_email_confirmation import SimpleEmailConfirmationUserMixin
 
 
-class Customer(MPTTModel, SimpleEmailConfirmationUserMixin):
+class Customer(MPTTModel):
     class Meta:
         verbose_name = _("Customer")
         ordering = ['name', ]

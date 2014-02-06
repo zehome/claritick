@@ -28,8 +28,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'south',
     'taggit',
-    'simple_email_confirmation',
     'positions',
+    'constance',
 ] + CLARITICK_APPS
 
 MIDDLEWARE_CLASSES = (
@@ -44,16 +44,25 @@ ROOT_URLCONF = 'claritick.urls'
 
 WSGI_APPLICATION = 'claritick.wsgi.application'
 
-
-# Database
-# https://docs.djangoproject.com/en/1.6/ref/settings/#databases
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
+
+CACHES = {
+    "default": {
+        "BACKEND": "redis_cache.cache.RedisCache",
+        "LOCATION": "%s:%s:%s" % ('localhost', 6379, 0),
+        "OPTIONS": {
+            "CLIENT_CLASS": "redis_cache.client.DefaultClient",
+        }
+    }
+}
+
+CONSTANCE_BACKEND = 'constance.backends.database.DatabaseBackend'
+CONSTANCE_DATABASE_CACHE_BACKEND = 'default'
 
 TEMPLATE_DIRS = (
     os.path.join(BASE_DIR, "templates"),
