@@ -11,3 +11,4 @@ eggs
 *.*~
 *.egg-info
 local
+.coverage
