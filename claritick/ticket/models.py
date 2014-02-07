@@ -50,6 +50,18 @@ class TicketManager(models.Manager):
         assert(False)
 
 
+class OpenedTicketManager(TicketManager):
+    def get_queryset(self):
+        qs = super(OpenedTicketManager, self).get_queryset()
+        return qs.filter(date_close=None)
+
+
+class ClosedTicketManager(TicketManager):
+    def get_queryset(self):
+        qs = super(ClosedTicketManager, self).get_queryset()
+        return qs.filter(~models.Q(date_close=None))
+
+
 class Ticket(models.Model):
     class Meta:
         verbose_name = _("Ticket")
@@ -88,3 +100,5 @@ class Ticket(models.Model):
 
     tags = TaggableManager()
     objects = TicketManager()
+    opened = OpenedTicketManager()
+    closed = ClosedTicketManager()

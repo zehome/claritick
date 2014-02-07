@@ -1,6 +1,6 @@
 import re
 from django.db import models
-from django.mail import send_mail
+from django.core.mail import send_mail
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import (
     AbstractBaseUser, PermissionsMixin, UserManager)
@@ -64,3 +64,32 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def get_visible_customers(self):
         return self.customer.get_descendants(include_self=True)
+
+
+class AccessLog(models.Model):
+    """Generic access log"""
+    class Meta:
+        ordering = ["-date", ]
+
+    ACCESSLOG_CHOICES = (
+        ('AUTH_OK', _("Authentification successfull")),
+        ('AUTH_BAD', _("Authentification failed")),
+    )
+    user = models.ForeignKey(
+        User, db_index=True, blank=True, null=True,
+        related_name="login_accesslog")
+    username = models.CharField(max_length=255)
+    date = models.DateTimeField(auto_now_add=True, db_index=True)
+    message = models.CharField(max_length=32, choices=ACCESSLOG_CHOICES)
+    ip = models.GenericIPAddressField(unpack_ipv4=True, blank=True, null=True)
+
+    def save(self, *args, **kwargs):
+        if self.user and not self.username:
+            self.username = self.user.username
+        return super(AccessLog, self).save(*args, **kwargs)
+
+    def __unicode__(self):
+        return "%s (%s): %s" % (self.user.username, self.ip, self.message)
+
+    def __repr__(self):
+        return "<AccessLog: %s: %s>" % (self.user.username, self.message)

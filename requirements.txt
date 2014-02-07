@@ -13,3 +13,4 @@ django-mptt
 django-simple-email-confirmation
 django-positions
 django-picklefield
+django-brake

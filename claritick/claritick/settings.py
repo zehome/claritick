@@ -15,6 +15,7 @@ CLARITICK_APPS = [
     'claritick',
     'customer',
     'ticket',
+    'api',
 ]
 
 # Application definition
@@ -28,6 +29,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'south',
     'taggit',
+    'brake',
     'positions',
     'constance',
     'constance.backends.database',
@@ -64,6 +66,9 @@ CACHES = {
 
 CONSTANCE_BACKEND = 'constance.backends.database.DatabaseBackend'
 CONSTANCE_DATABASE_CACHE_BACKEND = 'default'
+CONSTANCE_CONFIG = {
+    
+}
 
 TEMPLATE_DIRS = (
     os.path.join(BASE_DIR, "templates"),
@@ -92,3 +97,8 @@ REST_FRAMEWORK = {
 }
 
 AUTH_USER_MODEL = "claritick.User"
+
+# Static stuff, only usefull when using DEBUG
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_URL = '/static/'
+WEBUI_ROOT = os.path.join(BASE_DIR, 'webui', 'build')
