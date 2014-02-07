@@ -1,5 +1,7 @@
 Django==1.6
 psycopg2
+PyYAML
+flake8
 djangorestframework
 django-constance
 django-redis
@@ -10,3 +12,4 @@ django-taggit
 django-mptt
 django-simple-email-confirmation
 django-positions
+django-picklefield

@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     'taggit',
     'positions',
     'constance',
+    'constance.backends.database',
 ] + CLARITICK_APPS
 
 MIDDLEWARE_CLASSES = (

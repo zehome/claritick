@@ -12,4 +12,8 @@ class Customer(MPTTModel):
         order_insertion_by = ['name']
 
     name = models.CharField(_("Name"), max_length=64)
-    parent = TreeForeignKey('self', null=True, blank=True, related_name='children')
+    parent = TreeForeignKey(
+        'self', null=True, blank=True, related_name='children')
+
+    def __unicode__(self):
+        return self.name

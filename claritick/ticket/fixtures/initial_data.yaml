@@ -1,0 +1,42 @@
+- model: ticket.State
+  pk: 1
+  fields:
+    label: new
+    index: 1
+- model: ticket.State
+  pk: 2
+  fields:
+    label: accepted
+    index: 2
+- model: ticket.State
+  pk: 3
+  fields:
+    label: waiting
+    index: 3
+- model: ticket.State
+  pk: 4
+  fields:
+    label: raised
+    index: 4
+- model: ticket.State
+  pk: 5
+  fields:
+    label: closed
+    index: 5
+
+- model: ticket.Priority
+  pk: 1
+  fields:
+    label: normal
+    index: 1
+- model: ticket.Priority
+  pk: 2
+  fields:
+    label: high
+    index: 2
+- model: ticket.Priority
+  pk: 3
+  fields:
+    label: critical
+    alarm: critical ticket automatic alarm
+    index: 3
