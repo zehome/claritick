@@ -4,5 +4,5 @@ python:
   - "pypy"
 # command to install dependencies
 install:
-  - pip install -r claritick/requirements.txt
+  - pip install -r requirements.txt
 script: python claritick/manage.py test
