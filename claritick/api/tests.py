@@ -117,6 +117,9 @@ class BasicTicketTestCase(EmptyCacheAPITestCase, BasicTestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), Priority.objects.all().count())
+        p1 = response.data[0]
+        for k in ("id", "label", "index", "alarm"):
+            self.assertTrue(k in p1.keys())
 
     def test_state_list(self):
         self._test_login("root")
@@ -124,6 +127,9 @@ class BasicTicketTestCase(EmptyCacheAPITestCase, BasicTestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), State.objects.all().count())
+        s1 = response.data[0]
+        for k in ("id", "label", "index"):
+            self.assertTrue(k in s1.keys())
 
     def test_ticket_list_basic(self):
         self._test_login("root")
