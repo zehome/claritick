@@ -7,6 +7,7 @@ from django.core.cache import cache
 from rest_framework import status
 from rest_framework.test import APITestCase, APIClient
 from claritick.models import User
+from ticket.models import Ticket, State, Priority
 from customer.models import Customer
 
 
@@ -86,3 +87,50 @@ class LoginTestCase(EmptyCacheAPITestCase, BasicTestCase):
         self._test_login("nobody", first_name='', last_name='')
         logout_r = self.client.get(reverse('api-logout'))
         self.assertEqual(logout_r.status_code, status.HTTP_200_OK)
+
+
+class BasicTicketTestCase(EmptyCacheAPITestCase, BasicTestCase):
+    def setUp(self):
+        super(BasicTicketTestCase, self).setUp()
+        State(label="new", index=1).save()
+        State(label="closed", index=2).save()
+        Priority(label="normal", index=1).save()
+        Priority(label="high", index=2).save()
+
+        self.customer = Customer(name="root")
+        self.customer.save()
+        self.su = User.objects.create_superuser(
+            username="root", password="root", email="root@email.fr",
+            first_name="root", last_name="root",
+            customer=self.customer)
+
+    def test_permissions(self):
+        for view in ("api-ticket-state-list", "api-ticket-priority-list",
+                     "api-ticket-list"):
+            response = self.client.get(reverse(view))
+            self.assertEqual(response.status_code,
+                             status.HTTP_403_FORBIDDEN)
+
+    def test_priority_list(self):
+        self._test_login("root")
+        url = reverse("api-ticket-priority-list")
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), Priority.objects.all().count())
+
+    def test_state_list(self):
+        self._test_login("root")
+        url = reverse("api-ticket-state-list")
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), State.objects.all().count())
+
+    def test_ticket_list_basic(self):
+        self._test_login("root")
+        url = reverse("api-ticket-list")
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # Limit 50 but we don't have 50 ticket in our test data.
+        self.assertEqual(
+            response.data["count"],
+            Ticket.objects.foruser(self.su).count(), response.data)
